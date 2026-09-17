@@ -9,26 +9,26 @@ Canonical Path: thesis/problem.md
 
 1. The Problem
 
-Software systems are increasingly capable of performing actions on behalf of humans.
+Software systems are increasingly capable of performing consequential actions on behalf of people, agents, and other systems.
 
 APIs exist.
 Business systems exist.
 Automation exists.
-AI models can understand natural language and invoke tools.
+AI Models can understand natural language and invoke tools.
 
-Yet there is still a fundamental gap between:
+Yet there remains a fundamental gap between:
 
-What a human means
+What a source of intent means
 
 and:
 
-What a computer is allowed to do.
+What a system is authorized and able to execute.
 
-Today, that gap is typically bridged by application-specific code, rigid workflows, forms, prompts, tool definitions, and human interpretation.
+Today, that gap is typically bridged by application-specific code, rigid workflows, forms, prompts, tool definitions, policy logic, and human interpretation.
 
-These mechanisms work when intent is predictable.
+These mechanisms work well when intent is predictable and execution paths are known.
 
-They become fragile when intent is expressed dynamically, ambiguously, across multiple systems, and with consequential side effects.
+They become fragile when intent is expressed dynamically, ambiguously, across heterogeneous systems, and with consequential side effects.
 
 Noema exists to address this gap.
 
@@ -40,32 +40,34 @@ The core problem is not that computers cannot execute actions.
 
 They execute actions extremely well.
 
-The problem is that computers generally require intent to be translated into a sufficiently precise machine representation before execution.
+The problem is that consequential execution requires intent to be translated into a sufficiently precise, validated, authorized, and contextually grounded machine representation before execution.
 
 Consider:
 
 “Renew my company card.”
 
-A human may consider this straightforward.
+A person may consider this straightforward.
 
-A computer needs to determine:
+A system needs to determine:
 
-Who is "my"?
-Which company?
-Which card?
-Is the card eligible for renewal?
-What does "renew" mean in this system?
-Which capability performs the renewal?
-Does this Actor have authority?
-What policies apply?
-Are there constraints?
-What is the current state?
-What should happen if renewal requires approval?
-How do we know the renewal actually succeeded?
+* Who is the Actor?
+* Which company?
+* Which card?
+* What does “renew” mean in this enterprise context?
+* Is the card eligible for renewal?
+* Which Capability can satisfy the Intent?
+* Which Action should be executed?
+* Does the Actor have the required authority?
+* What Policies apply?
+* What Constraints apply?
+* What is the current enterprise State?
+* Is the required state sufficiently reconciled across systems?
+* What should happen if clarification or approval is required?
+* How will the resulting Outcome be verified?
 
 The difficulty is therefore not merely execution.
 
-It is semantic translation under uncertainty and authority constraints.
+It is semantic translation, resolution, governance, and verified execution under uncertainty.
 
 ⸻
 
@@ -82,18 +84,18 @@ These APIs describe how a system can be operated.
 
 They do not necessarily describe:
 
-What a human is trying to accomplish.
+What a source of intent is trying to accomplish.
 
 The distinction is:
 
 API:
 RenewCard(card_id)
-Human:
-"Make sure I have a valid company card when this one expires."
+Intent:
+“Make sure I have a valid company card when this one expires.”
 
-The second statement contains intent, context, temporal requirements, and potentially multiple valid execution paths.
+The second statement may contain intent, actor context, resource references, temporal requirements, constraints, and multiple valid execution paths.
 
-Current systems generally force an application developer to manually bridge that semantic gap.
+Current systems generally force application developers to manually bridge this semantic gap.
 
 ⸻
 
@@ -101,11 +103,11 @@ Current systems generally force an application developer to manually bridge that
 
 Large language models have significantly improved the ability of machines to interpret natural language.
 
-A Model can infer that:
+A Model may infer that:
 
 “Renew my company card.”
 
-probably corresponds to something like:
+corresponds to something like:
 
 Intent:
 RenewCard
@@ -120,14 +122,16 @@ The Model may still be wrong about:
 
 * which entity is being referenced
 * which Resource is intended
+* whether the Actor is correctly resolved
 * whether the Actor has authority
 * whether the requested operation is permitted
-* whether the current State allows it
+* whether the current State permits the operation
 * which Policy applies
+* which Capability can satisfy the Intent
 * which Action should execute
-* whether the resulting Outcome satisfies the Intent
+* whether the resulting Outcome satisfies the original Intent
 
-This creates a new systems problem:
+This creates a systems problem:
 
 How do we turn probabilistic interpretation into deterministic, trustworthy execution?
 
@@ -139,14 +143,14 @@ Modern AI systems often address actionability through tool calling.
 
 Conceptually:
 
-User
- ↓
-LLM
- ↓
+Source of Intent
+      ↓
+Model
+      ↓
 Tool Selection
- ↓
+      ↓
 Tool Call
- ↓
+      ↓
 API
 
 This solves one problem:
@@ -155,7 +159,7 @@ The Model can invoke software.
 
 It does not solve the deeper problem:
 
-Should this particular Action be executed given what the user actually intended and the surrounding constraints?
+Should this particular Action be executed given the resolved Intent, Actor, target, current State, authority, Policy, Constraints, and available evidence?
 
 Tool descriptions do not constitute a canonical ontology.
 
@@ -164,6 +168,8 @@ A function schema does not establish authority.
 A successful API response does not prove Intent satisfaction.
 
 Model confidence does not establish Trust.
+
+No free-form Model output should therefore be allowed to cross directly into consequential execution.
 
 ⸻
 
@@ -178,7 +184,7 @@ Ask for clarification if...
 
 This creates brittle, implicit semantics.
 
-Critical business rules become dependent on:
+Critical execution constraints can become dependent on:
 
 * prompt construction
 * Model behavior
@@ -190,7 +196,7 @@ Critical business rules become dependent on:
 
 This is unsuitable as the primary control plane for consequential execution.
 
-The system needs explicit, machine-evaluable semantics outside the Model.
+The system needs explicit, machine-evaluable semantics outside the Model, with a hard boundary between probabilistic interpretation and deterministic validation, Trust, and execution.
 
 ⸻
 
@@ -210,19 +216,19 @@ WHEN card expires
 
 The workflow is already known.
 
-But a human may instead say:
+But a person or agent may instead express:
 
 “Take care of my expiring card.”
 
-The system now needs to determine what “take care of” means in context.
+The system now needs to determine what “take care of” means in context and whether a valid execution path exists.
 
 This is fundamentally different from executing a predefined workflow.
 
 ⸻
 
-8. Human Intent Is Richer Than Commands
+8. Intent Is Richer Than Commands
 
-Human requests frequently contain implicit information.
+Sources of intent frequently contain information that is not represented by a simple operation name and parameter list.
 
 Consider:
 
@@ -231,7 +237,7 @@ Consider:
 This contains multiple semantic dimensions:
 
 Actor:
-Current user
+Current source of authority
 Intent:
 Grant access
 Target:
@@ -245,11 +251,11 @@ Relevant organization/system
 Constraint:
 Match John's access
 Potential Policy:
-Whether current user may grant that access
+Whether the Actor may grant that access
 
 A simple function call does not capture all of this.
 
-The system needs a representation of the meaning behind the command.
+The system needs a representation of the meaning behind the request.
 
 ⸻
 
@@ -271,18 +277,22 @@ Examples:
 
 Each request may require resolution of:
 
-Entity
-Resource
-Scope
-Time
-Authority
-Policy
-State
-Parameters
+* Actor
+* Entity
+* Resource
+* Scope
+* Time
+* Target
+* Authority
+* Policy
+* State
+* Parameters
 
-A trustworthy system must treat ambiguity explicitly.
+A trustworthy system must treat material ambiguity explicitly.
 
 It cannot assume that the most probable interpretation is always acceptable.
+
+When ambiguity materially affects consequential execution, the correct outcome may be CLARIFY rather than inference.
 
 ⸻
 
@@ -292,15 +302,15 @@ A mistaken answer in a conversational system may be inconvenient.
 
 A mistaken Action can be consequential.
 
-Examples:
+Examples include:
 
-Wrong account selected
-Wrong customer deleted
-Wrong payment refunded
-Wrong employee granted access
-Wrong deployment terminated
-Wrong document published
-Wrong funds transferred
+* wrong account selected
+* wrong customer deleted
+* wrong payment refunded
+* wrong employee granted access
+* wrong deployment terminated
+* wrong document published
+* wrong funds transferred
 
 The system therefore requires a different relationship with uncertainty.
 
@@ -310,17 +320,29 @@ uncertainty → lower confidence
 
 For consequential execution:
 
-uncertainty → clarification / denial / escalation
+material uncertainty
+        ↓
+clarification / rejection / escalation
+
+And when the execution state itself is uncertain:
+
+uncertain execution
+        ↓
+verification / reconciliation
+        ↓
+retry only when safe
+
+Timeout or lack of response must not automatically be interpreted as failure.
 
 ⸻
 
-11. Permission Is Not Intent
+11. Intent and Authorization Are Distinct
 
-Traditional authorization answers:
+Traditional authorization asks:
 
 “Can this Actor perform this operation?”
 
-Noema must also answer:
+Noema must also establish:
 
 “Is this the operation the Actor actually intended?”
 
@@ -335,7 +357,7 @@ DeleteCustomer
 Authority:
 Alice is allowed to delete customers.
 Intent:
-"Show me the customer's profile."
+“Show me the customer's profile.”
 
 Alice may be authorized to delete the customer.
 
@@ -347,6 +369,20 @@ Authority ≠ Intent
 
 Both must be established independently.
 
+Authorization must also be evaluated against a sufficiently resolved:
+
+Actor
++
+Action
++
+Target / Resource
++
+Context / Current State
++
+Applicable Policy
+
+Noema does not replace the enterprise as the authority source for business permissions or enterprise state. It provides the deterministic evaluation boundary through which those supplied authorities and governance conditions can be applied.
+
 ⸻
 
 12. Capability Is Not Permission
@@ -356,35 +392,34 @@ Similarly:
 Capability:
 refund_payment
 
-only establishes that an operation exists.
+only establishes that an operation is possible through the connected enterprise environment.
 
 It does not establish:
 
-Actor may perform it
+* that the Actor may perform it
+* that the current request authorizes it
+* that Policy permits it
+* that the current State allows it
+* that executing it is consistent with the resolved Intent
 
-or:
-
-Policy permits it
-
-or:
-
-Current State allows it
-
-The system needs to distinguish:
+The system must distinguish:
 
 What can happen?
-
-from:
-
+        ↓
+Capability
+What is authorized?
+        ↓
+Authorization
+What conditions govern it?
+        ↓
+Policy
 What should happen?
-
-and:
-
-What may happen?
+        ↓
+Intent + Action semantics
 
 ⸻
 
-13. Successful Execution Does Not Prove Success of Intent
+13. Successful Execution Does Not Prove Intent Satisfaction
 
 Suppose Noema executes:
 
@@ -394,27 +429,25 @@ and receives:
 
 HTTP 200 OK
 
-That only establishes that the external system accepted the request.
+That establishes something about the external request.
 
 It does not necessarily establish that:
 
-Card is now active
-
-or:
-
-The requested renewal was actually completed
-
-or:
-
-The user's Intent has been satisfied.
+* the renewal completed
+* the card is now active
+* the intended card was renewed
+* the expected enterprise state was reached
+* the original Intent was satisfied
 
 Therefore:
 
 Execution Success
         ≠
-Intent Success
+Intent Satisfaction
 
-Outcome verification is part of the problem.
+Outcome verification is part of the execution problem.
+
+Completion requires sufficient evidence that the expected Outcome has actually been established.
 
 ⸻
 
@@ -422,17 +455,17 @@ Outcome verification is part of the problem.
 
 Enterprise environments contain many systems:
 
-CRM
-ERP
-HRIS
-Payment Provider
-Identity Provider
-Ticketing System
-Cloud Infrastructure
-Databases
-Internal Services
+* CRM
+* ERP
+* HRIS
+* Payment Provider
+* Identity Provider
+* Ticketing System
+* Cloud Infrastructure
+* Databases
+* Internal Services
 
-Each has its own:
+Each may have its own:
 
 * identifiers
 * terminology
@@ -441,11 +474,11 @@ Each has its own:
 * permissions
 * business rules
 
-A human sees:
+A person may see:
 
-"the customer"
+“the customer”
 
-while different systems may represent that customer as:
+while different systems represent that customer as:
 
 CRM Customer #392
 Billing Account #8831
@@ -453,6 +486,16 @@ Support User #1049
 Payment Customer cus_7...
 
 The system therefore needs semantic resolution across boundaries.
+
+It also needs to distinguish:
+
+* source of information
+* authority of information
+* freshness
+* temporal applicability
+* contradictory observations
+
+Retrieving a value from a system does not automatically make that value authoritative.
 
 ⸻
 
@@ -466,39 +509,51 @@ API integration tools already address much of that problem.
 
 The deeper issue is:
 
-Human Meaning
-      ↓
+Intent
+  ↓
 ?
-      ↓
+  ↓
 System-Specific Action
 
-The missing layer is a canonical semantic representation of executable intent.
+The missing layer is a canonical semantic representation of executable Intent and its relationship to Context, Capabilities, Authority, Policy, State, Action, Execution, Evidence, and Outcome.
+
+Integration remains necessary, but it is not itself the fundamental abstraction Noema introduces.
 
 ⸻
 
 16. Business Logic Is Fragmented Across Applications
 
-Today, intent interpretation is frequently distributed across:
+Today, intent interpretation and execution governance may be distributed across:
 
-frontend validation
-backend services
-API gateways
-workflow engines
-authorization middleware
-prompt instructions
-tool schemas
-database constraints
-human procedures
+* frontend validation
+* backend services
+* API gateways
+* workflow engines
+* authorization middleware
+* prompt instructions
+* tool schemas
+* database constraints
+* human procedures
 
-There is rarely a single canonical representation of:
+There is rarely a single canonical representation connecting:
 
-What the Actor intends
-What must be true
-What is permitted
-What Action should happen
-What Outcome is expected
+What was intended
+        ↓
+What was resolved
+        ↓
+What is possible
+        ↓
+What is authorized
+        ↓
+What conditions apply
+        ↓
+What Action should occur
+        ↓
+What was attempted
+        ↓
+What Outcome was established
 
-This makes systems difficult to reason about and difficult to compose.
+This makes systems difficult to reason about, compose, audit, and recover.
 
 ⸻
 
@@ -506,30 +561,32 @@ This makes systems difficult to reason about and difficult to compose.
 
 The missing abstraction is not another API protocol.
 
-It is a semantic layer between:
+It is a semantic and governance layer between:
 
-Human Intent
+Source of Intent
 
 and:
 
 Executable Action
 
-That layer must be able to represent:
+That layer must be able to represent and relate:
 
-Actor
-Intent
-Entity
-Resource
-Capability
-Context
-State
-Constraint
-Policy
-Authority
-Action
-Outcome
+* Actor
+* Intent
+* Entity
+* Resource
+* Context
+* Capability
+* Authorization
+* Policy
+* Constraint
+* State
+* Evidence
+* Action
+* Execution
+* Outcome
 
-and establish the relationships between them.
+It must also preserve uncertainty rather than forcing unresolved information into false certainty.
 
 ⸻
 
@@ -537,43 +594,53 @@ and establish the relationships between them.
 
 The system should transform:
 
-Natural Language
-
-into:
-
-Canonical Intent
-
-then:
-
-Canonical Intent
+Source of Intent
         ↓
-Resolution
+Intent Compilation
         ↓
-Validation
+Hard Schema Validation
         ↓
-Trust Decision
+Context
         ↓
-Executable Action
+State Reconciliation
+        ↓
+Deterministic Trust
+        ↓
+Action Graph / Outcome Graph
+        ↓
+Planning
+        ↓
+Execution
+        ↓
+Verification / Recovery
         ↓
 Outcome
 
-The critical property is that the original natural-language request does not remain the implicit source of truth throughout execution.
+Natural language is an interface to this process, not its canonical representation.
+
+The original request must not remain the implicit source of truth throughout execution.
+
+Once an Intent Object is admitted to Trust, it is typed, schema-validated, versioned, and immutable. Changes to intent create a new version rather than silently mutating the admitted object.
 
 ⸻
 
 19. The Problem in One Sentence
 
-Software has powerful mechanisms for executing operations, and AI has become capable of interpreting human language, but there is no sufficiently general semantic and deterministic layer that reliably connects human intent to authorized, constrained, executable action.
+Software has powerful mechanisms for executing operations, and AI has become capable of interpreting human language, but there is no sufficiently general semantic and deterministic layer that reliably connects a source of intent to resolved, authorized, constrained, executable action and a verifiable outcome across heterogeneous enterprise systems.
 
 ⸻
 
 20. The Problem Noema Specifically Addresses
 
-Noema addresses the problem of trustworthy intent execution across heterogeneous software systems.
+Noema addresses the problem of trustworthy intent execution across heterogeneous enterprise systems.
 
 More precisely:
 
-Given an Actor expressing an Intent in natural language or another human-facing interface, determine the canonical meaning of that Intent, resolve the relevant Resources and Context, establish applicable Capabilities, Policies, Constraints, and Authority, and produce an executable Action whose Outcome can be verified.
+Given a source of intent from a person, AI agent, system, voice interface, text interface, chat interface, WhatsApp interaction, API, or other supported source, determine the canonical meaning of that Intent, resolve the relevant Actor, Entities, Resources, and Context, reconcile relevant State, establish applicable Capabilities, Policies, Constraints, and Authority, and produce a governed executable Action whose resulting Outcome can be verified and recovered when necessary.
+
+Noema does not become the enterprise system of record for the underlying business domain.
+
+Enterprise systems remain authoritative for business state, while Noema owns the semantic and execution state required to govern the transition from intent to outcome.
 
 ⸻
 
@@ -583,48 +650,70 @@ This is not merely an AI problem.
 
 It spans several layers:
 
-                HUMAN
-                  │
-                  ▼
-          Intent Expression
-                  │
-                  ▼
-        Probabilistic Interpretation
-                  │
-                  ▼
-          Semantic Resolution
-                  │
-                  ▼
-          Canonical Representation
-                  │
-          ┌───────┼────────┐
-          ▼       ▼        ▼
-       Policy  Authority  State
-          │       │        │
-          └───────┼────────┘
-                  ▼
-           Deterministic Trust
-                  │
-                  ▼
-               Action
-                  │
-                  ▼
-             Execution
-                  │
-                  ▼
-              Outcome
+              SOURCE OF INTENT
+       Human / Agent / System / Interface
+                     │
+                     ▼
+             Intent Compilation
+                     │
+                     ▼
+          Hard Schema Validation
+                     │
+                     ▼
+                 Context
+                     │
+                     ▼
+            State Reconciliation
+                     │
+                     ▼
+        Deterministic Trust Boundary
+                     │
+          ┌──────────┼──────────┐
+          ▼          ▼          ▼
+      Authority    Policy     Constraints
+          │          │          │
+          └──────────┼──────────┘
+                     ▼
+             Action / Outcome
+                  Graphs
+                     │
+                     ▼
+                  Planning
+                     │
+                     ▼
+                 Execution
+                     │
+                     ▼
+          Verification / Recovery
+                     │
+                     ▼
+                  Outcome
+                     │
+                     ▼
+            Causal Audit / Memory
 
 Each layer has different correctness requirements.
+
+The critical architectural boundary is:
+
+PROBABILISTIC
+understand / interpret / propose
+              │
+              │ HARD BOUNDARY
+              ▼
+DETERMINISTIC
+validate / resolve / reconcile / govern /
+plan / execute / verify / recover / audit
 
 ⸻
 
 22. The Fundamental Tension
 
-The problem can be expressed as a tension between two properties:
+The problem can be expressed as a tension between two properties.
 
-Human interaction wants flexibility.
+Human and agent-facing interaction wants flexibility.
 
-Humans want to say:
+A source of intent should be able to express:
 
 “Take care of this for me.”
 
@@ -632,38 +721,45 @@ without specifying every implementation detail.
 
 Software execution requires precision.
 
-Software needs:
+The execution system needs sufficiently resolved:
 
-exact Actor
-exact Resource
-exact Capability
-exact parameters
-exact authority
-exact constraints
-exact Action
+* Actor
+* Intent
+* Target
+* Capability
+* Action
+* Authority
+* Policy
+* Constraints
+* Context
+* Current State
 
 Noema exists in the space between those two requirements.
+
+Its purpose is not to eliminate ambiguity by guessing.
+
+Its purpose is to make ambiguity, uncertainty, authority, and execution state explicit and governable.
 
 ⸻
 
 23. Why Existing Approaches Are Insufficient
 
 Approach	What it solves	What remains unsolved
-APIs	System execution	Human intent
-Workflow engines	Predefined processes	Dynamic intent
-RPA	UI automation	Semantic intent
-Tool calling	Model → operation	Trust and meaning
+APIs	System execution	Intent semantics and governance
+Workflow engines	Predefined processes	Dynamic intent and semantic resolution
+RPA	UI automation	Canonical intent and trustworthy execution
+Tool calling	Model → operation	Deterministic trust and intent correctness
 Prompting	Model behavior	Deterministic enforcement
-IAM	Permission	Intent correctness
-Policy engines	Rule evaluation	Intent representation
-RAG	Information retrieval	Action legitimacy
-Knowledge graphs	Relationships	Executable intent
-Agent frameworks	Autonomous behavior	Deterministic trust
-Chat interfaces	Human interaction	Execution semantics
+IAM	Permission	Intent correctness and execution semantics
+Policy engines	Rule evaluation	Canonical intent and execution lifecycle
+RAG	Information retrieval	Action legitimacy and authority
+Knowledge graphs	Relationships	Governed executable intent
+Agent frameworks	Agent behavior	Deterministic execution boundary
+Chat interfaces	Human interaction	Execution semantics and verification
 
 Noema is not intended to replace these technologies.
 
-It provides the missing semantic boundary through which they can participate in trustworthy intent execution.
+It provides a semantic and trust boundary through which they can participate in trustworthy intent execution.
 
 ⸻
 
@@ -671,7 +767,7 @@ It provides the missing semantic boundary through which they can participate in 
 
 The first-order problem is:
 
-How can a machine reliably determine what a human intends to accomplish?
+How can a machine reliably determine what a source of intent means and resolve the relevant entities, resources, actor, and context?
 
 The second-order problem is:
 
@@ -679,7 +775,7 @@ How can that interpretation be converted into an Action without allowing probabi
 
 The third-order problem is:
 
-How can the resulting Outcome be verified against the original Intent?
+How can the resulting Outcome be verified against the original Intent and recovered safely when execution state is uncertain or partially failed?
 
 Noema must address all three.
 
@@ -697,18 +793,21 @@ A Model can correctly infer:
 
 while Noema still needs to determine:
 
-Which card?
-Which Actor?
-Is renewal available?
-Is the Actor authorized?
-What policy applies?
-What constraints apply?
-Which Action should execute?
-What constitutes successful renewal?
+* Which Actor?
+* Which card?
+* Which enterprise Resource?
+* Is renewal available?
+* Is the Actor authorized?
+* What Policy applies?
+* What Constraints apply?
+* What is the current State?
+* Which Capability can satisfy the Intent?
+* Which Action should execute?
+* What constitutes successful renewal?
 
 The gap is therefore not merely language understanding.
 
-It is operational semantics and trust.
+It is operational semantics, governance, and verified execution.
 
 ⸻
 
@@ -718,43 +817,47 @@ Enterprises already automate enormous numbers of operations.
 
 The problem is that automation is usually bound to:
 
-predefined workflows
-predefined triggers
-predefined forms
-predefined APIs
-predefined rules
+* predefined workflows
+* predefined triggers
+* predefined forms
+* predefined APIs
+* predefined rules
 
-Noema targets the space where the desired operation is expressed dynamically through human Intent.
+Noema targets the space where the desired operation is expressed dynamically and must be resolved into a governed execution path.
+
+This does not make predefined workflows obsolete. They can remain execution mechanisms within a Noema-governed path.
 
 ⸻
 
-27. The Problem Is Not That Humans Need More Interfaces
+27. The Problem Is Not That People Need More Interfaces
 
 Adding another UI does not solve the semantic problem.
 
-Forms make humans translate Intent into system-specific fields.
+Forms make people translate intent into system-specific fields.
 
 Noema aims to reverse that relationship:
 
 Traditional:
-Human
- ↓
+Source of Intent
+      ↓
 System-specific form
- ↓
+      ↓
 Structured command
- ↓
+      ↓
 Action
 
 versus:
 
 Noema:
-Human
- ↓
-Intent
- ↓
-Canonical semantics
- ↓
-Validated Action
+Source of Intent
+      ↓
+Canonical Intent
+      ↓
+Resolution / Validation
+      ↓
+Governed Action
+
+The interface may be voice, text, chat, WhatsApp, API, or another source. The canonical semantic representation remains the same.
 
 ⸻
 
@@ -762,46 +865,57 @@ Validated Action
 
 The failure Noema is designed to prevent is:
 
-A system executes an Action that is technically valid but semantically wrong.
+A system executes an Action that is technically valid but semantically, contextually, or authoritatively wrong.
 
 Examples:
 
 Correct API call
 Wrong customer
 Correct permission
-Wrong intent
+Wrong Intent
 Correct tool
-Wrong resource
+Wrong Resource
 Correct workflow
-Wrong context
+Wrong Context
 Successful execution
-Wrong outcome
+Wrong or unverified Outcome
 
-These failures are particularly dangerous because the underlying software may report everything as successful.
+These failures are particularly dangerous because the underlying software may report everything as technically successful.
 
 ⸻
 
 29. The Desired Property
 
-A trustworthy Noema execution should satisfy:
+A governed Noema execution should satisfy:
 
 Action
 ⊆
-Actor Authority
+Resolved Intent
 ∩
-Intent
+Resolved Actor Authority
 ∩
-Capability
+Available Capability
 ∩
-Policy
+Applicable Policy
 ∩
-Constraints
+Applicable Constraints
 ∩
-Current State
+Current Reconciled State
 ∩
-Context
+Relevant Context
 
-If the required intersection cannot be established, Noema should not silently proceed.
+This is not a literal set operation. It expresses the requirement that an Action must be justified simultaneously by the resolved semantic, authority, capability, governance, state, and contextual conditions.
+
+If a required condition cannot be established with sufficient certainty, Noema must not silently proceed.
+
+The canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Execution control may additionally require states such as waiting, confirmation, or unknown execution state, but these do not replace the canonical Trust outcomes.
 
 ⸻
 
@@ -809,20 +923,23 @@ If the required intersection cannot be established, Noema should not silently pr
 
 The thesis underlying Noema is:
 
-Human intent should become a first-class computational object.
+Intent should become a first-class computational object.
 
-Once Intent becomes explicit, the system can reason about:
+Once Intent becomes explicit and canonical, the system can reason about:
 
-what was requested
-who requested it
-what it refers to
-what is possible
-what is permitted
-what constraints apply
-what Action should occur
-what happened afterward
+* what was requested
+* who or what initiated it
+* what it refers to
+* what was resolved
+* what is possible
+* what is authorized
+* what constraints apply
+* what Action should occur
+* what was attempted
+* what evidence exists
+* what Outcome was established
 
-This creates a semantic execution layer between humans and software.
+This creates a semantic and deterministic execution layer between sources of intent and enterprise software.
 
 ⸻
 
@@ -830,9 +947,9 @@ This creates a semantic execution layer between humans and software.
 
 The emergence of highly capable Models makes this layer newly practical.
 
-Models can provide the probabilistic interface required to translate messy human language into candidate canonical Intent.
+Models can provide the probabilistic interpretation and candidate-generation capabilities required to translate messy source input into candidate canonical Intent.
 
-Noema can provide the deterministic substrate required to make that interpretation trustworthy.
+Noema can provide the deterministic substrate required to validate, resolve, govern, execute, verify, and recover from that interpretation.
 
 Together:
 
@@ -843,7 +960,11 @@ Canonical Semantics
 Deterministic Trust
           +
 Executable Capabilities
+          +
+Verification / Recovery
           =
 Trustworthy Intent Execution
+
+The commercial opportunity is to provide this capability as Trusted Enterprise Execution Infrastructure: an embedded execution boundary that enterprises can integrate into their own products so their users and customers can express intent and receive governed outcomes across existing enterprise systems.
 
 That is the problem Noema exists to solve.

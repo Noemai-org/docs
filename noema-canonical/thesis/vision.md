@@ -9,11 +9,11 @@ Canonical Path: thesis/vision.md
 
 1. Vision
 
-A world where humans express what they want, not how software must do it, and software can reliably translate that intent into authorized, constrained, and verifiable action.
+A world where people and systems express what they want to accomplish, rather than how software must accomplish it, and where software can reliably translate that Intent into authorized, constrained, executable, and verifiable action.
 
-Noema envisions a new layer of computing in which human Intent becomes a native interface to software.
+Noema envisions a new layer of computing in which Intent becomes a native semantic interface to software.
 
-Instead of humans learning the structure, terminology, workflows, and APIs of every system they use, software should increasingly understand the desired outcome and determine the legitimate path to achieve it.
+Instead of requiring people, agents, or systems to understand the structure, terminology, workflows, and APIs of every enterprise system they interact with, the execution layer should determine the legitimate path from Intent to Outcome.
 
 ⸻
 
@@ -21,7 +21,7 @@ Instead of humans learning the structure, terminology, workflows, and APIs of ev
 
 The dominant software model is:
 
-Human
+Source of Intent
   ↓
 Interface
   ↓
@@ -35,11 +35,11 @@ API
   ↓
 Action
 
-The user must understand how the software works.
+The source of intent must conform to the structure of the software.
 
 The Noema model is:
 
-Human
+Source of Intent
   ↓
 Intent
   ↓
@@ -47,104 +47,110 @@ Noema
   ↓
 Action
   ↓
-Outcome
+Verified Outcome
 
-The complexity moves from the human interface into a semantic execution layer.
+The complexity moves from the source-facing interface into a semantic execution layer.
 
 ⸻
 
 3. The World Noema Wants to Create
 
-In the Noema world, a human should be able to express:
+In the Noema world, a person or other source of intent should be able to express:
 
 “Make sure the team has access to the new repository.”
 
 without needing to know:
 
-which identity provider
-which repository provider
-which permission model
-which API
-which workflow
-which internal service
-which database
+* which identity provider
+* which repository provider
+* which permission model
+* which API
+* which workflow
+* which internal service
+* which database
 
-Noema should determine the operational path from the Intent.
+Noema should determine the legitimate operational path from the Intent.
 
-Where ambiguity exists, it asks.
+Where ambiguity exists, it clarifies.
 
 Where authority is missing, it stops.
 
-Where policy prohibits the operation, it refuses.
+Where Policy prohibits the operation, it rejects it.
+
+Where required state is uncertain, it reconciles or waits for sufficient evidence.
 
 Where execution succeeds, it verifies the Outcome.
 
 ⸻
 
-4. Intent Becomes a Universal Interface
+4. Intent Becomes a Common Semantic Interface
 
 Today, software exposes different interfaces for different systems:
 
-CRM UI
-ERP UI
-Cloud Console
-Payment Dashboard
-GitHub
-Slack
-Database Console
-Internal Admin Portal
+* CRM UI
+* ERP UI
+* Cloud Console
+* Payment Dashboard
+* Source Control
+* Database Console
+* Internal Admin Portal
 
-Noema envisions Intent becoming a common semantic interface across them.
+Noema envisions Intent becoming a common semantic interface across these systems.
 
-The human says:
+A person should be able to express:
 
-"Show me all customers who haven't paid."
+“Show me all customers who haven’t paid.”
 
 rather than learning the specific query interface of the underlying system.
 
 Or:
 
-"Deploy the latest version to staging."
+“Deploy the latest version to staging.”
 
 rather than navigating a deployment interface.
 
 The interface becomes:
 
-Desired outcome
+Desired objective
 
 rather than:
 
 System procedure
 
+The same canonical Intent model can be reached through different sources, including voice, text, chat, API, agent, or system-generated intent.
+
 ⸻
 
-5. Humans Specify Outcomes; Systems Determine Procedures
+5. Sources Specify Intent; Systems Determine Procedures
 
 The long-term shift is:
 
 Traditional:
-Human specifies procedure
+Source specifies procedure
         ↓
 Software executes procedure
 
 toward:
 
 Noema:
-Human specifies Intent
+Source specifies Intent
         ↓
 System determines valid procedure
 
-This does not mean software gets unlimited autonomy.
+This does not mean software receives unlimited autonomy.
 
 The procedure remains constrained by:
 
-Authority
-Policy
-Constraints
-Context
-State
-Capabilities
-Risk
+* Authority
+* Policy
+* Constraints
+* Context
+* State
+* Capabilities
+* Risk
+* Evidence
+
+Noema determines the execution path only within those established boundaries.
 
 ⸻
 
@@ -152,7 +158,7 @@ Risk
 
 Computing has repeatedly advanced by introducing higher-level abstractions.
 
-Examples:
+For example:
 
 Machine code
     ↓
@@ -168,58 +174,58 @@ Cloud platforms
 
 Noema proposes another abstraction:
 
-Human Intent
+Intent
     ↓
 Semantic Execution
     ↓
-Existing Software
+Existing Enterprise Software
 
 The objective is not to eliminate lower layers.
 
-It is to make them accessible through a higher-level semantic interface.
+It is to make those layers accessible through a higher-level semantic interface.
 
 ⸻
 
-7. The Semantic Internet of Software
+7. The Semantic Network of Software
 
 The long-term vision extends beyond individual applications.
 
 Today, software systems are connected primarily through:
 
-APIs
-Events
-Webhooks
-Databases
-Queues
-Files
+* APIs
+* Events
+* Webhooks
+* Databases
+* Queues
+* Files
 
-Noema envisions a world where systems are also connected through canonical Capabilities and semantic contracts.
+Noema envisions systems additionally being connected through canonical Capabilities, Actions, semantic contracts, evidence, and execution relationships.
 
 Conceptually:
 
-                HUMAN
-                  │
-                INTENT
-                  │
-                  ▼
-              ┌───────┐
-              │ NOEMA │
-              └───┬───┘
-        ┌─────────┼─────────┐
-        ▼         ▼         ▼
-       CRM       ERP      Payments
-        │         │         │
-     Customer   Orders   Transactions
-        │         │         │
-     Capabilities / Actions
+                SOURCE OF INTENT
+                       │
+                     INTENT
+                       │
+                       ▼
+                  ┌─────────┐
+                  │  NOEMA  │
+                  └────┬────┘
+             ┌─────────┼─────────┐
+             ▼         ▼         ▼
+            CRM       ERP     Payments
+             │         │         │
+         Customer    Orders   Transactions
+             │         │         │
+        Capabilities / Actions / Evidence
 
-Noema becomes a semantic coordination layer across software.
+Noema becomes a semantic execution layer across enterprise software.
 
 ⸻
 
 8. The Enterprise Intent Layer
 
-In enterprise environments, the same Intent often crosses organizational boundaries.
+In enterprise environments, the same Intent can cross organizational and system boundaries.
 
 For example:
 
@@ -227,13 +233,13 @@ For example:
 
 may involve:
 
-HRIS
-Identity Provider
-Email
-Payroll
-Access Management
-Device Management
-Project Management
+* HRIS
+* Identity Provider
+* Email
+* Payroll
+* Access Management
+* Device Management
+* Project Management
 
 Today, this is typically encoded as a workflow owned by one application.
 
@@ -251,46 +257,44 @@ Email provisioned
 Payroll configured
 Required access granted
 
-Individual systems provide the capabilities needed to satisfy the Intent.
+Individual systems provide the Capabilities required to satisfy the Intent.
+
+Noema does not become the authoritative owner of the resulting employee, identity, payroll, or access business state.
 
 ⸻
 
 9. The Enterprise Should Not Need to Become an AI Company
 
-Noema’s vision does not require enterprises to replace their systems.
+Noema’s vision does not require enterprises to replace their existing systems.
 
 An organization should be able to retain:
 
-Salesforce
-SAP
-Workday
-Stripe
-AWS
-GitHub
-Internal Services
-Databases
+* CRM
+* ERP
+* HRIS
+* Payment systems
+* Cloud infrastructure
+* Source control
+* Internal services
+* Databases
 
-and expose their capabilities through a common semantic layer.
+and expose their relevant Capabilities through a common semantic execution layer.
 
-The enterprise does not need to build:
+The enterprise does not need to rebuild its operational systems around AI to benefit from Intent-driven execution.
 
-a new AI operating system
-
-to benefit from AI-driven execution.
-
-Noema provides the semantic substrate.
+Noema provides the semantic and trust substrate between the source of intent and those systems.
 
 ⸻
 
 10. From Application-Centric to Capability-Centric Computing
 
-Today, humans think in terms of applications:
+Today, people often think in terms of applications:
 
-“I need to open Salesforce.”
+“I need to open the CRM.”
 
-“I need to go into AWS.”
+“I need to go into the cloud console.”
 
-“I need to check Stripe.”
+“I need to check the payment dashboard.”
 
 Noema moves toward a Capability-centric model:
 
@@ -300,27 +304,27 @@ Noema moves toward a Capability-centric model:
 
 “I need to deploy this service.”
 
-The system determines which application provides the required Capability.
+The system determines which enterprise Capability can satisfy the Intent.
 
-Therefore:
+Conceptually:
 
 Intent
    ↓
 Capability Discovery
    ↓
-Best Available Capability
+Eligible Capability
    ↓
 Action
 
-The application becomes an implementation detail.
+The application becomes an implementation detail of the execution path, while the enterprise system remains authoritative for its business state.
 
 ⸻
 
-11. The Disappearance of the API as a Human Abstraction
+11. The API Becomes an Implementation Abstraction
 
 APIs will continue to exist.
 
-But users should increasingly not need to think in API terms.
+But people should increasingly not need to think in API terms.
 
 Today:
 
@@ -328,13 +332,13 @@ POST /customers/123/subscription/cancel
 
 Future:
 
-"Cancel my subscription."
+“Cancel my subscription.”
 
 Noema bridges the two.
 
 The API remains beneath the abstraction.
 
-Intent becomes the human-facing semantic contract.
+Intent becomes the higher-level semantic contract.
 
 ⸻
 
@@ -342,22 +346,22 @@ Intent becomes the human-facing semantic contract.
 
 Current software largely operates on explicit commands:
 
-button click
-API call
-form submission
-event
+* button clicks
+* API calls
+* form submissions
+* events
 
-Noema envisions systems that can reason about the Intent behind those commands.
+Noema envisions systems that can reason about the Intent represented by those inputs.
 
-This allows software to distinguish:
+This allows the execution layer to distinguish:
 
-what the user said
+what was expressed
 
 from:
 
-what the user actually wants accomplished
+what has been canonically resolved as the desired objective.
 
-That distinction is essential when multiple Actions can satisfy the same Intent.
+That distinction becomes essential when multiple Actions can satisfy the same Intent or when the original expression is ambiguous.
 
 ⸻
 
@@ -375,17 +379,18 @@ System B
   ↓
 System C
 
-the semantic identity of the original Intent should remain available throughout execution.
+the semantic identity and version of the original Intent should remain available throughout the execution lifecycle.
 
 This enables:
 
-traceability
-auditability
-failure handling
-recovery
-outcome verification
+* traceability
+* auditability
+* failure handling
+* recovery
+* outcome verification
+* causal reconstruction
 
-The Intent becomes the thread connecting the execution lifecycle.
+The Intent becomes the semantic thread connecting the execution lifecycle.
 
 ⸻
 
@@ -399,14 +404,18 @@ For example:
 
 This may require:
 
-monitoring
-state changes
-scheduling
-approval
-execution
-verification
+* monitoring
+* state changes
+* waiting
+* scheduling
+* approval
+* execution
+* verification
+* recovery
 
-The Intent should remain active as an object until:
+The Intent should remain represented as a durable object while it is active.
+
+Its lifecycle may eventually reach:
 
 Satisfied
 Cancelled
@@ -414,11 +423,11 @@ Expired
 Denied
 Failed
 
-This creates the possibility of durable Intent, rather than merely transient commands.
+This creates the possibility of durable Intent rather than merely transient commands.
 
 ⸻
 
-15. From Commands to Desired States
+15. From Commands to Desired Outcomes
 
 A command generally says:
 
@@ -435,7 +444,7 @@ RenewCard(Card#123)
 Intent:
 Ensure Card#123 remains valid after expiration.
 
-The second representation gives Noema greater flexibility to determine the appropriate Action.
+The second representation gives Noema greater flexibility to determine an appropriate execution path.
 
 This moves software from:
 
@@ -443,15 +452,17 @@ command execution
 
 toward:
 
-state-oriented intent fulfillment
+Intent and outcome-oriented execution.
+
+This does not mean Noema treats external business State as its own source of truth. It means Noema uses authoritative enterprise State to determine whether the desired Outcome has been achieved.
 
 ⸻
 
 16. Outcome Becomes as Important as Action
 
-A mature Noema system should care less about whether a particular API call succeeded and more about whether the desired Outcome was achieved.
+A mature Noema system should care less about whether a particular API call succeeded and more about whether the desired Outcome was established.
 
-Human Intent
+Intent
       ↓
 Desired Outcome
       ↓
@@ -459,19 +470,23 @@ Action Selection
       ↓
 Execution
       ↓
-Observed Outcome
+Observed Evidence
+      ↓
+Verified Outcome
 
 The system asks:
 
-Did we accomplish what the human intended?
+Did we establish that the requested objective was accomplished?
 
 rather than merely:
 
 Did the API return 200?
 
+Outcome is distinct from enterprise State, although verified Outcome may depend on observing and reconciling that State.
+
 ⸻
 
-17. The Rise of Executable Human Intent
+17. The Rise of Executable Intent
 
 The ultimate vision is for Intent to become executable.
 
@@ -481,11 +496,13 @@ Not magically.
 
 But through a typed semantic pipeline:
 
-Human Intent
+Source of Intent
       ↓
 Canonical Intent
       ↓
-Resolved Entities
+Schema Validation
+      ↓
+Resolved Entities / Resources
       ↓
 Capabilities
       ↓
@@ -498,16 +515,24 @@ Authority
 Trust
       ↓
 Action
+      ↓
+Execution
+      ↓
+Verified Outcome
 
 This creates a new category:
 
-Executable human intent.
+Executable Intent.
+
+The defining property is not that Intent automatically produces an Action.
+
+The defining property is that the transition from Intent to Action is explicit, governed, and verifiable.
 
 ⸻
 
-18. A New Software Contract
+18. A Common Contract for Executable Intent
 
-Traditional APIs expose:
+Traditional APIs primarily expose:
 
 Operation
 Input
@@ -517,33 +542,38 @@ Noema’s higher-level contract becomes:
 
 Intent
 Actor
-Resources
-Capabilities
+Target / Resource
+Context
+Capability
 Constraints
 Policy
 Authority
 Action
+Execution
+Evidence
 Outcome
 
-This contract is richer because it describes not merely how to invoke software, but why an operation is legitimate.
+This contract is richer because it describes not merely how to invoke software, but why an operation is legitimate and what must be established afterward.
 
 ⸻
 
-19. A Common Language for Executable Human Intent
+19. A Common Language for Executable Intent
 
-Noema’s long-term architectural ambition is to define a standard language for executable human intent.
+Noema’s long-term architectural ambition is to establish a common machine-readable semantic model for executable Intent.
 
-Such a language should be:
+Such a model should be:
 
-machine-readable
-human-grounded
-domain-extensible
-transport-independent
-model-independent
-deterministically evaluable
-auditable
+* machine-readable
+* human-grounded
+* domain-extensible
+* transport-independent
+* model-independent
+* implementation-independent
+* deterministically evaluable
+* auditable
+* versionable
 
-It should allow different systems to communicate Intent without requiring every system to understand every Model or every interface.
+It should allow different systems to communicate Intent without requiring every system to understand every Model, interface, or provider-specific API.
 
 ⸻
 
@@ -561,71 +591,95 @@ Act
 
 the architecture becomes:
 
-Human
-  ↓
-Intent
+Source of Intent
   ↓
 Model
   ↓
-Interpretation
+Interpretation / Candidate Generation
+  ↓
+Canonical Intent
   ↓
 Noema
   ↓
-Decision
+Deterministic Decision
   ↓
 Action
 
-The Model becomes an interpreter between human expression and canonical semantics.
+The Model becomes an interpreter and proposal mechanism between source expression and canonical semantics.
 
-It does not become the system of record for intent or the final authority over execution.
+It does not become:
+
+* the system of record for Intent
+* the authority over enterprise business state
+* the final authority over execution
+* a holder of enterprise credentials
 
 ⸻
 
 21. Trust Becomes Infrastructure
 
-Today, trust is often implemented independently inside applications:
+Today, trust-related controls are often implemented independently inside applications:
 
-authorization
-validation
-approval
-audit
-business rules
+* authorization
+* validation
+* approval
+* audit
+* business rules
+* execution safeguards
 
 Noema envisions these concerns becoming part of a shared execution substrate.
 
 Intent
    ↓
+Resolution
+   ↓
 Trust Layer
    ↓
 Software
 
-The Trust Layer evaluates whether the semantic transition from Intent to Action is legitimate.
+The Trust Layer evaluates whether the semantic transition from Intent to Action is legitimate under the applicable Authority, Policy, Constraints, State, Context, and Evidence.
+
+The canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Other execution-control states, such as waiting for evidence, confirmation, or an unknown external outcome, remain distinct from these Trust outcomes.
 
 ⸻
 
 22. Human Control Remains Fundamental
 
-The vision is not a world where humans disappear from software.
+The vision is not a world where people disappear from software.
 
-It is a world where humans control what should happen, while software handles the complexity of how it happens.
+It is a world where people can specify what should happen while software handles more of the complexity of how it happens, without removing legitimate human control.
 
 The division becomes:
 
-Human:
+Source of Intent:
 Intent
-Judgment
 Goals
-Approval
+Judgment
+Approval where required
 Exceptions
 Noema:
-Interpretation
+Interpretation boundary
 Resolution
 Validation
-Policy
+Reconciliation
+Trust
+Policy evaluation
+Planning
 Execution
 Verification
+Recovery
+Audit
 
-Where the consequences are significant, humans remain in the control loop.
+Where consequences are significant, human approval or intervention remains a valid control mechanism.
+
+The goal is bounded autonomy, not maximum autonomy.
 
 ⸻
 
@@ -633,25 +687,29 @@ Where the consequences are significant, humans remain in the control loop.
 
 The Noema vision does not eliminate graphical interfaces.
 
-Instead, it makes the interface less central to execution.
+Instead, it makes the interface less central to the semantic execution model.
 
-A future system may accept Intent through:
+Intent may originate through:
 
-Conversation
-Voice
-Mobile UI
-Desktop UI
-API
-Event
-Email
-Agent
-Automation
+* conversation
+* voice
+* mobile UI
+* desktop UI
+* API
+* event
+* email
+* agent
+* automation
+* another system
 
 All can converge on the same canonical Intent model.
 
-                Intent
-             /    |    \
-          Chat  Voice   API
+              Intent
+            /    |    \
+         Chat   Voice   API
+            \    |    /
+             \   |   /
+              Noema
 
 The semantic layer remains constant.
 
@@ -661,13 +719,19 @@ The semantic layer remains constant.
 
 Today, making an enterprise system programmable usually means:
 
-discover API
-understand schema
-obtain credentials
-write integration
-implement workflow
-handle errors
-maintain integration
+Discover API
+    ↓
+Understand schema
+    ↓
+Obtain credentials
+    ↓
+Write integration
+    ↓
+Implement workflow
+    ↓
+Handle errors
+    ↓
+Maintain integration
 
 Noema’s vision is:
 
@@ -680,6 +744,8 @@ Resolve
 Trust
         ↓
 Execute
+        ↓
+Verify
 
 This does not eliminate engineering.
 
@@ -687,7 +753,7 @@ It changes the abstraction at which engineering interacts with the enterprise.
 
 ⸻
 
-25. The “Intent Operating System”
+25. The Intent Runtime
 
 At sufficient scale, Noema begins to resemble an operating system for Intent.
 
@@ -695,21 +761,24 @@ Not an operating system in the kernel sense.
 
 Rather, a common runtime providing:
 
-Intent representation
-Identity
-Context
-Resource resolution
-Capability discovery
-Policy evaluation
-Authority
-Constraints
-Execution
-Outcome tracking
-Audit
+* Intent representation
+* Identity
+* Context
+* Resource resolution
+* Capability discovery
+* State reconciliation
+* Policy evaluation
+* Authority evaluation
+* Constraints
+* Execution
+* Outcome tracking
+* Verification
+* Recovery
+* Audit
 
-Applications provide domain capabilities.
+Enterprise applications provide domain capabilities.
 
-Noema provides the semantic runtime through which those capabilities can be composed around human Intent.
+Noema provides the semantic and trust runtime through which those capabilities can be composed around Intent.
 
 ⸻
 
@@ -717,62 +786,67 @@ Noema provides the semantic runtime through which those capabilities can be comp
 
 The long-term conceptual architecture is:
 
-                     HUMAN
-                       │
-                       ▼
-              Intent Expression
-                       │
-                       ▼
-              ┌─────────────────┐
-              │     NOEMA       │
-              │                 │
-              │ Intent          │
-              │ Ontology        │
-              │ Context         │
-              │ Resolution      │
-              │ Trust           │
-              │ Policy          │
-              │ Authority       │
-              │ Constraints     │
-              │ Action          │
-              │ Outcome         │
-              └────────┬────────┘
-                       │
-          ┌────────────┼────────────┐
-          ▼            ▼            ▼
-       Business      Platform      External
-       Systems       Services      Capabilities
-          │            │            │
-          └────────────┼────────────┘
-                       ▼
-                 Resulting State
-                       │
-                       ▼
-                Verified Outcome
+                  SOURCE OF INTENT
+           Human / Agent / System / Interface
+                         │
+                         ▼
+                 Intent Expression
+                         │
+                         ▼
+                ┌─────────────────┐
+                │     NOEMA       │
+                │                 │
+                │ Intent          │
+                │ Ontology        │
+                │ Context         │
+                │ Resolution      │
+                │ Reconciliation  │
+                │ Trust           │
+                │ Policy          │
+                │ Authority       │
+                │ Constraints     │
+                │ Action Graph    │
+                │ Planning        │
+                │ Execution       │
+                │ Verification    │
+                │ Recovery        │
+                │ Outcome         │
+                └────────┬────────┘
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+       Business       Platform       External
+       Systems        Services       Capabilities
+          │              │              │
+          └──────────────┼──────────────┘
+                         ▼
+                 Authoritative State
+                         │
+                         ▼
+                  Verified Outcome
+
+Noema does not replace the business systems beneath it.
+
+It governs the semantic and execution path through them.
 
 ⸻
 
-27. The Network Effect of Canonical Semantics
+27. The Value of Canonical Semantics
 
-The value of Noema can increase as more capabilities adopt canonical semantics.
+The value of Noema should not depend simply on the number of integrations.
 
-Consider:
+As more enterprise Capabilities adopt canonical semantic contracts, the same Intent model can operate across more execution environments.
 
-100 capabilities
-+
-1 canonical Intent layer
+The alternative is a growing collection of bespoke translation mechanisms:
 
-versus:
+Capability A ↔ Custom Interpretation
+Capability B ↔ Custom Interpretation
+Capability C ↔ Custom Interpretation
+...
 
-100 capabilities
-+
-100 custom interpretation mechanisms
+A common semantic layer provides a stable contract between Intent and execution capabilities.
 
-The latter creates combinatorial integration complexity.
-
-A common semantic layer reduces the number of bespoke translation boundaries.
-
-This is one of the strongest long-term arguments for Noema.
+This reduces bespoke semantic translation across enterprise systems.
 
 ⸻
 
@@ -780,18 +854,18 @@ This is one of the strongest long-term arguments for Noema.
 
 The vision should not be measured primarily by:
 
-number of connectors
-number of tools
-number of APIs
-number of Models
+* number of connectors
+* number of tools
+* number of APIs
+* number of Models
 
-The meaningful metric is closer to:
+The meaningful question is:
 
-How much human Intent can be safely converted into useful Outcomes across existing software?
+How much Intent can be safely converted into useful, verifiable Outcomes across existing enterprise software?
 
 Integration count is an implementation metric.
 
-Intent coverage is the strategic metric.
+Safe Intent-to-Outcome coverage is a strategic metric.
 
 ⸻
 
@@ -801,16 +875,16 @@ The conceptual progression is:
 
 Past
 ────
-Humans operate software.
+People operate software.
 Present
 ───────
-Humans describe tasks to AI.
+People describe tasks to AI.
 AI operates software.
 Noema
 ─────
-Humans express Intent.
+Sources express Intent.
 Noema establishes meaning and Trust.
-Software performs the Action.
+Enterprise software performs governed Actions.
 Noema verifies the Outcome.
 
 The important transition is from:
@@ -819,86 +893,120 @@ AI that operates software
 
 to:
 
-Infrastructure that makes human Intent executable.
+Infrastructure that makes Intent safely executable through software.
 
 ⸻
 
-30. The Ultimate Vision
+30. The Embedded Enterprise Model
+
+Noema’s long-term vision is not primarily an internal enterprise operations product.
+
+It is infrastructure that enterprises can embed into their own products and services so that their users and customers can express Intent and receive governed Outcomes across existing enterprise systems.
+
+This creates two supported modes:
+
+Mode 1: Full-Stack Noema
+Source of Intent
+      ↓
+Noema
+      ↓
+Enterprise Systems
+
+and:
+
+Mode 2: Independent Trust Boundary
+Source of Intent
+      ↓
+Enterprise Agent / Orchestrator
+      ↓
+Noema
+      ↓
+Enterprise Systems
+
+Mode 2 allows an enterprise’s existing agent or orchestration system to remain responsible for interaction while Noema operates as an independent semantic, trust, and execution boundary before consequential Actions.
+
+The underlying semantic model remains the same.
+
+⸻
+
+31. The Ultimate Vision
 
 Noema ultimately aims to make Intent a first-class interface to the digital world.
 
-A human should not need to know:
+A person or authorized system should not need to know:
 
-which application
-which API
-which endpoint
-which workflow
-which database
-which service
-which implementation
+* which application
+* which API
+* which endpoint
+* which workflow
+* which database
+* which service
+* which implementation
 
-to express what they want accomplished.
+to express what should be accomplished.
 
-They should be able to express:
+They should be able to express the desired objective.
 
-“Make this happen.”
+The system should then determine:
 
-And the system should be able to determine:
+* What does the Intent mean?
+* Who initiated it?
+* What Actor and Resources are involved?
+* What Context applies?
+* What Capabilities can satisfy it?
+* What Policies apply?
+* What Authority exists?
+* What Constraints apply?
+* What State is authoritative and relevant?
+* What Evidence supports the decision?
+* What Action is legitimate?
+* What Outcome should result?
+* Did that Outcome actually occur?
 
-What does "this" mean?
-Who requested it?
-What Resources are involved?
-What Capabilities can satisfy it?
-What Policies apply?
-What Authority exists?
-What Constraints apply?
-What Action is legitimate?
-What Outcome should result?
-Did that Outcome actually occur?
-
-When the answer is clear:
+When the answer is sufficiently established:
 
 Execute.
 
 When it is not:
 
-Clarify.
+Clarify or escalate.
 
 When it is prohibited:
 
-Stop.
+Reject.
+
+When execution is uncertain:
+
+Verify and reconcile before proceeding.
 
 That is the future Noema is designed to make possible.
 
 ⸻
 
-31. Final Vision Statement
+32. Final Vision Statement
 
-Noema envisions a world in which Intent is the universal semantic interface between humans and software: humans express desired outcomes in the language natural to them; intelligent systems interpret that expression; a deterministic semantic and trust layer resolves what may legitimately happen; existing software provides the capabilities to execute it; and verified Outcomes close the loop back to the original human Intent.
+Noema envisions a world in which Intent is the common semantic interface between sources of intent and enterprise software: people, agents, and systems express desired objectives in the language or interface natural to them; intelligent systems interpret that expression; a deterministic semantic and Trust layer resolves what may legitimately happen; existing enterprise software provides the capabilities to execute it; and verified Outcomes close the loop back to the original Intent.
 
 In its simplest form:
 
-              HUMAN
-                 │
-                 ▼
-              INTENT
-                 │
-                 ▼
-              NOEMA
-        ┌────────┼────────┐
-        │        │        │
-      MEANING   TRUST   ACTION
-        │        │        │
-        └────────┼────────┘
-                 ▼
-             SOFTWARE
-                 │
-                 ▼
-              OUTCOME
-                 │
-                 ▼
-              HUMAN
+              SOURCE OF INTENT
+                     │
+                     ▼
+                   INTENT
+                     │
+                     ▼
+                  NOEMA
+           ┌─────────┼─────────┐
+           │         │         │
+        MEANING     TRUST    EXECUTION
+           │         │         │
+           └─────────┼─────────┘
+                     ▼
+             ENTERPRISE SOFTWARE
+                     │
+                     ▼
+              VERIFIED OUTCOME
 
 The vision is not to make software more conversational.
 
-It is to make software executable through human Intent.
+It is to make enterprise software executable through Intent, with Trust and verification as first-class infrastructure.

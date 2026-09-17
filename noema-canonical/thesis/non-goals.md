@@ -1,9 +1,7 @@
-The purpose of this document is to establish what Noema deliberately refuses to become.
-
-Non-Goals
+Noema Non-Goals
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Thesis
 Canonical Path: thesis/non-goals.md
 
@@ -11,15 +9,21 @@ Canonical Path: thesis/non-goals.md
 
 1. Purpose
 
-This document defines what Noema is not intended to build, own, or become.
+This document establishes what Noema deliberately refuses to become.
 
-Noema’s vision is intentionally broad: a system for converting human intent into trustworthy, executable operations across software systems.
-
-Without explicit boundaries, that vision can expand indefinitely.
+Noema is intentionally broad in applicability, but narrow in architectural responsibility. Without explicit boundaries, a system concerned with enterprise intent, trust, execution, and integration can gradually absorb responsibilities belonging to models, business systems, workflow engines, security platforms, integration infrastructure, and application interfaces.
 
 These non-goals therefore act as architectural and product constraints.
 
-A proposed feature, abstraction, or integration should be questioned against these boundaries before becoming part of Noema’s core.
+A proposed feature, abstraction, capability, or integration should be evaluated against these boundaries before becoming part of Noema’s core.
+
+The central question is not:
+
+Can Noema technically do this?
+
+It is:
+
+Does this belong to Noema’s responsibility as Trusted Enterprise Execution Infrastructure?
 
 ⸻
 
@@ -29,19 +33,21 @@ Noema is not intended to become another general-purpose conversational AI assist
 
 It does not primarily exist to:
 
-answer questions
-generate prose
-summarize documents
-write poems
-brainstorm ideas
-chat socially
-generate arbitrary content
+* answer arbitrary questions
+* generate prose
+* summarize documents
+* write poems
+* brainstorm ideas
+* chat socially
+* generate arbitrary content
 
-Those capabilities may be useful at the interface layer, but they are not Noema’s core product.
+These capabilities may exist at consuming application interfaces or within supporting model interactions.
+
+They are not Noema’s core product.
 
 Noema’s core concern is:
 
-Turning human intent into trustworthy action.
+Turning an interpreted source of intent into a legitimate, governed, executable, and verifiable enterprise outcome.
 
 ⸻
 
@@ -49,25 +55,29 @@ Turning human intent into trustworthy action.
 
 Noema does not intend to train or own a general-purpose foundation model.
 
-The Model is an inference component within Noema.
+Models are inference components used for probabilistic interpretation, proposal, candidate generation, or other bounded reasoning tasks.
 
-The architecture must therefore remain model-agnostic.
+Noema must therefore remain model-agnostic.
 
 Conceptually:
 
-User
-  ↓
-Noema
-  ↓
-Model
-  ↓
+Source of Intent
+      ↓
+Noema Intent Processing
+      ↓
+Model / Inference
+      ↓
 Candidate Interpretation
-  ↓
-Noema
+      ↓
+Schema Validation
+      ↓
+Deterministic Noema Systems
 
-The Model proposes.
+The model proposes.
 
-Noema determines what can be trusted and executed.
+Noema validates, resolves, governs, executes, verifies, and records the resulting semantics.
+
+A model must never be the final authority for consequential execution.
 
 ⸻
 
@@ -75,38 +85,37 @@ Noema determines what can be trusted and executed.
 
 Noema is not primarily a framework for creating autonomous agents.
 
-An agent framework generally focuses on concepts such as:
+Agent frameworks generally organize abstractions such as:
 
-agents
-tools
-memory
-planning
-loops
-reasoning
-delegation
-autonomy
+* agents
+* tools
+* memory
+* planning
+* reasoning
+* delegation
+* autonomous loops
 
-Noema may use some of these mechanisms internally.
+Noema may use some of these mechanisms.
 
-They are not the fundamental abstraction.
+They are not its fundamental abstraction.
 
-Noema’s fundamental abstraction is:
+Noema’s fundamental concern is the governed transformation from intent into legitimate enterprise execution.
 
-Intent
+An agent may be the source of an Intent.
 
-and the deterministic process by which that Intent becomes an authorized Action.
+An agent is not the authority that determines whether the resulting Action may execute.
 
 ⸻
 
 5. Noema Is Not an Autonomous Agent
 
-Noema should not be defined by the principle:
+Noema should not be defined by:
 
-“Let the AI figure out what to do.”
+Let the AI figure out what to do.
 
 Instead:
 
-Let the AI propose an interpretation, then let Noema establish what may actually be done.
+Let inference propose what the source of intent means, then let deterministic Noema mechanisms establish what may actually happen.
 
 The system must be capable of stopping.
 
@@ -114,7 +123,7 @@ Interpretation
      ↓
 Insufficient certainty
      ↓
-Clarification
+Clarification / Escalation
 
 rather than:
 
@@ -124,6 +133,10 @@ Best guess
      ↓
 Execute
 
+Autonomy is subordinate to correctness, authority, policy, and safety.
+
+Noema should optimize autonomous resolution only within a zero-unsafe operating region, rather than treating maximum autonomy as the objective.
+
 ⸻
 
 6. Noema Is Not an RPA Platform
@@ -132,128 +145,163 @@ Noema is not a traditional Robotic Process Automation system.
 
 RPA generally automates predefined interaction sequences such as:
 
-open application
-click button
-enter value
-download file
-copy value
-paste value
+Open application
+→ Click button
+→ Enter value
+→ Download file
+→ Copy value
+→ Paste value
 
-Noema should operate at a higher semantic level.
+Noema operates at a higher semantic level.
 
-Instead of:
-
-Click → Fill → Submit
-
-Noema represents:
+Its canonical concern is closer to:
 
 Intent
+→ Context
+→ Entity / Resource Resolution
 → Capability
-→ Action
-→ Resource
-→ Policy
 → Authority
+→ Policy
+→ Action
+→ Execution
+→ Verification
 → Outcome
 
-The implementation may eventually drive UI automation where necessary, but UI automation is not the semantic foundation.
+Noema may eventually drive UI automation where necessary.
+
+UI automation is an execution mechanism, not the semantic foundation.
 
 ⸻
 
 7. Noema Is Not a Workflow Engine
 
-Noema is not intended to replace workflow engines such as systems built around:
+Noema is not intended to replace workflow engines responsible for durable business workflows, state machines, scheduled processes, or predefined orchestration.
 
-DAGs
-state machines
-scheduled jobs
-durable workflows
-business process definitions
+A workflow engine primarily answers:
 
-A workflow engine answers:
+What sequence of operations should execute?
 
-What sequence of predefined operations should execute?
+Noema additionally answers:
 
-Noema answers:
+What is being intended, what does that intent resolve to, what is legitimately executable, under what authority and constraints, and what has actually happened?
 
-What does this human intend, and what executable operation is legitimately authorized by that intent?
+Noema may invoke, coordinate with, or sit above workflow infrastructure.
 
-Noema may invoke or integrate with workflow engines.
-
-It should not absorb their responsibilities unnecessarily.
+It should not absorb workflow-engine responsibilities merely because it coordinates execution.
 
 ⸻
 
-8. Noema Is Not a Business Process Database
+8. Noema Is Not a Durable Execution Infrastructure Product
 
-Noema does not own the complete business state of every connected system.
+Durable execution is important to reliable enterprise execution.
+
+It is not, by itself, Noema’s unique abstraction or moat.
+
+Noema may use or interoperate with mature durable execution systems and primitives rather than rebuilding them unnecessarily.
+
+Noema’s responsibility is the semantic and trust layer surrounding execution:
+
+Intent
+→ Trust
+→ Governed Plan
+→ Durable Execution
+→ Verification
+→ Recovery
+
+Durability supports Noema’s execution semantics.
+
+It does not define them.
+
+⸻
+
+9. Noema Is Not a Business Process Database
+
+Noema does not own the complete business state of every connected enterprise system.
 
 This is a foundational boundary.
 
-Noema owns:
-Intent State
-Trust State
-Execution State
-Semantic State
+Noema owns execution-domain state such as:
 
-The connected business system owns:
+* Intent State
+* Trust State
+* Action State
+* Execution State
+* Verification State
+* Outcome State
+* relevant semantic and provenance state
 
-Account State
-Payment State
-Order State
-Customer State
-Inventory State
-Employee State
+Connected enterprise systems continue to own their domain-specific business state.
 
-Therefore:
+For example:
 
-Noema owns intent state, not business state.
+Bank
+  → Account State
+  → Ledger State
+  → Transaction State
+CRM
+  → Customer State
+ERP
+  → Order / Inventory State
+HRIS
+  → Employee State
 
-Noema may reference, resolve, validate, and act upon external business state.
+Noema may retrieve, reconcile, reference, reason over, and act upon external business state.
 
-It should not become the authoritative system of record for that state.
+It must not silently become its authoritative system of record.
 
 ⸻
 
-9. Noema Is Not an ERP
+10. Noema Is Not an ERP
 
 Noema does not intend to become a replacement for:
 
-CRM
-ERP
-HRIS
-Accounting systems
-Payment systems
-Inventory systems
-Ticketing systems
+* CRM
+* ERP
+* HRIS
+* accounting systems
+* payment systems
+* inventory systems
+* ticketing systems
+* other domain systems of record
 
 Those systems own domain-specific business state.
 
-Noema operates across them.
+Noema operates across and above them as a governed execution boundary.
 
 ⸻
 
-10. Noema Is Not a System of Record
+11. Noema Is Not a System of Record for External Business State
 
-Noema should not become the canonical source of truth for external domain entities merely because it interacts with them.
+Noema should not become the canonical source of truth for an external domain entity merely because it interacts with that entity.
 
 For example:
 
 Bank
   owns → Account
+Payment System
+  owns → Payment
 CRM
   owns → Customer
-Payment Provider
-  owns → Payment
 HRIS
   owns → Employee
 
-Noema may maintain references, snapshots, observations, and provenance.
+Noema may maintain:
 
-But it should not silently assume ownership of the underlying entity.
+* observations
+* references
+* normalized representations
+* evidence
+* provenance
+* temporal observations
+* reconciliation records
+
+But these do not automatically transfer authority over the underlying business entity to Noema.
+
+Source, evidence, and authority must remain distinguishable.
 
 ⸻
 
-11. Noema Is Not an Integration Marketplace
+12. Noema Is Not an Integration Marketplace
 
 Integrations are necessary infrastructure.
 
@@ -261,107 +309,128 @@ They are not the product thesis.
 
 Noema should not become primarily:
 
-"Connect 10,000 apps."
+Connect 10,000 applications.
 
-The number of connectors is not the core measure of Noema’s value.
+Connector count is not the fundamental measure of Noema’s value.
 
-The important abstraction is:
+The important abstraction is the governed semantic path:
 
-Intent
-     ↓
-Canonical Interpretation
-     ↓
-Executable Action
-     ↓
+Source of Intent
+      ↓
+Canonical Intent
+      ↓
+Context / State Resolution
+      ↓
+Capability
+      ↓
 Trust
-     ↓
-External System
+      ↓
+Action
+      ↓
+Enterprise System
+      ↓
+Verification
+
+An integration matters because it provides governed access to enterprise capabilities and authoritative state, not because it increases the number of connectors.
 
 ⸻
 
-12. Noema Is Not an API Gateway
+13. Noema Is Not an API Gateway
 
 Noema does not replace:
 
-API Gateway
-Service Mesh
-Reverse Proxy
-Load Balancer
-Integration Gateway
+* API gateways
+* service meshes
+* reverse proxies
+* load balancers
+* integration gateways
 
-Noema may sit above these systems.
+These systems primarily concern transport, routing, networking, and service connectivity.
 
-It determines why and whether an operation should happen, rather than merely routing traffic.
+Noema concerns semantic meaning, authority, governance, execution legitimacy, and outcome verification.
+
+Noema may sit above or alongside these systems.
 
 ⸻
 
-13. Noema Is Not an Orchestration Platform by Default
+14. Noema Is Not an Orchestration Platform by Default
 
-Noema may orchestrate multiple Actions when required by an Intent.
+Noema may coordinate multiple Actions when an Intent requires them.
 
 However, orchestration itself is not the foundational abstraction.
 
 For example:
 
 Intent:
-"Renew my company card."
+"Resolve my failed card renewal."
+Possible execution:
+Investigate transaction
+→ Reconcile state
+→ Determine applicable policy
+→ Determine eligible capability
+→ Create case
+→ Verify case creation
+→ Return outcome
 
-may require:
+Noema may coordinate this sequence.
 
-Check eligibility
-→ Create renewal
-→ Update billing
-→ Notify user
+But the canonical object is still the Intent and its governed execution and Outcome.
 
-Noema may coordinate these operations.
-
-But the canonical object remains the Intent and its resulting Outcome—not the orchestration graph itself.
+The graph or workflow exists to make the execution path possible and governed; it does not replace the semantic model.
 
 ⸻
 
-14. Noema Is Not a Prompt Engineering Framework
+15. Noema Is Not a Prompt Engineering Framework
 
 Noema should not depend on increasingly elaborate prompts as its primary correctness mechanism.
 
 This:
 
-SYSTEM PROMPT
+System Prompt
 +
-50 RULES
+Rules
 +
-TOOL DESCRIPTIONS
+Tool Descriptions
 +
-EXAMPLES
+Examples
 =
-HOPE
+Hope
 
-is not the Trust architecture.
+is not a Trust architecture.
 
-Instead:
+Prompting may assist probabilistic interpretation.
 
-Natural Language
-      ↓
-Semantic Interpretation
-      ↓
-Canonical Ontology
-      ↓
-Deterministic Validation
-      ↓
-Trust
-      ↓
-Execution
+It must not substitute for:
 
-Prompting may assist interpretation.
+* typed schemas
+* canonical ontology
+* deterministic validation
+* authority resolution
+* policy evaluation
+* capability constraints
+* execution controls
+* verification
+* auditability
 
-It must not substitute for canonical semantics and deterministic controls.
+The architectural boundary is:
+
+Natural Language / Other Intent Source
+              ↓
+       Probabilistic Interpretation
+              ↓
+       Typed Intent Candidate
+              ↓
+      Hard Schema Validation
+              ↓
+      Deterministic Noema
 
 ⸻
 
-15. Noema Is Not a Tool-Calling Wrapper
+16. Noema Is Not a Tool-Calling Wrapper
 
-Simply giving a Model tools does not constitute Noema.
+Simply giving a model tools does not constitute Noema.
 
-This architecture:
+This architecture is insufficient:
 
 User
  ↓
@@ -371,276 +440,319 @@ Tool Call
  ↓
 API
 
-is insufficient.
+Noema requires explicit semantics around concepts such as:
 
-Noema requires explicit semantics around:
+* Actor
+* Intent
+* Context
+* Entity
+* Resource
+* Capability
+* Constraint
+* Policy
+* Authority
+* Action
+* Execution
+* Evidence
+* State
+* Outcome
 
-Actor
-Intent
-Capability
-Resource
-Context
-Constraint
-Policy
-Authority
-Action
-Outcome
-State
+A tool call is an execution mechanism.
 
-The tool call is merely an execution mechanism.
+It is not the semantic or trust boundary.
+
+Free-form model output must never directly become an executable operation.
 
 ⸻
 
-16. Noema Is Not a Chat Interface
+17. Noema Is Not a Chat Interface
 
-Chat is one possible interface.
+Chat is one possible source or representation of Intent.
 
 It is not the product boundary.
 
-Noema should eventually support intent originating from:
+Intent may originate from:
 
-Chat
-Voice
-UI
-API
-Events
-Forms
-Applications
-Agents
-Automated systems
+* humans
+* AI agents
+* enterprise applications
+* APIs
+* events
+* forms
+* voice
+* text
+* messaging systems
+* automated systems
+* other software
 
-The canonical representation must remain interface-independent.
+These sources must ultimately be capable of being represented through the same canonical semantic model.
+
+The interface is replaceable.
+
+The Intent representation is not.
 
 ⸻
 
-17. Noema Is Not UI Generation
+18. Noema Is Not UI Generation
 
-Noema may eventually generate or manipulate interfaces.
+Noema may eventually generate, manipulate, or integrate with user interfaces.
 
 That is not its foundational purpose.
 
 The important distinction is:
 
-UI
- ↓
+UI / Interface
+      ↓
 Intent
+      ↓
+Noema
 
-rather than:
+rather than defining Noema primarily as a system that generates interfaces.
 
-Intent
- ↓
-UI
+The interface is one possible interaction surface.
 
-UI is one possible representation or interaction mechanism.
-
-Intent is the canonical abstraction.
+The semantic execution boundary is the durable abstraction.
 
 ⸻
 
-18. Noema Is Not a Design System
+19. Noema Is Not a Design System
 
 Noema does not define:
 
-buttons
-cards
-colors
-typography
-layouts
-navigation
-component libraries
+* buttons
+* cards
+* colors
+* typography
+* layouts
+* navigation
+* component libraries
 
-These belong to consuming applications.
+These belong to consuming applications and their design systems.
 
-Noema should expose semantic capabilities and executable operations, not prescribe visual design.
+Noema exposes semantic capabilities, governed execution semantics, and outcomes rather than prescribing visual design.
 
 ⸻
 
-19. Noema Is Not a Knowledge Graph Product
+20. Noema Is Not a Knowledge Graph Product
 
-Noema may require a semantic graph.
+Noema may require an enterprise graph or other graph structures.
 
-However, the graph is infrastructure for representing canonical meaning.
+The graph is infrastructure for representing relationships relevant to intent resolution and execution.
 
 The product is not:
 
-“A better enterprise knowledge graph.”
+A better enterprise knowledge graph.
 
-The graph exists to support:
+Graph structures exist to support concerns such as:
 
-intent understanding
-entity resolution
-relationship resolution
-policy evaluation
-capability discovery
-action validation
-trust decisions
+* entity resolution
+* relationship resolution
+* capability discovery
+* authority resolution
+* policy evaluation
+* action validation
+* execution planning
+* evidence and provenance
+* verification
+* recovery
+
+Noema’s graph is subordinate to its execution semantics.
 
 ⸻
 
-20. Noema Is Not a Search Engine
+21. Noema Is Not a Search Engine
 
-Noema may need retrieval.
+Noema may use:
 
-It may use:
+* keyword search
+* vector retrieval
+* graph traversal
+* structured queries
+* semantic retrieval
+* enterprise APIs
 
-vector search
-keyword search
-graph traversal
-structured queries
-semantic retrieval
+Retrieval is not the end goal.
 
-But retrieval is not the end goal.
-
-Search answers:
+Search primarily answers:
 
 What information can I retrieve?
 
-Noema answers:
+Noema must additionally establish:
 
-What does the user intend, and what can legitimately happen because of it?
+What does this information mean, does it apply, is it authoritative for this claim, and what legitimate action can follow from it?
 
 ⸻
 
-21. Noema Is Not RAG
+22. Noema Is Not RAG
 
-Retrieval-Augmented Generation can be part of Noema’s implementation.
+Retrieval-Augmented Generation may be part of Noema’s implementation.
 
 It is not the architecture itself.
 
-RAG helps retrieve information.
+Retrieved information is not automatically trusted merely because a model retrieved it.
 
-Noema must establish:
+Noema must establish, where relevant:
 
-what the information means
-whether it is authoritative
-whether it applies
-whether it permits an Action
-whether the resulting Action is safe
+* meaning
+* provenance
+* authority
+* scope
+* freshness
+* applicability
+* contradiction
+* policy relevance
+* execution relevance
 
 Therefore:
 
 RAG ≠ Trust
 RAG ≠ Intent
 RAG ≠ Authorization
+RAG ≠ Evidence Authority
 RAG ≠ Execution
 
 ⸻
 
-22. Noema Is Not a Policy Engine Alone
+23. Noema Is Not a Policy Engine Alone
 
-Noema may contain or integrate with a policy engine.
+Noema may contain or integrate with policy engines.
 
-But Policy is only one component of the decision.
+Policy is only one part of determining whether an Action is legitimate.
 
-A valid execution may depend on:
+A consequential execution may depend on:
 
 Intent
-Actor
-Resource
-Capability
-Context
-State
-Policy
-Constraint
-Authority
-Evidence
++ Actor
++ Target
++ Context
++ State
++ Capability
++ Authority
++ Policy
++ Constraints
++ Evidence
 
-Therefore Noema is not merely:
+Noema is therefore not merely:
 
 if policy then allow
 
+Policy evaluation must occur against a resolved and appropriately scoped execution context.
+
 ⸻
 
-23. Noema Is Not an Authorization System
+24. Noema Is Not an Authorization System Alone
 
-Traditional authorization asks:
+Traditional authorization often asks:
 
 Is Actor X allowed to perform Operation Y?
 
-Noema must answer a larger question:
+Noema must reason about a more complete execution context:
 
-Given what this Actor intended, the Resources involved, the current Context and State, the applicable Policies and Constraints, and the available Authority, is this specific Action legitimate to execute?
+Given the resolved Actor, intended Action, target Resource, current State, Context, applicable Policies and Constraints, and available Authority, is this specific execution legitimate?
 
-Noema may integrate with existing authorization systems.
+Noema may integrate with existing IAM and authorization systems.
 
 It should not casually replace them.
 
+Technical authorization, business authorization, and policy authorization must remain distinguishable.
+
 ⸻
 
-24. Noema Is Not a Security Product
+25. Noema Is Not a Security Product
 
 Security is a foundational requirement.
 
-It is not sufficient to define the product.
+It is not sufficient to define the product category.
 
-Noema should not attempt to become a replacement for:
+Noema does not intend to replace:
 
-IAM
-SIEM
-EDR
-DLP
-WAF
-Secrets Management
-Security Operations
+* IAM
+* SIEM
+* EDR
+* DLP
+* WAF
+* secrets-management systems
+* security operations platforms
 
-Security controls may constrain execution, but Noema’s core problem remains intent-to-action correctness.
+Security controls constrain Noema’s execution boundary.
+
+Noema’s core concern remains trustworthy enterprise execution.
+
+Security must nevertheless be structural.
+
+In particular:
+
+* model output is untrusted
+* user input is untrusted
+* retrieved enterprise text is untrusted
+* tool responses are untrusted
+* models must not possess enterprise credentials
+* free-form model output must not reach execution
+* executors must revalidate critical constraints
+* security must not depend on model confidence
 
 ⸻
 
-25. Noema Is Not a Human Replacement
+26. Noema Is Not a Human Replacement
 
-Noema is not designed around the assumption:
+Noema is not designed around:
 
-“Remove humans from every workflow.”
+Remove humans from every workflow.
 
-Its purpose is to make human intent executable with less friction while preserving appropriate human control.
+Its purpose is to make legitimate human and system intent executable with less friction while preserving appropriate human control.
 
 For consequential ambiguity:
 
-Noema asks.
+Noema clarifies.
 
 For insufficient authority:
 
 Noema stops.
 
-For uncertain interpretation:
+For contradictory or insufficient state:
 
-Noema clarifies.
+Noema does not guess.
 
 For prohibited operations:
 
 Noema refuses.
 
-Autonomy is subordinate to correctness.
+For appropriate cases:
+
+Noema executes and verifies.
+
+Human intervention is therefore an explicit execution outcome, not merely a failure of automation.
 
 ⸻
 
-26. Noema Is Not “Do Whatever the User Says”
+27. Noema Is Not “Do Whatever the User Says”
 
 Natural-language instructions are not automatically executable commands.
 
 For example:
 
-“Delete the old customer accounts.”
+Delete the old customer accounts.
 
-Noema must resolve:
+Noema must resolve questions such as:
 
-Which customers?
-What qualifies as old?
-Does the Actor have authority?
-Which system owns the accounts?
-Is deletion permitted?
-Are there retention requirements?
-What Resources are affected?
-What Policy applies?
+* Which customers?
+* What qualifies as old?
+* Which system owns the accounts?
+* Does the Actor have authority?
+* Is deletion permitted?
+* Are retention requirements applicable?
+* What Resources are affected?
+* What Policy applies?
+* What capability can perform the operation?
+* What evidence establishes the required conditions?
 
-The Model’s interpretation is not sufficient.
+The source of Intent does not itself confer authority.
 
 ⸻
 
-27. Noema Is Not a Guessing Engine
+28. Noema Is Not a Guessing Engine
 
-When canonical information is insufficient, Noema should not fabricate certainty.
+When canonical information is insufficient, Noema must not fabricate certainty.
 
 The preferred progression is:
 
@@ -648,9 +760,9 @@ Known
   ↓
 Resolvable
   ↓
-Ambiguous
+Ambiguous / Contradictory / Unavailable
   ↓
-Clarify
+Clarify / Escalate / Wait / Reject
 
 not:
 
@@ -660,191 +772,273 @@ Guess
   ↓
 Execute
 
-This is a foundational Trust principle.
+Uncertainty is a first-class system state.
+
+A fact may be:
+
+* KNOWN
+* INFERRED
+* AMBIGUOUS
+* UNAVAILABLE
+* STALE
+* CONTRADICTORY
+* UNKNOWN
+* UNAUTHORIZED
+
+These states must not be collapsed into a single confidence score.
 
 ⸻
 
-28. Noema Is Not Responsible for Every Business Rule
+29. Noema Is Not an Outcome-Guessing System
+
+Noema must distinguish between attempting an Action and establishing what happened as a result.
+
+A successful request submission does not necessarily establish successful business completion.
+
+For example:
+
+Action Submitted
+      ↓
+Provider Timeout
+      ↓
+Outcome = UNKNOWN
+
+not:
+
+Provider Timeout
+      ↓
+Assume Failure
+
+Verification and reconciliation are therefore part of trustworthy execution.
+
+A timeout, missing response, or ambiguous provider state must not automatically be classified as success or failure.
+
+⸻
+
+30. Noema Is Not Responsible for Every Business Rule
 
 Business systems remain responsible for domain-specific invariants that belong to them.
 
 For example:
 
-Bank:
-ledger correctness
-Inventory system:
-stock accounting
-Payment provider:
-payment settlement
-HRIS:
-employment records
+Bank
+  → Ledger correctness
+Inventory System
+  → Stock accounting
+Payment Provider
+  → Settlement correctness
+HRIS
+  → Employment records
 
-Noema may consume these rules or evaluate relevant constraints.
+Noema may consume authoritative state and relevant rules.
 
 It should not duplicate every domain’s complete business logic.
 
+Domain intelligence that is necessary for Noema’s execution semantics should be represented through governed configuration, capabilities, adapters, policies, contracts, and other explicit mechanisms rather than hidden universal assumptions.
+
 ⸻
 
-29. Noema Is Not a Distributed Transaction Manager
+31. Noema Is Not a Replacement for Domain Expertise
+
+Noema does not magically understand every organization.
+
+Enterprises still need to define or expose concepts such as:
+
+* entities
+* resources
+* capabilities
+* policies
+* constraints
+* authorities
+* actions
+* outcomes
+* business state
+* operational semantics
+
+Noema provides the semantic and execution framework through which these enterprise-specific concepts can participate in governed execution.
+
+Noema’s universal core must remain distinct from domain-specific configuration.
+
+⸻
+
+32. Noema Is Not a Universal Ontology of Everything
+
+The canonical ontology should remain intentionally minimal.
+
+Noema does not need to model every concept in every industry.
+
+It needs stable primitives capable of representing and validating meaningful enterprise intent and execution semantics.
+
+The ontology should expand only when a concept is necessary to express, govern, verify, or explain consequential execution.
+
+Domain-specific concepts should generally remain domain-specific unless they reveal a reusable semantic primitive.
+
+⸻
+
+33. Noema Is Not a Business Logic Dumping Ground
+
+Every new business rule should not automatically become a Noema primitive.
+
+The architecture must preserve separation between:
+
+Noema Semantics
+        │
+        ├── Intent
+        ├── Trust
+        ├── Action
+        ├── Execution
+        └── Outcome
+Enterprise Domain Semantics
+        │
+        ├── Business State
+        ├── Business Rules
+        ├── Domain Policies
+        └── Domain Invariants
+
+Noema provides the governed semantic execution boundary.
+
+It does not absorb every enterprise implementation detail.
+
+⸻
+
+34. Noema Is Not a Distributed Transaction Manager
 
 Noema may coordinate Actions across multiple systems.
 
-It should not automatically assume responsibility for implementing global ACID semantics across arbitrary external systems.
+It should not assume global ACID semantics across arbitrary external systems.
 
-Where transactional guarantees are unavailable, Noema must model:
+Where transactional guarantees are unavailable, Noema must explicitly model:
 
-partial success
-failure
-compensation
-retry
-reconciliation
+* partial success
+* failure
+* compensation
+* retry
+* reconciliation
+* verification
+* unknown outcomes
 
-rather than pretending distributed atomicity exists.
+The architecture must represent the limits of external transactional guarantees rather than pretending distributed atomicity exists.
 
 ⸻
 
-30. Noema Is Not an Event Bus
+35. Noema Is Not an Event Bus
 
 Noema may consume and emit events.
 
 It is not intended to replace:
 
-Kafka
-NATS
-RabbitMQ
-SQS
-Pulsar
+* Kafka
+* NATS
+* RabbitMQ
+* SQS
+* Pulsar
 
-Events are mechanisms for communicating State changes and execution information.
+Events are mechanisms for communicating state changes, evidence, and execution information.
 
-They are not the core semantic model.
+They are not the canonical semantic model.
+
+An event does not automatically become authoritative business truth merely because Noema received it.
 
 ⸻
 
-31. Noema Is Not a Job Queue
+36. Noema Is Not a Job Queue
 
 Noema may execute asynchronous Actions.
 
-It is not a replacement for a generic job queue.
+It is not a replacement for generic job-queue infrastructure.
 
-A job queue answers:
+A job queue primarily answers:
 
 When and how should this task execute?
 
-Noema answers:
+Noema additionally answers:
 
-Why should this Action exist, what does it mean, and is it legitimate to execute?
+Why does this Action exist, what does it mean, is it legitimate, what constraints govern it, and what has actually happened?
+
+Noema may use queueing infrastructure as an implementation mechanism.
+
+Queueing is not the semantic foundation.
 
 ⸻
 
-32. Noema Is Not a Scheduler
+37. Noema Is Not a Scheduler
 
-Scheduling may be required for certain Intents.
+Scheduling may be required for particular Intents.
 
-Example:
+For example:
 
-“Remind me to renew this tomorrow.”
+Remind me to renew this tomorrow.
 
-But scheduling is an execution concern.
+Scheduling is an execution concern.
 
 It does not define Noema’s fundamental semantics.
 
+Noema should not become a general-purpose scheduling platform merely because some Intent-driven operations have temporal requirements.
+
 ⸻
 
-33. Noema Is Not an Autonomous Planning System
+38. Noema Is Not an Autonomous Planning System
 
-Planning can be useful.
+Planning is a necessary capability for some Intent-to-Outcome paths.
 
-But Noema should not optimize for:
+Noema is not, however, intended to maximize autonomous planning for its own sake.
 
-maximum autonomy
-maximum task completion
-minimum human intervention
+The planner operates within:
 
-at the expense of semantic correctness.
+* resolved Intent
+* available capabilities
+* authority
+* policies
+* constraints
+* enterprise state
+* evidence
+* execution contracts
+
+A model may propose plans.
+
+A plan does not acquire authority merely because a model generated it.
 
 The system should prefer:
 
-correct clarification
+Correct Clarification
 
 over:
 
-incorrect completion
-
-⸻
-
-34. Noema Is Not a Replacement for Domain Expertise
-
-Noema provides a semantic execution layer.
-
-It does not magically understand every organization’s business.
-
-Organizations must still define:
-
-Entities
-Capabilities
-Policies
-Constraints
-Authorities
-Resources
-Actions
-Outcomes
-
-Noema provides the language and execution boundary for representing these concepts.
-
-⸻
-
-35. Noema Is Not a Universal Ontology of Everything
-
-The canonical ontology should be intentionally minimal.
-
-Noema does not need to model every concept in every domain.
-
-It needs a stable set of primitives capable of representing executable human intent.
-
-The ontology should expand only when a concept is necessary to express or validate meaningful execution semantics.
-
-⸻
-
-36. Noema Is Not a Business Logic Dumping Ground
-
-Every new business rule should not automatically become a Noema primitive.
-
-The canonical architecture should preserve separation between:
-
-Noema semantics
+Incorrect Completion
 
 and:
 
-Domain semantics
+Verified Partial Progress
 
-Noema provides the language through which domain semantics become executable.
+over:
 
-It does not absorb every domain implementation detail.
+Unverified Success
 
 ⸻
 
-37. Noema Is Not a Replacement for Existing Systems
+39. Noema Is Not a Replacement for Existing Enterprise Systems
 
 Noema should generally sit above and across existing systems rather than requiring organizations to replace them.
 
 Conceptually:
 
-                    Noema
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-         CRM         ERP         Payments
-          │           │           │
-          ▼           ▼           ▼
-       Business    Business    Business
-        State       State       State
+                       Noema
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+         CRM             ERP         Payments
+          │              │              │
+          ▼              ▼              ▼
+      Business        Business       Business
+        State           State          State
 
-Noema provides the semantic execution layer connecting intent to those systems.
+Noema provides the semantic, trust, execution, verification, and coordination layer connecting Intent to those systems.
+
+Enterprise systems remain responsible for their domains.
 
 ⸻
 
-38. Noema Is Not Another “AI Wrapper”
+40. Noema Is Not Another “AI Wrapper”
 
 The product must not reduce to:
 
@@ -856,147 +1050,398 @@ Tools
 +
 Dashboard
 
-If the core intellectual property can be removed and replaced by a generic tool-calling framework without materially changing the architecture, Noema has failed to establish its intended abstraction.
+If Noema’s core intellectual property could be removed and replaced with a generic tool-calling framework without materially changing the architecture, Noema has failed to establish its intended abstraction.
 
-The differentiator must be the semantic and deterministic intent execution layer.
+The durable differentiation must live in the governed semantic execution layer, including:
+
+* canonical Intent representation
+* semantic resolution
+* enterprise context and state reconciliation
+* capability and action semantics
+* authority and policy evaluation
+* deterministic Trust
+* execution contracts
+* verification and recovery
+* causal audit
+* operational memory
+* enterprise execution knowledge
 
 ⸻
 
-39. Noema Is Not Defined by Its Model
+41. Noema Is Not Defined by Its Model
 
-The underlying Model may change.
+The underlying model may change.
+
+For example:
 
 GPT
 Claude
 Gemini
 Llama
 Qwen
-Future Model
+Future Models
 
 Noema should remain conceptually intact.
 
-The Model is replaceable infrastructure.
+Models are replaceable inference infrastructure.
 
-The canonical ontology, intent representation, trust boundary, and execution semantics are the durable architecture.
+The durable architecture is the semantic and deterministic layer surrounding them.
 
 ⸻
 
-40. Noema Is Not Defined by Its Transport
+42. Noema Is Not Defined by Its Transport
 
 Noema may eventually operate through:
 
-REST
-GraphQL
-gRPC
-MCP
-Webhooks
-Events
-SDKs
-UI
-Voice
+* REST
+* GraphQL
+* gRPC
+* MCP
+* webhooks
+* events
+* SDKs
+* UI
+* voice
+* messaging interfaces
 
 Transport is not the semantic layer.
 
-A different transport must not require redefining Intent.
+Changing the transport must not require redefining Intent, Trust, Action, Execution, or Outcome.
 
 ⸻
 
-41. Noema Is Not Defined by Its Storage Technology
+43. Noema Is Not Defined by Its Storage Technology
 
-Noema may use:
+Noema may use technologies such as:
 
-PostgreSQL
-Neo4j
-Redis
-Vector databases
-Object storage
-Search indexes
+* PostgreSQL
+* Neo4j
+* Redis
+* vector databases
+* object storage
+* search indexes
 
 These are implementation choices.
 
-The canonical model must remain independent of the persistence technology.
+The canonical semantic model must remain independent of persistence technology.
+
+Noema’s Operational Memory is likewise not defined as a particular database or vector store.
+
+It is structured execution and operational history used to support reliable future execution, analysis, recovery, and improvement.
 
 ⸻
 
-42. Noema Is Not “AI That Acts”
+44. Noema Is Not Defined by a Single Operating Mode
 
-That phrase is too broad to be a sufficient definition.
+Noema is not fundamentally limited to one deployment topology.
 
-The critical distinction is:
+It supports two conceptual operating modes:
 
-AI that acts
+Mode 1
+Full-stack Noema execution
+Source of Intent
+      ↓
+Noema
+      ↓
+Enterprise Systems
 
-versus:
+and:
 
-A system that determines whether an intended Action
-is semantically valid, authorized, constrained, and trustworthy
-before allowing execution.
+Mode 2
+Independent trust / execution boundary
+Existing Agent / Orchestrator
+            ↓
+        Noema Trust
+            ↓
+    Enterprise Execution
 
-The latter is the Noema thesis.
+Mode 2 allows an enterprise to retain its existing interaction or orchestration layer while inserting Noema before consequential execution.
+
+Noema’s semantic responsibility remains the same across both modes.
 
 ⸻
 
-43. Architectural Test
+45. Noema Is Not Defined by a Single Interface or Source of Intent
+
+Noema is not fundamentally a human-chat system.
+
+The source of Intent may be:
+
+* a human
+* an AI agent
+* an application
+* an API
+* an automated system
+* an event-driven process
+* a voice interaction
+* a text interaction
+* another enterprise system
+
+The source changes.
+
+The canonical Intent and subsequent Trust boundary do not.
+
+⸻
+
+46. Noema Is Not Defined by a Single Industry
+
+Noema is intended as horizontal enterprise infrastructure.
+
+A particular industry may provide the first proving environment, domain intelligence, and commercial wedge.
+
+That does not make the universal Noema architecture industry-specific.
+
+Domain-specific knowledge should enter through governed configuration, capabilities, policies, adapters, contracts, and enterprise graph structures rather than contaminating the universal core.
+
+The first domain proves the architecture.
+
+It does not define its ultimate boundary.
+
+⸻
+
+47. Noema Is Not a Generic Agent Builder or MCP Gateway
+
+Noema may integrate with agents, tools, MCP, APIs, and other execution surfaces.
+
+It is not intended to become a generic platform for building arbitrary agents or exposing arbitrary tools through a gateway.
+
+In particular, arbitrary HTTP, SQL, or model-generated operations must not become capabilities merely because they can technically be invoked.
+
+Capabilities must be explicit, bounded, registered, governed, and executable through defined contracts.
+
+⸻
+
+48. Noema Is Not an Unbounded Capability Marketplace
+
+Noema’s capability model is concerned with representing what an enterprise can legitimately accomplish through governed execution.
+
+Noema should not optimize primarily for creating the largest marketplace of callable tools or actions.
+
+A capability must have semantic meaning and execution constraints.
+
+Capability existence does not imply:
+
+* permission
+* eligibility
+* authorization
+* current availability
+* trust
+* successful execution
+
+These distinctions are foundational.
+
+⸻
+
+49. Noema Is Not a Self-Authorizing System
+
+Noema must not manufacture authority simply because it can technically perform an operation.
+
+A capability is not permission.
+
+A model’s confidence is not authorization.
+
+A retrieved document is not automatically authority.
+
+A user’s assertion is not automatically evidence.
+
+Noema must establish execution legitimacy from the appropriate combination of:
+
+Resolved Actor
++ Intended Action
++ Target
++ Context
++ Current State
++ Authority
++ Policy
++ Constraints
++ Evidence
+
+Noema may evaluate these conditions.
+
+It must not invent missing authority.
+
+⸻
+
+50. Noema Is Not a System That Hides Uncertainty
+
+Noema should not optimize for a clean-looking user experience by suppressing uncertainty.
+
+The system must be able to represent:
+
+* ambiguity
+* contradiction
+* stale information
+* unavailable information
+* unauthorized information
+* unknown execution outcomes
+* partial completion
+* verification failure
+
+Uncertainty is not merely an internal error condition.
+
+It is part of the canonical execution state.
+
+⸻
+
+51. Noema Is Not a Black-Box Execution System
+
+Consequential execution must be reconstructable.
+
+Noema should be able to establish the causal chain:
+
+Who initiated
+      ↓
+What was intended
+      ↓
+How the Intent was interpreted
+      ↓
+What was ambiguous
+      ↓
+How it was resolved
+      ↓
+What authority applied
+      ↓
+What policy applied
+      ↓
+What enterprise state and evidence were observed
+      ↓
+What Action was selected
+      ↓
+What was executed
+      ↓
+What the downstream system returned
+      ↓
+What was verified
+      ↓
+What final Outcome was established
+
+Noema must not treat auditability as an afterthought or merely retain opaque logs.
+
+Causal reconstruction is part of trustworthy execution.
+
+⸻
+
+52. Noema Is Not an Autonomous Learning System That Rewrites Its Own Authority
+
+Operational history may inform evaluation, recovery, improvement, and future system design.
+
+It must not silently rewrite:
+
+* canonical ontology
+* capabilities
+* policies
+* authority
+* execution contracts
+* safety constraints
+* enterprise graph semantics
+
+Model-generated or learned changes must pass through explicit validation and governance mechanisms before becoming canonical.
+
+Operational learning must not become self-authorized mutation.
+
+⸻
+
+53. Architectural Test
 
 When evaluating a proposed feature, ask:
 
-Does this improve Noema’s ability to:
+Does it materially improve Noema’s ability to:
 
-understand Intent?
-resolve canonical meaning?
-identify Actors?
-identify Resources?
-identify Capabilities?
-evaluate Context?
-apply Constraints?
-apply Policy?
-verify Authority?
-determine Trust?
-execute Actions?
-verify Outcomes?
+* understand or represent Intent?
+* resolve canonical meaning?
+* resolve Actors, Entities, or Resources?
+* establish relevant Context and State?
+* reconcile conflicting enterprise state?
+* identify governed Capabilities?
+* construct legitimate Actions?
+* evaluate Authority?
+* apply Policies and Constraints?
+* determine Trust?
+* execute governed Actions?
+* verify execution?
+* establish Outcomes?
+* recover from uncertain or failed execution?
+* reconstruct consequential decisions?
+* improve future operational reliability?
 
-If not, it probably does not belong in Noema’s core.
+If not, the feature should be presumed outside Noema’s core unless there is a strong architectural reason otherwise.
 
-⸻
+This is a boundary test, not a prohibition against integration.
 
-44. Product Boundary
-
-The simplest boundary is:
-
-                 NOEMA
-┌─────────────────────────────────────┐
-│                                     │
-│ Intent Understanding                │
-│ Semantic Resolution                 │
-│ Canonical Representation            │
-│ Trust Evaluation                    │
-│ Action Authorization                │
-│ Execution Coordination              │
-│ Outcome Verification                │
-│                                     │
-└─────────────────────────────────────┘
-                 │
-                 ▼
-        External Systems
-
-Noema owns the semantic boundary between human intent and executable action.
-
-External systems continue to own their business domains.
+Noema may integrate with systems that perform these functions without owning those functions as its own core abstraction.
 
 ⸻
 
-45. Canonical Principle
+54. Product Boundary
 
-Noema does not exist to replace every system that performs work. It exists to provide the semantic and trust boundary through which human intent becomes legitimate, executable action.
+The simplest current boundary is:
+
+                         NOEMA
+┌────────────────────────────────────────────────────┐
+│                                                    │
+│ Source-of-Intent Normalization                     │
+│ Intent Understanding                               │
+│ Semantic Resolution                                │
+│ Schema Validation                                  │
+│ Context Fabric                                     │
+│ State Reconciliation                               │
+│ Capability / Action Semantics                      │
+│ Trust and Policy Evaluation                        │
+│ Authority Evaluation                               │
+│ Planning within Governance                         │
+│ Execution Control                                  │
+│ Verification and Recovery                          │
+│ Causal Audit and Explanation                       │
+│ Operational Memory                                 │
+│                                                    │
+└────────────────────────────────────────────────────┘
+                         │
+                         ▼
+              Enterprise Systems
+              of Record / Execution
+                         │
+                         ▼
+                Verified Outcome
+
+Noema owns the governed semantic boundary through which consequential enterprise intent becomes legitimate, executable, and verifiable action.
+
+It does not own every system participating in that process.
+
+⸻
+
+55. Canonical Principle
+
+Noema does not exist to replace every system that performs work.
+
+It exists to provide the trusted semantic execution boundary through which intent becomes legitimate enterprise action and through which execution can be verified, explained, and recovered.
 
 Therefore:
 
-Noema does not own every system.
+Noema does not own every model.
+Noema does not own every interface.
+Noema does not own every transport.
+Noema does not own every database.
+Noema does not own every integration.
+Noema does not own every capability.
 Noema does not own every workflow.
 Noema does not own every policy.
 Noema does not own every business rule.
-Noema does not own every model.
-Noema does not own every interface.
-Noema owns the intent-to-action boundary.
+Noema does not own every enterprise system.
+Noema does not own every piece of business state.
 
-That is the boundary the rest of the canonical documentation should preserve.
+Noema owns the semantic and trust boundary around consequential enterprise execution.
+
+Its responsibility is to establish:
+
+Intent
+→ Meaning
+→ Context
+→ State
+→ Authority
+→ Trust
+→ Action
+→ Execution
+→ Verification
+→ Outcome
+
+That boundary is what the rest of the canonical architecture must preserve.

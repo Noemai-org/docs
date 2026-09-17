@@ -9,11 +9,11 @@ Canonical Path: thesis/thesis.md
 
 1. The Thesis
 
-Human intent should be a first-class computational object.
+Intent should be a first-class computational object.
 
-Software has historically required humans to translate what they want into the language of software:
+Software has historically required people to translate what they want into the language of software:
 
-Human
+Person
   ↓
 Form
   ↓
@@ -25,19 +25,21 @@ Action
 
 Noema proposes a different model:
 
-Human
+Source of Intent
   ↓
-Intent
+Canonical Intent
   ↓
-Canonical Meaning
+Resolution
   ↓
 Trust Decision
   ↓
 Action
   ↓
-Outcome
+Verified Outcome
 
-The fundamental premise is that Intent—not the API call, workflow, prompt, or UI—is the correct abstraction for representing what a human wants a computer to accomplish.
+The fundamental premise is that Intent, rather than the API call, workflow, prompt, or UI, is the correct semantic abstraction for representing what a source of intent wants a computer system to accomplish.
+
+A source of intent may be a person, AI agent, system, or supported interface. The semantic model remains the same.
 
 ⸻
 
@@ -45,11 +47,11 @@ The fundamental premise is that Intent—not the API call, workflow, prompt, or 
 
 Noema’s central claim is:
 
-A general-purpose semantic execution layer can sit between human intent and existing software systems, transforming human Intent into trustworthy, authorized, constrained, executable Actions without requiring the human to understand the implementation details of those systems.
+A general-purpose semantic execution layer can sit between sources of intent and existing enterprise software systems, transforming Intent into trustworthy, authorized, constrained, executable Actions whose Outcomes can be verified without requiring the source of intent to understand the implementation details of those systems.
 
 This layer should not replace the systems that already perform business operations.
 
-It should make those systems semantically executable through Intent.
+It should make those systems semantically executable through Intent while preserving their role as authoritative systems of record for business state.
 
 ⸻
 
@@ -58,7 +60,7 @@ It should make those systems semantically executable through Intent.
 The modern software stack contains powerful layers:
 
 ┌─────────────────────────────┐
-│ Human Interfaces            │
+│ Human / Agent Interfaces    │
 ├─────────────────────────────┤
 │ AI / Language Models        │
 ├─────────────────────────────┤
@@ -71,26 +73,31 @@ The modern software stack contains powerful layers:
 
 What is missing is a general layer that answers:
 
-What does the human want, and under what conditions may that intention become an executable operation?
+What does the source of intent mean, what can satisfy that meaning, and under what conditions may it become an executable operation?
 
-Noema occupies that layer:
+Noema occupies that semantic execution boundary:
 
 ┌─────────────────────────────┐
-│ Human Intent                │
+│ Source of Intent             │
 ├─────────────────────────────┤
-│         NOEMA               │
+│           NOEMA              │
 │                             │
 │ Intent                      │
-│ Semantics                   │
-│ Resolution                  │
+│ Resolution                   │
+│ Context                      │
+│ State Reconciliation         │
 │ Trust                       │
 │ Policy                      │
 │ Authority                   │
 │ Constraints                 │
-│ Action                      │
+│ Action Graph                │
+│ Planning                    │
+│ Execution                   │
+│ Verification / Recovery     │
 │ Outcome                     │
+│ Causal Audit / Memory       │
 ├─────────────────────────────┤
-│ Existing Software Systems   │
+│ Existing Enterprise Systems │
 └─────────────────────────────┘
 
 ⸻
@@ -99,27 +106,27 @@ Noema occupies that layer:
 
 Traditional software primitives include:
 
-Data
-Event
-Request
-Command
-Function
-Transaction
-Resource
+* Data
+* Event
+* Request
+* Command
+* Function
+* Transaction
+* Resource
 
-Noema introduces another primitive:
+Noema treats another abstraction as fundamental:
 
 Intent
 
-An Intent represents a desired change, outcome, or state from the perspective of an Actor.
+An Intent represents a desired objective or outcome from the perspective of an Actor.
 
 For example:
 
-"Renew my company card."
+“Renew my company card.”
 
 is not merely a string.
 
-It can become:
+It can become a canonical Intent Object containing concepts such as:
 
 Intent
 ├── Actor
@@ -129,30 +136,34 @@ Intent
 ├── Constraints
 └── Desired Outcome
 
-Once represented explicitly, Intent becomes something software can reason about.
+The exact representation is typed and schema-validated.
+
+Once admitted into the Trust path, the Intent Object is immutable. A change to the Intent creates a new version rather than silently mutating the admitted representation.
+
+This makes Intent something software can reason about independently of the language, interface, transport, or Model used to produce it.
 
 ⸻
 
 5. Intent Is Not a Prompt
 
-A prompt is an instruction to a Model.
+A prompt is an instruction or input to a Model.
 
-An Intent is a semantic object representing desired behavior.
+An Intent is a canonical semantic object representing desired behavior.
 
 This distinction is fundamental.
 
 Prompt:
-"Renew my card and don't ask me unnecessary questions."
+“Renew my card and don't ask me unnecessary questions.”
 Intent:
 RenewCard
 Actor:
 CurrentUser
 Resource:
 Card#123
-DesiredOutcome:
+Desired Outcome:
 Card renewed
 
-The prompt is an interface artifact.
+The prompt is an interface and Model-input artifact.
 
 The Intent is part of the canonical system model.
 
@@ -167,27 +178,25 @@ Action describes what the system will execute.
 For example:
 
 Intent:
-"Make sure my card is renewed before it expires."
+“Make sure my card is renewed before it expires.”
 Possible Action:
 RenewCard(Card#123)
 
-But another domain could satisfy the same Intent through:
+Another execution path might satisfy the same Intent through:
 
 ReplaceCard(Card#123)
-
 or:
-
 ScheduleRenewal(Card#123, expiration_date)
 
 Therefore:
 
 Intent
-   ≠
+  ≠
 Action
 
-The Intent determines the semantic objective.
+Intent determines the semantic objective.
 
-The execution layer determines the appropriate Action.
+The execution layer determines the appropriate Action or Action plan capable of satisfying that objective.
 
 ⸻
 
@@ -195,60 +204,64 @@ The execution layer determines the appropriate Action.
 
 Noema’s fundamental responsibility is the boundary between:
 
-Human Meaning
+Meaning
 
 and:
 
 Machine Execution
 
-The canonical pipeline is:
+The canonical platform flow is:
 
-                HUMAN
-                  │
-                  ▼
-          Intent Expression
-                  │
-                  ▼
-       Probabilistic Interpretation
-                  │
-                  ▼
-          Canonical Intent
-                  │
-          ┌───────┼────────┐
-          ▼       ▼        ▼
-       Context  Resource  Actor
-          │       │        │
-          └───────┼────────┘
-                  ▼
-        Capability Resolution
-                  │
-                  ▼
-       Policy / Constraint /
-       Authority Evaluation
-                  │
-                  ▼
-            TRUST DECISION
-                  │
-        ┌─────────┼─────────┐
-        ▼         ▼         ▼
-      PERMIT    CLARIFY    DENY
-        │
-        ▼
-      ACTION
-        │
-        ▼
-    EXECUTION
-        │
-        ▼
-     OUTCOME
-        │
-        ▼
-  STATE VERIFICATION
-        │
-        ▼
- INTENT SATISFIED
+             SOURCE OF INTENT
+       Human / Agent / System / Interface
+                     │
+                     ▼
+            Intent Compilation
+                     │
+                     ▼
+          Hard Schema Validation
+                     │
+                     ▼
+                 Context
+                     │
+                     ▼
+            State Reconciliation
+                     │
+                     ▼
+        Deterministic Trust Boundary
+                     │
+                     ▼
+       Enterprise Action / Outcome Graph
+                     │
+                     ▼
+                  Planning
+                     │
+                     ▼
+                 Execution
+                     │
+                     ▼
+          Verification / Recovery
+                     │
+                     ▼
+                  Outcome
+                     │
+                     ▼
+             Causal Audit / Memory
 
-This pipeline is the conceptual heart of Noema.
+The critical architectural boundary is:
+
+PROBABILISTIC
+understand / interpret / propose / generate candidates
+                     │
+                     │ HARD BOUNDARY
+                     ▼
+DETERMINISTIC
+validate / resolve / reconcile / govern /
+plan / execute / verify / recover / audit
+
+The Model proposes.
+
+Noema decides.
 
 ⸻
 
@@ -258,15 +271,15 @@ Noema does not reject probabilistic AI.
 
 It places probabilistic reasoning in the appropriate part of the system.
 
-Models are excellent candidates for:
+Models may assist with:
 
-language interpretation
-entity resolution
-intent classification
-semantic matching
-retrieval
-candidate generation
-planning
+* language interpretation
+* intent classification
+* entity resolution
+* semantic matching
+* retrieval
+* candidate generation
+* planning
 
 But consequential execution requires deterministic controls.
 
@@ -278,15 +291,17 @@ Candidate Interpretation
         ↓
 Canonical Noema Representation
         ↓
-Deterministic Validation
+Hard Schema Validation
+        ↓
+Deterministic Resolution / Reconciliation
         ↓
 Deterministic Trust Decision
         ↓
 Execution
 
-The Model proposes.
+Probabilistic output is untrusted input until it passes the canonical admission and validation boundary.
 
-Noema decides.
+No Model output should directly authorize consequential execution.
 
 ⸻
 
@@ -302,7 +317,7 @@ Trust =
 f(
   Intent,
   Actor,
-  Resource,
+  Target,
   Capability,
   Authority,
   Policy,
@@ -312,17 +327,16 @@ f(
   Evidence
 )
 
-The result should be explicit.
+The canonical Trust outcomes are:
 
-For example:
-
-PERMIT
-DENY
+EXECUTE
 CLARIFY
-REQUIRE_APPROVAL
-REQUIRE_EVIDENCE
+ESCALATE
+REJECT
 
-Trust therefore becomes a decision boundary, not a Model confidence score.
+Trust is therefore a decision boundary, not a Model confidence score.
+
+Enterprise systems remain the sources of authority for their own business permissions, policies, and business state. Noema evaluates the resolved execution path against the applicable governance conditions rather than replacing enterprise authorization systems.
 
 ⸻
 
@@ -330,11 +344,13 @@ Trust therefore becomes a decision boundary, not a Model confidence score.
 
 A Model may say:
 
-"I am 98% confident the user means Card #123."
+“I am 98% confident the user means Card #123.”
 
 That does not establish:
 
-Card #123 is actually the intended Resource.
+Card #123
+=
+Intended Resource
 
 Likewise:
 
@@ -345,6 +361,7 @@ does not establish:
 Actor authority = valid
 Policy = satisfied
 Constraint = satisfied
+Current State = compatible
 Action = safe
 
 Therefore:
@@ -359,18 +376,20 @@ This distinction is fundamental to the architecture.
 
 11. Uncertainty Must Become a System State
 
-Noema must treat uncertainty as something the system can represent and act upon.
+Noema must represent uncertainty explicitly rather than forcing unresolved information into false certainty.
+
+At the fact level, information may have statuses such as:
 
 KNOWN
-  │
-  ├──→ RESOLVED
-  │
-  └──→ UNKNOWN
-          │
-          ├──→ CLARIFY
-          ├──→ REQUEST EVIDENCE
-          ├──→ REQUIRE APPROVAL
-          └──→ DENY
+INFERRED
+AMBIGUOUS
+UNAVAILABLE
+STALE
+CONTRADICTORY
+UNKNOWN
+UNAUTHORIZED
+
+At the execution level, an Action may reach an uncertain state where the system cannot yet establish whether the external operation occurred.
 
 The unacceptable transition is:
 
@@ -380,13 +399,15 @@ GUESS
    ↓
 EXECUTE
 
+Unknown execution state requires verification or reconciliation before a retry or subsequent consequential Action is considered.
+
 ⸻
 
 12. Clarification Is Part of Execution
 
 Traditional systems often treat clarification as a failure of the interface.
 
-Noema treats it as a valid state in the execution lifecycle.
+Noema treats clarification as a valid governed outcome.
 
 For example:
 
@@ -396,15 +417,13 @@ If the Actor has three savings accounts, Noema should not select one arbitrarily
 
 It should produce:
 
-CLARIFICATION REQUIRED
+CLARIFY
 
-and ask:
-
-“Which savings account do you mean?”
+and ask which account is intended.
 
 The system has not failed.
 
-It has correctly determined that execution cannot yet be made deterministic.
+It has correctly determined that the required execution path cannot yet be established deterministically.
 
 ⸻
 
@@ -414,13 +433,15 @@ A conventional authorization system asks:
 
 Can Actor X perform Action Y?
 
-Noema must additionally ask:
+Noema must additionally establish:
 
-Is Action Y actually what Actor X intended?
+Is Action Y actually consistent with the resolved Intent?
 
-Therefore trustworthy execution requires at least:
+Trustworthy execution therefore requires the relationship between:
 
 Intent correctness
++
+Actor / target resolution
 +
 Authority correctness
 +
@@ -431,6 +452,14 @@ State correctness
 Constraint correctness
 
 Authorization is one component of Trust, not its definition.
+
+Noema must distinguish at least:
+
+* Technical authorization: whether the connected system permits the operation.
+* Policy authorization: whether applicable governance rules permit the operation.
+* Business authorization: whether the enterprise’s business rules establish that the Actor may cause the requested operation.
+
+These may depend on different authoritative sources.
 
 ⸻
 
@@ -446,29 +475,32 @@ Entity
 Resource
 Capability
 Action
+Execution
 Outcome
 State
 Context
 Constraint
 Policy
 Authority
+Evidence
 Relationship
 
-These concepts provide the semantic vocabulary through which domains can describe executable operations.
+These concepts provide the semantic vocabulary through which domains can describe and govern executable operations.
 
 The ontology should remain:
 
-small
-explicit
-composable
-domain-agnostic
-machine-readable
+* small
+* explicit
+* composable
+* domain-agnostic
+* machine-readable
+* stable across implementation technologies
 
 ⸻
 
 15. Domain Semantics Extend the Ontology
 
-Noema does not need to know every concept in every industry.
+Noema does not need to encode every concept in every industry into its universal core.
 
 Instead:
 
@@ -505,11 +537,13 @@ Constraint
 Action
 Outcome
 
+Domain intelligence belongs in domain configuration, enterprise-specific graph data, and adapters rather than being hard-coded into the universal execution engine.
+
 ⸻
 
 16. Noema Does Not Own Business State
 
-Noema operates across systems without becoming the authoritative owner of their business domains.
+Noema operates across enterprise systems without becoming the authoritative owner of their business domains.
 
 For example:
 
@@ -522,31 +556,35 @@ ERP
 HRIS
   → Employee state
 
-Noema maintains the state necessary to reason about Intent and execution:
+Noema maintains the semantic and execution state necessary to reason about and govern execution, including:
 
 Intent State
 Trust State
 Execution State
 Outcome State
+Evidence / Provenance
+Operational History
 
-This separation prevents Noema from becoming another ERP, CRM, or universal database.
+Noema does not become another ERP, CRM, or universal business database.
+
+Where multiple enterprise systems contribute observations, Noema performs state reconciliation for the purpose of determining the execution-relevant state without replacing the authoritative business system.
 
 ⸻
 
-17. Noema Is a Semantic Layer
+17. Noema Is a Semantic Execution Layer
 
-Noema should be understood as a semantic execution layer rather than as:
+Noema should be understood as a Trusted Enterprise Execution Infrastructure layer rather than as:
 
-an AI assistant
-an agent framework
-an RPA system
-a workflow engine
-an API gateway
-a policy engine
-a knowledge graph
-a chatbot
+* an AI assistant
+* an agent framework
+* an RPA system
+* a workflow engine
+* an API gateway
+* a policy engine
+* a knowledge graph product
+* a chatbot
 
-Those technologies may exist within or around Noema.
+Those technologies may participate in a Noema deployment.
 
 None defines the thesis.
 
@@ -559,6 +597,8 @@ Meaning
 Trust
   ↓
 Action
+  ↓
+Verified Outcome
 
 ⸻
 
@@ -566,35 +606,42 @@ Action
 
 Noema does not require the world to be rebuilt.
 
-Existing software already contains enormous execution capability.
+Existing enterprise software already contains enormous execution capability.
 
-Noema’s job is to make that capability semantically addressable.
+Noema’s job is to make that capability semantically addressable and governable.
 
 Conceptually:
 
 Existing System
       │
       ▼
-   Capability
+   Adapter
       │
       ▼
-     Noema
+Canonical Capability
+      │
+      ▼
+    Noema
       ▲
       │
     Intent
 
 For example:
 
-Stripe
+Payment Provider
   → refund_payment
-Salesforce
+CRM
   → update_customer
-AWS
+Cloud Platform
   → deploy_service
-GitHub
+Source Control
   → merge_pull_request
 
-Noema can reason about these as canonical Capabilities rather than exposing raw APIs directly to the Model.
+Noema reasons about canonical Capabilities rather than exposing arbitrary raw APIs directly to a Model.
+
+A Capability describes what can be done.
+
+It does not by itself establish that an Action is authorized or appropriate.
 
 ⸻
 
@@ -605,7 +652,7 @@ External systems should map into Noema’s canonical semantic model.
 External System
       │
       ▼
-   Adapter
+    Adapter
       │
       ▼
 Canonical Capability
@@ -613,160 +660,316 @@ Canonical Capability
       ▼
     Noema
 
-This allows the underlying integration to change without changing the meaning of the Intent.
+Adapters translate between Noema’s canonical execution semantics and provider-specific protocols, identifiers, authentication mechanisms, errors, and operational behavior.
 
-The canonical semantic model therefore becomes the stable contract.
+They are execution boundaries, not decision-makers.
+
+This allows the underlying integration to change without changing the meaning of the Intent.
 
 ⸻
 
 20. Action Is the Execution Contract
 
-Once Noema determines that an Intent can safely be executed, the resulting Action should be explicit.
+Once Noema determines that an Intent can safely proceed, the resulting Action should be explicit and contract-bound.
 
 Conceptually:
 
 Action
 ├── Actor
 ├── Capability
-├── Resource
+├── Target / Resource
 ├── Parameters
 ├── Preconditions
 ├── Constraints
-├── Authority
+├── Authority Context
 └── Expected Outcome
 
-This creates a typed boundary between semantic reasoning and execution.
+The Action is not free-form Model output.
+
+It is a typed representation that must satisfy the applicable Action Contract and Capability constraints.
 
 The external system should not receive an ambiguous natural-language instruction.
 
-It should receive an explicitly resolved Action.
+It should receive an explicitly resolved and governed Action.
 
 ⸻
 
-21. Outcome Completes the Loop
+21. Planning Does Not Create Authority
+
+Some Intents require multiple Actions or alternative execution paths.
+
+A Planner may therefore determine a suitable sequence or composition of Actions.
+
+However:
+
+Planning
+  ≠
+Authority
+
+The Planner cannot:
+
+* create a Capability
+* create permission
+* override Policy
+* bypass Trust
+* bypass Action Contracts
+* invent enterprise state
+* convert uncertainty into authorization
+
+Planning operates within the capabilities, policies, constraints, authority, and execution semantics already established by Noema.
+
+⸻
+
+22. Outcome Completes the Loop
 
 Execution is not the end of the lifecycle.
 
-Noema must determine whether the Action produced the intended Outcome.
+Noema must determine whether the Action produced the expected Outcome.
 
 Intent
   ↓
 Action
   ↓
-Execution
+Execution Attempt
   ↓
-Outcome
+Observed Evidence
   ↓
-State
+Verified Outcome
+  ↓
+State Reconciliation
   ↓
 Intent Satisfaction
 
-This creates a closed loop rather than a one-way command pipeline.
+An external acknowledgement is evidence about execution, not automatically proof of business completion.
+
+Verification is therefore part of the execution lifecycle.
 
 ⸻
 
-22. The Closed-Loop Model
+23. Execution Requires Idempotency and Recovery
+
+A consequential Action may be attempted more than once because of retries, timeouts, process failures, or infrastructure failures.
+
+Noema must distinguish:
+
+Action
+Execution
+Execution Attempt
+Idempotency Key
+
+These are related but distinct concepts.
+
+If execution state is unknown, Noema should verify or reconcile the external state before retrying whenever the operation could produce a duplicate side effect.
+
+Partial failure, compensation, reconciliation, and recovery must be explicit rather than assumed to behave like a distributed ACID transaction.
+
+⸻
+
+24. The Closed-Loop Model
 
 The complete Noema model is therefore:
 
-┌──────────────┐
-│    Actor     │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│    Intent    │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│  Resolution  │
-└──────┬───────┘
-       │
-       ▼
-┌─────────────────────────┐
-│ Trust Evaluation        │
-│                         │
-│ Policy                  │
-│ Authority               │
-│ Constraints             │
-│ Context                 │
-│ State                   │
-└───────────┬─────────────┘
-            │
-       ┌────┴────┐
-       ▼         ▼
-    Permit    Otherwise
-       │         │
-       ▼         ▼
-    Action   Clarify /
-       │      Deny /
-       │      Approve
-       ▼
-  Execution
-       │
-       ▼
-    Outcome
-       │
-       ▼
- State Verification
-       │
-       ▼
-Intent Satisfied
+┌────────────────────┐
+│ Source of Intent   │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Canonical Intent   │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Resolution         │
+│ + Context          │
+│ + State Reconcile  │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Deterministic      │
+│ Trust              │
+│                    │
+│ Authority          │
+│ Policy             │
+│ Constraints        │
+│ Capability         │
+│ Evidence           │
+└─────────┬──────────┘
+          │
+     ┌────┴────┐
+     ▼         ▼
+ EXECUTE   CLARIFY /
+           ESCALATE /
+           REJECT
+     │
+     ▼
+┌────────────────────┐
+│ Action / Plan      │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Execution          │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Verification /     │
+│ Recovery           │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Verified Outcome   │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│ Causal Audit /     │
+│ Operational Memory │
+└────────────────────┘
 
 This is the core Noema execution model.
 
 ⸻
 
-23. The Generality Thesis
+25. Safety Is Structural
+
+Trustworthy execution cannot depend solely on Model behavior or Model confidence.
+
+Noema must structurally constrain what can reach execution.
+
+Therefore:
+
+* Model output is untrusted.
+* User-provided input is untrusted.
+* Retrieved enterprise text is untrusted.
+* Tool responses are untrusted until evaluated according to their authority and provenance.
+* The Model has no direct enterprise credentials.
+* Free-form Model output cannot directly invoke arbitrary enterprise operations.
+* Capabilities must be explicitly registered and bounded.
+* Arbitrary HTTP, SQL, or equivalent operations are not capabilities merely because a Model can describe them.
+* Explicitly prohibited capabilities must be unavailable or hard-denied.
+* Executors must revalidate relevant execution conditions at the execution boundary.
+
+Safety therefore comes from architecture and enforceable contracts, not from asking a Model to behave correctly.
+
+⸻
+
+26. Auditability Is Causal Traceability
+
+Noema must be able to reconstruct why a consequential Action occurred.
+
+A causal audit should establish, as applicable:
+
+Who initiated
+      ↓
+What they intended
+      ↓
+What was ambiguous
+      ↓
+How it was resolved
+      ↓
+What authority applied
+      ↓
+What Policy applied
+      ↓
+What enterprise State was observed
+      ↓
+What Evidence supported the decision
+      ↓
+What Action was selected
+      ↓
+What was attempted
+      ↓
+What downstream result occurred
+      ↓
+What final State was verified
+
+Auditability does not require exposing private Model chain-of-thought.
+
+The requirement is reproducible causal traceability of the governed execution decision.
+
+⸻
+
+27. Operational Memory Is Part of the System
+
+Noema requires structured operational history describing cases, executions, failures, interventions, evidence, outcomes, and recovery.
+
+This is Operational Memory.
+
+It is not equivalent to:
+
+* a generic Model memory
+* a vector database
+* a conversation history
+* a retrieval index
+
+Operational Memory exists to preserve the history required to understand, operate, audit, and improve consequential execution.
+
+⸻
+
+28. The Generality Thesis
 
 Noema’s long-term thesis is not tied to one workflow.
 
 The same primitives should be capable of expressing:
 
-"Renew my card."
-"Give Sarah the same access John has."
-"Refund the duplicate payment."
-"Deploy the latest release to staging."
-"Book the earliest available flight."
-"Close the inactive account."
-"Move the remaining budget to Project B."
+“Renew my card.”
+“Give Sarah the same access John has.”
+“Refund the duplicate payment.”
+“Deploy the latest release to staging.”
+“Book the earliest available flight.”
+“Close the inactive account.”
+“Move the remaining budget to Project B.”
 
 The domain changes.
 
-The underlying semantic structure remains.
+The underlying semantic structure remains:
+
+Intent
+→ Context
+→ Capability
+→ Authority
+→ Policy
+→ Action
+→ Execution
+→ Outcome
 
 ⸻
 
-24. The Commercial Wedge
+29. The Commercial Wedge
 
 The broad thesis does not imply that Noema must begin broadly.
 
-The first implementation should target a workflow where the semantic gap is sufficiently painful that organizations have a reason to adopt Noema.
+The first implementation should target a consequential workflow where the semantic gap, fragmented enterprise state, and execution risk are sufficiently significant to demonstrate the value of the system.
 
-The initial use case should therefore demonstrate:
+The initial proof should demonstrate:
 
-Human Intent
+Source of Intent
       ↓
 Ambiguous / multi-step request
       ↓
 Canonical Intent
       ↓
+Resolution
+      ↓
 Trust Evaluation
       ↓
-Multiple system capabilities
+Multiple enterprise capabilities
       ↓
 Execution
       ↓
 Verified Outcome
 
-The first product proves the primitive.
+The initial use case proves the primitive.
 
-It does not define the entire thesis.
+It does not define the entire company category.
 
 ⸻
 
-25. The Smallest Proof
+30. The Smallest Proof
 
 The smallest convincing proof of Noema is not:
 
@@ -776,15 +979,15 @@ That is already commonplace.
 
 The smallest proof is:
 
-A human can express a meaningful operational Intent without knowing the underlying system APIs, and Noema can deterministically determine whether that Intent can be safely converted into an Action, execute it through existing systems, and verify the resulting Outcome.
+A source of intent can express a meaningful operational objective without knowing the underlying system APIs, and Noema can deterministically resolve that objective into a governed Action, execute it through existing enterprise capabilities, and verify the resulting Outcome.
 
-That is the critical demonstration.
+When that transition cannot be safely established, Noema must clarify, escalate, or reject rather than guess.
 
 ⸻
 
-26. The Architectural Consequence
+31. The Architectural Consequence
 
-If the thesis is correct, Noema’s architecture should be organized around semantic primitives rather than integrations.
+If the thesis is correct, Noema’s architecture should be organized around semantic and execution primitives rather than integrations.
 
 The center of the system should be:
 
@@ -801,107 +1004,105 @@ Policy
 Constraint
 Authority
 State
+Evidence
 
 and produces:
 
 Action
+Execution
 Outcome
 
 Integrations sit at the edge.
 
-The ontology sits at the center.
+The ontology and trust semantics sit at the center.
+
+The enterprise remains authoritative for business state.
 
 ⸻
 
-27. The Economic Consequence
+32. The Economic Consequence
 
 If Noema works, organizations do not need to redesign every existing application around AI.
 
-Instead, they expose existing business capabilities to a common semantic execution layer.
+Instead, they can expose existing business capabilities through a common semantic execution boundary.
 
-This potentially changes the integration model from:
-
-Application
-   ↕
-Custom Integration
-   ↕
-Application
-
-toward:
+Conceptually:
 
              Noema
           ↙    ↓    ↘
         CRM   ERP   Payments
 
-with Intent providing the common semantic interface.
+with Intent providing the common semantic entry point.
 
 The value is therefore not merely automation.
 
-It is reducing the semantic integration cost between humans and software systems.
+It is reducing the semantic and governance cost of connecting sources of intent to heterogeneous enterprise execution systems while preserving enterprise systems as the authoritative owners of business state.
 
 ⸻
 
-28. The Long-Term Vision
+33. The Embedded Product Model
 
-The long-term vision is a world where humans do not need to learn the operational vocabulary of every software system they use.
+Noema is intended to operate as an embedded enterprise product, not merely as an internal enterprise-operations tool.
 
-Instead of:
+An enterprise integrates Noema into its own product or service so that its users or customers can express intent and receive governed outcomes across the enterprise’s existing systems.
 
-“Open the CRM, navigate to Accounts, find the customer, open Billing, initiate a refund, select the original transaction, enter the reason, and submit.”
+This creates two supported operating modes:
 
-a human can express:
+Mode 1: Full-Stack Noema
+Source of Intent
+      ↓
+Noema
+      ↓
+Enterprise Systems
 
-“Refund the duplicate charge for Acme.”
+and:
 
-Noema determines:
+Mode 2: Independent Trust Boundary
+Source of Intent
+      ↓
+Enterprise Agent / Orchestrator
+      ↓
+Noema Trust + Execution Boundary
+      ↓
+Enterprise Systems
 
-what was meant
-who meant it
-what Resource is involved
-which systems matter
-what Capabilities exist
-what Policies apply
-what Authority exists
-what Constraints apply
-what Action should execute
-what Outcome should occur
+Mode 2 allows an enterprise to retain its existing interaction or orchestration layer while using Noema as an independent boundary before consequential execution.
 
-The human expresses the desired result.
-
-The system handles the semantic and operational translation.
+The underlying semantic and trust model remains the same.
 
 ⸻
 
-29. The Boundary of the Thesis
+34. The Boundary of the Thesis
 
-Noema does not claim that every human request can or should become autonomous execution.
+Noema does not claim that every request can or should become autonomous execution.
 
-It claims that:
-
-Intent can be represented explicitly enough to make the transition from human expression to software execution a principled, inspectable, and deterministic process.
+It claims that Intent can be represented explicitly enough to make the transition from source expression to software execution a principled, inspectable, and deterministic process.
 
 When the system cannot establish that transition safely, the correct behavior is:
 
-Clarify
-Request Evidence
-Require Approval
-Deny
+CLARIFY
+ESCALATE
+REJECT
 
-not:
+or, where required by the execution lifecycle, wait for evidence, approval, or reconciliation.
 
-Guess
+The incorrect behavior is:
+
+GUESS
 
 ⸻
 
-30. Final Thesis Statement
+35. Final Thesis Statement
 
-Noema is a semantic execution system in which human Intent becomes a first-class computational object, probabilistic AI is used to interpret that Intent, canonical ontology is used to resolve its meaning, deterministic Trust mechanisms determine whether it may become an Action, existing software systems provide the execution capabilities, and verified Outcomes close the loop back to the original Intent.
+Noema is Trusted Enterprise Execution Infrastructure in which Intent becomes a first-class computational object, probabilistic AI is used to interpret and propose candidate meanings, canonical semantics resolve those meanings, deterministic Trust mechanisms determine whether they may become Actions, enterprise systems provide the underlying execution capabilities and remain authoritative for business state, and verified Outcomes close the loop back to the original Intent.
 
 In its shortest form:
 
-Human Intent
+Source of Intent
       ↓
-Canonical Meaning
+Canonical Intent
+      ↓
+Resolution
       ↓
 Deterministic Trust
       ↓
@@ -909,4 +1110,4 @@ Executable Action
       ↓
 Verified Outcome
 
-Noema’s thesis is that this Intent-to-Action boundary should be a fundamental layer of software.
+Noema’s thesis is that this Intent-to-Action boundary should become a fundamental layer of enterprise software.

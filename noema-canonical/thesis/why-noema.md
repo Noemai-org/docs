@@ -9,9 +9,9 @@ Canonical Path: thesis/why-noema.md
 
 1. Why Noema Exists
 
-Software has become extraordinarily powerful, but the way humans control software is still fundamentally constrained by the abstractions software exposes.
+Software has become extraordinarily powerful, but the way people and systems express what they want software to accomplish is still constrained by the abstractions exposed by that software.
 
-Humans think in terms of:
+Sources of Intent operate at the level of:
 
 Goals
 Intentions
@@ -27,17 +27,19 @@ Commands
 Workflows
 Permissions
 
-The gap between these two worlds has historically been bridged by application developers.
+Historically, application developers have bridged these two worlds.
 
 AI changes the economics of that bridge.
 
-Models can now interpret human language, identify entities, reason over context, and propose actions.
+Models can now interpret language, identify entities, reason over context, and propose actions.
 
 But interpretation alone is not enough.
 
-What is missing is a trustworthy semantic execution layer that can turn that interpretation into an explicit, constrained, authorized, and verifiable operation.
+What is missing is a trustworthy semantic execution layer that can turn an interpreted Intent into an explicit, constrained, authorized, and verifiable operation.
 
 That is why Noema exists.
+
+Noema is Trusted Enterprise Execution Infrastructure: an embedded semantic and trust layer through which enterprise products can turn Sources of Intent into trusted outcomes without requiring those users to understand or operate the underlying enterprise systems.
 
 ⸻
 
@@ -45,7 +47,7 @@ That is why Noema exists.
 
 Three technological conditions have converged.
 
-2.1 Models can understand human intent
+2.1 Models Can Understand Intent
 
 Modern Models can interpret expressions such as:
 
@@ -55,9 +57,13 @@ This was previously difficult to automate without explicitly structured input.
 
 Models make probabilistic semantic interpretation practical.
 
+But model interpretation remains probabilistic.
+
+It therefore cannot, by itself, serve as the final authority for consequential execution.
+
 ⸻
 
-2.2 Software is increasingly exposed through machine interfaces
+2.2 Software Is Increasingly Exposed Through Machine Interfaces
 
 Modern systems expose:
 
@@ -71,17 +77,17 @@ Service interfaces
 
 The digital world is increasingly programmable.
 
-The problem is no longer:
+The problem is no longer simply:
 
 “Can software perform this operation?”
 
 It is:
 
-“Can we reliably determine which operation should be performed?”
+“Can we reliably determine which operation should be performed, under what authority and constraints, and verify that the intended outcome actually occurred?”
 
 ⸻
 
-2.3 Enterprises already contain the capabilities
+2.3 Enterprises Already Contain the Capabilities
 
 Organizations do not need another thousand business systems.
 
@@ -99,7 +105,7 @@ Internal services
 
 The capabilities already exist.
 
-What is missing is a common semantic layer that can safely connect human Intent to those capabilities.
+What is missing is a common semantic and trust layer that can safely connect Intent to those capabilities while preserving the enterprise systems as authoritative sources of business state.
 
 ⸻
 
@@ -117,23 +123,25 @@ What gives an Action legitimacy?
 
 An agent may determine:
 
-"I should refund this payment."
+“I should refund this payment.”
 
 Noema needs to establish:
 
-Is this actually what the Actor intended?
+Is this actually what the Source of Intent specified?
 Is this the correct payment?
-Does the Actor have authority?
-Does Policy permit the refund?
+Is the Actor resolved?
+Does the Actor have the required authority?
+Does Policy permit the Action?
 Are the required Constraints satisfied?
-Is the payment in a refundable State?
+Is the payment in a state where the Action is valid?
+Is the capability available and eligible?
 Is the Action safe to execute?
-Did the refund actually produce the expected Outcome?
+Did the execution produce the expected Outcome?
 
 Therefore:
 
 Agent
-    ≠
+≠
 Trustworthy Intent Execution
 
 Agents can operate within Noema.
@@ -150,26 +158,30 @@ Which function should the Model invoke?
 
 Noema asks:
 
-Why should this Action happen, what exactly does it mean, and is it legitimate to execute?
+Why should this Action happen, what exactly does it mean, is it legitimate to execute, and how do we establish what happened afterward?
 
 Consider:
 
 Tool:
+
 refund_payment(payment_id)
 
 A Model may call it correctly from a syntactic perspective.
 
 But Noema still needs to resolve:
 
-payment_id
-Actor
 Intent
+Actor
+Target Resource
 Authority
 Policy
 Constraints
 Context
 Current State
+Capability
 Expected Outcome
+
+The target must be resolved before consequential execution.
 
 Tool calling is therefore an execution mechanism.
 
@@ -195,17 +207,19 @@ More importantly, prompts do not provide a canonical machine representation of I
 
 Noema moves critical semantics outside the Model:
 
-Prompt
-   ↓
+Prompt / Interface
+↓
 Model
-   ↓
+↓
 Candidate Interpretation
-   ↓
+↓
+Hard Schema Validation
+↓
 Canonical Intent
-   ↓
+↓
 Deterministic Trust
 
-The Model can change without changing the fundamental semantics of execution.
+The Model can change without changing the fundamental semantic contract of execution.
 
 ⸻
 
@@ -216,26 +230,26 @@ Workflow engines are excellent at executing known processes.
 For example:
 
 Receive Application
-      ↓
+↓
 Validate
-      ↓
+↓
 Approve
-      ↓
+↓
 Create Account
-      ↓
+↓
 Notify User
 
 The workflow is predefined.
 
 Noema addresses a different problem:
 
-What should happen when the human expresses a goal without specifying the workflow?
+What should happen when the Source of Intent expresses a goal without specifying the workflow?
 
 For example:
 
 “Get this customer back on the premium plan.”
 
-There may be multiple legitimate workflows depending on:
+There may be multiple legitimate execution paths depending on:
 
 Customer State
 Billing State
@@ -244,9 +258,11 @@ Eligibility
 Actor Authority
 Available Capabilities
 
-Noema determines the semantic path.
+Noema determines the semantic execution path and governs whether that path may execute.
 
-A workflow engine can execute that path.
+A workflow engine can execute a path selected and governed by Noema.
+
+Workflow execution is therefore a possible substrate, not the semantic foundation.
 
 ⸻
 
@@ -254,7 +270,7 @@ A workflow engine can execute that path.
 
 RPA automates procedures.
 
-Noema represents Intent.
+Noema represents Intent and governs its translation into executable Actions.
 
 RPA says:
 
@@ -268,7 +284,9 @@ Noema says:
 
 Intent
 → resolve meaning
+→ reconcile relevant state
 → determine Action
+→ establish Trust
 → execute
 → verify Outcome
 
@@ -295,15 +313,15 @@ Sarah → employee_of → Acme
 
 does not establish:
 
-Sarah should receive John's access.
+Sarah should receive John’s access.
 
 Nor does it establish:
 
-the current Actor is authorized to grant it.
+The current Actor is authorized to grant it.
 
-Noema needs knowledge representation plus Intent, Trust, Policy, Authority, Action, and Outcome semantics.
+Noema needs knowledge representation together with Intent, Trust, Policy, Authority, Action, Execution, and Outcome semantics.
 
-The graph can be infrastructure.
+The Enterprise Graph can provide infrastructure for this reasoning.
 
 It is not the thesis.
 
@@ -317,21 +335,23 @@ Is this operation allowed?
 
 Noema must answer a larger question:
 
-What operation is actually being requested, and under what semantic interpretation should the policy be evaluated?
+What operation is actually being requested, against which resolved target, and under what semantic interpretation should policy be evaluated?
 
 The sequence matters:
 
 Intent
-   ↓
+↓
 Resolve
-   ↓
+↓
+Reconcile State
+↓
 Determine Candidate Action
-   ↓
-Evaluate Policy
-   ↓
+↓
+Evaluate Authority and Policy
+↓
 Trust Decision
 
-A policy engine can be part of this pipeline.
+Policy evaluation is therefore part of the Trust pipeline.
 
 It does not replace the pipeline.
 
@@ -345,16 +365,11 @@ That is necessary but insufficient.
 
 Consider:
 
-Actor:
-Alice
-Permission:
-Can delete customers
-Intent:
-"Show me Alice's customer record."
+Actor: Alice
+Permission: Can delete customers
+Intent: “Show me Alice’s customer record.”
 
-Alice has permission to delete.
-
-But deletion is not what she intended.
+Alice having permission to delete customers does not mean deletion is intended.
 
 Therefore:
 
@@ -366,7 +381,9 @@ does not establish:
 
 Intent correctness
 
-Noema exists in the layer above authorization.
+Noema operates across the semantic boundary between resolved Intent and authorized execution.
+
+Enterprise systems may remain authoritative for identity, permissions, and business authorization sources.
 
 ⸻
 
@@ -374,11 +391,12 @@ Noema exists in the layer above authorization.
 
 RAG solves retrieval.
 
-Noema needs retrieval, but retrieval does not answer:
+Noema needs retrieval, but retrieval does not by itself answer:
 
 Is this information authoritative?
 Does it apply to this Actor?
 Does it apply to this Resource?
+Is it current?
 Does Policy permit the Action?
 Are Constraints satisfied?
 Did the resulting Action fulfill the Intent?
@@ -386,12 +404,12 @@ Did the resulting Action fulfill the Intent?
 Therefore:
 
 Retrieval
-   ≠
+≠
 Trustworthy Execution
 
-RAG can supply evidence.
+RAG can supply evidence and context.
 
-Noema determines what that evidence means for execution.
+Noema evaluates how that information participates in a governed execution decision.
 
 ⸻
 
@@ -407,7 +425,7 @@ POST /payments/123/refund
 
 Noema needs to know:
 
-Actor intends to refund the duplicate payment
+The Actor intends to refund the duplicate payment
 
 and whether that Intent legitimately maps to:
 
@@ -430,32 +448,94 @@ Deployments
 
 Existing systems already do that.
 
-Noema should sit above them.
+Noema should sit above and across them.
 
              NOEMA
-                │
-      ┌─────────┼─────────┐
-      ▼         ▼         ▼
-     CRM       ERP      Payments
+  Trusted Enterprise Execution
+             │
+   ┌─────────┼─────────┐
+   ▼         ▼         ▼
+  CRM       ERP      Payments
 
-The goal is interoperability through Intent, not replacement of the underlying systems.
+The goal is interoperability through Intent and trusted execution, not replacement of the underlying systems.
 
 ⸻
 
-14. Why the Ontology Matters
+14. Why the Embedded Enterprise Model Matters
+
+Noema is not primarily another internal enterprise application.
+
+Enterprises integrate Noema into products and experiences through which their own users express Intent.
+
+The model is:
+
+Enterprise Product
+↓
+Source of Intent
+↓
+Noema
+↓
+Enterprise Capabilities
+↓
+Enterprise Systems of Record
+↓
+Verified Outcome
+↓
+Enterprise Product / User
+
+This allows enterprises to provide trusted Intent-driven experiences without replacing their existing systems.
+
+Noema therefore becomes infrastructure inside the enterprise product rather than another destination application users must learn.
+
+⸻
+
+15. Why Noema Has Two Operating Modes
+
+Noema should support two architectural modes.
+
+Mode 1: Full-Stack Execution
+
+Noema provides the complete path:
+
+Source of Intent
+→ Intent Compilation
+→ Validation
+→ Context
+→ State Reconciliation
+→ Trust
+→ Planning
+→ Execution
+→ Verification
+→ Outcome
+
+Mode 2: Independent Trust Boundary
+
+An enterprise’s existing agent, assistant, or orchestrator may handle interaction and planning.
+
+Noema can instead sit at the consequential execution boundary:
+
+Existing Agent / Orchestrator
+↓
+Noema
+↓
+Enterprise Systems
+
+Noema does not need to own the conversational interface to provide its core value.
+
+Its invariant is the trusted execution boundary.
+
+⸻
+
+16. Why the Ontology Matters
 
 If Noema is going to reason about Intent, it needs stable concepts.
 
 Without a canonical ontology, every integration creates its own interpretation:
 
-Integration A:
-"User"
-Integration B:
-"Actor"
-Integration C:
-"Requester"
-Integration D:
-"Owner"
+Integration A: “User”
+Integration B: “Actor”
+Integration C: “Requester”
+Integration D: “Owner”
 
 Likewise:
 
@@ -471,72 +551,161 @@ The ontology provides a common semantic vocabulary.
 
 That vocabulary becomes the foundation for:
 
+Intent
 Trust
 Interoperability
 Execution
 Auditability
 Domain extension
 
+The ontology is therefore not merely terminology.
+
+It defines the semantic boundaries that make the system composable.
+
 ⸻
 
-15. Why Intent Must Be Canonical
+17. Why Intent Must Be Canonical
 
 If the system repeatedly interprets natural language throughout an execution lifecycle, meaning can drift.
 
 Instead:
 
-Natural Language
-      ↓
+Natural Language / Source
+↓
+Candidate Interpretation
+↓
+Schema Validation
+↓
 Canonical Intent
-      ↓
+↓
 Action
-      ↓
+↓
 Execution
 
-Once canonicalized, downstream systems operate on the same semantic object.
+Once admitted as canonical, the Intent Object becomes the stable semantic contract for downstream execution.
 
-The Intent becomes the stable contract.
+It should be:
+
+Typed
+Schema-validated
+Versioned
+Immutable after admission to Trust
+
+If meaning changes, a new Intent version is created rather than silently mutating the existing one.
 
 ⸻
 
-16. Why Noema Must Own Intent State
+18. Why State Reconciliation Matters
+
+Enterprise execution rarely occurs against a single perfectly synchronized state.
+
+Relevant facts may exist across:
+
+Ledgers
+Payment processors
+Databases
+Events
+Operational systems
+External providers
+
+These sources can disagree, become stale, or expose incomplete information.
+
+Noema therefore needs an explicit State Reconciliation capability.
+
+The system must determine, where possible:
+
+What is known
+What is unknown
+Which source is authoritative for the claim
+How fresh the information is
+Whether sources conflict
+Which state is safe to use for execution
+
+Read-only investigation can therefore be deep and consequential even when it produces no write.
+
+State Reconciliation is not merely an integration concern.
+
+It is part of trustworthy execution.
+
+⸻
+
+19. Why Noema Must Own Intent State
 
 A conventional business system owns business state.
 
-Noema needs to own the state surrounding the Intent lifecycle:
+Noema needs to own the state surrounding the Intent and execution lifecycle:
 
 Expressed
 → Interpreting
-→ Resolved
+→ Validating
+→ Resolving
 → Awaiting Clarification
 → Awaiting Approval
 → Authorized
+→ Planned
 → Executing
+→ Verifying
 → Completed
-→ Verified
+
+With explicit alternatives such as:
+
+Rejected
+Escalated
+Blocked
+Cancelled
+Unknown
 
 This allows Noema to manage long-running and multi-system Intent without taking ownership of the underlying business domains.
 
+Noema owns semantic and execution state.
+
+The enterprise remains authoritative for business state.
+
 ⸻
 
-17. Why the Trust Engine Is Central
+20. Why the Trust Engine Is Central
 
 Without deterministic Trust, Noema becomes another agent framework.
 
-The Trust Engine is what transforms:
+The Trust Engine transforms:
 
-"I think this is what the user means."
+“I think this is what the user means.”
 
 into:
 
-"This Action is justified under the known facts,
-authority, policy, constraints, context, and state."
+“This Action is justified under the resolved facts, authority, policy, constraints, context, capability, and current state available to the system.”
 
-That distinction is the architectural center of Noema.
+Trust therefore exists at the boundary between probabilistic interpretation and consequential execution.
+
+The core boundary is:
+
+Probabilistic
+understand
+interpret
+propose
+candidate generation
+
+════════ HARD BOUNDARY ════════
+
+Deterministic
+validate
+resolve
+reconcile
+authorize / evaluate
+govern
+plan
+execute
+verify
+recover
+audit
+
+The Model may participate in interpretation and proposal.
+
+It does not become the final authority for consequential execution.
 
 ⸻
 
-18. Why “Clarify” Matters
+21. Why “Clarify” Matters
 
 Traditional automation tends to assume that inputs can be made complete before execution.
 
@@ -544,42 +713,53 @@ Natural language breaks that assumption.
 
 Noema must be able to say:
 
-I know what you want.
-I don't know which Resource you mean.
+I know the intended operation.
+I do not know which Resource you mean.
 
 and therefore:
 
 CLARIFY
 
-This is a powerful capability because it converts uncertainty into an explicit interaction rather than an implicit failure.
+Clarification is not an exception path.
+
+It is a first-class Trust outcome.
+
+Noema’s canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+The system must not silently resolve material ambiguity by guessing.
 
 ⸻
 
-19. Why “Deny” Matters
+22. Why “Reject” Matters
 
 A system that can only execute is not trustworthy.
 
-Noema must have explicit negative outcomes:
+Noema must have an explicit negative outcome:
 
-DENY
+REJECT
 
 because some Intents should not become Actions.
 
 Reasons may include:
 
-insufficient authority
-policy violation
-constraint violation
-unsafe state
-missing evidence
-unsupported capability
-ambiguous target
+Insufficient authority
+Policy violation
+Constraint violation
+Unsafe state
+Missing required evidence
+Unsupported capability
+Materially unresolved target
 
-The ability to refuse is part of the product.
+The ability to refuse execution is part of the product.
 
 ⸻
 
-20. Why Outcome Verification Matters
+23. Why Outcome Verification Matters
 
 Most automation ends at:
 
@@ -587,32 +767,101 @@ API returned success.
 
 Noema should end at:
 
-Expected Outcome observed.
+Expected Outcome established by appropriate evidence.
 
 That difference matters enormously when operating across distributed systems.
 
 Noema should be able to distinguish:
 
-Action succeeded
+Action accepted
 
 from:
 
+Action completed
+
+and:
+
 Intent satisfied
+
+Execution may therefore produce:
+
+SUCCESS
+FAILURE
+PARTIAL
+UNKNOWN
+REJECTED
+CANCELLED
+ESCALATED
+BLOCKED
+NOT_FOUND
+NO_RESULT
+
+UNKNOWN is especially important.
+
+A timeout or missing response does not necessarily establish failure.
+
+Noema must verify before retrying when an external execution result is uncertain.
 
 ⸻
 
-21. Why This Becomes More Valuable as Software Becomes More Agentic
+24. Why Causal Auditability Matters
+
+A trustworthy execution system must be able to establish why an Action happened and what evidence supported its result.
+
+Auditability therefore means causal traceability, not exposure of private Model reasoning.
+
+A consequential execution should be traceable through concepts such as:
+
+Source of Intent
+→ Canonical Intent
+→ Resolved Actor / Target
+→ Context and Evidence
+→ State Reconciliation
+→ Trust Decision
+→ Action
+→ Execution Attempt
+→ Verification
+→ Outcome
+
+This makes the system inspectable without requiring private chain-of-thought to become an audit artifact.
+
+⸻
+
+25. Why Structural Safety Matters
+
+Trust should not depend only on the Model behaving correctly.
+
+The architecture itself must constrain what can happen.
+
+Examples include:
+
+Model has no enterprise credentials
+Model cannot directly access enterprise systems
+No free-form Model output reaches execution
+Capabilities are explicit and bounded
+Prohibited capabilities can be unavailable by construction
+Execution revalidates critical contracts
+Arbitrary HTTP or SQL is not treated as an executable capability
+Security does not depend on Model confidence
+
+This is important because better Models increase capability, but capability without structural boundaries increases blast radius.
+
+⸻
+
+26. Why This Becomes More Valuable as Software Becomes More Agentic
 
 As AI systems become increasingly capable of acting, the number of systems that can be operated through natural language will increase.
 
 That creates a new problem:
 
 More capable Models
-        ↓
+↓
 More possible Actions
-        ↓
+↓
 Larger execution surface
-        ↓
+↓
+Greater potential blast radius
+↓
 Greater need for Trust
 
 The more capable the Model becomes, the more important the boundary around its Actions becomes.
@@ -621,29 +870,33 @@ Noema therefore becomes more relevant, not less, as AI improves.
 
 ⸻
 
-22. The Paradox of Better AI
+27. The Paradox of Better AI
 
-Better Models reduce the difficulty of understanding human language.
+Better Models reduce the difficulty of understanding language.
 
 But they increase the number of things a Model can plausibly attempt.
 
 Therefore:
 
 Model Capability ↑
-        ↓
+↓
 Potential Action Surface ↑
-        ↓
+↓
 Potential Blast Radius ↑
-        ↓
+↓
 Need for Deterministic Trust ↑
 
 Noema is designed for this environment.
 
+Its goal is not to make Models less capable.
+
+Its goal is to ensure that increased capability does not automatically become increased authority.
+
 ⸻
 
-23. Why Noema Should Be Model-Agnostic
+28. Why Noema Should Be Model-Agnostic
 
-If Noema’s value depends on one Model, it is an AI application.
+If Noema’s value depends on one Model, it is primarily an AI application.
 
 If Noema’s value persists across Models, it becomes infrastructure.
 
@@ -664,7 +917,7 @@ The semantic contract is not.
 
 ⸻
 
-24. Why Noema Should Be Domain-Agnostic
+29. Why Noema Should Be Domain-Agnostic
 
 The same core concepts should work across:
 
@@ -686,11 +939,13 @@ Constraints
 Actions
 Outcomes
 
-Noema defines the common semantic machinery through which those concepts become executable.
+Noema defines the common semantic machinery through which those concepts become governable and executable.
+
+Domain-specific intelligence should live in enterprise configuration, adapters, and domain extensions rather than being hard-coded into the universal core.
 
 ⸻
 
-25. Why the First Product Should Be Narrow
+30. Why the First Product Should Be Narrow
 
 A universal thesis does not require a universal first product.
 
@@ -707,16 +962,28 @@ The first product should prove the architecture.
 
 It should not attempt to implement the entire vision.
 
+The Nigerian fintech transaction-exception-resolution POC is deliberately narrow for this reason.
+
+It demonstrates:
+
+LOCATE
+EXPLAIN
+RESOLVE
+ROUTE
+RECONSTRUCT
+
+without requiring Noema to solve every enterprise execution problem at once.
+
 ⸻
 
-26. Why Noema Is Defensible
+31. Why Noema Is Defensible
 
 The defensibility should not primarily come from:
 
-a prompt
-a chatbot UI
-an LLM wrapper
-a connector catalog
+A prompt
+A chatbot UI
+An LLM wrapper
+A connector catalog
 
 Those are increasingly commoditized.
 
@@ -732,21 +999,25 @@ Trust Semantics
 +
 Capability Contracts
 +
+Enterprise Action Graph
++
 Policy / Authority Model
 +
 Outcome Model
 +
 Execution History
 +
+Operational Memory
++
 Domain Adapters
 
-Over time, this can become a semantic infrastructure layer that is difficult to reproduce casually.
+Over time, these assets can become a semantic infrastructure layer that is difficult to reproduce casually and increasingly valuable as execution volume and enterprise coverage grow.
 
 ⸻
 
-27. Why the Canonical Documentation Matters
+32. Why the Canonical Documentation Matters
 
-If Noema is ultimately a new semantic layer, the semantics themselves are part of the product.
+If Noema is ultimately a semantic execution layer, the semantics themselves are part of the product.
 
 That is why the Canonical Documentation Repository exists.
 
@@ -759,6 +1030,8 @@ What the system owns
 What it refuses to own
 How Intent becomes Action
 How Trust is determined
+How state is reconciled
+How Outcomes are verified
 How domains extend the model
 
 The documentation is therefore not merely developer documentation.
@@ -767,7 +1040,7 @@ It is the specification of the Noema semantic system.
 
 ⸻
 
-28. Why Noema Must Be Smaller Than Its Vision
+33. Why Noema Must Be Smaller Than Its Vision
 
 The vision is broad.
 
@@ -777,39 +1050,47 @@ Noema should resist becoming:
 
 AI platform
 +
-workflow engine
+Workflow engine
 +
-knowledge graph
+Knowledge graph
 +
 RPA platform
 +
 IAM
 +
-policy engine
+Policy engine
 +
-integration marketplace
+Integration marketplace
 +
-agent framework
+Agent framework
 
 The more responsibilities Noema absorbs, the less distinct the thesis becomes.
 
 The center must remain:
 
 Intent
-    ↓
+↓
 Trust
-    ↓
+↓
 Action
-    ↓
+↓
+Execution
+↓
 Outcome
+
+With verification and recovery surrounding execution.
+
+Noema may use workflows, graphs, policy engines, agents, RPA, retrieval systems, and durable execution substrates.
+
+It should not confuse using those mechanisms with becoming those products.
 
 ⸻
 
-29. The Fundamental Bet
+34. The Fundamental Bet
 
 Noema is making a specific technological bet:
 
-Intent can become a stable, machine-readable abstraction that sits above applications and below human language.
+Intent can become a stable, machine-readable abstraction that sits above applications and below natural language and other sources of Intent.
 
 If this is true, then software can move toward:
 
@@ -821,41 +1102,48 @@ That is the fundamental bet.
 
 ⸻
 
-30. The Fundamental Risk
+35. The Fundamental Risk
 
 The thesis fails if Intent cannot be represented with enough precision to support deterministic execution.
 
 If every meaningful Intent requires:
 
-unbounded Model reasoning
+Unbounded Model reasoning
 
 or:
 
-arbitrary application-specific logic
+Arbitrary application-specific logic
 
 then Noema does not provide a sufficiently strong abstraction.
 
-Therefore the canonical ontology and deterministic Trust layer are not secondary architecture.
+Therefore the canonical ontology, schema-validated Intent Object, deterministic Trust layer, and bounded capability model are not secondary architecture.
 
 They are what make the thesis falsifiable.
 
 ⸻
 
-31. The Standard Noema Question
+36. The Standard Noema Question
 
 For every proposed feature, integration, abstraction, or architectural decision, Noema should ask:
 
-Does this make the transition from human Intent to trustworthy Action more explicit, deterministic, composable, or verifiable?
+Does this make the transition from Intent to trustworthy Action more explicit, deterministic, composable, or verifiable?
+
+Does it strengthen Noema’s ability to establish:
+
+What was intended?
+What was authorized?
+What could be executed?
+What state existed?
+What was attempted?
+What actually happened?
 
 If yes, it may belong in Noema.
 
 If not, it should be questioned.
 
-This is the simplest test for maintaining architectural coherence.
-
 ⸻
 
-32. Why Noema, Ultimately
+37. Why Noema, Ultimately
 
 The reason for building Noema is not:
 
@@ -871,19 +1159,30 @@ Software needs another automation platform.
 
 The deeper reason is:
 
-The interface between human intention and machine execution is becoming the next major abstraction boundary in computing.
+The interface between Intent and machine execution is becoming a major abstraction boundary in computing.
 
-AI has made the human side of that boundary dramatically more expressive.
+AI has made the interpretation side of that boundary dramatically more expressive.
 
-Existing software has made the machine side dramatically more programmable.
+Existing software has made the execution side dramatically more programmable.
 
-Noema is the proposed layer that connects them.
+Noema is the proposed infrastructure layer that connects them through canonical semantics, deterministic Trust, bounded capabilities, execution, and verification.
 
 ⸻
 
-33. Final Statement
+38. Final Statement
 
-Noema exists because humans should not have to translate their goals into the operational language of every software system they use, and Models alone cannot safely perform that translation into action. Noema provides the missing semantic and trust layer: Intent becomes canonical, meaning becomes explicit, authority and constraints become evaluable, Actions become executable, and Outcomes become verifiable.
+Noema exists because Sources of Intent should not have to translate their goals into the operational language of every software system they use, and Models alone cannot safely perform that translation into consequential action.
+
+Noema provides the missing semantic and trust layer:
+
+Intent becomes canonical.
+Meaning becomes explicit.
+State becomes reconcilable.
+Authority and constraints become evaluable.
+Actions become bounded and executable.
+Execution becomes verifiable.
+Outcomes become established.
+The causal history remains auditable.
 
 The shortest expression of why Noema is:
 
@@ -893,14 +1192,16 @@ Noema makes execution trustworthy.
 
 And the deeper thesis is:
 
-Human Intent
-      ↓
+Source of Intent
+↓
 Canonical Meaning
-      ↓
+↓
+State Reconciliation
+↓
 Deterministic Trust
-      ↓
+↓
 Executable Action
-      ↓
+↓
 Verified Outcome
 
 That is the layer Noema exists to build.
