@@ -9,7 +9,7 @@ Canonical Path: data/persistence.md
 
 1. Definition
 
-Persistence defines what Noema retains, why it retains it, how persisted information relates to enterprise state, and the guarantees required to reconstruct, audit, recover, and operate an Intent execution safely.
+Persistence defines what Noema retains, why it retains it, how persisted information relates to enterprise state, and the guarantees required to reconstruct, audit, recover, reconcile, and safely operate an Intent execution.
 
 Persistence answers:
 
@@ -17,7 +17,9 @@ Persistence answers:
 
 Persistence is therefore not simply a database concern.
 
-It is an execution, trust, and auditability concern.
+It is an execution, trust, recovery, reconciliation, and auditability concern.
+
+Persistence gives Noema durable memory of its own execution domain without transferring ownership of enterprise Business State to Noema.
 
 ⸻
 
@@ -31,6 +33,8 @@ receive Intent
       ↓
 resolve Intent
       ↓
+reconcile relevant state
+      ↓
 evaluate Trust
       ↓
 execute Action
@@ -39,11 +43,13 @@ lose network connectivity
       ↓
 restart
       ↓
-recover execution
+recover Execution
+      ↓
+reconcile current state
       ↓
 verify Outcome
 
-If the relevant state existed only in process memory, Noema could lose the information required to safely continue.
+If relevant state existed only in process memory, Noema could lose the information required to safely continue.
 
 Persistence provides continuity across:
 
@@ -55,16 +61,27 @@ Persistence provides continuity across:
 * long-running workflows
 * reconciliation
 * auditing
+* recovery
+* deterministic reconstruction
 
 ⸻
 
 3. Core Principle
 
-Persist what Noema must remember to remain deterministic, recoverable, and accountable.
+Persist what Noema must remember to remain deterministic, recoverable, reconcilable, and accountable.
 
 Noema should not persist everything simply because it can.
 
-The persistence boundary should be driven by operational and semantic requirements.
+The persistence boundary should be driven by:
+
+* operational requirements
+* execution semantics
+* trust requirements
+* recovery requirements
+* reconciliation requirements
+* audit requirements
+* enterprise retention requirements
+* data minimization requirements
 
 ⸻
 
@@ -78,23 +95,31 @@ Enterprise System of Record
 
 Noema may persist:
 
-Intent
-Trust decisions
-Execution records
-Action metadata
-Evidence references
-Audit information
-Recovery state
+* Intent
+* Intent versions
+* Trust decisions
+* Execution records
+* Action metadata
+* Evidence references
+* Context snapshots
+* Reconciliation records
+* recovery state
+* audit information
+* intervention state
+* operational history
 
 while the enterprise remains authoritative for:
 
-accounts
-balances
-payments
-orders
-employees
-inventory
-business transactions
+* accounts
+* balances
+* payments
+* orders
+* employees
+* inventory
+* business transactions
+* other enterprise Business State
+
+Persistence does not transfer authority merely because Noema stores a representation of information.
 
 ⸻
 
@@ -102,54 +127,83 @@ business transactions
 
 Conceptually:
 
-Enterprise Systems
+Enterprise Systems of Record
         │
         │ authoritative state
         ▼
-   Integration Layer
+Validated Integration / Observation
         │
         ▼
-     Noema Runtime
+State Reconciliation
         │
         ▼
-   Noema Persistence
+Noema Runtime
+        │
+        ▼
+Noema Persistence
 
-Noema Persistence records what Noema needs to operate and explain its execution.
+Noema Persistence records what Noema needs to operate, recover, reconcile, and explain its execution.
 
 It does not become a shadow database for the enterprise.
 
 ⸻
 
-6. What Noema Should Persist
+6. Semantic Persistence Boundary
+
+Persistence must preserve distinctions between:
+
+Noema execution state
+Enterprise Business State
+Evidence
+Fact Status
+Context
+Historical observation
+Canonical Data Reference
+Audit Record
+Cache
+
+These may be physically stored in the same infrastructure while remaining semantically different.
+
+A database table does not determine semantic ownership.
+
+⸻
+
+7. What Noema Should Persist
 
 The persistence layer should generally retain information required to reconstruct consequential execution.
 
 This may include:
 
-Intent
-Intent lifecycle
-Resolved Intent
-Context snapshots
-Trust evaluations
-Trust state transitions
-Evidence references
-Policy decisions
-Action selections
-Execution records
-Execution attempts
-Idempotency information
-Failure information
-Recovery state
-Human intervention
-Compensation state
-Outcome observations
-Audit records
+* Intent
+* Intent lifecycle
+* Intent versions
+* resolved actor/action/target references
+* Context snapshots
+* Evidence references
+* Fact Status
+* State Reconciliation results
+* Trust evaluations
+* Trust state transitions
+* policy references
+* Action selections
+* Action Contract versions
+* Execution records
+* Execution attempts
+* idempotency information
+* external operation identifiers
+* failure information
+* recovery state
+* human intervention
+* compensation state
+* Outcome observations
+* audit records
+* causal relationships
 
 The exact retention policy is implementation- and enterprise-dependent.
 
 ⸻
 
-7. What Noema Should Generally Not Persist
+8. What Noema Should Generally Not Persist
 
 Noema should avoid unnecessarily duplicating enterprise Business State.
 
@@ -161,33 +215,40 @@ Noema generally should not maintain its own independently authoritative:
 
 Account.balance
 
-Instead, it may persist:
+Instead, it may persist a scoped observation such as:
 
-Evidence:
+Claim:
 Ledger reported balance = $10,000
-observed_at = ...
+Source:
+Ledger
+Observed:
+2026-08-25T10:42:00Z
 
-when required for execution or audit.
+The persisted observation records what Noema observed.
+
+It does not become a second System of Record.
 
 ⸻
 
-8. Persistence Categories
+9. Persistence Categories
 
 A useful conceptual division is:
 
-Operational State
-Historical Record
-Evidence
-Execution State
-Audit Record
-Reference
-Cache
+* Operational State
+* Historical Record
+* Evidence
+* Fact
+* Execution State
+* Reconciliation Record
+* Audit Record
+* Reference
+* Cache
 
 These categories should not be conflated.
 
 ⸻
 
-9. Operational State
+10. Operational State
 
 Operational State represents information required for Noema to continue active work.
 
@@ -200,15 +261,18 @@ next_action = VERIFY_REFUND
 
 Operational State may be mutable.
 
+It describes the current durable state of Noema’s own execution domain.
+
 ⸻
 
-10. Historical Record
+11. Historical Record
 
 Historical Records preserve what happened.
 
 Examples:
 
 Intent received
+Intent resolved
 Trust evaluated
 Action attempted
 Policy evaluated
@@ -219,7 +283,7 @@ Historical records should generally be append-oriented or otherwise protected ag
 
 ⸻
 
-11. Evidence Persistence
+12. Evidence Persistence
 
 Noema may persist Evidence required to reconstruct why a decision was made.
 
@@ -228,16 +292,117 @@ For example:
 Evidence:
 Payment API reported status = SUCCEEDED
 
-The record should preserve sufficient provenance to determine:
+The persisted record should preserve sufficient provenance to determine:
 
-what was observed
-where it came from
-when it was observed
-what claim it supported
+* what was observed
+* where it came from
+* when it was observed
+* under what scope it was observed
+* what claim it supported
+* which source or reference produced it
+
+Evidence supports claims.
+
+Evidence is not automatically truth.
 
 ⸻
 
-12. Execution Persistence
+13. Fact Status Persistence
+
+Fact Status should be persisted where it materially affects Trust, execution, reconciliation, recovery, or audit.
+
+Canonical Fact Status values are:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Fact Status is distinct from:
+
+Evidence
+Context
+State
+Outcome
+Canonical Data
+
+A persisted fact may therefore look conceptually like:
+
+Claim:
+payment.status = SUCCEEDED
+Fact Status:
+VERIFIED
+Evidence:
+evidence_42
+Observed At:
+10:42
+
+The status describes the evaluated state of the claim.
+
+It does not turn every representation of that claim into enterprise truth.
+
+⸻
+
+14. Model Confidence Is Not Fact Status
+
+Model confidence must not be persisted or interpreted as authoritative fact status.
+
+For example:
+
+model_confidence = 0.97
+
+does not mean:
+
+Fact Status = VERIFIED
+
+Model confidence is interpretation metadata.
+
+Fact Status is a semantic evaluation of a claim based on evidence, authority, freshness, reconciliation, and applicable rules.
+
+⸻
+
+15. Hard Schema Validation Before Persistence
+
+External information must not become canonical Noema data merely because it was received.
+
+Enterprise payloads, events, tool responses, and other external inputs are untrusted until they pass the applicable validation and admission boundary.
+
+Conceptually:
+
+External Input
+      ↓
+Schema Validation
+      ↓
+Semantic Validation / Classification
+      ↓
+Admission
+      ↓
+Persistence
+
+Malformed or non-admitted data must not be persisted as authoritative canonical data.
+
+Raw input may be retained for debugging or audit where explicitly permitted, but its status must remain distinguishable from admitted semantic data.
+
+⸻
+
+16. Persistence of Untrusted Inputs
+
+Persistence may retain untrusted input when required for:
+
+* debugging
+* security investigation
+* audit
+* evaluation
+* forensic analysis
+
+However, retention does not upgrade its authority.
+
+A persisted model response, user message, tool response, or external payload remains untrusted unless it has passed the appropriate semantic boundaries.
+
+⸻
+
+17. Execution Persistence
 
 Every consequential Action should have a durable Execution identity.
 
@@ -246,7 +411,9 @@ Conceptually:
 Execution {
     execution_id
     intent_id
+    intent_version
     action
+    target
     state
     attempts
     outcome
@@ -254,9 +421,11 @@ Execution {
 
 This allows Noema to recover an Execution after process failure.
 
+The physical representation is implementation-dependent.
+
 ⸻
 
-13. Intent Persistence
+18. Intent Persistence
 
 Intent may need to survive beyond the original request.
 
@@ -268,11 +437,36 @@ Needs clarification
    ↓
 User responds 4 hours later
 
-The Intent state must remain available.
+The relevant Intent state must remain available.
+
+The persisted Intent must preserve its semantic version.
 
 ⸻
 
-14. Intent Lifecycle Persistence
+19. Intent Version Persistence
+
+Once an Intent is admitted to Trust, it is immutable.
+
+A material change creates a new Intent version.
+
+Example:
+
+Intent v1
+"Refund my last payment."
+        ↓ clarification
+Intent v2
+"Refund payment #123."
+
+Persistence must preserve:
+
+v1
+superseded_by → v2
+
+Noema must not silently mutate the meaning of historical Intent.
+
+⸻
+
+20. Intent Lifecycle Persistence
 
 Noema should persist meaningful Intent transitions.
 
@@ -280,27 +474,39 @@ Example:
 
 RECEIVED
    ↓
-UNDERSTOOD
+INTERPRETING
+   ↓
+VALIDATING
+   ↓
+ADMITTED
    ↓
 RESOLVING
    ↓
 RESOLVED
    ↓
-TRUST_EVALUATING
+TRUST_PENDING
+   ↓
+READY_FOR_ACTION
    ↓
 EXECUTING
+   ↓
+VERIFYING
+   ↓
+COMPLETED
 
-The exact state machine is defined elsewhere.
+The exact lifecycle is defined by the Intent Contract.
 
 Persistence records its occurrence and history.
 
+Intent lifecycle state must not be conflated with Trust outcomes or enterprise Business State.
+
 ⸻
 
-15. Context Persistence
+21. Context Persistence
 
 Context may need to be persisted when it is necessary to explain or resume an Execution.
 
-However, Noema should distinguish:
+However, Noema must distinguish:
 
 Context Snapshot
 
@@ -308,13 +514,13 @@ from:
 
 Enterprise Current State
 
-A Context Snapshot describes what Noema knew at a particular point.
+A Context Snapshot describes what Noema had available at a particular point.
 
 It does not automatically remain current.
 
 ⸻
 
-16. Context Snapshot
+22. Context Snapshot
 
 Conceptually:
 
@@ -326,177 +532,209 @@ ContextSnapshot {
     relevant_resources
     relevant_state
     evidence_refs
+    fact_status_refs
     policy_refs
+    graph_version
 }
 
 This allows Noema to reconstruct the decision environment.
 
+A snapshot is historical runtime context, not a shadow System of Record.
+
 ⸻
 
-17. Snapshot vs Live State
+23. Snapshot vs Live State
 
 This distinction is fundamental.
 
 Snapshot:
+
 Account.status = ACTIVE
-observed at 10:30
+observed_at = 10:30
+
 Live Enterprise State:
+
 Account.status = SUSPENDED
-observed at 10:45
+observed_at = 10:45
 
 Both can be valid.
 
-The first describes what Noema knew at 10:30.
+The first describes what Noema observed at 10:30.
 
-The second describes current enterprise state.
+The second describes the later enterprise observation.
 
-⸻
-
-18. Trust Persistence
-
-Trust decisions should be persisted when they affect consequential execution.
-
-For example:
-
-Trust Decision:
-EXECUTE
-
-should be associated with:
-
-Intent
-Evidence
-Policy
-Risk
-Authorization
-timestamp
-
-This enables later reconstruction.
+Persistence must preserve temporal semantics rather than collapsing them into one mutable value.
 
 ⸻
 
-19. Trust Decision Is Not Enterprise Policy
+24. Canonical Data References
 
-Noema may persist:
-
-Trust Decision = EXECUTE
-
-but that does not make Noema the owner of:
-
-Enterprise Policy
-
-The enterprise remains authoritative for its policies unless explicitly delegated otherwise.
-
-⸻
-
-20. Policy Persistence
-
-Noema may persist:
-
-policy identifier
-policy version
-policy evaluation result
-policy inputs
-
-rather than necessarily storing the complete enterprise policy.
-
-Where the policy itself is managed by Noema, the persistence model must retain the relevant version and lifecycle.
-
-⸻
-
-21. Action Persistence
-
-Noema should persist enough information to determine which Action was selected.
-
-Example:
-
-Action:
-refund_payment
-Resource:
-Payment #123
-Action Contract:
-refund_payment.v3
-
-The Action identity should remain stable enough for audit and recovery.
-
-⸻
-
-22. Action Contract Version
-
-Execution records should preserve the Action Contract version used.
-
-Example:
-
-Action:
-refund_payment
-Contract:
-v3
-
-If the contract later changes to:
-
-v4
-
-historical executions should not silently appear to have used v4.
-
-⸻
-
-23. Execution Attempt Persistence
-
-Each actual attempt should be distinguishable.
-
-Execution #100
- ├── Attempt #1
- ├── Attempt #2
- └── Attempt #3
-
-Each attempt may have:
-
-started_at
-completed_at
-request identity
-response
-failure
-timeout
-retry decision
-
-⸻
-
-24. Idempotency Persistence
-
-Idempotency information must survive process restarts when the underlying Action requires it.
+Persistence may retain references to Canonical Data owned by an authoritative enterprise source.
 
 Conceptually:
 
-Idempotency Key
-      ↓
-Execution
-      ↓
-Action
+CanonicalDataReference {
+    claim
+    subject
+    attribute
+    value
+    source_system
+    authority_scope
+    observed_at
+    effective_at
+    source_version
+    freshness
+    provenance
+}
 
-This prevents a restarted worker from interpreting an existing execution as new work.
+Canonicality is scoped.
+
+A source may be authoritative for one claim within one domain and not authoritative for another.
 
 ⸻
 
-25. Persistence and Retries
+25. Source, Authority, Freshness, and Authorization
 
-Retries require durable knowledge of previous attempts.
+Persistence must not collapse these dimensions.
+
+They answer different questions:
+
+Source:
+Where did the information come from?
+Authority:
+Is this source authoritative for this claim within this scope?
+Freshness:
+How current is the observation?
+Authorization:
+Is this information or operation permitted to be accessed or used here?
+Availability:
+Can the information currently be obtained?
+
+A source being available does not make it authoritative.
+
+A source being authoritative does not mean the data is fresh.
+
+A persisted reference does not grant authorization to access the underlying resource.
+
+⸻
+
+26. State Reconciliation Persistence
+
+State Reconciliation is a first-class persistence concern.
+
+Noema may receive observations from multiple enterprise systems:
+
+Switch
+Ledger
+Payment Processor
+Customer System
+Operational System
+
+Those observations may disagree, arrive out of order, or become stale.
+
+Persistence should retain sufficient information to reconstruct the reconciliation process.
+
+Conceptually:
+
+StateReconciliation {
+    subject
+    observations[]
+    authority_rules
+    freshness_requirements
+    result
+    fact_status
+    conflicts[]
+    reconciled_at
+}
+
+⸻
+
+27. Reconciliation Is Not Canonicality Creation
+
+State Reconciliation does not invent authority.
+
+It evaluates observations according to explicit:
+
+* authority rules
+* source scope
+* temporal semantics
+* freshness requirements
+* conflict rules
+* reconciliation policy
+
+The result may be:
+
+VERIFIED
+CONFLICTED
+UNKNOWN
+STALE
+
+where applicable.
+
+Reconciliation selects an explicit interpretation of available observations.
+
+It does not manufacture enterprise truth.
+
+⸻
+
+28. Persistence and Reconciliation
+
+Reconciliation compares persisted observations and Noema expectations with current enterprise observations.
 
 Example:
 
-Attempt 1
-   ↓
-timeout
-   ↓
-restart
-   ↓
-Attempt history recovered
-   ↓
-determine whether retry is safe
+Persisted:
+Execution = EXPECTED_SUCCESS
+Enterprise:
+Payment = SUCCEEDED
+Result:
+reconciled
 
-Without persistence, Noema may accidentally duplicate an Action.
+Or:
+
+Persisted:
+Execution = EXPECTED_SUCCESS
+Enterprise:
+Payment = FAILED
+Result:
+discrepancy
+
+The discrepancy must remain explicit until resolved.
 
 ⸻
 
-26. Persistence and Unknown Outcomes
+29. Persistence and Unknown State
+
+Unknown is first-class.
+
+Persistence must be able to represent uncertainty for:
+
+* values
+* identity
+* resources
+* facts
+* state
+* reconciliation
+* execution
+* outcomes
+
+NULL is not sufficient to express these semantics.
+
+For example:
+
+Outcome = UNKNOWN
+
+must not be silently represented as:
+
+Outcome = FAILED
+
+or:
+
+Outcome = SUCCESS
+
+⸻
+
+30. Unknown Execution Outcomes
 
 One of the most important persistence requirements is preserving uncertainty.
 
@@ -512,15 +750,220 @@ Noema must persist:
 
 UNKNOWN
 
-rather than:
+unless the failure or success is subsequently established.
 
-FAILED
+A timeout is an execution condition.
 
-unless the failure is actually established.
+It is not automatically an Outcome.
 
 ⸻
 
-27. Recovery
+31. Trust Persistence
+
+Trust decisions should be persisted when they affect consequential execution.
+
+For example:
+
+Trust Decision:
+EXECUTE
+
+should be associated with:
+
+* exact Intent version
+* resolved actor
+* resolved Action
+* resolved target
+* relevant Evidence
+* Fact Status
+* applicable Policy version
+* Action Contract version
+* graph/capability version where applicable
+* decision timestamp
+* decision validity
+* decision context
+
+⸻
+
+32. Trust EXECUTE Is Not Success
+
+Persistence must preserve the distinction:
+
+Trust = EXECUTE
+
+means:
+
+The resolved execution path satisfied the applicable Trust conditions and may proceed.
+
+It does not mean:
+
+Action succeeded
+
+Success is established through execution and verification.
+
+Historical records must preserve these semantics.
+
+⸻
+
+33. Trust Decision Is Not Enterprise Policy
+
+Noema may persist:
+
+Trust Decision = EXECUTE
+
+but that does not make Noema the owner of:
+
+Enterprise Policy
+
+The enterprise remains authoritative for its business policy semantics unless explicitly delegated otherwise.
+
+Noema deterministically evaluates the applicable policy and trust conditions.
+
+⸻
+
+34. Policy Persistence
+
+Noema may persist:
+
+* policy identifier
+* policy version
+* policy evaluation result
+* relevant policy inputs
+* policy provenance
+
+rather than necessarily storing the complete enterprise policy.
+
+Where the policy itself is managed by Noema, persistence must retain the relevant version and lifecycle.
+
+⸻
+
+35. Action Persistence
+
+Noema should persist enough information to determine which Action was selected.
+
+Example:
+
+Action:
+refund_payment
+Resource:
+Payment #123
+Action Contract:
+refund_payment.v3
+
+Action identity should remain stable enough for audit and recovery.
+
+An Action refers to an explicitly registered capability, Action Contract, or Enterprise Action Graph operation.
+
+It is not an arbitrary function generated by a model.
+
+⸻
+
+36. Planner Bounds
+
+Persistence may record planner decisions, but persistence must not imply planner authority.
+
+The Planner may select among:
+
+* Enterprise Action Graph capabilities
+* registered capabilities
+* Action Contracts
+* permitted execution paths
+
+It may not:
+
+* invent capabilities
+* invent authority
+* modify Action Contracts
+* bypass Trust
+* bypass schema validation
+* directly execute arbitrary operations
+
+Historical planner output must therefore remain subordinate to the deterministic execution boundary.
+
+⸻
+
+37. Action Contract Version
+
+Execution records should preserve the Action Contract version used.
+
+Example:
+
+Action:
+refund_payment
+Contract:
+v3
+
+If the contract later changes to:
+
+v4
+
+historical executions must not silently appear to have used v4.
+
+⸻
+
+38. Execution Attempt Persistence
+
+Each actual attempt should be distinguishable.
+
+Execution #100
+ ├── Attempt #1
+ ├── Attempt #2
+ └── Attempt #3
+
+Each attempt may have:
+
+* started_at
+* completed_at
+* request identity
+* response reference
+* failure
+* timeout
+* external operation ID
+* retry decision
+* verification status
+
+⸻
+
+39. Idempotency Persistence
+
+Idempotency information must survive process restarts when the underlying Action requires it.
+
+Conceptually:
+
+Idempotency Key
+      ↓
+Execution
+      ↓
+Action
+
+This prevents a restarted worker from interpreting an existing execution as new work.
+
+Idempotency semantics belong to the Action and Execution contracts, not to persistence alone.
+
+⸻
+
+40. Persistence and Retries
+
+Retries require durable knowledge of previous attempts.
+
+Example:
+
+Attempt 1
+   ↓
+timeout
+   ↓
+restart
+   ↓
+Attempt history recovered
+   ↓
+reconcile
+   ↓
+determine whether retry is safe
+
+Without persistence and reconciliation, Noema may accidentally duplicate an Action.
+
+⸻
+
+41. Recovery
 
 Persistence allows Noema to reconstruct an interrupted Execution.
 
@@ -534,6 +977,8 @@ recover Execution
    ↓
 inspect state
    ↓
+reconcile
+   ↓
 revalidate
    ↓
 continue / retry / clarify / escalate
@@ -542,7 +987,7 @@ Recovery must not simply resume blindly from the last instruction.
 
 ⸻
 
-28. Recovery Requires Revalidation
+42. Recovery Requires Revalidation
 
 Persisted state is historical information.
 
@@ -554,17 +999,19 @@ Persisted Context
       ↓
 Recovery
       ↓
-Revalidation
+State Reconciliation
       ↓
 Current Context
       ↓
 Trust Re-evaluation
+      ↓
+Permitted continuation
 
 This is particularly important for Actions involving mutable resources.
 
 ⸻
 
-29. Persistence and Determinism
+43. Persistence and Determinism
 
 Persistence contributes to deterministic behavior by preserving the inputs and decisions required to reconstruct execution.
 
@@ -582,33 +1029,42 @@ Intent
 +
 historical state
 +
-evidence
+Evidence
 +
-policy version
+Fact Status
 +
-execution history
+Policy version
++
+Action Contract version
++
+Execution history
 =
 recoverable decision
 
 ⸻
 
-30. Persistence Does Not Guarantee Determinism
+44. Persistence Does Not Guarantee Determinism
 
 Persistence alone is insufficient.
 
 Noema also requires:
 
-explicit state
-explicit policies
-explicit contracts
-explicit transitions
-explicit evidence
+* explicit state
+* explicit policies
+* explicit contracts
+* explicit transitions
+* explicit evidence
+* deterministic reconciliation rules
+* explicit authority
+* explicit versioning
 
-Persistence records those semantics; it does not create them.
+Persistence records those semantics.
+
+It does not create them.
 
 ⸻
 
-31. Event vs State Persistence
+45. Event vs State Persistence
 
 Noema should distinguish:
 
@@ -620,13 +1076,38 @@ from:
 State:
 payment.status = REFUNDED
 
-An event may be persisted as part of the history.
+An event may be persisted as part of history.
 
-The current enterprise state remains owned by the authoritative system.
+Current enterprise state remains owned by the authoritative system.
+
+A persisted event is not automatically a current canonical state assertion.
 
 ⸻
 
-32. Append-Oriented History
+46. Events as Observations
+
+Enterprise events are observations or occurrences.
+
+They may contribute to State Reconciliation.
+
+For example:
+
+PaymentRefunded event
+        ↓
+observation
+        ↓
+State Reconciliation
+        ↓
+payment.status = REFUNDED
+Fact Status = VERIFIED
+
+The event itself does not automatically establish the final state.
+
+Out-of-order events, missing events, duplicate events, and eventual consistency must remain representable.
+
+⸻
+
+47. Append-Oriented History
 
 Consequential transitions should preferably produce append-oriented records.
 
@@ -634,11 +1115,14 @@ For example:
 
 Intent received
 Intent resolved
+Context captured
+Evidence collected
 Trust evaluated
 Action selected
 Attempt started
-Attempt failed
-Retry scheduled
+Attempt timed out
+Reconciliation performed
+Retry evaluated
 Attempt completed
 Outcome verified
 
@@ -646,19 +1130,19 @@ This provides a durable execution history.
 
 ⸻
 
-33. Event Sourcing Is Not Required
+48. Event Sourcing Is Not Required
 
 Noema may use event sourcing internally, but the semantic model does not require it.
 
 The principle is:
 
-Noema must preserve sufficient history to reconstruct consequential decisions and execution.
+Noema must preserve sufficient history to reconstruct consequential decisions, state transitions, reconciliation, and execution.
 
 The underlying persistence technology is an implementation choice.
 
 ⸻
 
-34. Transactional Boundaries
+49. Transactional Boundaries
 
 Persistence operations should have clear transactional semantics.
 
@@ -674,11 +1158,11 @@ but:
 
 Execution record does not exist
 
-unless the system explicitly handles that uncertainty.
+unless the architecture explicitly models and recovers that uncertainty.
 
 ⸻
 
-35. Persistence and Action Dispatch
+50. Persistence and Action Dispatch
 
 A critical distributed-systems problem is:
 
@@ -698,13 +1182,13 @@ or:
 dispatch succeeded
 persistence failed
 
-The latter is especially dangerous.
+The latter is especially dangerous because the external effect may exist without a corresponding local record.
+
+Reconciliation and external operation identifiers are therefore essential.
 
 ⸻
 
-36. Persistence and the Execution Boundary
-
-Noema should define a durable boundary around Action dispatch.
+51. Persistence and the Execution Boundary
 
 Conceptually:
 
@@ -712,19 +1196,21 @@ Intent
    ↓
 Trust
    ↓
-Persist Execution
+Persist Execution Identity
    ↓
 Dispatch Action
    ↓
-Observe Result
+Observe / Reconcile
    ↓
 Persist Outcome
 
 The exact ordering depends on the execution architecture and delivery guarantees.
 
+The semantic requirement is that Noema must explicitly model uncertainty around the dispatch boundary.
+
 ⸻
 
-37. At-Least-Once Reality
+52. At-Least-Once Reality
 
 Distributed execution commonly results in at-least-once delivery.
 
@@ -738,7 +1224,7 @@ Idempotency and durable Execution identity are therefore fundamental.
 
 ⸻
 
-38. Exactly-Once Claims
+53. Exactly-Once Claims
 
 Noema should not casually claim exactly-once execution.
 
@@ -748,9 +1234,10 @@ exactly-once logical effect
 
 through:
 
-idempotency
-deduplication
-transactional boundaries
+* idempotency
+* deduplication
+* transactional boundaries
+* reconciliation
 
 without literally guaranteeing exactly-once message delivery.
 
@@ -758,22 +1245,25 @@ The distinction matters.
 
 ⸻
 
-39. Persistence and Human Intervention
+54. Persistence and Human Intervention
 
 Human intervention may occur long after an Execution enters a blocked state.
 
-Therefore the system must persist:
+Therefore the system may need to persist:
 
-reason for intervention
-relevant Evidence
-current state
-requested decision
-operator decision
-timestamp
+* reason for intervention
+* relevant Evidence
+* Fact Status
+* current Noema state
+* requested decision
+* operator decision
+* actor identity
+* timestamp
+* associated Intent and Execution versions
 
 ⸻
 
-40. Persistence and Compensation
+55. Persistence and Compensation
 
 Compensation may depend on historical Execution state.
 
@@ -786,34 +1276,52 @@ create subscription → failed
 
 To determine whether compensation is required, Noema needs durable knowledge of Action A’s outcome.
 
+Compensation itself must execute through authorized enterprise capabilities.
+
+Noema should not compensate by mutating a local shadow copy of enterprise state.
+
 ⸻
 
-41. Persistence and Auditability
+56. Persistence and Auditability
 
 Persistence is one of the foundations of auditability.
 
 Noema should be able to answer:
 
-What did the user ask?
-What did Noema understand?
-What resources were identified?
-What evidence was available?
-What policy applied?
-What Trust decision was made?
-What Action was selected?
-What attempts occurred?
-What changed?
-What was the final outcome?
+* What did the source of intent provide?
+* What did Noema understand?
+* Which Intent version was admitted?
+* What resources were identified?
+* Which actor and target were resolved?
+* What evidence was available?
+* What was the Fact Status of relevant claims?
+* Which enterprise source was authoritative?
+* What state was reconciled?
+* What policy applied?
+* What Trust decision was made?
+* Which Action Contract was selected?
+* What attempts occurred?
+* What changed?
+* What was verified?
+* What was the final Outcome?
 
 ⸻
 
-42. Persistence and Explainability
+57. Persistence and Explainability
 
 The explanation of a consequential decision should be reconstructible from persisted records.
 
+Conceptually:
+
 Intent
   ↓
+Resolution
+  ↓
 Evidence
+  ↓
+Fact Status
+  ↓
+State Reconciliation
   ↓
 Policy
   ↓
@@ -823,13 +1331,17 @@ Action
   ↓
 Execution
   ↓
+Verification
+  ↓
 Outcome
 
-If these relationships disappear after execution, Noema cannot reliably explain its behavior.
+This is causal traceability.
+
+It does not require exposing private model chain-of-thought.
 
 ⸻
 
-43. Persistence and Provenance
+58. Persistence and Provenance
 
 Persisted records should preserve references to the origin of important information.
 
@@ -838,31 +1350,80 @@ For example:
 Evidence #42
 source = Payment System
 observed_at = 10:42
-version = 781
+source_version = 781
+claim = payment.status = SUCCEEDED
 
 This is more valuable than simply storing:
 
 payment_status = succeeded
 
+without provenance.
+
 ⸻
 
-44. Persistence and Versioning
+59. Persistence and Causal Audit
+
+Where meaningful, Noema should preserve relationships such as:
+
+Clarification caused by Ambiguity
+Reconciliation caused by Conflicting Observations
+Trust Re-evaluation caused by State Change
+Retry caused by Recoverable Failure
+Compensation caused by Partial Outcome
+Escalation caused by Unresolved Unknown
+
+This creates causal execution history rather than merely chronological logs.
+
+⸻
+
+60. Persistence and Versioning
 
 Important Noema artifacts should be versionable where changes could affect execution semantics.
 
 Examples:
 
-Action Contract
-Policy
-Intent schema
-Integration mapping
-Trust configuration
+* Intent version
+* Context schema/version
+* Trust Contract version
+* Action Contract version
+* Execution Contract version
+* Policy version
+* integration mapping version
+* Enterprise Action Graph version
+* capability registry version
+* relevant data/source version
 
 Historical executions must retain the versions relevant to their decisions.
 
 ⸻
 
-45. Persistence and Schema Evolution
+61. Data Versioning vs Contract Versioning
+
+Data versioning must not be confused with Contract Versioning.
+
+For example:
+
+Source Version:
+Ledger snapshot 781
+Observed At:
+10:42
+Effective At:
+10:40
+
+is different from:
+
+Action Contract:
+refund_payment.v3
+
+Data versioning describes information or source state.
+
+Contract versioning describes semantic contract behavior.
+
+Both may need to be preserved.
+
+⸻
+
+62. Persistence and Schema Evolution
 
 Noema’s persistence model will evolve.
 
@@ -870,65 +1431,91 @@ Historical records should remain interpretable after schema changes.
 
 Therefore Noema should consider:
 
-schema version
-contract version
-migration strategy
-backward compatibility
+* persistence schema version
+* semantic object version
+* contract version
+* migration strategy
+* backward compatibility
+* historical interpretation
 
-for durable records.
+A schema migration must not silently alter historical semantic meaning.
 
 ⸻
 
-46. Persistence and Integration
+63. Persistence and Migration
+
+Migration must preserve semantic meaning.
+
+For example:
+
+Historical:
+FAILED
+
+must not become:
+
+UNKNOWN
+
+simply because a new schema uses different state definitions.
+
+If semantic meaning genuinely changes, the migration must explicitly represent that change rather than silently rewriting history.
+
+⸻
+
+64. Persistence and Integration
 
 Integration responses should not necessarily be persisted wholesale.
 
 Noema should retain the information required to establish:
 
-claim
-provenance
-decision
-execution
-audit
+* claim
+* provenance
+* authority
+* Fact Status
+* reconciliation result
+* decision
+* execution
+* audit
 
 while minimizing unnecessary duplication.
 
 ⸻
 
-47. Persistence and Data Minimization
+65. Persistence and Data Minimization
 
 Persistence should follow:
 
-Store the minimum information required to preserve Noema’s operational and accountability guarantees.
+Store the minimum information required to preserve Noema’s operational, safety, recovery, reconciliation, and accountability guarantees.
 
 This reduces:
 
-storage cost
-privacy exposure
-security surface
-data duplication
-retention burden
+* storage cost
+* privacy exposure
+* security surface
+* data duplication
+* retention burden
 
 ⸻
 
-48. Persistence and Sensitive Enterprise Data
+66. Persistence and Sensitive Enterprise Data
 
 Persisting Evidence may expose sensitive enterprise information.
 
 Therefore persistence must respect:
 
-authorization
-classification
-encryption
-retention
-tenant isolation
-organizational boundaries
+* authorization
+* classification
+* encryption
+* retention
+* tenant isolation
+* organizational boundaries
+* legal boundaries
+* data residency
 
 Noema’s need to explain a decision does not override enterprise data controls.
 
 ⸻
 
-49. Tenant Isolation
+67. Tenant Isolation
 
 Persisted Noema data must preserve tenant boundaries.
 
@@ -943,24 +1530,28 @@ Tenant B
 
 Cross-tenant access must be explicitly authorized.
 
+Tenant identity should be part of the semantic scope of persisted records where applicable.
+
 ⸻
 
-50. Organizational Isolation
+68. Organizational Isolation
 
 The same principle applies within an enterprise.
 
 Noema must respect:
 
-organization
-business unit
-environment
-legal entity
+* organization
+* business unit
+* environment
+* legal entity
+* regional boundary
+* data domain
 
 when persistence contains data derived from those boundaries.
 
 ⸻
 
-51. Persistence and Access Control
+69. Persistence and Access Control
 
 Persistence itself must not become an authorization bypass.
 
@@ -970,15 +1561,18 @@ refund_payment
 
 does not necessarily have access to:
 
-all historical Evidence
-all tenant data
-all Execution records
+* all historical Evidence
+* all tenant data
+* all Execution records
+* all Context snapshots
 
 Access to persisted information must be separately governed.
 
+Technical, policy, and business authorization remain distinct.
+
 ⸻
 
-52. Persistence and Deletion
+70. Persistence and Deletion
 
 Deletion requirements may conflict with audit requirements.
 
@@ -996,37 +1590,38 @@ Where records cannot be deleted due to legal or audit requirements, access must 
 
 ⸻
 
-53. Retention
+71. Retention
 
 Retention should be defined according to:
 
-record type
-enterprise policy
-legal requirements
-operational requirements
-audit requirements
-data classification
+* record type
+* enterprise policy
+* legal requirements
+* operational requirements
+* audit requirements
+* data classification
+* Action risk
 
 Not all Noema data requires the same retention period.
 
 ⸻
 
-54. Expiration
+72. Expiration
 
 Temporary operational data may have shorter lifetimes.
 
 Examples:
 
-temporary Context
-ephemeral cache
-short-lived authorization evidence
-transient integration response
+* temporary Context
+* ephemeral cache
+* short-lived authorization evidence
+* transient integration response
 
-Expiration should not accidentally remove information required to reconstruct a consequential decision.
+Expiration must not accidentally remove information required to reconstruct a consequential decision.
 
 ⸻
 
-55. Cache vs Persistence
+73. Cache vs Persistence
 
 A cache is not a durable source of truth.
 
@@ -1037,9 +1632,11 @@ durable operational/history requirement
 
 If an Execution depends on a value surviving a restart, that value should not exist only in cache.
 
+A cache must never silently become the only representation of a consequential execution fact.
+
 ⸻
 
-56. Persistence and Current State
+74. Persistence and Current State
 
 Persisted Noema state can represent:
 
@@ -1049,33 +1646,11 @@ It should not be interpreted as:
 
 current enterprise Business State
 
-without revalidation.
+without appropriate State Reconciliation.
 
 ⸻
 
-57. Persistence and Reconciliation
-
-Reconciliation compares persisted Noema expectations with current enterprise observations.
-
-Persisted:
-Execution = EXPECTED_SUCCESS
-Enterprise:
-Payment = SUCCEEDED
-Result:
-reconciled
-
-or:
-
-Persisted:
-Execution = EXPECTED_SUCCESS
-Enterprise:
-Payment = FAILED
-Result:
-discrepancy
-
-⸻
-
-58. Persistence and Recovery State Machine
+75. Persistence and Recovery State Machine
 
 A recoverable Execution may conceptually move through:
 
@@ -1084,6 +1659,8 @@ RUNNING
 INTERRUPTED
    ↓
 RECOVERING
+   ↓
+RECONCILING
    ↓
 REVALIDATING
    ↓
@@ -1099,17 +1676,17 @@ Persistence makes these states durable.
 
 ⸻
 
-59. Persistence and Concurrency
+76. Persistence and Concurrency
 
 Multiple workers may interact with the same Execution.
 
 Persistence must support mechanisms such as:
 
-optimistic concurrency
-compare-and-swap
-leases
-version checks
-locking
+* optimistic concurrency
+* compare-and-swap
+* leases
+* version checks
+* locking
 
 The specific mechanism is implementation-dependent.
 
@@ -1119,7 +1696,7 @@ Concurrent workers must not corrupt Execution state or produce conflicting trans
 
 ⸻
 
-60. Persistence and State Transitions
+77. Persistence and State Transitions
 
 State transitions should be validated.
 
@@ -1137,7 +1714,7 @@ should generally require an explicit recovery or compensation semantic rather th
 
 ⸻
 
-61. Persistence and Idempotent State Transitions
+78. Persistence and Idempotent State Transitions
 
 Repeated requests to record the same transition should not corrupt state.
 
@@ -1151,41 +1728,28 @@ Persistence semantics must therefore support idempotent state updates where requ
 
 ⸻
 
-62. Persistence and Ordering
+79. Persistence and Ordering
 
 Execution history may depend on event ordering.
 
 Noema should preserve sufficient ordering information such as:
 
-sequence number
-logical version
-timestamp
-causal relationship
+* sequence number
+* logical version
+* timestamp
+* causal relationship
 
 Timestamps alone may not establish ordering in distributed systems.
 
 ⸻
 
-63. Persistence and Causality
-
-Where meaningful, Noema should preserve relationships such as:
-
-Retry caused by Failure
-Compensation caused by Partial Outcome
-Clarification caused by Ambiguity
-Revalidation caused by Recovery
-
-This allows execution history to be understood causally rather than merely chronologically.
-
-⸻
-
-64. Persistence and Observability
+80. Persistence and Observability
 
 Operational observability systems may contain:
 
-logs
-metrics
-traces
+* logs
+* metrics
+* traces
 
 These are useful but should not be assumed to constitute the canonical Noema execution history.
 
@@ -1193,7 +1757,7 @@ Noema’s durable execution records should remain available independently of eph
 
 ⸻
 
-65. Persistence and Logs
+81. Persistence and Logs
 
 Logs answer:
 
@@ -1205,34 +1769,34 @@ Execution persistence answers:
 
 Logs may support investigation.
 
-They should not be the only source of execution truth.
+They should not be the only source of execution history.
 
 ⸻
 
-66. Persistence and Traces
+82. Persistence and Traces
 
 Distributed traces provide valuable diagnostic information.
 
 However:
 
-trace ≠ Execution record
+trace ≠ Execution Record
 
 A trace may expire or be sampled.
 
-A consequential Execution record should have stronger durability guarantees.
+A consequential Execution Record should have stronger durability guarantees.
 
 ⸻
 
-67. Persistence and Events
+83. Persistence and Events
 
 Events may notify Noema of enterprise changes.
 
 Persisting relevant events can support:
 
-reconciliation
-state reconstruction
-audit
-recovery
+* reconciliation
+* state reconstruction
+* audit
+* recovery
 
 But Noema must retain the distinction between:
 
@@ -1244,21 +1808,21 @@ current resource state
 
 ⸻
 
-68. Persistence and External Systems
+84. Persistence and External Systems
 
 External systems may have their own retention and consistency guarantees.
 
 Noema should not assume that a previously observed resource can always be queried later.
 
-Consequential Evidence may therefore need to preserve sufficient information to explain what Noema observed.
+Consequential Evidence may therefore need to preserve sufficient information to explain what Noema observed, subject to enterprise data-retention constraints.
 
 ⸻
 
-69. Persistence and Large Payloads
+85. Persistence and Large Payloads
 
 Noema should avoid storing large raw payloads by default when a smaller semantic representation is sufficient.
 
-For example, instead of retaining an entire API response:
+For example, instead of retaining an entire:
 
 10 MB JSON document
 
@@ -1275,28 +1839,28 @@ when sufficient for audit and recovery.
 
 ⸻
 
-70. Persistence and Integrity
+86. Persistence and Integrity
 
 Persisted records should be protected against unauthorized modification.
 
 For consequential history, useful mechanisms may include:
 
-immutable records
-append-only storage
-cryptographic hashes
-signed records
-versioning
-tamper-evident chains
+* immutable records
+* append-only storage
+* cryptographic hashes
+* signed records
+* versioning
+* tamper-evident chains
 
 The exact mechanism depends on deployment requirements.
 
 ⸻
 
-71. Persistence and Audit Integrity
+87. Persistence and Audit Integrity
 
 An audit trail is useful only if its integrity can be trusted.
 
-Noema should be able to distinguish:
+Noema should distinguish:
 
 historical record
 
@@ -1308,24 +1872,24 @@ Audit records should have stronger immutability guarantees where required.
 
 ⸻
 
-72. Persistence and Disaster Recovery
+88. Persistence and Disaster Recovery
 
 Persistence infrastructure should define recovery objectives appropriate to the role of the data.
 
 Important concepts include:
 
-RPO
-RTO
-replication
-backup
-restore
-durability
+* RPO
+* RTO
+* replication
+* backup
+* restore
+* durability
 
 Noema should not claim stronger recovery guarantees than its persistence architecture provides.
 
 ⸻
 
-73. Persistence Failure
+89. Persistence Failure
 
 Persistence itself can fail.
 
@@ -1339,26 +1903,26 @@ Noema must define whether execution may proceed.
 
 For consequential Actions, inability to persist required state may itself be a reason to:
 
-block
-retry
-degrade safely
-escalate
+* block
+* retry
+* degrade safely
+* escalate
 
-rather than execute without accountability.
+rather than execute without required accountability and recovery guarantees.
 
 ⸻
 
-74. Persistence Before Consequential Execution
+90. Persistence Before Consequential Execution
 
 A core safety principle is:
 
 Noema should not perform an Action requiring durable execution state when that state cannot be durably recorded.
 
-The exact boundary depends on the Action Contract.
+The exact boundary depends on the Action Contract, execution architecture, and risk requirements.
 
 ⸻
 
-75. Persistence After Execution
+91. Persistence After Execution
 
 Noema must also handle:
 
@@ -1370,16 +1934,17 @@ This creates an uncertain observation state.
 
 The system should recover through:
 
-reconciliation
-idempotency
-external query
-execution lookup
+* reconciliation
+* idempotency
+* external query
+* execution lookup
+* external operation identity
 
 rather than assuming the Action failed.
 
 ⸻
 
-76. Persistence and Exactly-Once Logical Effects
+92. Persistence and Logical Exactly-Once Effects
 
 Noema can combine:
 
@@ -1391,31 +1956,35 @@ reconciliation
 
 to achieve reliable logical execution even when infrastructure provides only at-least-once delivery.
 
+This is not a claim of exactly-once message delivery.
+
 ⸻
 
-77. Persistence and Action Recovery
+93. Persistence and Action Recovery
 
 After restart:
 
 Execution:
 RUNNING
 Last known:
-Attempt 1 = TIMEOUT
+Attempt 1 = UNKNOWN
 
 Noema should not simply execute Attempt 2.
 
 It should determine:
 
-Did Attempt 1 execute?
-Did the enterprise commit the Action?
-Is the Action idempotent?
-Is reconciliation required?
+* Did Attempt 1 execute?
+* Did the enterprise commit the Action?
+* Is the Action idempotent?
+* Is the external operation identifiable?
+* Is reconciliation required?
+* Has the applicable Trust decision remained valid?
 
 Persistence provides the historical inputs for this reasoning.
 
 ⸻
 
-78. Persistence and Compensation Recovery
+94. Persistence and Compensation Recovery
 
 Similarly:
 
@@ -1424,16 +1993,18 @@ PARTIAL
 
 may require recovering:
 
-completed Actions
-failed Actions
-available compensation Actions
-current enterprise state
+* completed Actions
+* failed Actions
+* available compensation Actions
+* current enterprise state
+* applicable Action Contract versions
+* relevant Trust decisions
 
 before compensation can safely proceed.
 
 ⸻
 
-79. Persistence and Human Approval
+95. Persistence and Human Approval
 
 If an Execution waits for approval:
 
@@ -1441,21 +2012,21 @@ WAITING_FOR_APPROVAL
 
 that state must survive:
 
-process restart
-worker replacement
-network failure
-deployment
+* process restart
+* worker replacement
+* network failure
+* deployment
 
-Approval Evidence should also remain associated with the relevant Action.
+Approval Evidence should remain associated with the relevant Intent, Action, and Execution.
 
 ⸻
 
-80. Persistence and Clarification
+96. Persistence and Clarification
 
 Likewise:
 
 Intent:
-AMBIGUOUS
+CLARIFICATION_REQUIRED
 waiting_for:
 user clarification
 
@@ -1465,36 +2036,31 @@ A clarification response must be associated with the correct Intent version and 
 
 ⸻
 
-81. Persistence and Intent Versioning
+97. Persistence and Context Versioning
 
-Intent may evolve.
+Context can change.
 
-Intent v1
-"Refund my last payment."
-Clarification
-Intent v2
-"Refund payment #123."
-
-Persistence should preserve the relationship between versions.
-
-⸻
-
-82. Persistence and Context Versioning
-
-Context can also change.
+For example:
 
 Context v1
 payment.status = SUCCEEDED
+
+followed by:
+
 Context v2
 payment.status = REFUNDED
 
 Noema should be able to distinguish these snapshots.
 
+A newer Context version does not erase the historical observation represented by the earlier snapshot.
+
 ⸻
 
-83. Persistence and Evidence Versioning
+98. Persistence and Evidence Versioning
 
 Evidence can be superseded.
+
+Example:
 
 Evidence v1:
 status = PENDING
@@ -1503,22 +2069,26 @@ status = SUCCEEDED
 
 The history should remain reconstructible.
 
+Supersession does not mean the earlier observation never occurred.
+
 ⸻
 
-84. Persistence and Policy Versioning
+99. Persistence and Policy Versioning
 
 A Trust decision should identify which Policy version was evaluated.
 
+Example:
+
 Policy:
 refund-policy
-version:
+Version:
 12
 
 This prevents historical decisions from becoming ambiguous after policy changes.
 
 ⸻
 
-85. Persistence and Integration Versioning
+100. Persistence and Integration Versioning
 
 The same principle applies to integration mappings.
 
@@ -1534,45 +2104,30 @@ historical executions should retain the mapping version used when that interpret
 
 ⸻
 
-86. Persistence and Schema Versioning
+101. Persistence and Schema Versioning
 
 Persistent objects should carry enough schema information to remain interpretable.
 
 Example:
 
-Execution schema = 4
+Execution Schema = 4
 Action Contract = refund.v3
 Policy = refund-policy.v12
+Integration Mapping = payment-api.v2
 
 This provides semantic stability across system evolution.
 
 ⸻
 
-87. Persistence and Migration
-
-Migration must preserve semantic meaning.
-
-A schema migration should not silently change historical meaning.
-
-For example:
-
-FAILED
-
-must not become:
-
-UNKNOWN
-
-simply because a new schema uses different state definitions.
-
-⸻
-
-88. Persistence and Data Lineage
+102. Persistence and Data Lineage
 
 Persisted records should preserve relationships between:
 
 Intent
 Evidence
-Decision
+Fact
+Reconciliation
+Trust Decision
 Action
 Execution
 Outcome
@@ -1581,23 +2136,28 @@ This forms the Noema execution lineage.
 
 ⸻
 
-89. Persistence and the Execution Record
+103. Persistence and the Execution Record
 
-The Execution Record is the central durable object.
+The Execution Record is the central durable object for consequential execution.
 
 Conceptually:
 
 Execution Record
  ├── execution_id
  ├── intent_id
+ ├── intent_version
+ ├── actor_ref
  ├── action
- ├── resource_refs
+ ├── target_ref
  ├── context_snapshot
- ├── trust_decision
  ├── evidence_refs
+ ├── fact_status_refs
+ ├── reconciliation_refs
+ ├── trust_decision
  ├── attempts
  ├── state
  ├── outcome
+ ├── external_operation_ids
  ├── timestamps
  └── versions
 
@@ -1605,17 +2165,19 @@ The physical implementation may differ.
 
 ⸻
 
-90. Persistence and the Audit Record
+104. Persistence and the Audit Record
 
 The Audit Record answers:
 
-What happened, when, why, and based on what information?
+“What happened, when, why, and based on what information?”
 
 It should reference rather than duplicate large amounts of data wherever possible.
 
+Audit records should preserve causal relationships and semantic versions.
+
 ⸻
 
-91. Persistence and References
+105. Persistence and References
 
 Noema should prefer stable references when the underlying enterprise data remains externally authoritative.
 
@@ -1623,12 +2185,13 @@ Example:
 
 payment_id = 123
 source = Payment System
+tenant = tenant_42
 
 rather than maintaining a shadow copy of the entire Payment record.
 
 ⸻
 
-92. Persistence and Referential Integrity
+106. Persistence and Referential Integrity
 
 References to enterprise resources should preserve enough identity to avoid ambiguity.
 
@@ -1644,11 +2207,13 @@ resource_type
 resource_id
 system
 tenant
+organization
+environment
 scope
 
 ⸻
 
-93. Persistence and Resource Deletion
+107. Persistence and Resource Deletion
 
 If an enterprise Resource is later deleted, historical Noema records should still be able to indicate what Resource the Execution originally targeted.
 
@@ -1656,7 +2221,25 @@ Therefore references used for audit should not depend entirely on the continued 
 
 ⸻
 
-94. Persistence and Privacy
+108. Persistence and Identity Resolution
+
+Persistence must distinguish:
+
+identity resolution
+
+from:
+
+canonicalization
+
+A resolved identifier indicates which resource or actor a semantic reference refers to.
+
+Canonicalization establishes which representation is authoritative within an explicit scope.
+
+Neither may be inferred merely from a model’s confidence.
+
+⸻
+
+109. Persistence and Privacy
 
 Persistence must minimize unnecessary replication of sensitive information.
 
@@ -1672,21 +2255,21 @@ should be preferred over complete enterprise record duplication.
 
 ⸻
 
-95. Persistence and Encryption
+110. Persistence and Encryption
 
 Depending on enterprise requirements, persisted data may require:
 
-encryption at rest
-encryption in transit
-key management
-field-level protection
-secret isolation
+* encryption at rest
+* encryption in transit
+* key management
+* field-level protection
+* secret isolation
 
 Secrets should not be persisted merely because they appeared in an integration payload.
 
 ⸻
 
-96. Persistence and Secrets
+111. Persistence and Secrets
 
 Credentials, tokens, API keys, and other secrets should not become ordinary Execution data.
 
@@ -1700,40 +2283,44 @@ credentials
 
 Secret material belongs in an appropriate secret-management system.
 
+The model must never receive credentials merely because persistence contains execution information.
+
 ⸻
 
-97. Persistence and Audit Redaction
+112. Persistence and Audit Redaction
 
 Auditability does not require storing every raw value.
 
 Sensitive fields may require:
 
-redaction
-tokenization
-hashing
-masking
-reference
+* redaction
+* tokenization
+* hashing
+* masking
+* reference
 
 while preserving enough information to reconstruct the decision.
 
 ⸻
 
-98. Persistence and Searchability
+113. Persistence and Searchability
 
 Noema’s persisted records should be queryable by stable identifiers such as:
 
-intent_id
-execution_id
-resource_id
-principal_id
-idempotency_key
-correlation_id
+* intent_id
+* intent_version
+* execution_id
+* resource_id
+* principal_id
+* idempotency_key
+* correlation_id
+* external_operation_id
 
 This supports operational recovery and audit investigation.
 
 ⸻
 
-99. Correlation
+114. Correlation
 
 Related records should share a correlation identity.
 
@@ -1744,13 +2331,14 @@ Intent
           ├── Trust
           ├── Action
           ├── Execution
+          ├── Reconciliation
           └── Outcome
 
 This allows distributed components to reconstruct a single execution journey.
 
 ⸻
 
-100. Persistence and Observability Correlation
+115. Persistence and Observability Correlation
 
 Where possible, Noema should connect:
 
@@ -1758,13 +2346,15 @@ execution_id
 correlation_id
 trace_id
 request_id
-external operation ID
+external_operation_id
 
 This creates a bridge between semantic execution records and infrastructure diagnostics.
 
+Observability identifiers do not replace semantic execution identity.
+
 ⸻
 
-101. Persistence and External Operation IDs
+116. Persistence and External Operation IDs
 
 External systems may assign their own operation identifiers.
 
@@ -1781,24 +2371,24 @@ This is particularly important for reconciliation.
 
 ⸻
 
-102. Persistence and Reconciliation Identity
+117. Persistence and Reconciliation Identity
 
 A recovery process should be able to search the enterprise system using durable identifiers such as:
 
-idempotency key
-external operation ID
-resource ID
-transaction ID
+* idempotency key
+* external operation ID
+* resource ID
+* transaction ID
 
 Persistence should preserve these identifiers where available.
 
 ⸻
 
-103. Persistence and Recovery Semantics
+118. Persistence and Recovery Semantics
 
 Recovery should be defined as:
 
-Reconstructing the last known Noema Execution state, determining what remains uncertain, revalidating the relevant enterprise state, and selecting the next permitted deterministic transition.
+Reconstructing the last known Noema Execution state, determining what remains uncertain, reconciling the relevant enterprise state, revalidating applicable conditions, and selecting the next permitted deterministic transition.
 
 Not:
 
@@ -1806,7 +2396,7 @@ Not:
 
 ⸻
 
-104. Persistence and State Reconstruction
+119. Persistence and State Reconstruction
 
 A recovered Execution should be reconstructable from durable information:
 
@@ -1817,6 +2407,10 @@ Intent version
 Context
 +
 Evidence
++
+Fact Status
++
+Reconciliation results
 +
 Trust decision
 +
@@ -1830,7 +2424,7 @@ Current Execution state
 
 ⸻
 
-105. Persistence and Stale State
+120. Persistence and Stale State
 
 Persisted state can become stale.
 
@@ -1841,7 +2435,7 @@ Example:
 last_known_status = ACTIVE
 observed_at = 09:00
 
-This is preferable to:
+is preferable to:
 
 status = ACTIVE
 
@@ -1849,7 +2443,7 @@ without temporal context.
 
 ⸻
 
-106. Persistence and Revalidation Windows
+121. Persistence and Revalidation Windows
 
 Some Actions may define maximum acceptable evidence age.
 
@@ -1864,9 +2458,11 @@ evidence age > 30 seconds
 
 may require revalidation before execution.
 
+Freshness requirements are claim- and action-specific.
+
 ⸻
 
-107. Persistence and Durable Decisions
+122. Persistence and Durable Decisions
 
 A Trust Decision should not be treated as permanently valid merely because it was once persisted.
 
@@ -1876,13 +2472,17 @@ old Trust Decision
       ↓
 current Context changed
       ↓
-re-evaluate
+State Reconciliation
+      ↓
+re-evaluate Trust
 
-Persistence preserves the historical decision; it does not freeze reality.
+Persistence preserves the historical decision.
+
+It does not freeze enterprise reality.
 
 ⸻
 
-108. Persistence and Policy Changes
+123. Persistence and Policy Changes
 
 If policy changes while an Execution is waiting:
 
@@ -1903,9 +2503,11 @@ current policy
 
 This must never be accidental.
 
+The historical decision must remain unchanged even if a current-policy re-evaluation produces a different result.
+
 ⸻
 
-109. Persistence and Long-Running Intent
+124. Persistence and Long-Running Intent
 
 Long-running Intent may require periodic revalidation.
 
@@ -1919,6 +2521,8 @@ Hours pass
  ↓
 Resume
  ↓
+Reconcile
+ ↓
 Revalidate
  ↓
 Continue / Re-evaluate
@@ -1927,7 +2531,7 @@ Persistence makes the pause safe.
 
 ⸻
 
-110. Persistence and Workflow State
+125. Persistence and Workflow State
 
 Noema’s workflow state should describe execution semantics rather than duplicating enterprise workflow systems.
 
@@ -1943,7 +2547,7 @@ unless explicitly integrated as an enterprise capability.
 
 ⸻
 
-111. Persistence and System of Record
+126. Persistence and System of Record
 
 Noema should remain explicit about which system owns each fact.
 
@@ -1960,17 +2564,18 @@ Persistence should preserve these ownership relationships.
 
 ⸻
 
-112. Persistence and Canonical Data
+127. Persistence and Canonical Data
 
-Persisted references to Canonical Data should identify:
+Persisted references to Canonical Data should identify, where required:
 
-source
-authority
-observation time
-resource
-version
-
-where needed.
+* source
+* authority scope
+* observation time
+* effective time
+* resource
+* version
+* provenance
+* freshness
 
 This preserves the distinction between:
 
@@ -1978,19 +2583,21 @@ canonical enterprise fact
 
 and:
 
-Noema's observation of that fact
+Noema's observation/reference to that fact
 
 ⸻
 
-113. Persistence and Evidence Retention
+128. Persistence and Evidence Retention
 
 Evidence retention should correspond to how long the evidence is necessary to explain or reconstruct a decision.
 
 High-consequence Actions may require stronger retention than low-risk informational interactions.
 
+Retention requirements should be explicit rather than assumed.
+
 ⸻
 
-114. Persistence and Risk
+129. Persistence and Risk
 
 Persistence requirements may increase with Action risk.
 
@@ -2003,15 +2610,20 @@ transfer funds
 
 The second may require stronger:
 
-audit
-immutability
-evidence retention
-versioning
-reconciliation
+* audit
+* immutability
+* evidence retention
+* versioning
+* reconciliation
+* recovery guarantees
+
+Read-only does not mean non-consequential.
+
+A read operation involving protected enterprise data may itself require durable authorization and audit information.
 
 ⸻
 
-115. Persistence and Risk-Adaptive Durability
+130. Persistence and Risk-Adaptive Durability
 
 Noema may define durability requirements based on Action class.
 
@@ -2027,13 +2639,13 @@ Audit requirements
  ↓
 Recovery guarantees
 
-The exact policy belongs to the enterprise configuration.
+The exact policy belongs to enterprise configuration and applicable Noema policy.
 
 ⸻
 
-116. Persistence and Informational Requests
+131. Persistence and Informational Requests
 
-Not every user interaction requires a durable Execution record.
+Not every user interaction requires a durable Execution Record.
 
 For a purely informational query:
 
@@ -2047,53 +2659,61 @@ For:
 
 durable Execution state is substantially more important.
 
+The persistence requirement is determined by semantic consequence, not merely by whether the request is technically read or write.
+
 ⸻
 
-117. Persistence and Ephemeral State
+132. Persistence and Ephemeral State
 
 Ephemeral state is acceptable when losing it does not create an unsafe or unauditable condition.
 
 Examples:
 
-temporary model output
-intermediate parsing artifacts
-cache entries
-short-lived UI state
+* temporary model output
+* intermediate parsing artifacts
+* cache entries
+* short-lived UI state
 
 The boundary must be explicit.
 
 ⸻
 
-118. Persistence and Model Outputs
+133. Persistence and Model Outputs
 
 Raw LLM outputs should not automatically become durable canonical records.
 
-Noema should persist model output when necessary for:
+Noema may persist model output when necessary for:
 
-debugging
-audit
-evaluation
-reproducibility
+* debugging
+* audit
+* evaluation
+* reproducibility
 
 subject to data-retention requirements.
 
 More importantly, Noema should persist the semantic result that affected execution, not blindly retain every intermediate token or generation.
 
+Model output remains untrusted and must not become authoritative merely because it is persisted.
+
 ⸻
 
-119. Persistence and Deterministic Replay
+134. Persistence and Deterministic Replay
 
 Replay can be useful for debugging and auditing.
 
 A replayable Execution may require:
 
-Intent
-Context snapshot
-Evidence
-Policy version
-Action Contract version
-Trust configuration
-integration semantics
+* Intent
+* Intent version
+* Context snapshot
+* Evidence
+* Fact Status
+* reconciliation inputs/results
+* Policy version
+* Action Contract version
+* Trust configuration
+* integration semantics
+* relevant graph/capability versions
 
 Replay should distinguish:
 
@@ -2107,7 +2727,7 @@ The latter must never occur accidentally during replay.
 
 ⸻
 
-120. Persistence and Safe Replay
+135. Persistence and Safe Replay
 
 Replay must be non-executing by default.
 
@@ -2119,11 +2739,11 @@ must not dispatch:
 
 refund_payment()
 
-unless an explicit execution path is invoked.
+unless an explicit execution path is invoked and separately authorized.
 
 ⸻
 
-121. Persistence and Testing
+136. Persistence and Testing
 
 Persisted execution histories can become test fixtures.
 
@@ -2132,6 +2752,8 @@ Example:
 Intent
 +
 Evidence
++
+Fact Status
 +
 Policy
 +
@@ -2145,7 +2767,7 @@ This supports regression testing of Noema’s deterministic layer.
 
 ⸻
 
-122. Persistence and Versioned Semantics
+137. Persistence and Versioned Semantics
 
 Historical records should be interpretable under the semantic versions that produced them.
 
@@ -2155,12 +2777,13 @@ Intent Model v4
 Trust Model v7
 Action Contract v3
 Policy v12
+Integration Mapping v2
 
 This supports reliable audit and regression analysis.
 
 ⸻
 
-123. Persistence and Migration Safety
+138. Persistence and Migration Safety
 
 When semantics change, Noema should avoid silently rewriting historical execution meaning.
 
@@ -2168,7 +2791,7 @@ Historical:
 
 EXECUTE
 
-should remain historically:
+must remain historically:
 
 EXECUTE
 
@@ -2180,7 +2803,7 @@ The distinction between historical and current evaluation must remain explicit.
 
 ⸻
 
-124. Persistence and Current Evaluation
+139. Persistence and Current Evaluation
 
 Noema may re-evaluate historical executions for analysis.
 
@@ -2195,17 +2818,23 @@ The new result must not overwrite the original historical decision.
 
 ⸻
 
-125. Persistence and Audit Trail
+140. Persistence and Audit Trail
 
 A complete audit trail may look like:
 
 Intent received
+      ↓
+Intent version admitted
       ↓
 Intent resolved
       ↓
 Context captured
       ↓
 Evidence collected
+      ↓
+State reconciled
+      ↓
+Fact Status established
       ↓
 Policy evaluated
       ↓
@@ -2229,7 +2858,7 @@ Persistence makes this chain durable.
 
 ⸻
 
-126. Persistence and Recovery Example
+141. Persistence and Recovery Example
 
 Consider:
 
@@ -2263,9 +2892,13 @@ lookup idempotency key
         ↓
 query Payment System
         ↓
+State Reconciliation
+        ↓
 Payment = REFUNDED
         ↓
 record Evidence
+        ↓
+Fact Status = VERIFIED
         ↓
 Outcome = SUCCESS
 
@@ -2273,48 +2906,54 @@ No duplicate refund is issued.
 
 ⸻
 
-127. Persistence and Failure Modes
+142. Persistence and Failure Modes
 
 Persistence architecture must account for:
 
-database unavailable
-partial write
-duplicate write
-lost acknowledgment
-network partition
-worker crash
-storage corruption
-replication lag
-schema mismatch
+* database unavailable
+* partial write
+* duplicate write
+* lost acknowledgment
+* network partition
+* worker crash
+* storage corruption
+* replication lag
+* schema mismatch
+* stale reads
+* concurrent updates
 
 The execution model must explicitly define the resulting Noema state.
 
 ⸻
 
-128. Persistence and Partial Writes
+143. Persistence and Partial Writes
 
-If part of an Execution record is written successfully while another part fails, Noema must not assume the record is complete.
+If part of an Execution Record is written successfully while another part fails, Noema must not assume the record is complete.
 
 Use of:
 
-transactions
-write-ahead logs
-versioning
-reconciliation
+* transactions
+* write-ahead logs
+* versioning
+* reconciliation
 
 may be appropriate depending on implementation.
 
+Incomplete records must be detectable.
+
 ⸻
 
-129. Persistence and Duplicate Writes
+144. Persistence and Duplicate Writes
 
 Retries at the persistence layer can produce duplicate records.
 
 Consequential records should therefore have stable identifiers and idempotent write semantics where necessary.
 
+Duplicate persistence events must not create contradictory execution history.
+
 ⸻
 
-130. Persistence and Corruption
+145. Persistence and Corruption
 
 If persisted Execution state becomes inconsistent:
 
@@ -2327,7 +2966,7 @@ It should enter a defined recovery or reconciliation path.
 
 ⸻
 
-131. Persistence and Availability
+146. Persistence and Availability
 
 Durability and availability can conflict.
 
@@ -2341,7 +2980,7 @@ do not execute
 
 may be appropriate.
 
-For low-risk read-only interactions:
+For low-risk interactions:
 
 persistence unavailable
         ↓
@@ -2353,38 +2992,39 @@ This must be policy-driven.
 
 ⸻
 
-132. Persistence and Enterprise Requirements
+147. Persistence and Enterprise Requirements
 
 Enterprise deployments may impose:
 
-data residency
-retention periods
-legal hold
-audit requirements
-encryption standards
-access controls
-tenant isolation
-regional storage
+* data residency
+* retention periods
+* legal hold
+* audit requirements
+* encryption standards
+* access controls
+* tenant isolation
+* regional storage
+* organizational boundaries
 
 Noema persistence must be configurable to satisfy these requirements.
 
 ⸻
 
-133. Persistence and Data Residency
+148. Persistence and Data Residency
 
 Where enterprise policy requires regional storage, Noema should ensure persisted data remains within the permitted boundary.
 
 This is especially relevant for:
 
-Evidence
-Context
-Audit records
-Identity information
-Execution metadata
+* Evidence
+* Context
+* Audit records
+* Identity information
+* Execution metadata
 
 ⸻
 
-134. Persistence and Data Classification
+149. Persistence and Data Classification
 
 Persisted information may have classifications such as:
 
@@ -2395,15 +3035,15 @@ RESTRICTED
 
 Classification should influence:
 
-storage
-access
-retention
-encryption
-replication
+* storage
+* access
+* retention
+* encryption
+* replication
 
 ⸻
 
-135. Persistence and Access Logging
+150. Persistence and Access Logging
 
 Access to sensitive persisted records may itself require auditability.
 
@@ -2415,7 +3055,7 @@ may need to become an audit event depending on enterprise requirements.
 
 ⸻
 
-136. Persistence and System Boundaries
+151. Persistence and System Boundaries
 
 Noema may interact with multiple persistence systems:
 
@@ -2428,23 +3068,27 @@ Enterprise Systems
 
 These stores should have explicit ownership and semantics.
 
+A physical database may contain multiple logical persistence domains, but those domains must remain semantically distinct.
+
 ⸻
 
-137. Persistence Is a Semantic Boundary
+152. Persistence Is a Semantic Boundary
 
 The persistence layer should preserve the distinction between:
 
 current operational state
 historical observation
 enterprise reference
-evidence
+Evidence
+Fact Status
+reconciliation result
 audit record
 
 A single database table does not eliminate these semantic distinctions.
 
 ⸻
 
-138. Recommended Conceptual Storage Model
+153. Recommended Conceptual Storage Model
 
 A logical persistence model may contain:
 
@@ -2452,9 +3096,13 @@ Intent
 IntentVersion
 ContextSnapshot
 Evidence
+Fact
+FactStatus
+StateObservation
+StateReconciliation
 TrustEvaluation
 PolicyReference
-Action
+ActionReference
 Execution
 ExecutionAttempt
 Outcome
@@ -2466,7 +3114,7 @@ This is a conceptual model, not a mandatory relational schema.
 
 ⸻
 
-139. Core Relationships
+154. Core Relationships
 
 Intent
   │
@@ -2476,53 +3124,194 @@ Intent
 Execution
   ├── uses → ContextSnapshot
   ├── references → Evidence
+  ├── references → Fact
+  ├── references → StateReconciliation
   ├── evaluates → TrustEvaluation
   ├── invokes → Action
   ├── contains → ExecutionAttempt
   ├── produces → Outcome
   └── may_create → Intervention
+Observation
+  └── evaluated_by → StateReconciliation
+StateReconciliation
+  └── produces → Fact / State
+Evidence
+  └── supports → Claim
 
 ⸻
 
-140. Persistence and the Noema Architecture
+155. Persistence and the Noema Architecture
 
 The persistence layer sits beneath the semantic execution lifecycle:
 
-                Intent
-                  │
-                  ▼
-             Intent Model
-                  │
-                  ▼
-               Context
-                  │
-                  ▼
-              Evidence
-                  │
-                  ▼
-                Trust
-                  │
-                  ▼
-               Action
-                  │
-                  ▼
-             Execution
-                  │
-                  ▼
-              Outcome
-                  │
-                  ▼
-             Persistence
+                    Source of Intent
+                          │
+                          ▼
+                    Intent Engine
+                          │
+                          ▼
+                  Hard Schema Gate
+                          │
+                          ▼
+                  Context / Evidence
+                          │
+                          ▼
+                 State Reconciliation
+                          │
+                          ▼
+                   Deterministic Trust
+                          │
+                          ▼
+              Action Graph / Planner
+                          │
+                          ▼
+                      Execution
+                          │
+                          ▼
+                    Verification
+                          │
+                          ▼
+                       Outcome
+                          │
+                          ▼
+                     Persistence
 
 Persistence records the journey rather than replacing the systems involved in the journey.
 
+Persistence also preserves the historical information necessary to repeat reconciliation and recover execution safely.
+
 ⸻
 
-141. Core Invariants
+156. Persistence and the Noema Ownership Boundary
+
+Noema may own canonical state in its own execution domain.
+
+Examples include:
+
+* Intent
+* Intent version lineage
+* Trust Decision
+* Execution state
+* Execution attempt history
+* Outcome state
+* intervention/case state
+* reconciliation record
+* operational execution history
+
+Noema does not thereby own canonical enterprise Business State.
+
+Examples of enterprise-owned state include:
+
+* account balance
+* payment ledger state
+* inventory quantity
+* employee status
+* customer account status
+* transaction settlement state
+
+The distinction must remain explicit in persistence.
+
+⸻
+
+157. No Shadow Canonical Business State
+
+Noema must not create a shadow canonical representation of enterprise Business State merely because that state is useful for execution.
+
+If Noema stores:
+
+payment.status = SUCCEEDED
+
+it must be possible to determine whether that represents:
+
+* an enterprise-owned authoritative value
+* a persisted observation
+* Evidence
+* a Context snapshot
+* a reconciled Fact
+* a historical execution expectation
+
+The representation alone must never imply ownership.
+
+⸻
+
+158. Persistence and Read-Only Consequences
+
+Read-only operations can still be consequential.
+
+For example:
+
+Retrieve protected financial records
+
+may expose sensitive enterprise data even though it does not mutate enterprise state.
+
+Persistence may therefore need to retain:
+
+* authorization evidence
+* Trust decisions
+* access records
+* data-scope information
+* relevant audit information
+
+Data being read does not make the operation semantically consequence-free.
+
+⸻
+
+159. Persistence and Security Boundary
+
+Persistence must respect the Noema security boundary.
+
+The following remain untrusted:
+
+* model output
+* user-provided text
+* retrieved enterprise text
+* tool responses
+* external payloads
+
+The model must not have:
+
+* enterprise credentials
+* unrestricted database access
+* unrestricted HTTP access
+* direct execution authority
+
+No free-form model output may become executable merely because it was persisted.
+
+⸻
+
+160. Persistence and Causal Reconstruction
+
+A consequential execution should ideally support reconstruction of:
+
+Claim
+   ↓
+Source / Authority
+   ↓
+Observation
+   ↓
+Fact Status
+   ↓
+State Reconciliation
+   ↓
+Trust Decision
+   ↓
+Action
+   ↓
+Execution Attempt
+   ↓
+Verification
+   ↓
+Outcome
+
+This chain is the durable semantic lineage of execution.
+
+⸻
+
+161. Core Invariants
 
 Invariant 1
 
-Noema must persist information required to remain recoverable, deterministic, and auditable.
+Noema must persist information required to remain recoverable, deterministic, reconcilable, and auditable.
 
 Invariant 2
 
@@ -2546,139 +3335,213 @@ Intent state requiring future interaction must survive beyond the original reque
 
 Invariant 7
 
-Persisted Context is historical context, not automatically current enterprise state.
+Admitted Intent versions must remain semantically immutable.
 
 Invariant 8
 
-Persisted Trust Decisions are historical decisions and do not automatically remain valid forever.
+Material Intent changes must create new versions rather than silently mutate historical Intent.
 
 Invariant 9
 
-Evidence required to reconstruct consequential decisions should be durably referenced or retained.
+Persisted Context is historical context, not automatically current enterprise state.
 
 Invariant 10
 
-Historical records must preserve relevant Policy, Action Contract, and semantic versions.
+Persisted Trust Decisions are historical decisions and do not automatically remain valid forever.
 
 Invariant 11
 
-Execution attempts must be distinguishable.
+Evidence required to reconstruct consequential decisions should be durably referenced or retained.
 
 Invariant 12
 
-Idempotency information must survive whenever required to prevent duplicate logical execution.
+Fact Status must remain distinct from Evidence, Context, State, Outcome, and Canonical Data.
 
 Invariant 13
 
-Unknown execution outcomes must remain explicitly represented.
+Model confidence must never be treated as authoritative Fact Status.
 
 Invariant 14
 
-Persistence must not convert an uncertain outcome into success or failure without sufficient evidence.
+External data must pass the applicable schema validation and admission boundary before being treated as admitted semantic data.
 
 Invariant 15
 
-Recovery must revalidate mutable enterprise state before continuing consequential execution.
+Historical records must preserve relevant Policy, Action Contract, Intent, integration, graph, capability, and semantic versions.
 
 Invariant 16
 
-Historical records must not be silently rewritten to reflect current policy or current enterprise state.
+Execution attempts must be distinguishable.
 
 Invariant 17
 
-Replay must not accidentally execute Actions.
+Idempotency information must survive whenever required to prevent duplicate logical execution.
 
 Invariant 18
 
-Persisted references to enterprise Resources must retain sufficient identity and scope to remain meaningful.
+Unknown execution outcomes must remain explicitly represented.
 
 Invariant 19
 
-Persistence must preserve tenant and organizational boundaries.
+Persistence must not convert an uncertain outcome into success or failure without sufficient evidence.
 
 Invariant 20
 
-Persistence must not bypass enterprise authorization.
+Recovery must reconcile and revalidate mutable enterprise state before continuing consequential execution.
 
 Invariant 21
 
-Secrets must not be treated as ordinary execution data.
+Historical records must not be silently rewritten to reflect current policy or current enterprise state.
 
 Invariant 22
 
-Persistence should minimize unnecessary duplication of enterprise data.
+Replay must not accidentally execute Actions.
 
 Invariant 23
 
-Retention must be appropriate to the semantic and operational purpose of the data.
+Persisted references to enterprise Resources must retain sufficient identity and scope to remain meaningful.
 
 Invariant 24
 
-Consequential audit records should have stronger integrity guarantees than ordinary mutable operational state where required.
+Persistence must preserve tenant, organizational, legal, and environmental boundaries.
 
 Invariant 25
 
-Persistence failures must produce explicit system states rather than silent loss of execution history.
+Persistence must not bypass enterprise authorization.
 
 Invariant 26
 
-Noema should not execute high-consequence Actions when required durable execution state cannot be safely recorded.
+Secrets must not be treated as ordinary execution data.
 
 Invariant 27
 
-Persistence must support reconciliation when execution state and enterprise state diverge.
+Persistence should minimize unnecessary duplication of enterprise data.
 
 Invariant 28
 
-Concurrent updates to Execution state must not produce invalid or contradictory transitions.
+Retention must be appropriate to the semantic and operational purpose of the data.
 
 Invariant 29
 
-Historical execution records must remain interpretable across schema evolution.
+Consequential audit records should have stronger integrity guarantees than ordinary mutable operational state where required.
 
 Invariant 30
 
-Noema should persist enough information to answer:
+Persistence failures must produce explicit system states rather than silent loss of execution history.
 
-What happened, what was known, what was trusted, what was executed, and what ultimately occurred?
+Invariant 31
+
+Noema should not execute high-consequence Actions when required durable execution state cannot be safely recorded.
+
+Invariant 32
+
+Persistence must support reconciliation when execution state and enterprise state diverge.
+
+Invariant 33
+
+Concurrent updates to Execution state must not produce invalid or contradictory transitions.
+
+Invariant 34
+
+Historical execution records must remain interpretable across schema evolution.
+
+Invariant 35
+
+Source, authority, freshness, availability, and authorization must remain distinct dimensions.
+
+Invariant 36
+
+State Reconciliation must not invent authority or canonicality.
+
+Invariant 37
+
+Persisted enterprise observations must remain distinguishable from enterprise-owned canonical state.
+
+Invariant 38
+
+Trust EXECUTE must never be persisted or interpreted as proof that an Action succeeded.
+
+Invariant 39
+
+Planner persistence must not imply planner authority to invent capabilities, authority, or execution semantics.
+
+Invariant 40
+
+No persisted model output may bypass deterministic validation, Trust, authorization, or Action Contract boundaries.
+
+Invariant 41
+
+Persistence must preserve sufficient causal relationships to reconstruct why consequential transitions occurred.
+
+Invariant 42
+
+Noema-owned execution-domain state may be canonical within Noema without becoming canonical enterprise Business State.
+
+Invariant 43
+
+Persisted state must retain sufficient temporal information to distinguish historical observations from current enterprise state.
+
+Invariant 44
+
+A persisted record must not become authoritative merely because it is stored durably.
+
+Invariant 45
+
+Persistence must preserve enough information to answer:
+
+What happened?
+What was known?
+What was authoritative?
+What was reconciled?
+What was trusted?
+What was executed?
+What was verified?
+What ultimately occurred?
 
 ⸻
 
-142. Final Definition
+162. Final Definition
 
-Persistence is the durable memory of Noema’s execution system: it preserves the Intent, evidence, decisions, state transitions, Actions, attempts, and outcomes necessary for recovery, auditability, reconciliation, and deterministic continuation without becoming the System of Record for enterprise Business State.
+Persistence is the durable memory of Noema’s execution system.
+
+It preserves the Intent versions, evidence, Fact Status, observations, reconciliation results, Trust decisions, state transitions, Actions, attempts, and Outcomes necessary for recovery, auditability, reconciliation, and deterministic continuation without becoming the System of Record for enterprise Business State.
 
 The fundamental architecture is:
 
-              ENTERPRISE
-                  │
-          Authoritative State
-                  │
-                  ▼
-             Integration
-                  │
-                  ▼
-               NOEMA
-                  │
-      ┌───────────┼───────────┐
-      ▼           ▼           ▼
-    Intent       Trust      Execution
-      │           │           │
-      └───────────┼───────────┘
-                  ▼
-             Persistence
-                  │
-        ┌─────────┼─────────┐
-        ▼         ▼         ▼
-      History   Recovery   Audit
-        │         │         │
-        └─────────┼─────────┘
-                  ▼
-            Reconciliation
-                  │
-                  ▼
-              ENTERPRISE
+                  ENTERPRISE
+                      │
+              Authoritative State
+                      │
+                      ▼
+          Validated Integration / Events
+                      │
+                      ▼
+             State Reconciliation
+                      │
+                      ▼
+                   NOEMA
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       Intent       Trust      Execution
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+                 Persistence
+                      │
+        ┌─────────────┼─────────────┐
+        ▼             ▼             ▼
+     History       Recovery       Audit
+        │             │             │
+        └─────────────┼─────────────┘
+                      ▼
+                Reconciliation
+                      │
+                      ▼
+                  ENTERPRISE
 
 The key principle is:
 
-Persistence gives Noema memory, not ownership. It remembers what Noema knew, decided, and did so that execution can survive failure and remain accountable—while enterprise systems remain authoritative for enterprise state.
+Persistence gives Noema memory, not ownership.
+
+It remembers what Noema knew, what it observed, what it reconciled, what it decided, and what it did so that execution can survive failure and remain accountable while enterprise systems remain authoritative for enterprise Business State.

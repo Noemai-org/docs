@@ -9,15 +9,17 @@ Canonical Path: data/data-model.md
 
 1. Definition
 
-The Noema Data Model defines the semantic structure, relationships, provenance, authority, and lifecycle of information used to resolve Intent, evaluate Trust, and execute Actions.
+The Noema Data Model defines the semantic structure, relationships, provenance, authority, temporal meaning, and lifecycle of information used to resolve Intent, reconcile enterprise state, evaluate Trust, execute Actions, and verify Outcomes.
 
 The Data Model answers:
 
-“What kinds of data does Noema operate on, how are they related, and what does each piece of data mean?”
+“What kinds of information does Noema operate on, how are they related, what does each piece of information mean, and what authority does it have?”
 
 It is not simply a database schema.
 
 The Data Model is the semantic contract underlying Noema’s data layer.
+
+It defines meaning without requiring Noema to become the owner or System of Record for enterprise Business Data.
 
 ⸻
 
@@ -32,20 +34,26 @@ Noema operates across enterprise systems that each have their own:
 * event models
 * terminology
 * state representations
+* authority boundaries
 
 Noema requires a common semantic model without requiring every enterprise system to adopt Noema’s internal storage model.
 
 Enterprise Systems
        │
        ▼
-Integration Layer
+Validated Integration / Observation
        │
        ▼
 Noema Data Model
        │
- ┌─────┼─────┐
- ▼     ▼     ▼
-Intent Trust Execution
+ ┌─────┼────────────┐
+ ▼     ▼            ▼
+Intent Trust     Execution
+       │
+       ▼
+State Reconciliation
+
+The Data Model therefore provides the semantic bridge between heterogeneous enterprise information and deterministic Noema execution.
 
 ⸻
 
@@ -55,18 +63,20 @@ Noema’s Data Model represents meaning, not ownership.
 
 Noema may represent:
 
-Customer
-Account
-Payment
-Employee
-Order
-Policy
-Capability
-Action
+* Customer
+* Account
+* Payment
+* Employee
+* Organization
+* Order
+* Policy
+* Capability
+* Action
+* Execution
 
 without becoming the System of Record for those entities.
 
-The model provides a semantic representation that allows Noema to reason across heterogeneous enterprise systems.
+The model provides a semantic representation that allows Noema to reason across heterogeneous enterprise systems while preserving enterprise ownership and authority.
 
 ⸻
 
@@ -93,45 +103,76 @@ and another:
 
 state
 
-The Integration layer maps the enterprise representation into the semantic model.
+The Integration layer maps the enterprise representation into the Noema semantic model.
+
+The semantic model defines what Payment.status means.
+
+It does not dictate how the enterprise stores that value.
 
 ⸻
 
 5. Data Model Layers
 
-The Noema Data Model can be understood as several related layers:
+The Noema Data Model can be understood as several related semantic domains:
 
-┌──────────────────────────────┐
-│        Intent Data           │
-├──────────────────────────────┤
-│        Trust Data            │
-├──────────────────────────────┤
-│       Execution Data         │
-├──────────────────────────────┤
-│      Enterprise Data        │
-├──────────────────────────────┤
-│      Provenance Data         │
-└──────────────────────────────┘
+┌──────────────────────────────────┐
+│          Intent Data             │
+├──────────────────────────────────┤
+│       Context / Fact Data        │
+├──────────────────────────────────┤
+│     Trust / Decision Data        │
+├──────────────────────────────────┤
+│       Execution Data             │
+├──────────────────────────────────┤
+│     Enterprise Data References   │
+├──────────────────────────────────┤
+│     Evidence / Observation Data  │
+├──────────────────────────────────┤
+│       Provenance / Lineage       │
+└──────────────────────────────────┘
 
 These layers should remain semantically distinguishable.
+
+In particular:
+
+Enterprise Business State
+        ≠
+Noema Execution State
+        ≠
+Context
+        ≠
+Evidence
+        ≠
+Fact Status
+        ≠
+Outcome
 
 ⸻
 
 6. Core Data Categories
 
-Noema operates on several fundamental categories.
+Noema operates on several fundamental semantic categories:
 
-Entity
-Resource
-State
-Context
-Evidence
-Constraint
-Policy
-Action
-Outcome
-Identity
-Relationship
+* Entity
+* Resource
+* Identity
+* Attribute
+* State
+* Relationship
+* Context
+* Evidence
+* Fact
+* Fact Status
+* Canonical Data
+* Constraint
+* Policy
+* Action
+* Intent
+* Execution
+* Outcome
+* Provenance
+* Observation
+* Failure
 
 These categories form the foundation of the Noema semantic model.
 
@@ -143,11 +184,11 @@ An Entity represents a distinct enterprise subject.
 
 Examples:
 
-Customer
-Employee
-Organization
-Account
-Vendor
+* Customer
+* Employee
+* Organization
+* Account
+* Vendor
 
 An Entity has identity and relationships with other entities.
 
@@ -156,26 +197,30 @@ Entity
  ├── attributes
  └── relationships
 
+An Entity representation in Noema does not imply that Noema owns the enterprise Entity.
+
 ⸻
 
 8. Resource
 
-A Resource represents something that can be acted upon.
+A Resource represents something that can be referenced or acted upon.
 
 Examples:
 
-Payment
-Order
-Account
-Invoice
-Subscription
-Card
+* Payment
+* Order
+* Account
+* Invoice
+* Subscription
+* Card
 
 A Resource may be associated with an Entity.
 
 Customer
    │
    └── owns → Account
+
+Resource identity and ownership must be resolved through appropriate enterprise information rather than inferred solely from conversational context.
 
 ⸻
 
@@ -195,6 +240,16 @@ Identity {
 
 Identity is critical because natural-language Intent frequently refers to Resources indirectly.
 
+Identity must preserve sufficient scope to distinguish:
+
+* tenants
+* organizations
+* environments
+* namespaces
+* resource domains
+
+Identity resolution may produce candidates before a single authoritative Resource is established.
+
 ⸻
 
 10. Attribute
@@ -203,20 +258,26 @@ An Attribute describes a property of an Entity or Resource.
 
 Examples:
 
-Account.balance
-Payment.amount
-Payment.currency
-Order.status
-Employee.department
+* Account.balance
+* Payment.amount
+* Payment.currency
+* Order.status
+* Employee.department
 
 Attributes may have:
 
 value
 type
 source
-authority
-timestamp
+authority_scope
+observed_at
+effective_at
 version
+freshness
+fact_status
+provenance
+
+Attribute-level authority is important because a single source may be authoritative for some attributes but not others.
 
 ⸻
 
@@ -233,11 +294,15 @@ Intent = RESOLVED
 
 State should be modeled explicitly rather than inferred from arbitrary fields whenever state semantics are consequential.
 
+State must always be interpreted within an authority domain.
+
 ⸻
 
 12. State Ownership
 
 State belongs to an authority domain.
+
+For example:
 
 Enterprise:
 Account.status
@@ -245,6 +310,8 @@ Noema:
 Execution.status
 
 Noema should not silently replace enterprise state with a local approximation.
+
+Noema may maintain observations, references, reconciled representations, or cached values of enterprise state, but those representations do not become the enterprise System of Record.
 
 ⸻
 
@@ -258,32 +325,49 @@ Customer ──owns──> Account
 Account ──has──> Payment
 Action ──operates_on──> Resource
 Policy ──governs──> Action
-System ──owns──> Capability
+System ──provides──> Capability
+Intent ──refers_to──> Resource
 
 Relationships are first-class semantic information.
+
+Relationships may themselves have:
+
+* source
+* authority
+* scope
+* effective time
+* expiration
+* provenance
 
 ⸻
 
 14. Context
 
-Context is the bounded information relevant to a particular Intent or Execution.
+Context is the bounded, relevant information state surrounding a particular Intent, Trust evaluation, Action, Execution, Verification, or Reconciliation operation.
 
-Context
- ├── identity
- ├── entities
- ├── resources
- ├── states
- ├── policies
- ├── evidence
- └── system information
+Context may contain:
+
+* identity
+* entities
+* resources
+* states
+* policy information
+* evidence
+* observations
+* system information
+* historical information
+* canonical data references
+* derived information
 
 Context provides runtime grounding for the rest of the model.
+
+Context does not itself establish authority.
 
 ⸻
 
 15. Evidence
 
-Evidence represents information supporting a proposition or decision.
+Evidence represents information supporting or challenging a proposition, decision, or outcome.
 
 Conceptually:
 
@@ -292,44 +376,135 @@ Evidence {
     claim
     source
     observed_at
-    authority
-    confidence
+    effective_at
+    authority_scope
     provenance
 }
 
 Evidence is not synonymous with truth.
 
-Its strength depends on its source and authority.
+Its ability to support a claim depends on:
+
+* source
+* authority
+* identity
+* scope
+* freshness
+* consistency
+* temporal applicability
+* reconciliation
+
+Evidence should therefore not contain an undifferentiated confidence value as a substitute for semantic status.
 
 ⸻
 
-16. Canonical Data
+16. Fact
 
-Canonical Data represents authoritative enterprise facts within a defined scope.
+A Fact is a semantic claim about an Entity, Resource, relationship, state, or other subject.
 
-Canonical Data
-      │
-      ├── source
-      ├── authority
-      ├── scope
-      ├── value
-      └── temporal metadata
+Examples:
+
+Payment:123
+status = SUCCEEDED
+Account:456
+status = ACTIVE
+
+A Fact may be supported by one or more Evidence items and may reference Canonical Data.
+
+A Fact is not automatically verified merely because it exists in the Data Model.
+
+⸻
+
+17. Fact Status
+
+Fact Status describes the semantic status of a claim after the relevant observations, authority, freshness, and reconciliation conditions have been evaluated.
+
+A foundational vocabulary is:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Fact Status is distinct from:
+
+* Evidence
+* Context
+* Canonical Data
+* model confidence
+* execution state
+* Outcome
+
+For example:
+
+Evidence:
+Payment System observed status = SUCCEEDED
+Fact Status:
+STALE
+
+is possible if the observation is authoritative but no longer sufficiently current for the current operation.
+
+⸻
+
+18. Canonical Data
+
+Canonical Data represents an authoritative enterprise representation or claim within a defined authority boundary.
+
+Canonicality is claim-specific.
+
+A System of Record may be authoritative for:
+
+Account.balance
+
+without being authoritative for:
+
+Customer.email
 
 The Data Model must preserve the distinction between:
 
-canonical
-derived
-inferred
-cached
-observed
-historical
-unknown
+* canonical
+* observed
+* derived
+* inferred
+* cached
+* historical
+* user-provided
+* unknown
+
+Canonicality is not universal truth.
+
+It is authority within a defined scope.
 
 ⸻
 
-17. Constraint
+19. Canonical Data Reference
 
-A Constraint limits what may be valid or executable.
+Noema should generally represent enterprise Canonical Data through semantic references rather than creating a shadow canonical enterprise object.
+
+Conceptually:
+
+CanonicalDataReference {
+    claim
+    subject
+    attribute
+    value
+    source_system
+    authority_scope
+    observed_at
+    effective_at
+    source_version
+    freshness
+    provenance
+}
+
+This model allows Noema to preserve the semantic relationship to enterprise truth without claiming ownership of the underlying enterprise data.
+
+⸻
+
+20. Constraint
+
+A Constraint limits what may be valid, permitted, or executable.
 
 Examples:
 
@@ -339,15 +514,19 @@ transfer.currency = USD
 
 Constraints may originate from:
 
-Policy
-System Capability
-Business Rule
-Resource State
-Enterprise Configuration
+* Policy
+* Action Contract
+* System Capability
+* Business Rule
+* Resource State
+* Enterprise Configuration
+* execution requirements
+
+Constraints must retain their semantic source.
 
 ⸻
 
-18. Policy
+21. Policy
 
 Policy determines what is permitted, required, prohibited, or conditionally allowed.
 
@@ -357,25 +536,31 @@ refunds above $5,000 require approval
 employees cannot modify their own payroll
 transfers above $50,000 require MFA
 
-Policy is data within the semantic model but has normative authority.
+Policy is part of the semantic model but its normative authority must come from an applicable enterprise or Noema policy source.
+
+Policy is not simply another Context value.
+
+The Trust Engine evaluates applicable Policy deterministically.
 
 ⸻
 
-19. Action
+22. Action
 
-An Action represents an executable operation.
+An Action represents a bounded executable operation.
 
 Examples:
 
-refund_payment
-freeze_card
-create_user
-transfer_funds
-cancel_order
+* refund_payment
+* freeze_card
+* create_user
+* transfer_funds
+* cancel_order
 
-Actions operate against Resources through enterprise Capabilities.
+Actions operate against Resources through explicitly registered enterprise Capabilities and Action Contracts.
 
 Action
+   ↓
+Action Contract
    ↓
 Capability
    ↓
@@ -383,15 +568,29 @@ Enterprise System
    ↓
 Resource
 
+An Action cannot be invented by a model at execution time.
+
+The permitted Action surface must come from explicit Noema configuration and enterprise integration semantics.
+
 ⸻
 
-20. Intent
+23. Intent
 
-Intent represents the desired outcome or objective of a Principal.
+Intent represents the semantic objective expressed by a Source of Intent.
+
+A Source of Intent may be:
+
+* human
+* agent
+* system
+* workflow
+* API/application
+* enterprise event
+* other registered source
 
 Example:
 
-"Refund my last payment."
+“Refund my last payment.”
 
 may resolve to:
 
@@ -400,16 +599,20 @@ Intent {
     resource = Payment:123
 }
 
-Intent is not itself an Action.
+An Intent is not itself an Action.
+
+Intent represents what is requested.
+
+Action represents what can be executed.
 
 ⸻
 
-21. Intent vs Action
+24. Intent vs Action
 
 Intent:
-"What the user wants."
+"What is being requested?"
 Action:
-"What the system can execute."
+"What registered operation can execute that request?"
 
 Example:
 
@@ -420,25 +623,54 @@ refund_payment(payment_id)
 
 The Data Model preserves this distinction.
 
-⸻
-
-22. Outcome
-
-Outcome represents what resulted from an attempted Action.
-
-Examples:
-
-SUCCESS
-FAILED
-PARTIAL
-REQUIRES_INTERVENTION
-UNKNOWN
-
-Outcome should be grounded in observed execution results rather than inferred solely from Action submission.
+Intent does not grant execution authority.
 
 ⸻
 
-23. Execution
+25. Intent Version
+
+Consequential processing must identify the exact Intent version being evaluated.
+
+An admitted Intent is immutable.
+
+If the semantic Intent changes:
+
+Intent v1
+      ↓
+clarification / material change
+      ↓
+Intent v2
+supersedes v1
+
+Noema must not silently mutate the meaning of an admitted Intent.
+
+Trust and execution records should reference the exact Intent version that they evaluate or execute.
+
+⸻
+
+26. Outcome
+
+Outcome represents what Noema establishes about an attempted Action after execution and verification.
+
+Examples may include:
+
+* SUCCESS
+* FAILED
+* PARTIAL
+* REQUIRES_INTERVENTION
+* UNKNOWN
+
+Outcome should be grounded in observed and reconciled execution results rather than inferred solely from Action submission.
+
+Outcome is not the same thing as enterprise Business State.
+
+Noema Outcome
+      ≠
+Enterprise Business State
+
+⸻
+
+27. Execution
 
 Execution represents a concrete attempt to perform an Action.
 
@@ -446,19 +678,22 @@ Conceptually:
 
 Execution {
     execution_id
+    intent_version
     action
-    context
+    context_reference
     state
     attempts
     outcome
     timestamps
 }
 
-Execution connects Intent to real-world system activity.
+Execution connects a governed Intent and Action to real-world enterprise system activity.
+
+An Execution may have multiple attempts while retaining one logical execution identity.
 
 ⸻
 
-24. Execution Data vs Enterprise Data
+28. Execution Data vs Enterprise Data
 
 Noema must distinguish:
 
@@ -475,11 +710,42 @@ payment.status = REFUNDED
 Noema:
 execution.status = COMPLETED
 
-The two values are related but describe different domains.
+The two values are related but describe different semantic domains.
+
+Noema Execution Data must not be treated as a replacement for enterprise Business State.
 
 ⸻
 
-25. Provenance
+29. Observation
+
+An Observation records something observed from a source at a particular time.
+
+Conceptually:
+
+Observation {
+    subject
+    claim
+    value
+    source
+    observed_at
+    effective_at
+    source_version
+    provenance
+}
+
+Observations are important because Noema frequently operates with information that is:
+
+* temporally bounded
+* eventually consistent
+* cached
+* incomplete
+* conflicting
+
+An Observation is not automatically a Fact, and a Fact is not automatically verified.
+
+⸻
+
+30. Provenance
 
 Every consequential data item should have sufficient provenance.
 
@@ -487,42 +753,50 @@ Conceptually:
 
 Provenance {
     source
-    authority
+    authority_scope
     observed_at
     effective_at
     version
     transformation
+    parent_references
 }
 
 This allows Noema to determine:
 
-Where did this information come from?
+“Where did this information come from, how was it transformed, and what authority did the source have?”
+
+Provenance is essential for causal auditability.
 
 ⸻
 
-26. Source
+31. Source
 
-Source identifies where data originated.
+Source identifies where information originated.
 
 Examples:
 
-CRM
-Ledger
-Payment API
-HRIS
-Event Bus
-User
-Noema
+* CRM
+* Ledger
+* Payment API
+* HRIS
+* Event Bus
+* User
+* Noema
+* external provider
 
 Source and authority are distinct.
+
+Source ≠ Authority
 
 A source may provide information without being authoritative for that particular fact.
 
 ⸻
 
-27. Authority
+32. Authority
 
-Authority determines whether a source is authoritative for a particular fact.
+Authority determines whether a source is authoritative for a particular claim.
+
+For example:
 
 Source:
 Analytics DB
@@ -532,30 +806,43 @@ Authority for:
 account.balance
 NO
 
+Authority is:
+
+* claim-specific
+* scope-specific
+* temporal
+* potentially field-level
+* potentially resource-level
+
 The Data Model must not equate source presence with authority.
 
 ⸻
 
-28. Scope
+33. Scope
 
 Data must have an understood scope.
 
 Possible dimensions include:
 
-tenant
-organization
-legal entity
-environment
-system
-resource
-attribute
-time
+* tenant
+* organization
+* legal entity
+* business unit
+* environment
+* system
+* resource
+* attribute
+* namespace
+* time
+* purpose
 
 Scope prevents accidental cross-boundary interpretation.
 
+Scope must be preserved through integration, Context assembly, State Reconciliation, Trust, and Execution.
+
 ⸻
 
-29. Temporal Data
+34. Temporal Data
 
 Data may have multiple relevant timestamps:
 
@@ -570,31 +857,42 @@ These timestamps answer different questions.
 For example:
 
 effective_at
-→ when the fact became true
+→ when the fact became applicable
 observed_at
-→ when Noema learned it
+→ when Noema learned of the observation
+expires_at
+→ when the observation or representation ceases to satisfy its applicable validity requirement
+
+Temporal semantics are essential for reconciliation and long-running execution.
 
 ⸻
 
-30. Version
+35. Version
 
 Data may be versioned.
+
+Example:
 
 Account
 version = 42
 
 Version information supports:
 
-optimistic concurrency
-revalidation
-reconciliation
-auditability
+* optimistic concurrency
+* revalidation
+* State Reconciliation
+* auditability
+* causal reconstruction
+
+Data versioning is distinct from Contract Versioning.
+
+A source data version does not replace the semantic version of a Noema Contract.
 
 ⸻
 
-31. Freshness
+36. Freshness
 
-Freshness describes how current a data observation is relative to the requirement of an Action.
+Freshness describes how current an observation or representation is relative to the requirement of an operation.
 
 Freshness is not identical to authority.
 
@@ -608,26 +906,35 @@ fresh + non-canonical
 
 is possible.
 
+Freshness requirements are determined by the claim, Action, Policy, risk, and system semantics.
+
 ⸻
 
-32. Uncertainty
+37. Uncertainty
 
 The Data Model must represent uncertainty explicitly.
 
-Possible states include:
+Possible semantic conditions include:
 
-KNOWN
-UNKNOWN
-AMBIGUOUS
-CONFLICTED
-STALE
-UNAVAILABLE
+* KNOWN
+* UNKNOWN
+* AMBIGUOUS
+* CONFLICTED
+* STALE
+* UNAVAILABLE
+* INVALID
 
-Noema should not collapse these into a generic null.
+These must not be collapsed into a generic null.
+
+Unknown is particularly important because:
+
+UNKNOWN ≠ FAILED
+UNKNOWN ≠ ABSENT
+UNKNOWN ≠ FALSE
 
 ⸻
 
-33. Derived Data
+38. Derived Data
 
 Derived information should retain its derivation semantics.
 
@@ -641,11 +948,13 @@ transaction_history
 payment_history
 account_age
 
-The resulting value should not be mistaken for canonical enterprise data unless the enterprise explicitly defines it as such.
+The resulting value should not be mistaken for canonical enterprise data unless the enterprise explicitly defines it as authoritative.
+
+Derived data should preserve sufficient dependency information where its use is consequential.
 
 ⸻
 
-34. Inferred Data
+39. Inferred Data
 
 Inference represents a conclusion generated from available information.
 
@@ -655,32 +964,38 @@ likely_account = 123
 
 Inference should be distinguishable from verified identity:
 
-canonical_account = 123
+verified_account = 123
 
 This distinction is particularly important during Intent Resolution.
 
+Model-generated inference is candidate information.
+
+It is not automatically Evidence, Fact Status VERIFIED, authority, or authorization.
+
 ⸻
 
-35. User-Provided Data
+40. User-Provided Data
 
 User-provided information is an important input to the Data Model.
 
-User:
-"Use account 123."
+Example:
 
-This creates an input fact.
+“Use account 123.”
+
+This creates an input claim.
 
 It does not automatically establish:
 
-account 123 exists
-user owns account 123
-user is authorized to operate account 123
+* account 123 exists
+* user owns account 123
+* user is authorized to operate account 123
+* account 123 is currently active
 
-Those facts require appropriate verification.
+Those facts require appropriate enterprise verification.
 
 ⸻
 
-36. Data Classification
+41. Data Classification
 
 A useful semantic classification is:
 
@@ -692,11 +1007,21 @@ USER_PROVIDED
 HISTORICAL
 UNKNOWN
 
-Classification should be preserved where it affects Trust or execution.
+Classification should be preserved where it affects:
+
+* Trust
+* authorization
+* Policy
+* reconciliation
+* execution
+* verification
+* auditability
+
+Classification is not a substitute for Fact Status.
 
 ⸻
 
-37. Data Dependencies
+42. Data Dependencies
 
 Data objects may depend on other objects.
 
@@ -710,18 +1035,21 @@ Ledger
 
 Dependency relationships support:
 
-provenance
-recomputation
-invalidity detection
-auditability
+* provenance
+* recomputation
+* invalidity detection
+* impact analysis
+* auditability
+
+A derived value should not silently remain valid after a material dependency changes.
 
 ⸻
 
-38. Data Lineage
+43. Data Lineage
 
-Lineage represents how a value was produced.
+Lineage represents how a value or claim was produced.
 
-Canonical Data
+Enterprise Observation
       ↓
 Transformation
       ↓
@@ -731,13 +1059,17 @@ Context
       ↓
 Evidence
       ↓
-Decision
+State Reconciliation
+      ↓
+Trust Decision
 
 For consequential Actions, Noema should be able to trace this path where feasible.
 
+Lineage is about causal reconstruction, not exposing private model chain-of-thought.
+
 ⸻
 
-39. Data Relationships
+44. Data Relationships
 
 The core semantic relationships include:
 
@@ -750,75 +1082,98 @@ Intent ──resolves_to──> Action
 Action ──operates_on──> Resource
 Action ──requires──> Context
 Action ──requires──> Preconditions
-Action ──produces──> Outcome
+Action ──produces──> Execution
 Policy ──governs──> Action
-Evidence ──supports──> Claim
+Evidence ──supports──> Fact
+Observation ──supports──> Evidence
 Data ──sourced_from──> System
+State ──reconciled_by──> State Reconciliation
+Fact ──has_status──> Fact Status
 
 ⸻
 
-40. The Noema Data Graph
+45. The Noema Data Graph
 
 These relationships form a semantic graph:
 
-                  Policy
-                    │
-                  governs
-                    ▼
-Intent ────────> Action
-  │                │
-refers_to       operates_on
-  │                │
-  ▼                ▼
-Resource ──────> State
-  │
-  │
-  ▼
-Canonical Data
-  │
-  ▼
-Evidence
-  │
-  ▼
-Trust
-  │
-  ▼
-Execution
-  │
-  ▼
-Outcome
+                    Policy
+                      │
+                    governs
+                      ▼
+Intent ───────────> Action
+  │                   │
+refers_to          operates_on
+  │                   │
+  ▼                   ▼
+Resource ─────────> State
+  │                   │
+  │                   ▼
+  │              Observation
+  │                   │
+  ▼                   ▼
+Canonical Data ──> Evidence
+                      │
+                      ▼
+              State Reconciliation
+                      │
+                      ▼
+                 Fact Status
+                      │
+                      ▼
+                    Trust
+                      │
+                      ▼
+                  Execution
+                      │
+                      ▼
+                   Outcome
 
 This is not necessarily a requirement that Noema use a graph database.
 
-It is a description of the semantic relationships.
+It is a description of the semantic relationships that Noema must preserve.
 
 ⸻
 
-41. Data Model and Enterprise Action Graph
+46. Data Model and Enterprise Action Graph
 
-The Enterprise Action Graph describes what an enterprise can do.
+The Enterprise Action Graph describes what an enterprise can do and how its capabilities, systems, resources, and actions relate.
 
-The Data Model describes the information required to understand and execute those operations.
+The Data Model describes the information required to understand, govern, execute, and verify those operations.
 
 Enterprise Action Graph
-        +
+          +
 Noema Data Model
-        ↓
-Runtime Execution Context
+          ↓
+Runtime Context
+          ↓
+State Reconciliation
+          ↓
+Trust
+          ↓
+Execution
+
+The two are related but distinct.
+
+The Action Graph is structural execution knowledge.
+
+The Data Model is semantic information structure.
 
 ⸻
 
-42. Data Model and Integration
+47. Data Model and Integration
 
 Integration translates enterprise-specific representations into Noema’s semantic model.
 
 Example:
 
 Enterprise A:
+
 {
     payment_status: "completed"
 }
+
 Enterprise B:
+
 {
     state: "succeeded"
 }
@@ -827,13 +1182,50 @@ Both may map to:
 
 Payment.status = SUCCEEDED
 
-The Integration layer handles translation.
+The Integration layer handles translation and validation.
 
 The Data Model defines the meaning of Payment.status.
 
+Integration does not automatically establish that the mapped value is current or authoritative.
+
 ⸻
 
-43. Data Model and APIs
+48. Data Model and Hard Validation
+
+Enterprise data, events, tool responses, and external observations are untrusted inputs until they pass the appropriate validation and admission boundary.
+
+Conceptually:
+
+External Representation
+        ↓
+Integration Boundary
+        ↓
+Schema Validation
+        ↓
+Semantic Validation
+        ↓
+Admission
+        ↓
+Data Model
+        ↓
+Context / Reconciliation
+
+Hard schema validation establishes structural validity.
+
+It does not establish:
+
+* enterprise authority
+* freshness
+* authorization
+* Fact Status
+* policy compliance
+* execution permission
+
+No free-form model output should bypass this boundary.
+
+⸻
+
+49. Data Model and APIs
 
 APIs expose enterprise data and capabilities.
 
@@ -843,27 +1235,43 @@ API Response
      ↓
 Integration Mapping
      ↓
+Schema Validation
+     ↓
 Data Model
      ↓
 Context
 
+API responses should retain their source, scope, version, and relevant temporal semantics.
+
 ⸻
 
-44. Data Model and Events
+50. Data Model and Events
 
-Events represent changes or occurrences.
+Events represent occurrences or observations.
+
+For example:
 
 payment.refunded
 
-may update or invalidate Context concerning:
+may provide an observation relevant to:
 
 Payment.status
 
-The event model should map cleanly into the Data Model without conflating events with persistent state.
+The event model should map cleanly into the Data Model without conflating:
+
+Event Occurrence
+
+with:
+
+Current Enterprise State
+
+State Reconciliation may need to query the authoritative enterprise source after an event to establish current state.
+
+Event absence is not automatically proof that an occurrence did not happen.
 
 ⸻
 
-45. Data Model and State
+51. Data Model and State
 
 State is a first-class concept because Noema frequently asks:
 
@@ -879,66 +1287,121 @@ Account.status_changed_at = ...
 
 State should therefore not be reduced to arbitrary event history.
 
+Current state may require reconciliation across multiple observations.
+
 ⸻
 
-46. Data Model and Policy
+52. Data Model and State Reconciliation
 
-Policy may depend on data.
+State Reconciliation is a first-class operation over Data Model information.
+
+It determines what enterprise state can be established from available observations, authority boundaries, versions, temporal information, and consistency rules.
+
+Observations
+     │
+     ├── Source A
+     ├── Source B
+     ├── Events
+     └── Cached State
+           │
+           ▼
+   State Reconciliation
+           │
+     ┌─────┼──────┐
+     ▼     ▼      ▼
+ Resolved Conflict Unknown
+ State
+
+Reconciliation must not invent facts or promote non-authoritative information into canonical truth.
+
+Its result may remain:
+
+* VERIFIED
+* STALE
+* CONFLICTED
+* UNKNOWN
+
+depending on the claim and available evidence.
+
+⸻
+
+53. Data Model and Policy
+
+Policy may depend on Data Model values.
 
 Example:
 
 if transfer.amount > 50000
 then approval_required
 
-The Data Model must represent the relationship between:
+The Data Model must represent the relationship among:
 
-Policy
-Amount
-Action
-Principal
-Approval Requirement
+* Policy
+* Amount
+* Action
+* Principal
+* Resource
+* Approval Requirement
+* applicable state
+
+Trust evaluates the resulting conditions deterministically.
 
 ⸻
 
-47. Data Model and Preconditions
+54. Data Model and Preconditions
 
 Preconditions consume Data Model values.
 
-Precondition:
+Example:
+
 account.status == ACTIVE
 
-The referenced state must resolve to an authoritative or appropriately trusted value.
+The referenced state must resolve to an appropriately authoritative and sufficiently fresh value for the Action.
+
+If the required fact is unknown, conflicted, or otherwise insufficient, Noema must not treat the precondition as satisfied merely because a stale or inferred value exists.
 
 ⸻
 
-48. Data Model and Postconditions
+55. Data Model and Postconditions
 
 Postconditions also reference Data Model values.
 
-Postcondition:
+Example:
+
 payment.status == REFUNDED
 
-The resulting state should be verified through the appropriate source.
+The resulting state should be verified through the appropriate enterprise source or reconciliation path.
+
+An Action response alone does not necessarily establish that the postcondition is true.
 
 ⸻
 
-49. Data Model and Trust
+56. Data Model and Trust
 
 Trust evaluates relationships among:
 
-data
-authority
-identity
-policy
-risk
-evidence
-state
+* Intent
+* actor
+* Action
+* Resource
+* data
+* authority
+* Policy
+* evidence
+* Fact Status
+* state
+* risk
+* capabilities
 
 The Data Model provides the semantic substrate on which Trust operates.
 
+Trust does not create enterprise authority.
+
+It evaluates whether the resolved operation satisfies the applicable deterministic conditions.
+
 ⸻
 
-50. Data Model and Determinism
+57. Data Model and Determinism
 
 Deterministic execution requires explicit semantics.
 
@@ -946,25 +1409,28 @@ For example:
 
 balance = 10000
 
-must mean:
+is insufficient without knowing:
 
-which account?
-which currency?
-which system?
-which timestamp?
-which tenant?
+* which account
+* which currency
+* which enterprise system
+* which timestamp
+* which tenant
+* which legal entity
+* which authority boundary
+* what Fact Status applies
 
 The Data Model should provide the structure necessary to answer these questions.
 
 ⸻
 
-51. Data Model and Ambiguity
+58. Data Model and Ambiguity
 
 Ambiguity exists when the Data Model cannot uniquely resolve a reference.
 
 Example:
 
-"my account"
+“my account”
 
 may map to:
 
@@ -972,13 +1438,15 @@ Account A
 Account B
 Account C
 
-Noema should preserve this ambiguity until resolved.
+Noema should preserve this ambiguity until deterministic resolution is possible.
+
+The model may generate candidate interpretations, but candidate generation is not authoritative identity resolution.
 
 ⸻
 
-52. Data Model and Identity Resolution
+59. Data Model and Identity Resolution
 
-Identity resolution maps natural-language references to canonical entities.
+Identity resolution maps references to enterprise entities or Resources.
 
 "John's account"
       ↓
@@ -986,21 +1454,23 @@ Candidate Accounts
       ↓
 Identity Resolution
       ↓
-Canonical Account
+Resolved Enterprise Account
 
-The Data Model provides the identifiers and relationships needed to perform that resolution.
+The Data Model provides the identifiers, relationships, scope, and authority metadata needed to perform that resolution.
+
+A resolved Resource must be sufficiently specific before consequential execution.
 
 ⸻
 
-53. Data Model and Compound Intent
+60. Data Model and Compound Intent
 
 Compound Intent may produce multiple Actions operating across multiple Resource types.
 
 Example:
 
-"Cancel my order, refund the payment, and close the account."
+“Cancel my order, refund the payment, and close the account.”
 
-maps to:
+may map to:
 
 Order
   ↓
@@ -1014,9 +1484,20 @@ close_account
 
 The Data Model provides the relationships connecting these Resources.
 
+Each Action may have distinct:
+
+* Context requirements
+* Policies
+* Preconditions
+* authorities
+* capabilities
+* execution semantics
+
+Compound Intent does not imply that all Actions share one authority boundary.
+
 ⸻
 
-54. Data Model and Ownership
+61. Data Model and Ownership
 
 Ownership is represented explicitly.
 
@@ -1030,34 +1511,41 @@ Account
 
 Ownership should not be inferred solely from:
 
-email
-name
-phone number
-conversation history
+* email
+* name
+* phone number
+* conversation history
 
-when authoritative relationships exist.
+when authoritative enterprise relationships exist.
+
+Ownership itself is a claim whose authority is enterprise-specific.
 
 ⸻
 
-55. Data Model and Permissions
+62. Data Model and Permissions
 
-Permission data determines whether a Principal can perform an Action against a Resource.
+Permission data helps determine whether a Principal may perform an Action against a Resource.
 
 Principal
     │
- authorized_for
+    ▼
+Authorization Context
+    │
     ▼
 Action
     │
- operates_on
     ▼
 Resource
 
 Permission is not inferred simply from Resource visibility.
 
+Technical authorization, policy authorization, and business authorization remain distinct concepts.
+
+The Data Model represents the information required to evaluate them; it does not manufacture permission.
+
 ⸻
 
-56. Data Model and Organizational Boundaries
+63. Data Model and Organizational Boundaries
 
 The Data Model must preserve organizational relationships and boundaries.
 
@@ -1069,46 +1557,57 @@ Organization
 
 These relationships can affect:
 
-authorization
-policy
-resource visibility
-Action availability
+* authorization
+* Policy
+* Resource visibility
+* Action availability
+* data access
+
+Cross-organizational relationships must be explicit rather than inferred from proximity in Context.
 
 ⸻
 
-57. Data Model and Data Boundaries
+64. Data Model and Data Boundaries
 
 Data access must respect:
 
-tenant
-organization
-legal entity
-environment
-classification
-purpose
-permission
+* tenant
+* organization
+* legal entity
+* environment
+* classification
+* purpose
+* permission
 
 The Data Model does not grant access merely by representing a piece of data.
 
+A value can be canonical within an enterprise and still be unavailable to the current Noema operation.
+
 ⸻
 
-58. Data Model and Auditability
+65. Data Model and Auditability
 
 The Data Model should support reconstructing:
 
-what was known
-what was believed
-what was authoritative
-what Action was selected
-what Policy applied
-what Execution occurred
-what Outcome resulted
+* what was requested
+* what Intent version was admitted
+* what was known
+* what was observed
+* what was authoritative
+* what Fact Status applied
+* what state was reconciled
+* what Action was selected
+* what Policy applied
+* what Trust decision was made
+* what Execution occurred
+* what was verified
+* what Outcome resulted
 
 This is essential for enterprise-grade automation.
 
 ⸻
 
-59. Immutable Observations
+66. Immutable Observations
 
 Where appropriate, observations used for consequential decisions should be immutable.
 
@@ -1127,39 +1626,63 @@ balance = $10,000
 Observation 2:
 balance = $8,000
 
-This improves auditability and temporal reasoning.
+This improves:
+
+* auditability
+* temporal reasoning
+* reconciliation
+* causal reconstruction
+
+Noema should not silently rewrite historical observations to match later state.
 
 ⸻
 
-60. Data Model and Long-Running Execution
+67. Data Model and Long-Running Execution
 
 Data may change during execution.
 
 Therefore an Execution may need to retain:
 
-initial Context
-current Context
-revalidated Context
-observed changes
+* initial Context
+* Context version
+* current Context
+* reconciled Context
+* revalidated Context
+* observed changes
+* relevant source versions
 
 This allows Noema to determine whether Preconditions remain valid.
 
+A long-running Execution must not assume that state established at T1 remains valid at T2.
+
 ⸻
 
-61. Data Model and Reconciliation
+68. Data Model and Reconciliation
 
-Reconciliation compares Noema’s expected state with observed enterprise state.
+Reconciliation compares expected, observed, and authoritative state.
+
+Example:
 
 Expected:
 payment.status = REFUNDED
 Observed:
 payment.status = SUCCEEDED
 
-The Data Model provides the common semantic representation required to detect this discrepancy.
+The Data Model provides the common semantic representation required to identify the discrepancy.
+
+Reconciliation may then establish:
+
+* the expected state has not occurred
+* the observed state is stale
+* the sources conflict
+* the execution result is unknown
+* further verification is required
+
+Reconciliation must not silently convert discrepancies into success or failure.
 
 ⸻
 
-62. Data Model and Failure
+69. Data Model and Failure
 
 Failures should be represented semantically rather than as arbitrary strings.
 
@@ -1174,11 +1697,22 @@ Failure {
     details
 }
 
-This allows Execution logic to reason consistently about failures.
+Failure information should preserve enough context to determine whether the failure concerns:
+
+* Intent resolution
+* Trust
+* Context acquisition
+* State Reconciliation
+* Action execution
+* verification
+* integration
+* enterprise availability
+
+A timeout must not automatically be classified as a business failure.
 
 ⸻
 
-63. Data Model and Unknown Outcomes
+70. Data Model and Unknown Outcomes
 
 An Action may succeed at the enterprise boundary while Noema fails to observe the result.
 
@@ -1198,11 +1732,13 @@ rather than incorrectly recording:
 
 Outcome = FAILED
 
+Unknown execution state should normally trigger verification or reconciliation before a potentially duplicative retry.
+
 ⸻
 
-64. Data Model and Idempotency
+71. Data Model and Idempotency
 
-Execution records should connect Actions with their idempotency identity.
+Execution records should connect Actions with their execution identity and idempotency identity.
 
 Action
    │
@@ -1212,128 +1748,276 @@ Action
 
 This allows Noema to distinguish:
 
-new execution
+new logical execution
 
 from:
 
-retry of existing execution
+retry / continuation of existing execution
+
+Idempotency semantics belong to execution and Action contracts, while the Data Model provides the relationships required to represent them.
 
 ⸻
 
-65. Data Model and Compensation
+72. Data Model and Compensation
 
 Compensation requires knowledge of:
 
-prior Action
-prior state
-current state
-available capabilities
+* prior Action
+* prior state
+* current state
+* available capabilities
+* applicable Policy
+* execution history
 
 The Data Model therefore provides the semantic information required to determine whether compensation is possible.
 
+Compensation is not a local data rewrite.
+
+It must execute through authorized enterprise capabilities and preserve causal linkage to the original execution.
+
 ⸻
 
-66. Data Model and Human Intervention
+73. Data Model and Human Intervention
 
 When Noema cannot safely continue, intervention records should reference the relevant semantic objects:
 
-Intent
-Action
-Resource
-Context
-Policy
-Evidence
-Failure
-Execution
+* Intent
+* Intent version
+* Action
+* Resource
+* Context
+* Policy
+* Evidence
+* Fact Status
+* Failure
+* Execution
+* Reconciliation result
 
-This gives the human operator enough context to make an informed decision.
+This gives the human operator the information required to understand the case without requiring access to private model reasoning.
 
 ⸻
 
-67. Data Model and Noema Ownership Boundary
+74. Data Model and Noema Ownership Boundary
 
-Noema should own semantic and execution data necessary to operate its Trust and Execution systems.
+Noema should own the semantic and execution-domain data necessary to operate its Trust and Execution systems.
 
-The enterprise should remain authoritative for enterprise Business State.
+The enterprise remains authoritative for enterprise Business State.
+
+Conceptually:
 
 Noema owns:
-Intent lifecycle
-Trust decisions
-Execution records
-Action semantics
-Evidence records
+- Intent lifecycle
+- Trust Decisions
+- Execution records
+- Action semantics
+- execution-domain Outcomes
+- intervention / case state
+- operational execution history
 Enterprise owns:
-Accounts
-Balances
-Payments
-Orders
-Employees
-Business transactions
+- Accounts
+- Balances
+- Payments
+- Orders
+- Employees
+- Business transactions
+- enterprise permissions
+- enterprise Business State
 
 The exact boundary is enterprise-specific.
 
+Noema may store references, observations, evidence, and historical representations of enterprise data without becoming the canonical owner of that data.
+
 ⸻
 
-68. Canonical Data Model
+75. Operational Memory
 
-The foundational object relationship is:
+Operational Memory stores structured information about prior Noema operations, including:
 
-Enterprise System
-       │
-       ▼
-Canonical Data
-       │
-       ▼
-Data Model
-       │
-       ▼
-Context
-       │
-       ▼
-Evidence
-       │
-       ▼
-Trust
-       │
-       ▼
-Execution
+* Intent history
+* Trust decisions
+* executions
+* interventions
+* failures
+* reconciliations
+* outcomes
+* learned operational patterns
+
+Operational Memory is not:
+
+* generic AI memory
+* a vector store by definition
+* a replacement for enterprise Business Data
+* an authority source merely because it contains historical information
+
+Operational Memory may provide Context and historical Evidence, but its authority must remain explicitly classified.
+
+⸻
+
+76. Canonical Data Model Flow
+
+The foundational relationship is:
+
+Enterprise Systems of Record
+          │
+          ▼
+Validated Integration / Observation
+          │
+          ▼
+Canonical Data Reference
+          │
+          ▼
+      Data Model
+          │
+          ▼
+        Context
+          │
+          ▼
+ State Reconciliation
+          │
+          ▼
+ Evidence + Fact Status
+          │
+          ▼
+         Trust
+          │
+          ▼
+      Execution
+          │
+          ▼
+      Verification
+          │
+          ▼
+   Enterprise State
 
 The Data Model provides the semantic bridge between enterprise truth and Noema execution.
 
+It does not become a replacement System of Record.
+
 ⸻
 
-69. Conceptual Core Schema
+77. Conceptual Core Schema
 
-A simplified conceptual model:
+A simplified conceptual model is:
 
 Principal
    │
    ▼
 Intent
    │
-   ├──────────► Context
-   │               │
-   │               ▼
-   │            Evidence
-   │               │
-   ▼               ▼
-Resource ─────► Trust
-   │               │
-   ▼               ▼
-State          Decision
-                   │
-                   ▼
-                 Action
-                   │
-                   ▼
-               Execution
-                   │
-                   ▼
-                Outcome
+   ├──────────────► Context
+   │                    │
+   │                    ▼
+   │                 Evidence
+   │                    │
+   ▼                    ▼
+Resource ────────► State Reconciliation
+   │                    │
+   ▼                    ▼
+State              Fact Status
+                         │
+                         ▼
+                       Trust
+                         │
+                         ▼
+                       Action
+                         │
+                         ▼
+                     Execution
+                         │
+                         ▼
+                      Outcome
+                         │
+                         ▼
+                    Verification
+
+This represents semantic relationships rather than a mandatory physical database structure.
 
 ⸻
 
-70. Core Invariants
+78. Data Model and Security Boundary
+
+The Data Model participates in Noema’s structural security boundary.
+
+The following must be treated as untrusted until appropriately validated and admitted:
+
+* user input
+* model output
+* retrieved documents
+* external tool responses
+* enterprise responses
+* event payloads
+
+The Data Model must not provide a path for untrusted content to become:
+
+* enterprise authority
+* Policy
+* Action Contract
+* authorization
+* execution instruction
+
+without an explicit deterministic admission and validation path.
+
+The model must not receive credentials or direct enterprise access merely because data is represented in the Data Model.
+
+⸻
+
+79. Data Model and Model Independence
+
+Noema’s semantic Data Model must remain independent of any particular AI model.
+
+Models may:
+
+* interpret Intent
+* generate candidate references
+* identify potential Context
+* propose plans
+* summarize information
+
+But models must not define:
+
+* enterprise authority
+* canonical truth
+* Fact Status
+* Policy semantics
+* Action Contract semantics
+* execution authority
+
+The Data Model therefore forms part of the deterministic semantic substrate surrounding probabilistic model behavior.
+
+⸻
+
+80. Data Model and Verification
+
+Verification uses the Data Model to determine whether expected postconditions correspond to observed enterprise state.
+
+Conceptually:
+
+Action
+   ↓
+Execution
+   ↓
+Expected Postcondition
+   ↓
+Enterprise Observation
+   ↓
+State Reconciliation
+   ↓
+Fact Status
+   ↓
+Verified Outcome
+
+An enterprise API response may be Evidence without being sufficient to establish the final Outcome.
+
+Verification must preserve the distinction between:
+
+* request accepted
+* execution completed
+* enterprise state changed
+* postcondition established
+
+⸻
+
+81. Core Invariants
 
 Invariant 1
 
@@ -1349,7 +2033,7 @@ Enterprise-specific schemas must be mapped into the Noema semantic model through
 
 Invariant 4
 
-Entities, Resources, State, Context, Evidence, Policy, Actions, and Outcomes are distinct semantic concepts.
+Entities, Resources, State, Context, Evidence, Facts, Policies, Actions, Executions, and Outcomes are distinct semantic concepts.
 
 Invariant 5
 
@@ -1361,7 +2045,7 @@ Enterprise Business State and Noema Execution State must remain distinct.
 
 Invariant 7
 
-Canonical Data must remain distinguishable from derived, inferred, cached, and user-provided data.
+Canonical Data must remain distinguishable from derived, inferred, cached, observed, historical, and user-provided data.
 
 Invariant 8
 
@@ -1373,103 +2057,195 @@ Authority and source are distinct concepts.
 
 Invariant 10
 
-Freshness and authority are distinct concepts.
+Authority and freshness are distinct concepts.
 
 Invariant 11
 
-Unknown, ambiguous, stale, unavailable, and conflicted states must remain semantically distinguishable where consequential.
+Authority, availability, and authorization are distinct concepts.
 
 Invariant 12
 
-Identity must include sufficient scope to prevent accidental cross-entity resolution.
+Fact Status must remain distinct from Evidence, Context, Canonical Data, State, Outcome, and model confidence.
 
 Invariant 13
 
-Relationships are first-class semantic information.
+Unknown, ambiguous, stale, unavailable, invalid, and conflicted states must remain semantically distinguishable where consequential.
 
 Invariant 14
 
-Temporal information must be preserved when it affects interpretation or execution.
+Identity must include sufficient scope to prevent accidental cross-entity or cross-tenant resolution.
 
 Invariant 15
 
-Version information should be preserved when required for concurrency, validation, or auditability.
+Relationships are first-class semantic information.
 
 Invariant 16
 
-User-provided information must not automatically become canonical enterprise data.
+Temporal information must be preserved when it affects interpretation, reconciliation, or execution.
 
 Invariant 17
 
-Model inference must not automatically become canonical enterprise data.
+Version information should be preserved when required for concurrency, validation, reconciliation, or auditability.
 
 Invariant 18
 
-Events must remain distinguishable from persistent state.
+User-provided information must not automatically become canonical enterprise data.
 
 Invariant 19
 
-Context must remain distinguishable from Business State.
+Model inference must not automatically become canonical enterprise data, Evidence, verified Fact Status, or authority.
 
 Invariant 20
 
-Policy constrains data-driven execution; data does not override Policy.
+Events must remain distinguishable from persistent or current enterprise state.
 
 Invariant 21
 
-Representation of data does not grant authorization to access or use it.
+Context must remain distinguishable from Business State.
 
 Invariant 22
 
-Data access must respect enterprise organizational and tenant boundaries.
+Policy constrains data-driven execution; data does not override Policy.
 
 Invariant 23
 
-Noema should not create shadow canonical representations of enterprise Business State.
+Representation of data does not grant authorization to access or use it.
 
 Invariant 24
 
-Execution data must be sufficient to connect Intent, Context, Action, Execution, and Outcome.
+Data access must respect enterprise organizational, tenant, legal, environmental, and purpose boundaries.
 
 Invariant 25
 
-Unknown execution outcomes must not be incorrectly converted into failure or success.
+Noema must not create shadow canonical representations of enterprise Business State merely for convenience.
 
 Invariant 26
 
-Data required for consequential execution must be revalidated when freshness requirements demand it.
+Execution data must be sufficient to connect Intent, Intent version, Context, Action, Execution, Verification, and Outcome.
 
 Invariant 27
 
-Historical observations required for auditability must not be silently overwritten.
+Unknown execution outcomes must not be incorrectly converted into failure or success.
 
 Invariant 28
 
-Derived data should preserve its dependency and derivation semantics where consequential.
+Data required for consequential execution must be revalidated when freshness or state requirements demand it.
 
 Invariant 29
 
-The Data Model must support deterministic reasoning without requiring the underlying model to be deterministic.
+Historical observations required for auditability must not be silently overwritten.
 
 Invariant 30
 
+Derived data should preserve its dependency and derivation semantics where consequential.
+
+Invariant 31
+
+The Data Model must support deterministic reasoning without requiring the underlying model to be deterministic.
+
+Invariant 32
+
 The Data Model must preserve enough structure to distinguish what is known, what is authoritative, what is inferred, what is uncertain, and what changed.
+
+Invariant 33
+
+State Reconciliation is a first-class operation over enterprise observations and state representations.
+
+Invariant 34
+
+State Reconciliation must not invent canonicality or promote non-authoritative observations into enterprise truth.
+
+Invariant 35
+
+A canonical source may still produce a stale, unavailable, or otherwise insufficient observation for a particular operation.
+
+Invariant 36
+
+Hard schema validation establishes structural validity but does not establish authority, freshness, authorization, or Fact Status.
+
+Invariant 37
+
+Untrusted external or model-generated information must not bypass the schema validation and semantic admission boundary.
+
+Invariant 38
+
+Intent versions admitted to Trust are immutable; material semantic changes require a new version with explicit lineage.
+
+Invariant 39
+
+Trust decisions and consequential executions must preserve the exact semantic versions of the Intent and other relevant governing artifacts.
+
+Invariant 40
+
+Noema Outcome must not be treated as a replacement for enterprise Business State.
+
+Invariant 41
+
+Read-only data access may be consequential and must remain subject to authorization and data-boundary requirements.
+
+Invariant 42
+
+Operational Memory is not an enterprise System of Record and does not become authoritative merely by retaining historical information.
+
+Invariant 43
+
+Compensation must operate through authorized enterprise capabilities rather than local mutation of shadow business state.
+
+Invariant 44
+
+A source count or agreement among sources does not itself establish authority.
+
+Invariant 45
+
+Canonicality is claim-, scope-, resource-, and time-specific.
+
+Invariant 46
+
+The absence of a Data Model observation must not automatically be interpreted as absence of the underlying enterprise fact.
+
+Invariant 47
+
+Timeouts and retrieval failures must not automatically be converted into negative enterprise facts.
+
+Invariant 48
+
+The Data Model must preserve enough lineage to connect consequential decisions to the enterprise observations on which they depended.
+
+Invariant 49
+
+A Data Model representation must not silently expand the authority, scope, or semantics of the underlying enterprise data.
+
+Invariant 50
+
+Noema’s Data Model must remain semantically independent of any particular AI model or model provider.
 
 ⸻
 
-71. Final Definition
+82. Final Definition
 
-The Noema Data Model is the semantic foundation through which Noema represents enterprise entities, resources, state, context, evidence, policies, actions, executions, and outcomes while preserving authority, provenance, temporal semantics, uncertainty, and enterprise ownership boundaries.
+The Noema Data Model is the semantic foundation through which Noema represents and relates enterprise entities, Resources, identities, state, Context, Evidence, Facts, Policies, Actions, Executions, Outcomes, observations, and provenance while preserving authority, temporal semantics, uncertainty, reconciliation, and enterprise ownership boundaries.
 
 Its fundamental role is:
 
 ENTERPRISE TRUTH
       │
       ▼
+VALIDATED OBSERVATIONS
+      │
+      ▼
 SEMANTIC DATA MODEL
       │
       ▼
+CANONICAL DATA REFERENCES
+      │
+      ▼
 RUNTIME CONTEXT
+      │
+      ▼
+STATE RECONCILIATION
+      │
+      ▼
+EVIDENCE + FACT STATUS
       │
       ▼
 TRUST
@@ -1478,11 +2254,11 @@ TRUST
 EXECUTION
       │
       ▼
-OBSERVED OUTCOME
+VERIFICATION
       │
       ▼
-ENTERPRISE TRUTH
+OBSERVED ENTERPRISE STATE
 
 The central rule is:
 
-Noema’s Data Model should make enterprise information understandable and executable without making Noema the owner of that information.
+Noema’s Data Model should make enterprise information understandable, reconcilable, governable, and executable without making Noema the owner of that information.
