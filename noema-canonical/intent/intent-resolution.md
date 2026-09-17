@@ -9,110 +9,160 @@ Canonical Path: intent/intent-resolution.md
 
 1. Definition
 
-Intent Resolution is the deterministic process by which Noema transforms a candidate Intent into a sufficiently complete, grounded, and unambiguous Intent that can be evaluated for executability and Trust.
+Intent Resolution is the governed process by which Noema transforms an admitted candidate Intent into a sufficiently complete, grounded, and semantically determined Intent that can become Executable Intent and be evaluated by Trust.
 
 Resolution answers:
 
-“Do we know what the Actor means well enough to proceed?”
+“Do we know what the Actor means well enough to proceed to deterministic evaluation?”
 
 It does not answer:
 
-“Should we execute it?”
+“May Noema execute it?”
 
-That is the responsibility of Trust and Policy.
+That is the responsibility of Trust, using applicable authority, policy, current state, constraints, capabilities, contracts, and other governance conditions.
 
 ⸻
 
 2. Why Resolution Exists
 
-A Model can produce a plausible interpretation of a request without that interpretation being sufficiently reliable for execution.
+A Model can produce a plausible interpretation without that interpretation being sufficiently established for consequential execution.
 
 For example:
 
-“Cancel my subscription.”
+"Cancel my subscription."
 
 If the Actor has:
 
 Subscription#123
 Subscription#456
 
-the Model may select one.
+a Model may select one.
 
-Noema must not treat plausibility as resolution.
+Noema must not treat plausibility as semantic resolution.
 
 Instead:
 
-Natural Language
+Source of Intent
        ↓
-Candidate Intent
+Candidate Semantic Representation
+       ↓
+Hard Schema Validation / Admission
+       ↓
+Canonical Intent
        ↓
 Resolution
        ↓
-Ambiguity?
+Material Ambiguity?
    ┌───┴───┐
   Yes      No
    ↓        ↓
 Clarify   Resolved
             ↓
-        Executability
+       Executable Intent
+            ↓
+          Trust
 
-Resolution is therefore one of the primary deterministic boundaries in Noema.
+Resolution is therefore a primary deterministic commitment boundary in Noema.
 
 ⸻
 
 3. Resolution vs Interpretation
 
-These are distinct stages.
+These are distinct activities.
 
 Interpretation
+
+Determines:
 
 What might the Actor mean?
 
 Resolution
 
-Which interpretation is sufficiently established to become the canonical Intent?
+Determines:
+
+Which meaning is sufficiently established to become the canonical semantic interpretation of the Intent?
 
 For example:
 
 Expression:
 "Renew the card I used yesterday."
 
-Interpretation:
+Interpretation may produce:
 
+Objective:
 RenewCard
-
 Candidate Resources:
-
 Card#123
 Card#456
 
-Resolution determines whether available evidence establishes one of those cards.
+Resolution determines whether available Context, evidence, relationships, and authoritative state establish one of those Resources.
+
+The Model may generate candidates.
+
+Noema determines whether semantic commitment is justified.
 
 ⸻
 
-4. Resolution vs Clarification
+4. Resolution vs Hard Validation and Admission
 
-Clarification is one mechanism used when resolution cannot otherwise be achieved.
+Resolution occurs after the candidate semantic representation has passed the hard schema validation and admission boundary.
+
+These concerns must remain distinct:
+
+Hard Validation / Admission
+    =
+Is this candidate structurally valid and admissible?
+Resolution
+    =
+What does this admitted Intent mean, given available evidence?
+
+A malformed or schema-invalid candidate should not enter canonical Intent semantics merely because its meaning appears understandable.
+
+The architectural sequence is:
+
+Expression
+   ↓
+Candidate Representation
+   ↓
+Hard Schema Validation
+   ↓
+Admission
+   ↓
+Canonical Intent
+   ↓
+Resolution
+
+⸻
+
+5. Resolution vs Clarification
+
+Clarification is one mechanism used when resolution cannot otherwise establish material meaning.
+
+Therefore:
 
 Resolution
     ↓
 Can meaning be established?
-    ├── Yes → RESOLVED
+    ├── Yes → Resolved
     └── No
          ↓
      Clarification
 
-Therefore:
+Clarification is part of the Intent-resolution process.
 
-Clarification is a resolution mechanism, not a substitute for resolution.
+It does not replace resolution.
+
+A clarification response must itself be validated and resolved before it can change the canonical semantic interpretation.
+
+A material clarification normally creates a new Intent version with an explicit supersedes relationship.
 
 ⸻
 
-5. Resolution vs Confidence
+6. Resolution vs Confidence
 
-Confidence expresses the strength of an interpretation.
+Confidence expresses the strength of support for a candidate interpretation.
 
-Resolution determines whether the available evidence is sufficient to proceed.
+Resolution determines whether the evidence is sufficient to establish that interpretation as canonical.
 
 These are not equivalent.
 
@@ -125,209 +175,259 @@ Model confidence:
 Competing candidate:
 Card#456
 
-If both remain materially plausible:
+If both remain materially valid:
 
 Resolution:
-FAILED / AMBIGUOUS
+Material ambiguity
 
 despite high Model confidence.
 
-Conversely, an interpretation may have modest Model confidence but become deterministically resolved by authoritative evidence.
+Conversely, a candidate with modest Model confidence may become resolved if authoritative evidence deterministically establishes the intended Resource.
+
+Confidence therefore supports resolution but does not perform semantic commitment.
 
 ⸻
 
-6. Resolution vs Trust
+7. Resolution vs Trust
 
 Resolution asks:
 
-"What does the Actor mean?"
+What does the Actor mean?
 
 Trust asks:
 
-"May this Intent be executed?"
+May the resolved Intent proceed under current governance conditions?
 
-The canonical sequence is:
+The canonical relationship is:
 
 Interpretation
       ↓
+Hard Validation / Admission
+      ↓
 Resolution
       ↓
-Executability
+Executable Intent
       ↓
 Trust
       ↓
+Action
+      ↓
 Execution
 
-Trust should not compensate for unresolved semantic ambiguity.
+Trust must not compensate for unresolved material semantic ambiguity.
+
+Likewise, resolution must not rewrite an Actor’s Intent merely to make Trust or execution succeed.
 
 ⸻
 
-7. Resolution Inputs
+8. Resolution Inputs
 
 Intent Resolution may consume:
 
-Candidate Intent
-Actor
-Conversation Context
-Domain Context
-Entities
-Resources
-Relationships
-Constraints
-Preferences
-Policies
-Authoritative data
-External evidence
-Actor clarification
-System state
+* admitted Intent
+* Actor identity
+* Source of Intent
+* conversation Context
+* Intent Context
+* domain Context
+* Entities
+* Resources
+* relationships
+* Parameters
+* Scope
+* Constraints
+* Preferences
+* authoritative enterprise state
+* State Reconciliation results
+* external evidence
+* prior admitted Intent versions
+* Actor clarification
+* deterministic domain rules
 
-The exact evidence depends on the Intent.
+The exact inputs depend on the Intent type and the semantic question being resolved.
+
+Not every source has equal authority.
 
 ⸻
 
-8. Resolution Output
+9. Resolution Outputs
 
-Resolution should produce one of several outcomes.
+Resolution should make the semantic result explicit.
 
-Resolved
+Conceptually, results may include:
 
-Intent:
-RenewCard(Card#123)
-
-Ambiguous
-
-Intent:
-RenewCard(Card#123 | Card#456)
-
-Missing Information
-
-Intent:
-TransferFunds
-Destination:
-UNKNOWN
-
-Invalid
-
-Intent:
-TransferFunds
-Amount:
+RESOLVED
+AMBIGUOUS
+INCOMPLETE
 INVALID
+CONTRADICTORY
+UNVERIFIABLE
 
-Unsupported
+These describe semantic resolution conditions.
 
-Intent:
-TeleportPerson
+UNSUPPORTED is different: the Intent may be semantically clear while no applicable Capability exists. That is an executability or capability condition, not necessarily a resolution condition.
 
-The resolution result should make the reason for non-resolution explicit.
+The exact lifecycle encoding is governed by intent-lifecycle.md.
 
 ⸻
 
-9. Resolution Is Evidence-Based
+10. Resolution Is Evidence-Based
 
 Noema should resolve Intent components using evidence rather than intuition.
 
-Evidence may come from:
+Evidence may include:
 
-explicit Actor statements
-conversation history
-Context
-canonical ontology
-authoritative system records
-Resource relationships
-domain rules
-previously established Intent state
+* explicit Actor statements
+* prior Actor statements
+* conversation Context
+* validated Intent Context
+* canonical ontology
+* authoritative enterprise records
+* State Reconciliation
+* Resource relationships
+* deterministic domain rules
+* explicit references
+* previous Intent versions
+* Actor clarification
 
-The strongest available evidence should generally take precedence over weaker inference.
+Evidence must be evaluated for:
+
+* authority
+* scope
+* freshness
+* relevance
+* consistency
+* Fact Status
+
+Retrieval alone does not make evidence authoritative.
 
 ⸻
 
-10. Evidence Hierarchy
+11. Evidence Hierarchy
 
-A useful canonical ordering is:
+A useful conceptual hierarchy is:
 
 1. Explicit current Actor statement
 2. Explicit prior Actor statement
 3. Authoritative domain state
-4. Established Context
+4. Validated and applicable Context
 5. Deterministic domain relationship
 6. Derived semantic inference
 7. Model inference
 
-This is a conceptual hierarchy rather than an absolute rule for every domain.
+This is not an absolute ordering for every domain.
+
+Different semantic claims may have different authoritative sources.
 
 When evidence conflicts, Noema must not silently select the most convenient interpretation.
 
-⸻
-
-11. Explicit Actor Intent Has Primacy
-
-If the Actor explicitly specifies a value, Noema should not replace it with an inferred value.
-
-Example:
-
-“Send the invoice to Sarah.”
-
-Even if the system normally sends invoices to the account owner, the explicit recipient should remain Sarah unless Policy or domain rules prevent it.
+The resolution rule must be explicit or the conflict must remain unresolved.
 
 ⸻
 
-12. Current Context Has Temporal Relevance
+12. Explicit Actor Intent Has Primacy
 
-More recent explicit information may supersede older context.
+Where the Actor explicitly specifies a material value, Noema should not replace it with an inferred value merely because another value appears more typical.
 
 Example:
 
-“Book the flight for Friday.”
+"Send the invoice to Sarah."
 
+If the system normally sends invoices to the account owner, that default does not replace the explicit recipient.
+
+If policy or domain state prevents the requested action, the Intent remains:
+
+SendInvoice → Sarah
+
+and the governance or execution layer determines whether it may proceed.
+
+Resolution should preserve meaning rather than optimize it away.
+
+⸻
+
+13. Current Context Has Temporal Relevance
+
+Later explicit Actor statements may supersede earlier semantic commitments.
+
+Example:
+
+"Book the flight for Friday."
 Later:
+"Actually, Saturday."
 
-“Actually, Saturday.”
-
-Resolution should produce:
+The later statement establishes a new semantic value:
 
 Date:
 Saturday
 
-rather than combining both values.
+If the change is material, the new meaning should be represented as a new Intent version rather than silently mutating the historical version.
+
+Resolution therefore considers temporal provenance and explicit correction.
 
 ⸻
 
-13. Authoritative State
+14. Authoritative State
 
-When an Intent references an external Resource, Noema should resolve against authoritative domain state where possible.
+When an Intent references external Resources, Noema should resolve against authoritative domain state where the relevant state is material.
 
 Example:
 
-“Cancel my active subscription.”
+"Cancel my active subscription."
 
-Noema may query the subscription system to determine:
+The enterprise subscription system may establish:
 
-Subscription#123 → Active
-Subscription#456 → Cancelled
+Subscription#123 → ACTIVE
+Subscription#456 → CANCELLED
 
-The Resource resolves to:
+The Resource may therefore resolve to:
 
 Subscription#123
 
-The business system remains authoritative for the subscription’s actual state.
+The enterprise system remains authoritative for the actual subscription state.
+
+Noema may use that state to resolve meaning without becoming the owner of the Business State.
 
 ⸻
 
-14. Grounding
+15. State Reconciliation
 
-Resolution often requires grounding.
+Resolution may require State Reconciliation across multiple enterprise systems.
+
+For example:
+
+"Renew the card I used yesterday."
+
+may require:
+
+Transaction System
+        ↓
+Transaction#789
+        ↓
+Card Record
+        ↓
+Card#123
+
+If multiple systems contain relevant observations, Noema may reconcile them before determining the semantic Resource.
+
+State Reconciliation is a first-class platform capability.
+
+It is not merely an integration detail.
+
+Reconciliation may resolve an Intent, reveal ambiguity, expose stale information, or produce conflict.
+
+⸻
+
+16. Grounding
+
+Resolution often requires grounding linguistic references in canonical Resources or Entities.
 
 Example:
 
-“Renew the card I used yesterday.”
+"Renew the card I used yesterday."
 
-The phrase:
+may become:
 
-"card I used yesterday"
-
-must be grounded through evidence:
-
-Transaction history
+Transaction History
       ↓
 Transaction#789
       ↓
@@ -337,43 +437,50 @@ Result:
 
 RenewCard(Card#123)
 
-Grounding converts references into canonical Entities or Resources.
+Grounding establishes a canonical reference.
+
+Grounding does not necessarily establish uniqueness.
+
+A reference may be grounded to multiple candidates and remain materially ambiguous.
 
 ⸻
 
-15. Entity Resolution
+17. Entity Resolution
 
-Entity resolution determines which canonical Entity a linguistic reference denotes.
+Entity Resolution determines which canonical Entity a reference denotes.
 
 Example:
 
-“Send it to Sarah.”
+"Send it to Sarah."
 
-Possible entities:
+Possible Entities:
 
 Sarah#123
 Sarah#456
 Sarah#789
 
-If Context establishes:
+If validated Context or authoritative records establish:
 
 Sarah = Sarah#123
 
-the reference is resolved.
+the Entity may be resolved.
 
 Otherwise:
 
+Entity:
 AMBIGUOUS
+
+Noema must not select an Entity merely because one candidate has a higher model score.
 
 ⸻
 
-16. Resource Resolution
+18. Resource Resolution
 
-Resource resolution identifies the domain object affected by the Intent.
+Resource Resolution identifies the domain object materially affected by the Intent.
 
 Example:
 
-“Delete the project.”
+"Delete the project."
 
 Possible Resources:
 
@@ -381,21 +488,24 @@ Project#1
 Project#2
 Project#3
 
-If the Actor has one currently active project in Context:
+If valid Context and authoritative state establish one intended project:
 
 Project#1
 
 may be resolved.
 
-If several remain plausible:
+If multiple materially valid candidates remain:
 
-CLARIFICATION_REQUIRED
+Resource:
+AMBIGUOUS
+
+and clarification may be required.
 
 ⸻
 
-17. Reference Resolution
+19. Reference Resolution
 
-Natural language frequently uses references:
+Natural language frequently uses references such as:
 
 it
 that
@@ -405,7 +515,7 @@ my account
 the card
 the other project
 
-Noema should resolve these against Context and canonical relationships.
+Noema should resolve these against applicable Context and canonical relationships.
 
 Example:
 
@@ -414,38 +524,46 @@ Create a project called Noema.
 User:
 Add Sarah to it.
 
-“It” resolves to:
+The reference:
+
+"it"
+
+may resolve to:
 
 Project#Noema
 
+Only the Context relevant to the current Intent should be propagated.
+
 ⸻
 
-18. Scope Resolution
+20. Scope Resolution
 
-Resolution must determine the intended scope.
+Resolution must establish the intended scope where scope materially affects meaning.
 
 Example:
 
-“Delete the inactive projects.”
+"Delete the inactive projects."
 
-Potential interpretations:
+Possible interpretations include:
 
 one project
 all inactive projects
 all projects
 
-The canonical interpretation is:
+A resolved representation may be:
 
 Scope:
 Collection
 Filter:
-State = Inactive
+State = INACTIVE
 
-Scope ambiguity can be execution-critical and must not be ignored.
+Scope ambiguity is potentially execution-critical.
+
+Noema must not broaden scope merely because a broader operation is technically available.
 
 ⸻
 
-19. Quantifier Resolution
+21. Quantifier Resolution
 
 Terms such as:
 
@@ -458,25 +576,27 @@ a
 each
 none
 
-may materially alter the Intent.
+may materially change an Intent.
 
 Example:
 
-“Notify all administrators.”
+"Notify all administrators."
 
-is not:
+is not equivalent to:
 
 NotifyAdministrator(single)
 
-The Intent Model must preserve quantification.
+Quantification must therefore be preserved in the Intent Model.
+
+Where quantifier semantics are material, they must be resolved before the Intent becomes Executable.
 
 ⸻
 
-20. Temporal Resolution
+22. Temporal Resolution
 
-Relative time expressions require Context.
+Relative temporal expressions require appropriate temporal Context.
 
-Examples:
+Examples include:
 
 today
 tomorrow
@@ -486,19 +606,29 @@ in two hours
 later
 before lunch
 
-Resolution should normalize these against the appropriate temporal Context.
+Resolution should normalize these against the relevant:
+
+* current date
+* timezone
+* locale where material
+* temporal Context
+* domain calendar semantics
 
 Example:
 
 "next Friday"
 
-becomes a concrete temporal value once the relevant timezone and current date are established.
+may become a concrete temporal value once the applicable date and timezone are established.
+
+Temporal normalization must not silently change the Actor’s intended time semantics.
 
 ⸻
 
-21. Spatial Resolution
+23. Spatial Resolution
 
-Likewise:
+Spatial references may also require Context or authoritative location data.
+
+Examples include:
 
 near me
 at the office
@@ -506,92 +636,101 @@ in London
 the Lagos branch
 the warehouse
 
-may require Context or authoritative location data.
+Resolution should establish canonical geographic or logical locations where those locations materially affect the Intent.
 
-Resolution should convert these expressions into canonical locations where necessary.
+Location inference remains subject to evidence, scope, and authority requirements.
 
 ⸻
 
-22. Constraint Resolution
+24. Constraint Resolution
 
-Constraints themselves may require interpretation.
+Constraints may themselves require semantic resolution.
 
 Example:
 
-“Book something cheap.”
+"Book something cheap."
 
-What does “cheap” mean?
+Possible interpretations include:
 
-Possible interpretations:
-
-Price < $500
+Price < 500
 lowest available price
 below Actor's historical average
 
-If the domain provides a deterministic definition, it may be resolved.
+If the relevant domain defines “cheap” deterministically, that definition may establish the constraint.
 
-If not, Noema may need clarification.
+If no valid definition exists and the threshold is material, Noema should not invent one merely because it appears reasonable.
 
-Noema must not invent a material threshold merely because one seems reasonable.
+The unresolved semantic dimension may require clarification.
 
 ⸻
 
-23. Preference Resolution
+25. Preference Resolution
 
 Preferences may also require semantic normalization.
 
 Example:
 
-“I’d rather leave in the afternoon.”
+"I'd rather leave in the afternoon."
 
-This might resolve to:
+may resolve to:
 
 Preference:
 DepartureTime ∈ Afternoon
 
-rather than:
+It should not become:
 
 Constraint:
 DepartureTime >= 12:00
 
-unless the Actor establishes a hard requirement.
+unless the Actor explicitly establishes a hard requirement or the Intent type defines that semantic equivalence.
+
+Preference semantics must remain distinct from constraint semantics.
 
 ⸻
 
-24. Resolution of Defaults
+26. Resolution of Defaults
 
-Defaults may resolve missing values when they are:
+Defaults may resolve non-material omissions when they are:
 
-canonical
-known
-safe
-non-material
+* explicitly defined
+* deterministic
+* domain-valid
+* within scope
+* policy-compatible
+* non-material
 
 Example:
 
 Project visibility:
 Private
 
-if Private is the explicit system default.
+may be valid if Private is the explicit system default for the relevant Intent type.
 
-Defaults must not be used to hide material uncertainty.
+Defaults must not:
+
+* hide material uncertainty
+* choose between materially ambiguous alternatives
+* expand scope
+* invent material intent
+* manufacture authority
+* override explicit constraints
 
 ⸻
 
-25. Materiality
+27. Materiality
 
 Not every unresolved value requires clarification.
 
 Resolution should ask:
 
-Would choosing between the possible values materially change the Intent, its execution, its risk, or its Outcome?
+Would choosing between the possible values materially change the Intent, its execution, its risk, or its Expected Outcome?
 
 Example:
 
-Email formatting:
+Email format:
 HTML vs plain text
 
-may not be material.
+may be non-material.
 
 But:
 
@@ -600,13 +739,13 @@ Savings vs Emergency
 
 is material.
 
-Material ambiguity must block progression.
+Material ambiguity must prevent the Intent from becoming Executable until it is resolved or otherwise eliminated by valid evidence.
 
 ⸻
 
-26. Deterministic Resolution
+28. Deterministic Resolution
 
-Where deterministic evidence exists, Noema should prefer deterministic resolution.
+Where valid deterministic evidence exists, Noema should prefer deterministic resolution.
 
 Example:
 
@@ -619,15 +758,18 @@ Request:
 
 Resolution:
 
+Resource:
 Subscription#456
 
-No clarification is necessary.
+No clarification is necessary if the evidence uniquely establishes the intended Resource.
+
+Deterministic resolution must be based on defined semantic and domain rules rather than hidden model preference.
 
 ⸻
 
-27. Non-Deterministic Resolution
+29. Non-Deterministic Resolution
 
-Where multiple materially plausible interpretations remain, Noema should not force resolution.
+Where multiple materially valid interpretations remain, Noema must not force resolution.
 
 Example:
 
@@ -637,37 +779,40 @@ Card#456
 Request:
 "Renew my card."
 
-Resolution:
+If both cards remain materially valid:
 
+Resolution:
 AMBIGUOUS
 
-The correct behavior is clarification.
+The appropriate next step may be targeted clarification.
 
 ⸻
 
-28. No Guessing Across Material Ambiguity
+30. No Guessing Across Material Ambiguity
 
 This is a core Noema invariant.
 
-If materially different interpretations remain plausible and cannot be deterministically distinguished, Noema must not select one merely because it is more probable.
-
-Instead:
+If materially different interpretations remain plausible and cannot be deterministically distinguished:
 
 AMBIGUOUS
-    ↓
+      ↓
 CLARIFICATION_REQUIRED
 
-This is the practical expression of Noema’s deterministic Trust boundary.
+Noema must not select one merely because it has the highest probability or model confidence.
+
+The purpose of the resolution boundary is to prevent probabilistic preference from becoming an ungoverned semantic commitment.
 
 ⸻
 
-29. Resolution of Composite Intents
+31. Resolution of Composite Intents
 
-Each constituent Intent must be independently resolved.
+Constituent Intents must be resolved according to the semantics of the composition.
 
 Example:
 
-“Refund the payment and close the account.”
+"Refund the payment and close the account."
+
+may produce:
 
 RefundPayment
     → Resolved
@@ -681,39 +826,45 @@ RefundPayment
 CloseAccount
     → Ambiguous
 
-the parent Composite Intent cannot be treated as fully resolved.
+the Composite Intent is not fully resolved.
+
+An independent child may still resolve or potentially proceed where the composition semantics explicitly permit independent progress.
+
+Composition does not bypass the semantic requirements of its constituents.
 
 ⸻
 
-30. Dependency-Aware Resolution
+32. Dependency-Aware Resolution
 
 Some Intent components depend on others.
 
 Example:
 
-“Transfer the balance to my other account.”
+"Transfer the balance to my other account."
 
 The phrase:
 
 "other account"
 
-cannot be resolved until the current source account is established.
+cannot be resolved until the relevant source account is established.
 
 Resolution may therefore proceed:
 
 Resolve source
       ↓
-Identify other eligible accounts
+Identify eligible other accounts
       ↓
 Resolve destination
 
-Resolution is consequently a dependency-aware process.
+Resolution is consequently dependency-aware rather than necessarily field-order based.
 
 ⸻
 
-31. Resolution Order
+33. Resolution Order
 
-There is no universal mandatory order, but a useful canonical pattern is:
+There is no universal mandatory resolution order.
+
+A useful conceptual pattern is:
 
 Actor
   ↓
@@ -725,6 +876,10 @@ Entities
   ↓
 Resources
   ↓
+Parameters
+  ↓
+Scope
+  ↓
 Constraints
   ↓
 Preferences
@@ -733,11 +888,13 @@ Relationships
   ↓
 Expected Outcome
 
-The actual order may vary where dependencies require it.
+Actual ordering may vary when dependencies require it.
+
+For example, resolving one Resource may be necessary before resolving a dependent reference or constraint.
 
 ⸻
 
-32. Resolution and Context Propagation
+34. Resolution and Context Propagation
 
 Context should propagate only where semantically valid.
 
@@ -748,17 +905,17 @@ Create project Noema.
 User:
 Add Sarah to it.
 
-The project reference propagates.
+The project reference can propagate.
 
-But unrelated Context should not automatically contaminate the new Intent.
+Unrelated Context should not automatically propagate into the new Intent.
 
-Noema should avoid broad, implicit context inheritance.
+Noema should avoid broad, implicit Context inheritance because stale or irrelevant Context can create false semantic commitments.
 
 ⸻
 
-33. Context Boundaries
+35. Context Boundaries
 
-A useful distinction is:
+Useful Context boundaries include:
 
 Conversation Context
 Session Context
@@ -766,13 +923,15 @@ Intent Context
 Domain Context
 Execution Context
 
-Resolution should know which Context layer is authoritative for a given field.
+Resolution should determine which Context layer is relevant and authoritative for each semantic claim.
 
-This prevents an old conversational fact from overriding current authoritative domain state.
+An old conversational statement must not override current authoritative domain state merely because it appears earlier in the conversation.
+
+Likewise, execution Context should not retroactively redefine the Actor’s original Intent.
 
 ⸻
 
-34. Conflict Resolution
+36. Conflict Resolution
 
 Evidence may conflict.
 
@@ -785,116 +944,136 @@ Sarah's account is inactive.
 Policy:
 Inactive accounts cannot receive invoices.
 
-The semantic Intent may still be:
+The semantic Intent may remain:
 
 SendInvoice → Sarah
 
-while Policy later blocks execution.
+Resolution should not change the recipient merely because execution may be prohibited.
 
-Resolution should not alter the Actor’s meaning merely because execution may be prohibited.
+Trust evaluates whether the resolved Intent may proceed under applicable governance conditions.
 
-This preserves the distinction between:
+The distinction is:
 
 Resolution
-
-and:
-
-Trust / Policy
+    =
+What does the Actor mean?
+Trust
+    =
+May the resolved path proceed?
 
 ⸻
 
-35. Resolution Must Not Optimize Away Intent
+37. Resolution Must Not Optimize Away Intent
 
 Suppose the Actor says:
 
-“Transfer $5,000 to savings.”
+"Transfer $5,000 to savings."
 
-Noema discovers that transferring $5,000 would violate a daily transfer limit.
+Noema discovers that the amount exceeds a current transfer limit.
 
-Resolution should remain:
+Resolution must remain:
 
-TransferFunds($5,000)
+TransferFunds
+Amount:
+$5,000
 
-not silently transform it into:
+It must not silently transform the Intent into:
 
-TransferFunds($2,000)
+TransferFunds
+Amount:
+$2,000
 
 The latter is a different Intent.
 
-Policy or execution constraints must not silently rewrite Actor intent.
+Policy and execution constraints may prevent or condition execution, but they must not silently rewrite Actor intent.
 
 ⸻
 
-36. Resolution and Capability Discovery
+38. Resolution and Capability Availability
 
-Capability discovery can help establish whether an Intent is executable.
-
-However, absence of a Capability does not necessarily mean the Intent is semantically unresolved.
+Capability availability can affect executability but is not itself semantic resolution.
 
 Example:
 
 Intent:
 TeleportPerson
+Destination:
+London
 
 The meaning is clear.
 
-There is simply no Capability.
-
-Therefore:
+If Noema has no applicable Capability:
 
 Resolution:
-SUCCESS
+RESOLVED
 Executability:
 UNSUPPORTED
 
+The exact execution/trust representation is governed by the relevant execution and Trust specifications.
+
+The important distinction is:
+
+Semantic clarity
+    ≠
+Capability availability
+
 ⸻
 
-37. Resolution and Business State
+39. Resolution and Business State
 
 Business State may provide evidence for resolution.
 
 Example:
 
-“Cancel my active subscription.”
+"Cancel my active subscription."
 
 The subscription system provides:
 
-Subscription#123 = Active
-Subscription#456 = Cancelled
+Subscription#123 = ACTIVE
+Subscription#456 = CANCELLED
 
-This helps resolve the Resource.
+This evidence may resolve the Resource.
 
-But Noema does not become the owner of that Business State.
+The enterprise system remains the source of truth for the actual subscription state.
 
-⸻
-
-38. Resolution and Intent State
-
-Resolution modifies the Intent’s semantic completeness and therefore may drive lifecycle transitions.
-
-For example:
-
-AMBIGUOUS
-    ↓
-Actor clarifies
-    ↓
-RESOLVED
-
-But the lifecycle state itself remains governed by intent-lifecycle.md.
+Noema does not acquire ownership of Business State through resolution.
 
 ⸻
 
-39. Resolution Evidence
+40. Resolution and Intent State
 
-A resolution decision should ideally record:
+Resolution establishes semantic completeness and may therefore drive lifecycle transitions.
 
-candidate
-selected value
-rejected alternatives
-evidence
-evidence source
-resolution rule
-timestamp
+Conceptually:
+
+Material ambiguity
+       ↓
+Actor clarification
+       ↓
+New Intent version
+       ↓
+Resolution
+       ↓
+EXECUTABLE
+
+The lifecycle state itself is governed by intent-lifecycle.md.
+
+Resolution should not introduce a second independent lifecycle model.
+
+⸻
+
+41. Resolution Evidence Record
+
+A material resolution decision should record, where practical:
+
+* candidate value
+* selected value
+* rejected alternatives
+* evidence references
+* evidence source
+* resolution rule
+* relevant timestamps
+* relevant ontology or domain-rule version
 
 Example:
 
@@ -903,16 +1082,16 @@ Card#123
 Evidence:
 Transaction#789
 Rule:
-"card I used yesterday" resolved to the card
+"card I used yesterday" resolves to the card
 associated with the most recent qualifying transaction.
 Rejected:
 Card#456
 
-This makes resolution explainable.
+The purpose is causal traceability and reproducibility.
 
 ⸻
 
-40. Resolution Provenance
+42. Resolution Provenance
 
 Resolution provenance answers:
 
@@ -926,30 +1105,34 @@ Transaction#789
         ↓
 Card#123
 
-This chain should remain available where material to the decision.
+This causal chain should remain available where material to the semantic decision.
+
+Provenance explains the basis of a resolution.
+
+It does not itself establish that the underlying evidence is authoritative.
 
 ⸻
 
-41. Resolution and Auditability
+43. Resolution and Auditability
 
-Every material resolution should be reproducible from its evidence.
+Material resolution decisions should be reproducible from their relevant inputs.
 
 Given the same:
 
-Intent
+Intent Version
 Context
-Ontology
+Ontology Version
 Authoritative State
 Evidence
 Resolution Rules
 
-Noema should reach the same resolution result.
+Noema should reach the same resolution result, assuming the referenced state and evidence are themselves unchanged.
 
-This is a core deterministic property.
+Resolution therefore forms part of Noema’s deterministic semantic boundary.
 
 ⸻
 
-42. Resolution and Model Role
+44. Resolution and Model Role
 
 The Model may propose:
 
@@ -957,18 +1140,20 @@ candidate Intent
 candidate Entity
 candidate Resource
 candidate Constraint
+candidate reference
 candidate interpretation
 
-Noema determines whether the candidate is sufficiently established.
+Noema determines whether that proposal is sufficiently established.
 
 Conceptually:
 
 Model
   ↓
 Hypothesis
-Noema
   ↓
-Resolution
+Noema Resolution
+  ↓
+Canonical Semantic Commitment
 
 The Model generates possibilities.
 
@@ -976,158 +1161,211 @@ Noema governs semantic commitment.
 
 ⸻
 
-43. Resolution as a Commitment Boundary
+45. Resolution as a Commitment Boundary
 
 Before resolution:
 
 Candidate meaning
 
-After resolution:
+After successful resolution:
 
-Canonical meaning
+Established canonical meaning
 
-This is one of the most important boundaries in Noema.
+The architectural boundary is:
 
 PROBABILISTIC
       │
       ▼
-Candidate Intent
+Candidate Semantic Representation
       │
       ▼
-   RESOLUTION
+Hard Validation / Admission
+      │
+      ▼
+Canonical Intent
+      │
+      ▼
+    RESOLUTION
       │
       ▼
 DETERMINISTIC
       │
       ▼
-Canonical Intent
+Resolved Intent
+      │
+      ▼
+Executable Intent
+
+This boundary prevents probabilistic interpretation from directly becoming consequential execution.
 
 ⸻
 
-44. Resolution and Trust
+46. Resolution and Trust
 
-Trust should consume the resolved Intent rather than raw Model output.
+Trust consumes the resolved Intent rather than raw Model output.
 
 Bad architecture:
 
 Model
- ↓
+  ↓
 Action
 
 Better:
 
 Model
- ↓
+  ↓
 Candidate Intent
- ↓
+  ↓
+Hard Validation / Admission
+  ↓
 Resolution
- ↓
-Canonical Intent
- ↓
+  ↓
+Executable Intent
+  ↓
 Trust
- ↓
+  ↓
 Action
 
-This is the architectural mechanism by which Noema prevents Model uncertainty from becoming uncontrolled execution.
+Trust does not resolve semantic ambiguity on behalf of the resolution layer.
+
+Likewise, resolution does not make the Trust decision.
+
+The four canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+A CLARIFY Trust outcome may indicate that a material semantic issue must be resolved before safe continuation, but clarification remains an Intent-resolution mechanism.
 
 ⸻
 
-45. Resolution Failure Classes
+47. Resolution Failure Classes
 
 Noema should distinguish at least:
 
 Ambiguous
 
-Multiple valid interpretations remain.
+Multiple materially valid interpretations remain.
 
 Incomplete
 
-Required information is missing.
+Required semantic information is absent.
 
 Invalid
 
-The candidate violates semantic rules.
+The candidate violates a semantic validity rule.
 
 Contradictory
 
-The supplied information conflicts internally.
-
-Unsupported
-
-The meaning is clear but no applicable Capability exists.
+Supplied information contains incompatible semantic claims.
 
 Unverifiable
 
-The system cannot obtain sufficient evidence to establish a material claim.
+A material claim cannot be established with sufficient evidence.
 
-These conditions should not collapse into a generic “failed.”
+Unsupported
+
+The meaning is sufficiently established but no applicable Capability or execution path exists.
+
+These conditions should not collapse into a generic FAILED.
+
+Their consequences belong to the relevant lifecycle, Trust, execution, or clarification semantics.
 
 ⸻
 
-46. Ambiguous vs Incomplete
+48. Ambiguous vs Incomplete
 
 These are related but distinct.
 
 Ambiguous
 
-“Cancel my subscription.”
+"Cancel my subscription."
 
 Two subscriptions exist.
 
-Multiple plausible values
+Multiple plausible values are present.
 
 Incomplete
 
-“Transfer money.”
+"Transfer money."
 
 No amount or destination has been supplied.
 
-Required information absent
+Required information is absent.
 
-The appropriate clarification differs.
+The clarification required is therefore different.
+
+Ambiguity asks:
+
+Which valid interpretation?
+
+Incompleteness asks:
+
+What required information is missing?
 
 ⸻
 
-47. Invalid vs Contradictory
+49. Invalid vs Contradictory
 
 Invalid
 
-The value itself violates a semantic rule.
+A value violates a semantic rule.
 
-Amount = "banana"
+Example:
+
+Amount:
+"banana"
 
 Contradictory
 
-Two valid statements conflict.
+Two otherwise meaningful claims conflict.
+
+Example:
 
 Departure:
 Friday
 Constraint:
 Departure must be Saturday
 
-Noema must determine whether the contradiction can be resolved through recency, explicit correction, or clarification.
+Noema should determine whether the contradiction can be resolved through:
+
+* explicit recency
+* explicit Actor correction
+* authoritative state
+* deterministic domain rules
+
+If it cannot, the contradiction remains unresolved and may require clarification or another non-executable disposition.
 
 ⸻
 
-48. Resolution and Clarification Generation
+50. Resolution and Clarification Generation
 
 When clarification is required, the question should target the smallest unresolved semantic unit.
 
 Bad:
 
-“Can you clarify your request?”
+"Can you clarify your request?"
 
 Better:
 
-“Which subscription do you want to cancel: Premium or Business?”
+"Which subscription do you want to cancel: Premium or Business?"
 
-The Intent Model allows Noema to know exactly what is missing.
+A resolved Intent structure allows Noema to identify exactly which semantic field remains unresolved.
+
+Clarification should not unnecessarily reopen already resolved portions of the Intent.
 
 ⸻
 
-49. Minimal Clarification Principle
+51. Minimal Clarification Principle
 
-Ask only for information necessary to resolve material ambiguity or satisfy semantic completeness.
+Ask only for information necessary to:
+
+* resolve material ambiguity
+* establish required semantic information
+* resolve a material contradiction
+* satisfy the requirements of the relevant Intent type
 
 Noema should not ask:
 
@@ -1135,20 +1373,23 @@ Noema should not ask:
 
 when it already knows:
 
-Objective
 Actor
+Objective
 Resource candidates
 Context
+Constraints
 
 and only needs:
 
-which Resource
+Which Resource?
+
+Clarification should be as narrow as the unresolved semantic dimension permits.
 
 ⸻
 
-50. Resolution Should Be Monotonic
+52. Resolution Should Preserve Established Meaning
 
-Where possible, resolution should add information rather than repeatedly reinterpret established information.
+Resolution should preserve established semantic commitments rather than repeatedly reinterpreting them.
 
 Example:
 
@@ -1159,21 +1400,24 @@ RenewCard(Card#123)
 After clarification:
 RenewCard(Card#123, expedited=true)
 
-New evidence should extend or correct the model only where justified.
+New evidence should extend or replace a semantic value only where the evidence justifies that change.
 
-Previously established facts should not be casually discarded.
+Previously established information should not be casually discarded.
+
+Where a material change occurs, the resulting Intent should be represented as a new version.
 
 ⸻
 
-51. Resolution and Actor Corrections
+53. Resolution and Actor Corrections
 
 The Actor may explicitly correct a previous interpretation.
 
 Example:
 
-Noema: “Do you mean your personal account?”
-
-Actor: “No, the business account.”
+Noema:
+"Do you mean your personal account?"
+Actor:
+"No, the business account."
 
 The new explicit statement supersedes the previous candidate interpretation.
 
@@ -1182,22 +1426,22 @@ Resolution becomes:
 Account:
 BusinessAccount
 
-The correction should be recorded as provenance.
+The correction should be recorded through provenance and, where materially changing the admitted Intent, represented as a new Intent version.
 
 ⸻
 
-52. Resolution and External Changes
+54. Resolution and External Changes
 
 The world can change while an Intent is being resolved.
 
 Example:
 
 09:00:
-Card#123 = Active
+Card#123 = ACTIVE
 09:05:
-Card#123 = Cancelled
+Card#123 = CANCELLED
 
-The resolution system must distinguish:
+Noema must distinguish:
 
 semantic resolution
 
@@ -1205,13 +1449,15 @@ from:
 
 current domain state
 
-A resolved Resource may later become unavailable.
+A Resource can be correctly resolved and subsequently become unavailable.
 
-That is an execution/state problem, not necessarily a resolution failure.
+That does not necessarily invalidate the semantic resolution.
+
+Current state must be re-evaluated where required before Trust and execution.
 
 ⸻
 
-53. Resolution and Staleness
+55. Resolution and Staleness
 
 Evidence can become stale.
 
@@ -1219,39 +1465,108 @@ For example:
 
 Yesterday's account state
 
-may not be sufficient to establish:
+may be insufficient to establish:
 
 Current authorization
 
-Noema should consider evidence freshness where the domain makes freshness material.
+or:
+
+Current account eligibility
+
+where freshness is material.
+
+Noema should therefore evaluate evidence freshness and Fact Status according to the relevant claim and domain.
+
+A previously verified fact may no longer be sufficient for a current decision.
 
 ⸻
 
-54. Resolution and Deterministic Reproducibility
+56. Resolution and Unknown
 
-A resolution decision should ideally be reproducible.
+Unknown is a first-class epistemic condition.
 
-For:
+Noema should distinguish:
 
-Candidate Intent
+UNKNOWN
+
+from:
+
+AMBIGUOUS
+
+UNKNOWN means the relevant fact or value has not been established.
+
+AMBIGUOUS means multiple materially valid interpretations remain.
+
+Examples:
+
+Destination:
+UNKNOWN
+
+versus:
+
+Destination:
+AMBIGUOUS
+├── Account#1
+└── Account#2
+
+Unknown must not be converted into a guessed value merely to complete the structure.
+
+⸻
+
+57. Resolution and Conflicting Evidence
+
+Conflicting evidence should remain explicit when no valid deterministic rule resolves the conflict.
+
+For example:
+
+Source A:
+Account#123 = ACTIVE
+Source B:
+Account#123 = CLOSED
+
+Noema should not treat the existence of two retrieved records as proof that either one is authoritative.
+
+The relevant State Reconciliation and authority rules must determine whether the conflict can be resolved.
+
+If it cannot, the material claim may remain:
+
+CONFLICTED
+
+and the Intent may remain non-executable.
+
+⸻
+
+58. Resolution and Deterministic Reproducibility
+
+A resolution decision should be reproducible from its material inputs.
+
+Conceptually:
+
+Intent Version
 +
 Evidence
 +
+Validated Context
++
+Authoritative State
++
 Resolution Rules
++
+Ontology Version
 
-Noema should produce:
+should produce a deterministic resolution result.
 
-Resolved Intent
+Any probabilistic component may generate candidates.
 
-without relying on an uncontrolled probabilistic decision at the final commitment boundary.
+The final semantic commitment must not depend on uncontrolled model choice.
 
 ⸻
 
-55. Resolution Invariants
+59. Resolution Invariants
 
 Invariant 1
 
-No materially ambiguous Intent may become Resolved through confidence alone.
+No materially ambiguous Intent may become resolved through confidence alone.
 
 Invariant 2
 
@@ -1259,7 +1574,7 @@ No material assumption may be silently introduced during resolution.
 
 Invariant 3
 
-Explicit Actor corrections supersede prior inferred interpretations.
+Explicit Actor corrections supersede prior inferred interpretations where the correction is valid and applicable.
 
 Invariant 4
 
@@ -1267,11 +1582,11 @@ Authoritative domain evidence may ground Resources and Entities.
 
 Invariant 5
 
-Resolution must not rewrite Actor intent to satisfy Policy.
+Resolution must not rewrite Actor intent to satisfy Policy, Capability availability, or execution convenience.
 
 Invariant 6
 
-Resolution must precede Trust-dependent execution.
+Material semantic resolution must precede Executable Intent.
 
 Invariant 7
 
@@ -1279,7 +1594,7 @@ Every material resolution should have explainable provenance.
 
 Invariant 8
 
-The absence of a Capability does not imply semantic ambiguity.
+The absence of a Capability does not by itself imply semantic ambiguity.
 
 Invariant 9
 
@@ -1287,58 +1602,84 @@ Business State and Intent State remain separate.
 
 Invariant 10
 
-If resolution cannot safely establish meaning, Noema must transition to clarification, rejection, or another explicitly defined non-executable state.
+Evidence, Fact Status, and Confidence remain distinct.
+
+Invariant 11
+
+Unknown and Ambiguous must remain distinguishable.
+
+Invariant 12
+
+Material semantic changes must create a new Intent version rather than silently mutate historical meaning.
+
+Invariant 13
+
+If resolution cannot establish material meaning, Noema must not produce an Executable Intent from unsupported inference.
 
 ⸻
 
-56. Canonical Resolution Flow
+60. Canonical Resolution Flow
 
-                 Actor Expression
-                       │
-                       ▼
-                Candidate Intent
-                       │
-                       ▼
-                 Ground References
-                       │
-                       ▼
-                Gather Evidence
-                       │
-                       ▼
-              Evaluate Alternatives
-                       │
-             ┌─────────┴─────────┐
-             │                   │
-             ▼                   ▼
-      One sufficient        Multiple material
-       interpretation          interpretations
-             │                   │
-             ▼                   ▼
-         RESOLVED             AMBIGUOUS
-             │                   │
-             │                   ▼
-             │             CLARIFICATION
-             │                   │
-             │                   ▼
-             │              New Evidence
-             │                   │
-             └───────────┬───────┘
-                         ▼
-                     RESOLVED
-                         │
-                         ▼
-                   EXECUTABLE
-                         │
-                         ▼
-                      TRUST
+                    Source of Intent
+                           │
+                           ▼
+               Candidate Semantic Meaning
+                           │
+                           ▼
+              Hard Schema Validation /
+                     Admission
+                           │
+                           ▼
+                    Canonical Intent
+                           │
+                           ▼
+               Context + State Reconciliation
+                           │
+                           ▼
+                    Ground References
+                           │
+                           ▼
+                    Gather Evidence
+                           │
+                           ▼
+                 Evaluate Alternatives
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+                 ▼                   ▼
+       One materially valid       Multiple
+       interpretation             material
+       established                interpretations
+                 │                   │
+                 ▼                   ▼
+             RESOLVED            AMBIGUOUS
+                 │                   │
+                 │                   ▼
+                 │             CLARIFICATION
+                 │                   │
+                 │                   ▼
+                 │              New Evidence /
+                 │              New Intent Version
+                 │                   │
+                 └───────────┬───────┘
+                             ▼
+                    Resolved Intent
+                             │
+                             ▼
+                    Executable Intent
+                             │
+                             ▼
+                           TRUST
+
+The flow may iterate where additional evidence or clarification is required.
 
 ⸻
 
-57. Example: Card Renewal
+61. Example: Card Renewal
 
 Expression
 
-“Renew the card I used yesterday.”
+"Renew the card I used yesterday."
 
 Candidate Intent
 
@@ -1352,32 +1693,35 @@ Evidence
 Transaction#789 → Card#123
 Transaction#790 → Card#456
 
-If only Transaction#789 qualifies:
+If only Transaction#789 satisfies the applicable temporal and semantic criteria:
 
 Resource:
 Card#123
-
-Result
-
+Resolution:
 RESOLVED
 
 If both qualify:
 
+Resolution:
 AMBIGUOUS
 
-Noema asks:
+Noema should ask a targeted clarification such as:
 
-“Which card do you mean: the Visa ending in 1234 or the Mastercard ending in 5678?”
+"Which card do you mean: the Visa ending in 1234 or the Mastercard ending in 5678?"
+
+The clarification resolves the semantic reference.
+
+It does not itself establish Trust or execution authority.
 
 ⸻
 
-58. Example: Transfer
+62. Example: Transfer
 
 Expression
 
-“Send $500 to my other account.”
+"Send $500 to my other account."
 
-Candidate:
+Candidate Intent
 
 Objective:
 TransferFunds
@@ -1388,96 +1732,107 @@ CurrentAccount
 Destination:
 OtherAccount
 
-Evidence:
+Evidence
 
 Savings#1
 Investment#2
 
-Both qualify.
+If both accounts satisfy the reference:
 
-Result:
-
+Destination:
 AMBIGUOUS
 
 Clarification:
 
-“Which account should receive the $500: Savings or Investment?”
+"Which account should receive the $500: Savings or Investment?"
+
+After clarification, the resulting material semantic change is represented as a new Intent version.
+
+Trust then evaluates the resolved Intent against current authority, policy, state, constraints, and applicable execution conditions.
 
 ⸻
 
-59. Example: Clear but Unsupported
+63. Example: Clear but Unsupported
 
-Expression:
+Expression
 
-“Teleport me to London.”
+"Teleport me to London."
 
-Candidate:
+Candidate
 
 Objective:
 TeleportPerson
 Destination:
 London
 
-Resolution:
+If the meaning is established:
 
-SUCCESS
+Resolution:
+RESOLVED
+
+If no applicable Capability exists:
 
 Executability:
-
 UNSUPPORTED
 
 This illustrates why semantic resolution and Capability availability must remain separate.
 
+The Intent can be semantically clear without being executable.
+
 ⸻
 
-60. Example: Clear but Policy-Blocked
+64. Example: Clear but Not Permitted
 
-Expression:
+Expression
 
-“Refund this $50,000 payment.”
+"Refund this $50,000 payment."
 
-Resolution:
+Resolution
 
 RefundPayment(Payment#123)
+Amount:
+$50,000
 
-Executability:
+The Intent may be fully resolved and executable in the semantic sense.
 
-SUPPORTED
+Suppose applicable governance conditions require manager approval.
 
-Policy:
+The result is not a resolution failure.
 
-ManagerApprovalRequired
+Trust evaluates the resolved Intent and may return:
 
-Result:
+CLARIFY
+ESCALATE
+REJECT
 
-POLICY_BLOCKED
+as appropriate to the actual governance condition.
 
-The Intent itself was never ambiguous.
+Resolution does not rewrite the amount or objective to avoid the requirement.
 
 ⸻
 
-61. Resolution and Noema’s Thesis
+65. Resolution and Noema’s Thesis
 
 Intent Resolution operationalizes one of Noema’s central principles:
 
-The model may be probabilistic; the commitment to executable meaning must be governed.
+The Model may be probabilistic; the commitment to executable meaning must be governed.
 
-The Model can say:
+The Model can propose:
 
-"I think this is what the user means."
+"I think this is what the Actor means."
 
 Noema must determine:
 
-"This is sufficiently established to proceed."
+"This interpretation is sufficiently established to become canonical."
 
-That distinction is foundational to Noema.
+Only then can the resolved semantic object become Executable Intent and enter the deterministic Trust boundary.
 
 ⸻
 
-62. Final Definition
+66. Final Definition
 
-Intent Resolution is the governed process of grounding, completing, and disambiguating a candidate Intent using explicit Actor input, Context, authoritative evidence, and deterministic semantic rules until Noema can either establish a canonical meaning or explicitly determine that clarification, rejection, or another non-executable state is required.
+Intent Resolution is the governed process of grounding, completing, disambiguating, and reconciling a canonical Intent using explicit Actor input, validated Context, authoritative evidence, State Reconciliation, and deterministic semantic rules until Noema can either establish a sufficiently determined canonical meaning or explicitly determine that clarification or another non-executable disposition is required.
 
 The shortest canonical formulation is:
 
-Resolution is the point at which Noema stops guessing what the Actor might mean and establishes what it can safely treat as the Actor’s Intent.
+Resolution is the point at which Noema stops treating an interpretation as a possibility and establishes what it can deterministically treat as the Actor’s Intent.

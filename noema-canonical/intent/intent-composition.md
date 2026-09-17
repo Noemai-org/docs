@@ -9,17 +9,15 @@ Canonical Path: intent/intent-composition.md
 
 1. Definition
 
-Intent Composition is the process by which multiple related Intents are represented, ordered, constrained, or combined into a larger semantic objective without losing the identity of the individual Intents.
+Intent Composition is the process by which multiple related Intents are represented together with the semantic relationships, dependencies, conditions, constraints, and expected Outcomes that connect them to a larger Actor objective, without losing the identity of the individual Intents.
 
-Composition exists because a human request may express more than one goal.
+Composition exists because a human request may express more than one semantic goal.
 
 For example:
 
-“Close my old account and move the remaining balance to my new account.”
+"Close my old account and move the remaining balance to my new account."
 
-This is not necessarily one atomic Intent.
-
-It can be represented as:
+This may contain at least two Intents:
 
 Intent A:
 TransferBalance
@@ -30,45 +28,56 @@ with a semantic relationship:
 
 TransferBalance
       ↓
-must precede
+   PRECEDES
       ↓
 CloseAccount
 
 The composed structure represents the Actor’s larger objective while preserving the individual semantic units.
 
+Composition is therefore a semantic relationship layer over multiple Intents. It does not replace Intent resolution, Executable Intent, Trust, Action, or Execution.
+
 ⸻
 
 2. Why Intent Composition Exists
 
-Real-world human requests frequently contain:
+Real-world requests frequently contain:
 
-multiple Actions
-multiple Outcomes
-dependencies
-conditions
-sequences
-parallel goals
-nested goals
+* multiple Actions
+* multiple Outcomes
+* dependencies
+* conditions
+* sequences
+* parallel goals
+* nested goals
+* alternatives
+* optional goals
+* shared Context
+* shared Constraints
 
 Examples:
 
-“Create a project, add Sarah, and send her the invitation.”
+"Create a project, add Sarah, and send her the invitation."
+"Refund the payment and notify the customer."
+"Update my address everywhere."
+"Book a flight and add it to my calendar."
 
-“Refund the payment and notify the customer.”
+Treating each semantic goal as an isolated Intent would lose relationships between the requested operations.
 
-“Update my address everywhere.”
+Noema therefore needs a canonical representation for:
 
-“Book a flight and add it to my calendar.”
-
-Treating each sentence as an isolated Intent would lose relationships between the requested operations.
-
-Noema therefore needs a canonical way to represent Intent relationships and composition.
+What goals exist?
+How are they related?
+Which goals depend on others?
+Which may proceed independently?
+Which are conditional?
+Which are optional?
+What constitutes satisfaction of the larger objective?
 
 ⸻
 
 3. Composition Does Not Mean Merging Everything
 
-Composition should not collapse multiple Intents into one indistinguishable object.
+Composition must not collapse multiple Intents into one indistinguishable object.
 
 For example:
 
@@ -83,18 +92,24 @@ NotifyCustomer
 
 They may be composed:
 
-Composite Intent
+Composite
 ├── RefundPayment
 └── NotifyCustomer
 
-but each Intent retains its own:
+but each constituent Intent retains its own:
 
-Actor
-Resources
-Constraints
-Outcome
-Trust requirements
-Lifecycle
+* Identity
+* Version
+* Actor
+* Resources
+* Parameters
+* Scope
+* Constraints
+* Expected Outcome
+* Resolution state
+* Trust requirements
+* Lifecycle
+* Outcome
 
 Therefore:
 
@@ -104,129 +119,131 @@ Composition creates structure between Intents; it does not erase their identity.
 
 4. Atomic Intent
 
-An Atomic Intent is an Intent that represents a single semantic objective that Noema treats as indivisible for the relevant lifecycle.
+An Atomic Intent is an Intent that Noema treats as a single semantic objective for the relevant abstraction level and lifecycle.
 
-Example:
+Examples:
 
 RenewCard(Card#123)
-
-or:
-
 RefundPayment(Payment#8291)
 
 Atomicity is contextual.
 
-An Intent that is atomic at one abstraction level may contain multiple lower-level Actions.
+An Intent that is atomic from the Actor’s perspective may require multiple lower-level Actions.
 
 For example:
 
 Intent:
 RenewCard
-Actions:
+Possible Actions:
 VerifyEligibility
 CreateReplacement
 DeactivateOldCard
+UpdateAccount
 
-The Intent remains atomic from the Actor’s perspective even though execution may involve multiple Actions.
+These Actions do not automatically become separate user-level Intents.
+
+Therefore:
+
+Intent atomicity is semantic, not equivalent to implementation atomicity or Action count.
 
 ⸻
 
 5. Composite Intent
 
-A Composite Intent is an Intent structure containing multiple related Intents whose relationship is semantically meaningful.
+A Composite Intent is a semantic composition containing multiple related Intents whose relationship contributes to a larger Actor objective.
 
 Example:
 
-Composite Intent:
+Composite:
 PrepareEmployeeOnboarding
 ├── CreateEmployeeAccount
 ├── GrantRequiredAccess
 ├── CreateEmailMailbox
 └── NotifyEmployee
 
-The composite structure may define:
+A composition may define:
 
-ordering
-dependency
-parallelism
-conditions
-shared context
-shared constraints
+* Ordering
+* Dependency
+* Parallelism
+* Conditions
+* Alternatives
+* Optionality
+* Shared Context
+* Shared Constraints
+* Expected Outcomes
+
+The constituent Intents remain independently identifiable.
 
 ⸻
 
 6. Composition Is Semantic, Not Merely Procedural
 
-A workflow is usually concerned with:
+A workflow is primarily concerned with execution steps.
 
-Step 1
-Step 2
-Step 3
-
-Intent Composition is concerned with:
-
-Goal A
-Goal B
-Goal C
-
-and the semantic relationships between them.
+Intent Composition is concerned with semantic goals and the relationships between them.
 
 For example:
 
-“Transfer the balance and then close the account.”
+"Transfer the balance and then close the account."
 
-The important semantic fact is:
+contains the semantic relationship:
 
 CloseAccount
 requires
-TransferBalance completed
+TransferBalance
+to have completed
 
-The exact API sequence is an execution concern.
+The exact API calls, retries, queues, transactions, and timing are execution concerns.
 
 Therefore:
 
-Intent Composition ≠ Workflow Definition
+Intent Composition is not a workflow definition.
+
+The composition constrains execution without becoming the execution workflow itself.
 
 ⸻
 
 7. Composition Relationships
 
-A Composite Intent may contain relationships such as:
+A Composite Intent may contain explicit relationships such as:
 
-SEQUENCE
-PARALLEL
-DEPENDENCY
-CONDITIONAL
-OPTIONAL
-ALTERNATIVE
-NESTED
-SHARED-CONTEXT
+* PRECEDES
+* DEPENDS_ON
+* PARALLEL_WITH
+* CONDITIONAL_ON
+* OPTIONAL
+* ALTERNATIVE_TO
+* ENABLES
+* REQUIRES
+* NESTED_WITHIN
+* SHARES_CONTEXT_WITH
 
-These relationships should be explicit rather than inferred repeatedly by downstream systems.
+The exact relationship vocabulary is implementation-specific, but the semantic relationship must be explicit wherever it affects resolution, Trust, planning, execution, or Outcome evaluation.
+
+Noema should not repeatedly infer consequential relationships from the original natural-language expression downstream.
 
 ⸻
 
 8. Sequential Composition
 
-Sequential composition expresses an ordering relationship.
+Sequential composition expresses an ordering or prerequisite relationship.
 
 Example:
 
-“Create the account and then send me the credentials.”
+"Create the account and then send me the credentials."
+
+Semantic structure:
 
 CreateAccount
       ↓
+   PRECEDES
+      ↓
 SendCredentials
 
-The second Intent depends on the first.
+The second Intent depends on a semantic condition established by the first.
 
-The semantic relationship is:
-
-SendCredentials
-after
-CreateAccount
-
-The exact execution mechanism is separate.
+The relationship does not prescribe a particular API sequence or execution mechanism.
 
 ⸻
 
@@ -236,60 +253,57 @@ Some Intents can be pursued independently.
 
 Example:
 
-“Update my address and change my notification preferences.”
+"Update my address and change my notification preferences."
 
-UpdateAddress
-      │
-      ├──────────┐
-      │          │
-      ▼          ▼
-   Complete   ChangePreferences
+Conceptually:
 
-There may be no semantic dependency between them.
+UpdateAddress      ChangePreferences
+       │                   │
+       └──── independent ──┘
 
-They can therefore be composed as parallel Intents.
+Parallel composition means that neither Intent semantically depends on the completion of the other.
 
-Parallel composition does not require simultaneous execution.
+It does not require simultaneous execution.
 
-It means:
-
-Neither Intent semantically depends on the completion of the other.
+Execution may serialize, batch, queue, or otherwise schedule the Actions while preserving the semantic independence.
 
 ⸻
 
 10. Dependency Composition
 
-An Intent may depend on another Intent without necessarily requiring strict sequential execution.
+An Intent may depend on another Intent without requiring a specific low-level execution sequence.
 
 Example:
 
 CreateProject
       ↓
+  DEPENDS_ON
+      ↓
 AddMembers
-
-AddMembers depends on the Project existing.
 
 The dependency is semantic:
 
-Project must exist
+The Project must exist before the member relationship can be established.
 
-not necessarily:
+It does not mean:
 
-API call A must finish exactly 100ms before API call B.
+API call A must finish exactly before API call B begins.
+
+The Planner and Execution Controller determine the concrete implementation sequence within the composition’s semantic constraints.
 
 ⸻
 
 11. Conditional Composition
 
-An Intent may depend on a condition.
+An Intent may depend on a condition established by another Intent or by reconciled state.
 
 Example:
 
-“If the payment failed, retry it; otherwise send the receipt.”
+"If the payment failed, retry it; otherwise send the receipt."
 
 Conceptually:
 
-PaymentResult
+Payment State
       ↓
  ┌────┴────┐
  │         │
@@ -298,9 +312,11 @@ Failed   Successful
  ▼         ▼
 Retry    SendReceipt
 
-The condition belongs to the semantic composition.
+The condition is part of the semantic composition.
 
-Execution logic determines how that condition is evaluated.
+Execution logic determines how the condition is evaluated using authoritative or reconciled state.
+
+A Model must not be relied upon to reinterpret the condition during execution.
 
 ⸻
 
@@ -310,67 +326,69 @@ An Intent may contain an optional subordinate Intent.
 
 Example:
 
-“Book the flight and, if possible, add it to my calendar.”
+"Book the flight and, if possible, add it to my calendar."
+
+Conceptually:
 
 BookFlight
     │
     └── OPTIONAL → AddToCalendar
 
-Failure of the optional Intent does not necessarily invalidate the primary Intent.
+Optionality means that failure or non-execution of the optional constituent does not necessarily invalidate the primary semantic objective.
 
-The semantics of optionality should be explicit.
+The exact parent Outcome semantics must define whether an optional child contributes to complete, partial, or degraded satisfaction.
 
 ⸻
 
 13. Alternative Composition
 
-An Intent may express alternatives.
+An Intent may express alternatives rather than simultaneous objectives.
 
 Example:
 
-“Either renew my card or issue a replacement, whichever is appropriate.”
+"Either renew my card or issue a replacement, whichever is appropriate."
 
 Conceptually:
 
-             Card Resolution
-                  │
-          ┌───────┴────────┐
-          ▼                ▼
-     RenewCard       IssueReplacement
+          Card State
+              │
+       ┌──────┴──────┐
+       ▼             ▼
+  RenewCard    IssueReplacement
 
-The alternative is not a request to perform both.
+The alternatives are not two Actions to execute independently.
 
-Noema must establish a selection condition.
+Noema must establish the selection condition through applicable Intent semantics, current state, Constraints, and Policy.
+
+If multiple alternatives remain materially valid and the Actor’s preference is consequential, the ambiguity must be resolved rather than silently selecting one.
 
 ⸻
 
 14. Nested Intent
 
-An Intent may contain subordinate Intents.
+An Intent may contain subordinate semantic Intents.
 
 Example:
 
-“Prepare my employee onboarding.”
-
-This may compose:
-
-PrepareOnboarding
+PrepareEmployeeOnboarding
 ├── CreateAccount
 ├── ProvisionEmail
 ├── GrantAccess
 └── NotifyEmployee
 
-The parent Intent represents the higher-level Outcome.
+The parent represents the larger semantic objective.
 
-The children represent semantic subgoals.
+The children represent constituent semantic goals.
+
+Nested structure does not make the children mere implementation steps. Each child retains its own semantic identity and lifecycle.
 
 ⸻
 
 15. Parent and Child Intent
 
-A parent Intent defines a broader objective.
+A parent Intent defines a broader semantic objective.
 
-A child Intent represents a subordinate objective required to satisfy it.
+A child Intent represents a subordinate objective that contributes to satisfying the parent.
 
 Example:
 
@@ -381,34 +399,50 @@ CreateEmployeeAccount
 GrantAccess
 SendWelcomeEmail
 
-The relationship does not mean that the child is merely an implementation step.
+The relationship between parent and child is semantic.
 
-Each child has its own semantic meaning.
+A child may have its own:
+
+* Actor
+* Authority
+* Constraints
+* Policy
+* Resources
+* Trust evaluation
+* Outcome
+
+The parent does not automatically inherit or grant these properties.
 
 ⸻
 
 16. Composition Must Preserve Intent Identity
 
-Each child Intent should retain its own identity.
+Each constituent Intent should retain its own identity.
 
 Conceptually:
 
-CompositeIntent: CI-100
+Composite: CI-100
 Intent: I-101
 Intent: I-102
 Intent: I-103
 
 This allows Noema to independently track:
 
-resolution
-clarification
-Trust
-Action
-Outcome
-failure
-retry
+* Resolution
+* Clarification
+* Version
+* Trust
+* Action
+* Execution
+* Verification
+* Outcome
+* Failure
+* Recovery
+* Retry
 
 for each constituent Intent.
+
+The composition relationship itself should also be identifiable and auditable.
 
 ⸻
 
@@ -418,8 +452,7 @@ Multiple Intents may share the same Actor.
 
 Example:
 
-“Update my address and change my phone number.”
-
+"Update my address and change my phone number."
 Actor:
 Alice
 Intent A:
@@ -427,24 +460,26 @@ UpdateAddress
 Intent B:
 UpdatePhoneNumber
 
-The Actor is common, but each Intent remains distinct.
+The Actor may be shared without merging the Intents.
+
+Actor identity remains an explicit property of each Intent.
 
 ⸻
 
 18. Different Actors
 
-Composition can also involve multiple Actors where the domain permits it.
+A composition may involve multiple Actors where the domain permits it.
 
 Example:
 
-“Ask Sarah to approve the invoice and then notify the customer.”
+"Ask Sarah to approve the invoice and then notify the customer."
 
 Potential structure:
 
 Intent A:
 RequestApproval
 Actor:
-System / Alice
+Alice / System
 Intent B:
 ApproveInvoice
 Actor:
@@ -454,9 +489,11 @@ NotifyCustomer
 Actor:
 System
 
-The Actor associated with each Intent must remain explicit.
+The Actor associated with each constituent Intent must remain explicit.
 
 Noema must not assume that the Actor of the parent automatically becomes the Actor of every child.
+
+Likewise, a parent Actor cannot manufacture Authority for another Actor.
 
 ⸻
 
@@ -466,8 +503,7 @@ Multiple Intents may operate on the same Resource.
 
 Example:
 
-“Update the customer’s address and notify them.”
-
+"Update the customer's address and notify them."
 Resource:
 Customer#123
 Intent A:
@@ -475,42 +511,44 @@ UpdateAddress
 Intent B:
 NotifyCustomer
 
-The shared Resource relationship can be represented explicitly.
+The shared Resource relationship may be represented explicitly.
+
+This prevents downstream systems from independently resolving the same reference and potentially binding the Intents to different Resources.
 
 ⸻
 
 20. Resource Dependencies
 
-One Intent may create or transform a Resource required by another.
+One Intent may create or transform a Resource required by another Intent.
 
 Example:
 
 CreateInvoice
       ↓
+   ENABLES
+      ↓
 SendInvoice
 
-The output Resource of the first Intent becomes an input Resource of the second.
+The output Resource of the first Intent may become an input Resource of the second.
 
-This relationship should be explicit in the composition graph.
+The dependency should be represented semantically rather than reconstructed from execution logs.
 
 ⸻
 
 21. Shared Constraints
 
-A Composite Intent may have constraints applying to all constituent Intents.
+A Composite Intent may have Constraints applying to multiple constituent Intents.
 
 Example:
 
-“Update everything before the end of the business day.”
-
-Composite Intent
-Constraint:
+"Update everything before the end of the business day."
+Composite Constraint:
 Deadline = Today 17:00
 ├── UpdateAddress
 ├── UpdatePhone
 └── UpdatePreferences
 
-Child Intents may additionally have their own constraints.
+Child Intents may have additional Constraints.
 
 Therefore:
 
@@ -520,37 +558,44 @@ Child Constraints
 
 must be evaluated according to their defined scope.
 
+A parent Constraint must not silently override a more specific Constraint unless the applicable semantic model explicitly permits it.
+
 ⸻
 
 22. Shared Context
 
-A Composite Intent may establish Context that applies to its children.
+A Composite Intent may establish Context that applies to multiple children.
 
 Example:
 
-“For the Acme account, update the billing contact and notify the finance team.”
-
+"For the Acme account, update the billing contact and notify the finance team."
 Shared Context:
 Account = Acme
 ├── UpdateBillingContact
 └── NotifyFinance
 
-This avoids repeatedly reconstructing the same semantic context.
+Shared Context reduces repeated resolution.
+
+However:
+
+Shared Context is not automatically authoritative.
+
+Each constituent Intent must use Context only to the extent that it is relevant, valid, scoped, fresh, and sufficiently authoritative for the claim being resolved.
 
 ⸻
 
 23. Composition and Clarification
 
-A Composite Intent may contain one unresolved child while others are fully resolved.
+A Composite Intent may contain one unresolved constituent while others are fully resolved.
 
 Example:
 
-Composite Intent
+Composite
 ├── UpdateAddress       RESOLVED
 ├── UpdatePhone         RESOLVED
 └── NotifyEmployer      AMBIGUOUS
 
-Noema should not necessarily discard the entire composite structure.
+Noema should not necessarily discard the entire composition.
 
 Instead:
 
@@ -558,88 +603,108 @@ Composite
    ↓
 Child Intent C
    ↓
-CLARIFY
+Material Ambiguity
+   ↓
+Targeted Clarification
 
-The unresolved child can be clarified independently.
+The unresolved constituent can be clarified independently where the composition semantics permit it.
+
+Clarification must preserve the identity and version lineage of the affected Intent.
 
 ⸻
 
 24. Composition and Partial Resolution
 
-Intent composition therefore supports partial resolution.
+Intent Composition supports partial resolution.
 
 For example:
 
 Intent A:
-Resolved
+RESOLVED
 Intent B:
-Resolved
+RESOLVED
 Intent C:
-Clarification required
+CLARIFICATION_REQUIRED
 
-The Composite Intent is not fully Executable until its required constituents are resolved.
+The Composite is not fully executable while a required constituent remains materially unresolved.
 
-However, Noema may determine that some independent children can proceed if the composition semantics permit it.
+However, independent constituents may still progress if:
 
-This must be explicitly defined rather than assumed.
+1. their own semantics are sufficiently resolved,
+2. their dependencies are satisfied,
+3. their execution does not violate the composition,
+4. their independent execution is permitted by Trust and Policy,
+5. doing so does not create an unintended consequence if another constituent later fails or changes.
+
+Partial execution must therefore be a semantic property of the composition, not an accidental consequence of execution order.
 
 ⸻
 
 25. Composition and Executable Intent
 
-A Composite Intent can become an Executable Composite Intent when all required constituent Intents are sufficiently resolved.
+Each constituent Intent must independently satisfy the requirements for Executable Intent before it can proceed toward consequential Action.
 
 Conceptually:
 
-Composite Intent
-├── Executable Intent A
-├── Executable Intent B
-└── Executable Intent C
+Composite
+├── Intent A → Executable Intent
+├── Intent B → Executable Intent
+└── Intent C → Executable Intent
 
-subject to:
+The composition itself may also have unresolved semantic conditions, dependencies, or required constituent Outcomes.
 
-dependencies
-constraints
-policy
-authority
-current state
+Therefore:
 
-The composite itself still requires Trust evaluation.
+A collection of executable child Intents is not automatically an executable composition.
+
+The composition must remain consistent with its own dependencies, Constraints, conditions, and Expected Outcome semantics.
 
 ⸻
 
 26. Composition and Trust
 
-Trust may need to be evaluated at multiple levels.
+Trust is evaluated against the relevant Intent and Action semantics.
 
-For example:
+A composite structure does not create a single blanket authorization.
 
-Composite Intent:
-CloseAccount
+Example:
+
+Composite:
+TransferAndCloseAccount
 ├── TransferBalance
 └── CloseAccount
 
-The Actor may have authority to transfer funds but not authority to close the account.
+The Actor may satisfy the applicable authority conditions for one constituent but not the other.
 
 Therefore:
 
 Trust(TransferBalance)
 Trust(CloseAccount)
 
-may produce different results.
+may produce different Trust outcomes.
 
-A parent-level Trust decision must not automatically authorize every child Intent.
+A parent-level Trust result must not automatically authorize every child Intent.
+
+The canonical Trust outcomes remain:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Confirmation or approval requirements are control conditions, not additional Trust outcomes.
 
 ⸻
 
 27. Composition and Policy
 
-Policies may apply at:
+Policies may apply at different semantic scopes:
 
-Composite level
-Child level
-Action level
-Resource level
+* Composite level
+* Child Intent level
+* Action level
+* Resource level
+* Capability level
 
 Example:
 
@@ -654,15 +719,17 @@ Requires Security approval.
 Child:
 RevokeEmail
 Policy:
-No approval required.
+No additional approval required.
 
-Each child retains its own Policy requirements.
+Each constituent retains its own applicable Policy requirements.
+
+Policy scope must be explicit enough to determine which conditions apply to which constituent.
 
 ⸻
 
 28. Composition and Authority
 
-Authority should be evaluated according to the Actor and Action associated with each Intent.
+Authority is evaluated according to the resolved Actor, Action, Resource, Scope, and applicable authorization conditions of each constituent Intent.
 
 A user may be authorized to:
 
@@ -672,17 +739,19 @@ but not:
 
 DeleteCustomerAccount
 
-even if both appear inside one Composite Intent.
+even when both appear inside one Composite Intent.
 
 Therefore:
 
-Composition does not aggregate authority.
+Composition does not aggregate, transfer, or inherit Authority.
+
+A parent Intent cannot confer Authority that its constituent Actor does not otherwise possess.
 
 ⸻
 
 29. Composition and Failure
 
-A Composite Intent may contain children with different failure semantics.
+Constituent Intents may have different execution and Outcome states.
 
 Example:
 
@@ -690,27 +759,29 @@ CreateAccount
 GrantAccess
 SendWelcomeEmail
 
-If email delivery fails:
+Results:
 
 Account creation = successful
 Access grant = successful
-Email = failed
+Email delivery = failed
 
-the parent Outcome may still be partially satisfied.
+The Composite may therefore be partially satisfied.
 
-Noema therefore needs to distinguish:
+Noema must distinguish:
 
-Intent state
-Action state
-Outcome state
+Intent State
+Action State
+Execution State
+Outcome State
+Composite Outcome
 
-for each constituent Intent.
+A child failure does not automatically determine the parent Outcome unless the composition semantics make that child outcome required.
 
 ⸻
 
 30. Composition and Compensation
 
-Some compositions require compensating Actions when a later Intent fails.
+Some compositions may require compensating Actions when a later constituent fails.
 
 Example:
 
@@ -720,19 +791,21 @@ ChargeCustomer
       ↓
 ProvisionService
 
-If provisioning fails after payment succeeds, the system may need:
+If provisioning fails after payment succeeds, a compensating Action may be required:
 
 RefundPayment
 
-This is primarily an execution concern.
+Compensation is primarily an execution concern.
 
-However, the semantic composition should expose enough dependency information for the execution layer to determine appropriate compensation.
+Intent Composition should expose the semantic dependencies and required Outcomes necessary for the execution layer to determine whether compensation is required.
+
+The existence of a dependency does not by itself guarantee that compensation is possible.
 
 ⸻
 
 31. Composition Is Not Transactionality
 
-Two Intents being composed does not mean they form one atomic transaction.
+Two or more Intents being composed does not mean they form one atomic transaction.
 
 For example:
 
@@ -740,21 +813,23 @@ UpdateCRM
 +
 SendEmail
 
-may not be transactionally coupled.
+may have no distributed transactional boundary.
 
-The composition defines the semantic relationship.
+Composition defines semantic relationships.
 
-The execution system determines whether the underlying Actions support:
+The execution substrate determines whether underlying Actions support:
 
-atomicity
-rollback
-compensation
-retry
-eventual consistency
+* Atomicity
+* Rollback
+* Compensation
+* Retry
+* Idempotency
+* Eventual consistency
+* Durable recovery
 
 Therefore:
 
-Intent Composition ≠ Distributed Transaction
+Intent Composition is not a distributed transaction.
 
 ⸻
 
@@ -762,11 +837,8 @@ Intent Composition ≠ Distributed Transaction
 
 A Composite Intent may have:
 
-individual Outcomes
-
-and:
-
-a Composite Outcome
+1. individual constituent Outcomes, and
+2. a Composite Outcome.
 
 Example:
 
@@ -780,19 +852,23 @@ Welcome email sent
 Composite Outcome:
 Employee successfully onboarded
 
-The parent Outcome should be derived from the semantic requirements of the composition, not simply from whether every Action returned HTTP 200.
+The Composite Outcome should be derived from the semantic requirements of the composition.
+
+It must not be inferred solely from technical execution responses such as HTTP status codes.
+
+Actual Outcome requires execution evidence and verification against the relevant enterprise state where necessary.
 
 ⸻
 
 33. Composition and Outcome Dependencies
 
-Some parent Outcomes require specific child Outcomes.
+Some Composite Outcomes require specific constituent Outcomes.
 
 Example:
 
 Composite:
 TransferAndCloseAccount
-Required:
+Required Outcomes:
 Transfer completed
 AND
 Account closed
@@ -802,15 +878,17 @@ If only the transfer succeeds:
 Composite Outcome:
 Not satisfied
 
-even though one child succeeded.
+The transfer may still have a successful constituent Outcome.
 
-This is why Outcome semantics must remain explicit.
+Therefore:
+
+Constituent success and Composite satisfaction are distinct semantic states.
 
 ⸻
 
 34. Composition Graph
 
-A useful canonical representation is a directed graph:
+A useful canonical representation is a directed semantic graph:
 
              Composite Intent
                     │
@@ -826,38 +904,43 @@ A useful canonical representation is a directed graph:
 
 Edges represent semantic relationships such as:
 
-depends_on
-precedes
-enables
-requires
-conditional_on
-alternative_to
+PRECEDES
+DEPENDS_ON
+ENABLES
+REQUIRES
+CONDITIONAL_ON
+OPTIONAL
+ALTERNATIVE_TO
 
-This fits naturally with Noema’s broader ontology.
+The graph expresses semantic constraints and relationships.
+
+It does not itself prescribe the complete execution workflow.
 
 ⸻
 
 35. Composition Must Be Explicit
 
-Noema should avoid reconstructing composition from execution logs after the fact.
+Noema should not reconstruct consequential composition from execution logs after the fact.
 
 If the Actor expressed:
 
-“Transfer the balance and then close the account.”
+"Transfer the balance and then close the account."
 
 the semantic relationship should exist before execution:
 
 TransferBalance
-    precedes
+      ↓
+   PRECEDES
+      ↓
 CloseAccount
 
-The execution layer consumes that relationship.
+The Planner and Execution Controller consume this relationship when determining an executable plan.
 
 ⸻
 
 36. Composition and Natural Language
 
-Natural language can encode composition through:
+Natural language can encode composition through expressions such as:
 
 and
 then
@@ -870,42 +953,40 @@ also
 as well as
 while
 until
+either
 
 For example:
 
-“Update my address and notify my employer.”
-
+"Update my address and notify my employer."
 UpdateAddress
 AND
 NotifyEmployer
-
-“Update my address, then notify my employer.”
-
+"Update my address, then notify my employer."
 UpdateAddress
 PRECEDES
 NotifyEmployer
-
-“Notify my employer if the address update succeeds.”
-
+"Notify my employer if the address update succeeds."
 NotifyEmployer
 CONDITIONAL_ON
 UpdateAddress.Success
 
-The linguistic relationship should be translated into a canonical semantic relationship.
+The linguistic relationship should be translated into canonical semantic structure.
+
+The original expression should not need to be reinterpreted by downstream execution components.
 
 ⸻
 
 37. Composition Must Preserve Human Intent
 
-Noema should not create unnecessary composition merely because an Action happens to require multiple internal operations.
+Noema should not create unnecessary composition merely because one Intent requires multiple internal Actions.
 
 For example:
 
-“Renew my card.”
+"Renew my card."
 
 The execution system may perform:
 
-CheckEligibility
+VerifyEligibility
 CreateReplacement
 UpdateAccount
 DeactivateOldCard
@@ -916,17 +997,17 @@ They may simply be Actions required to satisfy one Intent.
 
 Therefore:
 
-Intent composition is driven by semantic goals, not by implementation step count.
+Intent Composition is driven by semantic goals, not implementation step count.
 
 ⸻
 
 38. Composition vs Action Decomposition
 
-These must remain distinct.
+These concepts must remain distinct.
 
 Intent Composition
 
-Multiple semantic goals.
+Multiple semantic goals:
 
 RefundPayment
 +
@@ -934,7 +1015,7 @@ NotifyCustomer
 
 Action Decomposition
 
-One semantic goal requiring multiple operations.
+One semantic goal requiring multiple operations:
 
 RenewCard
     ↓
@@ -944,33 +1025,34 @@ CreateCard
     ↓
 UpdateAccount
 
+Intent Composition operates at the semantic-goal level.
+
+Action decomposition operates at the execution level.
+
 This distinction is critical to maintaining Noema’s abstraction boundary.
 
 ⸻
 
 39. Composition and User Expression
 
-A single sentence may contain:
+A single expression may contain:
 
-one Intent
+* one Intent,
+* multiple Intents,
+* one Intent with multiple Actions,
+* multiple Intents with dependencies.
 
-or:
-
-multiple Intents
-
-Conversely, multiple sentences may represent:
-
-one Intent
+Conversely, multiple expressions may represent one Intent.
 
 Example:
 
-“I need to replace my card. It’s expired.”
+"I need to replace my card. It's expired."
 
-This is probably one Intent:
+This may represent one Intent:
 
 ReplaceCard
 
-The second sentence provides Context or justification.
+with the second sentence providing Context or supporting Evidence.
 
 Therefore:
 
@@ -997,7 +1079,9 @@ Project = newly created Noema project
 
 The second Intent may be independently identifiable but contextually linked to the first.
 
-Noema should preserve that relationship where it matters.
+The relationship should be preserved where it affects semantic resolution, resource binding, dependencies, or auditability.
+
+Context must still satisfy the normal requirements for relevance, scope, freshness, and authority.
 
 ⸻
 
@@ -1014,16 +1098,18 @@ Turn 2:
 Turn 3:
 "Also send the itinerary to Sarah."
 
-This can produce:
+This may produce:
 
-Composite Intent
+Composite
 ├── BookFlight
 ├── AddToCalendar
 └── SendItinerary
 
-with relevant dependencies.
+with relevant dependencies and shared Context.
 
-Composition therefore operates over an Intent lifecycle, not merely a single user message.
+Composition therefore operates over the Intent lifecycle and conversational context, not merely over a single user message.
+
+Each new constituent remains subject to validation, resolution, versioning, Trust, and execution controls.
 
 ⸻
 
@@ -1040,79 +1126,92 @@ AddToCalendar
 +
 NotifySarah
 
-Human:
+Actor:
 
-“Actually, don’t notify Sarah.”
+"Actually, don't notify Sarah."
 
-The resulting composition may become:
+The resulting semantic state may be:
 
 BookFlight
 AddToCalendar
 NotifySarah → CANCELLED
 
-The remaining Intents should retain their identity and state.
+The remaining Intents retain their own identity and state.
+
+Cancellation is a lifecycle/control state and is not one of the canonical Trust outcomes.
 
 ⸻
 
 43. Composition and Modification
 
-The Actor may modify part of a Composite Intent.
+The Actor may modify one constituent Intent.
 
 Example:
 
-“Book the flight and add it to my calendar.”
+"Book the flight and add it to my calendar."
+"Actually, don't add it to my calendar."
 
-Then:
-
-“Actually, don’t add it to my calendar.”
-
-Noema should update:
-
-AddToCalendar → CANCELLED
-
-without necessarily invalidating:
+Noema may produce:
 
 BookFlight
+AddToCalendar → CANCELLED
 
-provided there is no semantic dependency requiring the cancelled child.
+provided no dependency requires the cancelled constituent.
+
+A material semantic modification must create the appropriate new Intent version rather than silently mutating an admitted historical version.
+
+The parent composition must be re-evaluated if the modification changes dependencies, Constraints, required Outcomes, or other material semantics.
 
 ⸻
 
 44. Composition and Reuse
 
-A resolved Intent may become a dependency or Context source for another Intent.
+A resolved Intent may provide a Resource or Context dependency for another Intent.
 
 Example:
 
 CreateCustomer
       ↓
+   ENABLES
+      ↓
 SendWelcomeEmail
 
-The output of the first Intent may provide:
+The first Intent may establish:
 
 Customer ID
 Email address
 Customer Context
 
-to the second.
+for the second.
 
-This allows Noema to construct semantic chains without forcing every downstream Action to independently rediscover state.
+This allows Noema to construct semantic chains without requiring every downstream Intent to rediscover already resolved relationships.
+
+The reused information remains subject to validity, scope, freshness, and authority requirements.
 
 ⸻
 
 45. Composition and Idempotency
 
-Each constituent Intent should have its own identity.
+Each constituent Intent should have its own stable identity.
 
-This allows the system to determine:
+This allows Noema to determine:
 
-Intent A already satisfied
-Intent B pending
-Intent C failed
+Intent A → already satisfied
+Intent B → pending
+Intent C → failed
 
-rather than treating the entire Composite Intent as an opaque unit.
+rather than treating the entire Composite as an opaque unit.
 
-This is especially important for retries and partial failures.
+This is important for:
+
+* Retries
+* Recovery
+* Partial completion
+* Verification
+* Duplicate prevention
+* Causal audit
+
+Intent identity and Action idempotency remain distinct concerns.
 
 ⸻
 
@@ -1120,50 +1219,61 @@ This is especially important for retries and partial failures.
 
 The audit trail should preserve:
 
-Parent Intent
-Child Intents
-Composition relationships
-Resolution history
-Trust decisions
-Actions
-Outcomes
+* Parent or Composite identity
+* Constituent Intent identities
+* Intent versions
+* Composition relationships
+* Resolution history
+* Clarification history
+* Trust decisions
+* Actions
+* Execution state
+* Verification evidence
+* Constituent Outcomes
+* Composite Outcome
 
 Example:
 
 Composite: OffboardEmployee#123
 ├── RevokeGitHubAccess
-│   ├── Trust: Permit
-│   └── Outcome: Success
+│   ├── Trust: EXECUTE
+│   └── Outcome: Verified
 │
 ├── DisableEmail
-│   ├── Trust: Permit
-│   └── Outcome: Success
+│   ├── Trust: EXECUTE
+│   └── Outcome: Verified
 │
 └── NotifyManager
-    ├── Trust: Permit
-    └── Outcome: Failed
+    ├── Trust: EXECUTE
+    └── Outcome: UNKNOWN
 
-This provides a complete semantic and operational history.
+This provides a semantic and operational history without requiring private Model chain-of-thought.
 
 ⸻
 
 47. Composition and Re-evaluation
 
-If a child Intent changes materially, the parent composition may need re-evaluation.
+If a constituent Intent changes materially, the parent composition may require re-evaluation.
 
 Example:
 
 Parent:
-CloseAccount
+TransferAndCloseAccount
 Child:
 TransferBalance
 
 If the transfer destination changes:
 
 TransferBalance
-Resource/Parameter changed
+Resource / Parameter changed
 
-the parent may need to be revalidated because the dependency relationship could have changed.
+the parent may need to be revalidated because:
+
+* the dependency may have changed,
+* the required Outcome may have changed,
+* Policy applicability may have changed,
+* Authority may need reevaluation,
+* the closing Action may no longer be safe or valid.
 
 Composition is therefore not merely static structure.
 
@@ -1171,16 +1281,23 @@ Composition is therefore not merely static structure.
 
 48. Composition and Determinism
 
-The composition graph should be explicit enough that downstream systems can determine:
+The composition graph should be explicit enough that downstream deterministic components can establish:
 
-which Intents exist
-which depend on which
-which may execute independently
-which are conditional
-which are optional
-which Outcomes are required
+* Which Intents exist
+* Which Intent versions are active
+* Which Intents depend on which
+* Which Intents may proceed independently
+* Which are conditional
+* Which are optional
+* Which are alternatives
+* Which Resources are shared
+* Which Constraints are shared
+* Which Outcomes are required
+* Which constituent Outcomes determine Composite satisfaction
 
 without asking the Model to reinterpret the original request.
+
+This supports the hard boundary between probabilistic interpretation and deterministic Trust and execution.
 
 ⸻
 
@@ -1190,15 +1307,22 @@ Conceptually:
 
 CompositeIntent
 ├── identity
-├── actor
-├── context
-├── constraints
+├── version
+├── source
+├── parent_actor
+├── shared_context
+├── shared_constraints
 ├── intents[]
 │   ├── identity
+│   ├── version
+│   ├── actor
 │   ├── intent
 │   ├── resources
+│   ├── parameters
+│   ├── scope
 │   ├── constraints
-│   └── expected_outcome
+│   ├── expected_outcome
+│   └── resolution
 ├── relationships[]
 │   ├── type
 │   ├── source
@@ -1206,21 +1330,54 @@ CompositeIntent
 │   └── condition
 └── expected_outcome
 
-This is conceptual, not a required implementation schema.
+This is a conceptual model, not a required implementation schema.
+
+A Composite Intent must not imply that all constituents share the same Actor, Authority, Policy, Resource, Trust decision, or lifecycle.
 
 ⸻
 
-50. Canonical Composition Rules
+50. Composition and Intent Versioning
+
+Composition itself must be version-aware.
+
+If a material change occurs to:
+
+* a constituent Intent,
+* a dependency,
+* a condition,
+* a Constraint,
+* a required Outcome,
+* a Resource binding,
+
+the affected semantic structure must be represented through explicit versioning rather than silently changing historical meaning.
+
+Conceptually:
+
+Composite v1
+      ↓
+Material modification
+      ↓
+Composite v2
+      ↓
+supersedes v1
+
+Constituent Intent versions must remain independently traceable.
+
+Historical execution must therefore remain bound to the exact composition and Intent versions under which it was authorized and executed.
+
+⸻
+
+51. Canonical Composition Rules
 
 Noema should follow these rules:
 
 Rule 1 — Preserve Intent Identity
 
-Composing Intents must not erase their individual identities.
+Composing Intents must not erase their individual identities or versions.
 
 Rule 2 — Composition Is Semantic
 
-Composition represents relationships between goals, not merely execution steps.
+Composition represents relationships between semantic goals, not merely execution steps.
 
 Rule 3 — Intent Boundaries Are Semantic
 
@@ -1232,35 +1389,47 @@ If one Intent depends on another, that dependency must be represented.
 
 Rule 5 — Trust Is Not Automatically Inherited
 
-A parent Trust decision does not automatically authorize every child Intent.
+A parent Trust decision does not automatically authorize every constituent Intent.
 
-Rule 6 — Partial Resolution Is Permitted
+Rule 6 — Authority Is Not Aggregated
 
-Individual child Intents may resolve independently.
+Composition does not transfer or aggregate Authority between Actors or constituents.
 
-Rule 7 — Partial Execution Is Not Automatically Failure
+Rule 7 — Partial Resolution Is Permitted
 
-The semantic meaning of partial completion depends on the composition.
+Constituent Intents may resolve independently where the composition permits.
 
-Rule 8 — Parent Outcome Must Be Explicit
+Rule 8 — Partial Execution Is Not Automatically Failure
 
-The Composite Outcome should define what constitutes successful completion.
+The semantic meaning of partial completion depends on the composition’s requirements.
 
-Rule 9 — Implementation Steps Are Not Automatically Intents
+Rule 9 — Parent Outcome Must Be Explicit
 
-Action decomposition must remain separate from Intent composition.
+The Composite Outcome must define what constitutes satisfaction of the larger objective.
 
-Rule 10 — Composition Must Be Auditable
+Rule 10 — Implementation Steps Are Not Automatically Intents
 
-The relationship between constituent Intents must survive through the lifecycle.
+Action decomposition remains distinct from Intent Composition.
+
+Rule 11 — Composition Must Survive Execution
+
+Consequential composition relationships must remain available to the Planner and Execution Controller.
+
+Rule 12 — Composition Must Be Auditable
+
+The relationship between constituent Intents, their versions, Trust decisions, Actions, and Outcomes must survive through the lifecycle.
+
+Rule 13 — Material Changes Require Versioning
+
+A material modification must not silently mutate historical semantic meaning.
 
 ⸻
 
-51. Canonical Example
+52. Canonical Example
 
 Human:
 
-“Close my old bank account, transfer the remaining balance to my savings account, and email me the confirmation.”
+"Close my old bank account, transfer the remaining balance to my savings account, and email me the confirmation."
 
 Noema may construct:
 
@@ -1287,118 +1456,159 @@ SendConfirmation
 
 Expected Composite Outcome:
 
-Old account closed
+Remaining balance transferred
 AND
-remaining balance transferred
+old account closed
 AND
 confirmation delivered
 
-This is substantially richer than simply generating three API calls.
+Each constituent Intent remains independently subject to:
+
+Resolution
+Executable Intent
+Trust
+Action Contracts
+Execution
+Verification
+Outcome
+
+This is substantially richer than generating three API calls because it preserves the semantic structure of the Actor’s objective.
 
 ⸻
 
-52. The Key Architectural Distinction
+53. The Key Architectural Distinction
 
-Noema should maintain this hierarchy:
+Noema should maintain the following conceptual hierarchy:
 
-Actor
-   ↓
-Intent
-   ↓
+Actor Expression
+       ↓
+Intent Detection / Decomposition
+       ↓
 Intent Composition
-   ↓
-Executable Intent
-   ↓
+       ↓
+Intent Resolution
+       ↓
+Executable Intent(s)
+       ↓
 Trust
-   ↓
+       ↓
 Action
-   ↓
+       ↓
+Execution
+       ↓
+Verification
+       ↓
 Outcome
 
 Where:
 
 Intent
 
-represents a goal,
+represents a semantic goal.
 
 Intent Composition
 
-represents relationships between goals,
+represents semantic relationships between multiple goals.
 
 Executable Intent
 
-represents a sufficiently resolved goal,
-
-and:
+represents a sufficiently resolved individual goal that can be evaluated deterministically by Trust and potentially acted upon.
 
 Action
 
-represents what the system actually does.
+represents an operation that the system performs to satisfy an Intent.
+
+Outcome
+
+represents the verified result of execution relative to the requested or expected semantic objective.
+
+Composition therefore sits above individual Executable Intents while constraining how they relate. It does not become a replacement for them.
 
 ⸻
 
-53. What Intent Composition Protects Against
+54. What Intent Composition Protects Against
 
-Composition protects against:
+Intent Composition protects against:
 
-Lost dependencies
-Incorrect ordering
-Unintended partial execution
-Semantic drift between related operations
-Incorrect parent/child relationships
-Repeated interpretation of context
-Loss of user-stated conditions
+* Lost dependencies
+* Incorrect ordering
+* Unintended partial execution
+* Semantic drift between related operations
+* Incorrect parent/child relationships
+* Repeated reinterpretation of shared Context
+* Loss of Actor-stated conditions
+* Loss of alternative or optional semantics
+* Incorrect Composite Outcome evaluation
+* Treating independent Intents as one atomic operation
 
-It gives Noema a formal representation of multi-intent requests.
+It gives Noema a formal semantic representation of multi-intent objectives.
 
 ⸻
 
-54. What Intent Composition Does Not Do
+55. What Intent Composition Does Not Do
 
 Intent Composition does not:
 
-execute Actions
-authorize Actors
-replace Policy
-replace Constraints
-define implementation workflows
-guarantee transactionality
-guarantee Outcome success
+* Execute Actions
+* Authorize Actors
+* Replace Trust
+* Replace Policy
+* Replace Constraints
+* Resolve unresolved Intent semantics by itself
+* Define implementation workflows
+* Guarantee transactionality
+* Guarantee atomicity
+* Guarantee Outcome success
+* Transfer Authority between Actors
+* Make a constituent Intent Executable
+* Make an Action permissible
 
-It defines the semantic structure of multiple related Intents.
+Its purpose is to represent the semantic structure and relationships among multiple related Intents.
 
 ⸻
 
-55. Final Definition
+56. Final Definition
 
-Intent Composition is the canonical representation of multiple semantically related Intents and the dependencies, ordering, conditions, alternatives, shared Context, and Outcomes that connect them into a larger Actor objective.
+Intent Composition is the canonical representation of multiple semantically related Intents and the dependencies, ordering, conditions, alternatives, shared Context, Constraints, and Outcome relationships that connect them into a larger Actor objective while preserving the identity, version, lifecycle, Authority, Trust requirements, and Outcomes of each constituent Intent.
 
 The essential pipeline is:
 
-Human Expression
+Actor Expression
        ↓
-Intent Detection
+Intent Detection / Decomposition
        ↓
-Intent Decomposition
-       ↓
-┌─────────────────────────────┐
-│      Intent Composition     │
-│                             │
-│  Intent A ──→ Intent B      │
-│      │            │         │
-│      └────→ Intent C        │
-└──────────────┬──────────────┘
-               ↓
-       Intent Resolution
-               ↓
-      Executable Intents
-               ↓
-             Trust
-               ↓
-            Actions
-               ↓
-           Outcomes
+Intent Composition
+       │
+       ├── Intent A
+       │      ↓
+       │   Resolution
+       │      ↓
+       │   Executable Intent
+       │
+       ├── Intent B
+       │      ↓
+       │   Resolution
+       │      ↓
+       │   Executable Intent
+       │
+       └── Intent C
+              ↓
+           Resolution
+              ↓
+          Executable Intent
+                │
+                ↓
+        Composition Constraints
+        and Relationships
+                ↓
+              Trust
+                ↓
+             Actions
+                ↓
+           Verification
+                ↓
+             Outcomes
 
 The shortest canonical formulation is:
 
-A Composite Intent preserves what the Actor wants, while making explicit how the constituent goals relate to one another.
+Intent Composition preserves what the Actor wants as multiple semantic goals while making explicit how those goals relate to one another.

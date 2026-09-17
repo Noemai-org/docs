@@ -9,7 +9,7 @@ Canonical Path: intent/executable-intent.md
 
 1. Definition
 
-An Executable Intent is a resolved Intent whose semantic requirements have been sufficiently established to permit deterministic Trust evaluation and potential execution as one or more Actions.
+An Executable Intent is a resolved Intent whose semantic requirements have been sufficiently established for deterministic Trust evaluation and potential execution as one or more Actions.
 
 An Executable Intent is not merely an Intent that a Model understands.
 
@@ -24,17 +24,27 @@ to evaluate whether it may be acted upon."
 
 The canonical transition is:
 
-Expression
-    ↓
-Interpretation
-    ↓
+Source of Intent
+      ↓
+Candidate Interpretation
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
 Resolution
-    ↓
+      ↓
 Executable Intent
-    ↓
-Trust
-    ↓
+      ↓
+Deterministic Trust
+      ↓
 Action
+      ↓
+Execution
+      ↓
+Verification
+      ↓
+Outcome
 
 ⸻
 
@@ -44,15 +54,15 @@ Noema needs a stable boundary between probabilistic interpretation and determini
 
 Without that boundary, the Model remains implicitly responsible for deciding:
 
-What the user meant
+What the Actor meant
 What Resource is involved
 What Action should happen
-Whether it is allowed
-Whether it is safe
+Whether it is permitted
+Whether the current state permits it
 
 That creates an unsafe execution model:
 
-Human
+Source
   ↓
 Model
   ↓
@@ -60,11 +70,13 @@ Tool
 
 Noema instead establishes:
 
-Human
+Source of Intent
   ↓
-Model
+Candidate Interpretation
   ↓
-Intent
+Hard Schema Validation
+  ↓
+Admitted Intent
   ↓
 Resolution
   ↓
@@ -72,9 +84,13 @@ Executable Intent
   ↓
 Trust
   ↓
-Action
+Action Contract
+  ↓
+Execution
 
-The Executable Intent becomes the semantic handoff point between interpretation and execution.
+The Executable Intent is the semantic handoff point between Intent interpretation/resolution and deterministic Trust evaluation.
+
+It does not itself authorize execution.
 
 ⸻
 
@@ -84,7 +100,8 @@ This distinction is fundamental.
 
 An Executable Intent means:
 
-The Intent is sufficiently specified to evaluate for execution.
+The semantic requirements necessary for Trust evaluation
+have been sufficiently established.
 
 It does not mean:
 
@@ -95,18 +112,21 @@ Therefore:
 Executable Intent
        ↓
 Trust Evaluation
-       ├── PERMIT
+       ├── EXECUTE
        ├── CLARIFY
-       ├── DENY
-       └── REQUIRE_APPROVAL
+       ├── ESCALATE
+       └── REJECT
 
 The existence of an Executable Intent does not bypass:
 
 Authority
 Policy
 Constraints
-State
+Current State
 Capability requirements
+Action Contracts
+
+EXECUTE means that the applicable Trust conditions permit the Action to proceed. It does not mean that execution has succeeded.
 
 ⸻
 
@@ -114,35 +134,48 @@ Capability requirements
 
 A simplified Intent lifecycle is:
 
-EXPRESSED
+RECEIVED
     ↓
 INTERPRETING
     ↓
+VALIDATING
+    ↓
+ADMITTED
+    ↓
 RESOLVING
     ↓
-┌────────────────────┐
-│                    │
-│     CLARIFYING     │
-│                    │
-└─────────┬──────────┘
-          ↓
-   EXECUTABLE
-          ↓
-        TRUST
-          ↓
-       ACTION
-          ↓
-      OUTCOME
+┌─────────────────────────┐
+│ CLARIFICATION_REQUIRED  │
+│ / CLARIFYING            │
+└────────────┬────────────┘
+             ↓
+          RESOLVED
+             ↓
+       EXECUTABLE
+             ↓
+        TRUST_PENDING
+             ↓
+     TRUST DECISION
+             ↓
+          ACTION
+             ↓
+        EXECUTION
+             ↓
+       VERIFICATION
+             ↓
+          OUTCOME
 
 An Intent should not become Executable merely because a Model has produced a plausible interpretation.
+
+If material information remains unresolved, Noema must resolve it through authoritative Context, State Reconciliation, additional evidence, clarification, escalation, or another explicitly governed mechanism.
 
 ⸻
 
 5. Minimum Requirement
 
-An Intent becomes Executable when Noema has established the semantic information necessary to evaluate the intended Action.
+An Intent becomes Executable when Noema has established the semantic information necessary to evaluate the intended Action without requiring consequential interpretation by the Model.
 
-The exact requirements are domain-dependent, but typically include:
+The exact requirements are Action- and domain-dependent, but may include:
 
 Actor
 Intent
@@ -151,13 +184,16 @@ Target Resource(s)
 Required parameters
 Relevant Context
 Required Constraints
+Applicable scope
 Expected Outcome
 
 Not every Intent requires every field.
 
 The canonical rule is:
 
-An Executable Intent must contain enough resolved semantic information to determine what Action is being requested without requiring the Model to guess.
+An Executable Intent must contain enough resolved semantic
+information to determine what is being requested and what
+must be evaluated by Trust without requiring the Model to guess.
 
 ⸻
 
@@ -165,7 +201,7 @@ An Executable Intent must contain enough resolved semantic information to determ
 
 Human:
 
-“Refund John’s duplicate payment.”
+"Refund John's duplicate payment."
 
 A Model might initially produce:
 
@@ -182,13 +218,13 @@ Unknown
 
 This is not yet Executable.
 
-Suppose Noema finds:
+Suppose Noema obtains enterprise observations and performs State Reconciliation:
 
 John has three payments.
 Two are identical.
 One was already refunded.
 
-The system may still need to determine which payment is intended.
+The relevant Resource may still be unresolved.
 
 After sufficient resolution:
 
@@ -204,30 +240,35 @@ DuplicatePayment
 Expected Outcome:
 Payment#8291 refunded to John
 
-Now Trust can be evaluated.
+Trust can now evaluate whether this resolved request may proceed.
+
+The Executable Intent does not itself establish that Alice is authorized to refund the payment.
 
 ⸻
 
-7. Executable Intent as a Contract
+7. Executable Intent as a Semantic Contract
 
-An Executable Intent should function as a semantic contract between:
+An Executable Intent functions as a semantic contract between Intent Resolution and downstream deterministic evaluation.
 
-Intent Resolution
+It answers:
 
-and:
-
-Trust / Execution
-
-The contract answers:
-
-Who is acting?
-What do they intend?
-What should be acted upon?
+Who is the Actor?
+What does the Actor intend?
 What Action represents that Intent?
-Under what relevant Context?
-What Outcome is expected?
+What Resource is affected?
+What parameters are required?
+What relevant scope and Context apply?
+What Outcome is being pursued?
 
-The execution layer should not need to reinterpret the original natural-language request to determine those facts.
+The execution layer should not need to reinterpret the original natural-language request to determine those semantics.
+
+The contract does not replace:
+
+Trust Contract
+Action Contract
+Execution Contract
+
+Each remains responsible for its own semantics.
 
 ⸻
 
@@ -244,7 +285,7 @@ For example:
   "payment_id": "8291"
 }
 
-is merely a candidate interpretation until Noema validates and resolves it.
+is merely a candidate interpretation until it passes the appropriate validation and resolution process.
 
 The canonical sequence is:
 
@@ -252,25 +293,41 @@ Model Output
     ↓
 Candidate Intent
     ↓
-Validation
+Hard Schema Validation
+    ↓
+Admitted Intent
     ↓
 Resolution
     ↓
 Executable Intent
 
+Model output remains untrusted.
+
+No free-form Model output may directly become an executable Action request.
+
 ⸻
 
 9. Executable Intent Is Canonical
 
-Once established, the Executable Intent should become the canonical semantic representation of the request for that execution lifecycle.
+Once established, the Executable Intent is the canonical semantic representation of the request for that Intent version and execution lifecycle.
 
 Downstream systems should not repeatedly reinterpret:
 
 "Refund John's duplicate payment."
 
-Instead they should consume the resolved representation.
+Instead they should consume the resolved semantic representation.
 
-This prevents semantic drift.
+This prevents semantic drift between:
+
+Intent
+Policy
+Trust
+Capability
+Planning
+Action
+Execution
+
+The canonical representation must preserve its version and lineage.
 
 ⸻
 
@@ -282,24 +339,26 @@ For example:
 
 Model:
 Refund Payment #8291
-Policy Engine:
+Policy Evaluation:
 Refund Customer #123
 Execution Adapter:
 Refund Transaction #8297
 
-The system has now lost semantic integrity.
+The system has lost semantic integrity.
 
-Executable Intent provides the common reference:
+Executable Intent provides the common semantic reference:
 
-Canonical Intent
+Executable Intent
        ↓
-Policy
+Trust / Policy Evaluation
        ↓
-Capability
+Capability / Action Selection
        ↓
-Action
+Action Contract
+       ↓
+Execution
 
-All layers operate against the same semantic meaning.
+Every downstream stage operates against the same admitted Intent version and resolved semantic bindings.
 
 ⸻
 
@@ -313,11 +372,11 @@ What the Actor wants to accomplish.
 
 Executable Intent
 
-The resolved representation of that Intent that is sufficiently specified for execution evaluation.
+The resolved representation of that Intent that is sufficiently specified for deterministic Trust evaluation and bounded Action selection.
 
 Action
 
-The operation performed to satisfy the Intent.
+The typed semantic operation performed to satisfy the Intent.
 
 For example:
 
@@ -326,15 +385,15 @@ Intent:
 Executable Intent:
 Refund Payment #8291
 for Customer #123
-with expected Outcome = refunded funds
+with Expected Outcome = refunded funds
 Action:
 RefundPayment(Payment#8291)
 
 Therefore:
 
-Intent ≠ Action
+Intent ≠ Executable Intent ≠ Action
 
-even when an Intent maps directly to one Action.
+An Executable Intent may map to one Action or multiple Actions.
 
 ⸻
 
@@ -344,14 +403,14 @@ An Executable Intent does not necessarily correspond to a single Action.
 
 Example:
 
-“Close my old account and move the remaining balance to my new account.”
+"Close my old account and move the remaining balance to my new account."
 
 Executable Intent:
 
 Actor:
 Alice
 Intent:
-CloseAccount
+CloseAccountAndTransferBalance
 Resources:
 OldAccount
 NewAccount
@@ -362,12 +421,16 @@ Old account closed
 Actions might be:
 
 TransferBalance
-    ↓
+      ↓
 VerifyTransfer
-    ↓
+      ↓
 CloseAccount
+      ↓
+VerifyClosure
 
 The Executable Intent remains the semantic root.
+
+Each consequential Action remains subject to its applicable Action Contract, Trust requirements, execution controls, and verification.
 
 ⸻
 
@@ -377,26 +440,37 @@ An Intent may be satisfiable through different Action sequences.
 
 For example:
 
-“Get this customer back on the premium plan.”
+"Get this customer back on the premium plan."
 
-Possible plans:
+Possible plans might include:
 
 Plan A:
 RestoreSubscription
+
+or:
+
 Plan B:
 CreateSubscription
 +
 CancelOldSubscription
 
-The Executable Intent should represent the desired semantic Outcome rather than prematurely hard-code implementation details.
+The Executable Intent should represent the desired semantic result without prematurely hard-coding implementation details that belong to planning and execution.
 
-Capability and policy resolution may determine which Action plan is appropriate.
+The Planner may select among permitted alternatives only within:
+
+Enterprise Action Graph
+Capability Registry
+Action Registry
+Action Contracts
+Applicable Policy and Trust constraints
+
+The Planner cannot invent an Action or Capability merely because it would satisfy the Intent.
 
 ⸻
 
 14. Executable Intent vs Capability
 
-Capability represents what a system or Actor is capable of doing.
+Capability represents an available bounded ability within the enterprise execution environment.
 
 Executable Intent represents what the Actor wants to accomplish.
 
@@ -407,19 +481,25 @@ RefundPayment
 Intent:
 "Give the customer their money back."
 
-Noema determines whether:
-
-RefundPayment
-
-is an appropriate Capability/Action for satisfying the Executable Intent.
+Noema determines whether an available Capability and corresponding Action can satisfy the Executable Intent.
 
 The human should not need to know the internal Capability name.
+
+Capability existence also does not imply:
+
+permission
+authorization
+current availability
+Trust approval
+successful execution
+
+These remain separate concerns.
 
 ⸻
 
 15. Executable Intent vs Tool Call
 
-A Tool Call is an implementation-level operation.
+A Tool Call is an implementation-level invocation.
 
 Example:
 
@@ -429,41 +509,55 @@ An Executable Intent is semantic:
 
 Refund Payment #8291
 because it was identified as a duplicate,
-with expected Outcome = funds returned to customer.
+with Expected Outcome = funds returned to customer.
 
-The Tool Call may be generated from the Executable Intent.
+The Tool Call may be produced from a permitted Action and Action Contract.
 
-It must not replace it.
+It must not replace the semantic Intent.
+
+The canonical relationship is:
 
 Executable Intent
+        ↓
+Trust
         ↓
 Action
         ↓
 Capability
         ↓
-Tool / API
+Action Contract
+        ↓
+Tool / API / Provider Operation
 
 ⸻
 
 16. Required Resolution
 
-An Executable Intent must have resolved all material variables.
+An Executable Intent must have resolved all material variables required for its intended Action.
 
 For example:
 
 "Send the report to John."
 
-If three Johns exist:
+If three Johns exist within the applicable scope:
 
 Recipient = unresolved
 
 The Intent is not Executable.
 
-Noema must:
+Noema may first attempt to resolve the ambiguity through:
+
+Validated Context
+Authoritative Identity Data
+State Reconciliation
+Explicit references
+Deterministic resolution rules
+
+If material ambiguity remains:
 
 CLARIFY
 
-If one John is uniquely established:
+If one recipient is sufficiently established:
 
 Recipient = John Smith
 
@@ -486,7 +580,7 @@ Optional:
 Notification wording
 Email formatting preference
 
-If the optional wording is unknown, Noema can use a valid default.
+If the optional wording is unknown, Noema can use a valid deterministic default where permitted.
 
 The Executable Intent should contain the semantic requirements necessary for the Action, not every possible piece of metadata.
 
@@ -501,20 +595,21 @@ domain-valid
 non-material
 policy-compatible
 deterministic
+within the applicable scope
 
 For example:
 
 User:
 "Schedule a meeting with Sarah tomorrow."
 
-If the organization’s default meeting duration is 30 minutes, Noema may resolve:
+If the organization’s applicable default meeting duration is 30 minutes, Noema may resolve:
 
 Duration:
 30 minutes
 
 without clarification.
 
-But a default must never silently resolve a material ambiguity.
+A default must never silently resolve a material ambiguity involving Actor, Target, Action, authority, scope, parameters, or other consequential semantics.
 
 ⸻
 
@@ -534,35 +629,43 @@ Context may resolve:
 Resource:
 Invoice #9281
 
-provided that the contextual reference is valid and sufficiently authoritative.
+provided that the reference is valid, within scope, sufficiently fresh, and supported by the applicable evidence.
 
-Thus:
+Context is not inherently authoritative.
 
-Intent + Context
+The canonical relationship is:
+
+Intent
+   +
+Validated Relevant Context
+   +
+Applicable State Reconciliation
+        ↓
+Resolved Semantic State
         ↓
 Executable Intent
-
-when the context legitimately resolves the required semantics.
 
 ⸻
 
 20. Executable Intent and Explicit References
 
-Explicit user references should generally carry strong semantic weight.
+Explicit references should generally carry strong semantic weight.
 
 For example:
 
-“Refund invoice #9281.”
+"Refund invoice #9281."
 
 provides a direct Resource reference.
 
-Noema should still validate that:
+Noema must still validate the reference and relevant current state, including where applicable:
 
 Invoice #9281 exists
-Actor can access it
-Invoice is eligible for refund
+Resource is within applicable scope
+Actor is resolved
+Resource is eligible for the requested Action
+Required enterprise state is current enough
 
-Explicit reference does not bypass Trust.
+An explicit reference does not bypass Trust.
 
 ⸻
 
@@ -578,14 +681,15 @@ Destination:
 London
 Date:
 September 12
-Constraint:
+Constraints:
 Nonstop
-Constraint:
 Under $800
 
-The resulting Executable Intent captures the requirements necessary for selecting a valid Action.
+The resulting Executable Intent captures the requirements necessary to determine which permissible Action or plan can satisfy the request.
 
 Constraints remain independently evaluable.
+
+Confidence does not satisfy a constraint.
 
 ⸻
 
@@ -598,22 +702,24 @@ For example:
 Executable Intent:
 Refund Payment #8291
 
-Policy may subsequently determine:
+A policy may subsequently determine:
 
 Refund amount < $1,000
     → permitted
 Refund amount >= $1,000
     → approval required
 
-The Intent does not change merely because Policy changes the Trust outcome.
+The semantic Intent does not change merely because Policy changes the Trust decision or introduces a control requirement.
+
+Policy remains a separate deterministic governance layer.
 
 ⸻
 
 23. Executable Intent and Authority
 
-The Actor is part of the semantic Intent representation.
+The Actor is part of the semantic representation.
 
-But authority is evaluated separately.
+Authority is evaluated separately.
 
 Example:
 
@@ -622,9 +728,7 @@ Delete Customer #123
 Actor:
 Alice
 
-Trust then evaluates:
-
-Does Alice have authority to delete Customer #123?
+Trust then evaluates whether the resolved Actor has the applicable authority for that Action, Resource, and scope.
 
 Therefore:
 
@@ -632,13 +736,15 @@ Executable Intent
     ≠
 Authorized Intent
 
-Authorization is a Trust decision.
+Authorization does not become true merely because the Actor is resolved.
+
+Technical authorization, policy authorization, and business authorization remain distinct where applicable.
 
 ⸻
 
 24. Executable Intent and State
 
-An Executable Intent is resolved against relevant state.
+An Executable Intent is resolved against relevant enterprise state, but its existence does not freeze that state.
 
 Example:
 
@@ -653,62 +759,76 @@ Eligible for renewal
 
 This may produce an Executable Intent.
 
-But if the state changes before execution:
+Before execution:
 
 Card #123:
 Already renewed
 
-Noema must re-evaluate the Action against current state.
+Noema must evaluate the Action against current applicable state again.
 
-Executable does not mean permanently executable.
+Therefore:
+
+Executable
+    ≠
+Permanently executable
+
+State Reconciliation may be required before Trust, before execution, or during recovery.
 
 ⸻
 
 25. Temporal Validity
 
-Executable Intent may therefore have a validity period.
+An Executable Intent may have temporal validity associated with its semantic assumptions.
 
 For example:
 
 Executable Intent
-    ↓
-Valid at T1
-    ↓
-State changes
-    ↓
-Trust reevaluation
+       ↓
+Valid under state at T1
+       ↓
+Relevant state changes
+       ↓
+State Reconciliation
+       ↓
+Trust / Action re-evaluation
 
-The exact implementation may use:
+The implementation may use:
 
 timestamps
-versions
+resource versions
 state snapshots
-resource revisions
+validity intervals
+policy versions
+contract versions
 
 The canonical principle is:
 
-An Executable Intent must remain semantically valid against the state under which the Action will execute.
+An Executable Intent does not make historical state permanently current.
+
+Current consequential execution must use sufficiently current and authoritative information for the relevant claims.
 
 ⸻
 
 26. Executable Intent and Idempotency
 
-Where an Intent can produce consequential Actions, Noema should preserve enough semantic identity to determine whether an Action has already been performed.
+Where an Intent can produce consequential Actions, Noema should preserve sufficient semantic identity to support idempotent execution and Outcome verification.
 
 Example:
 
 Intent:
 Refund duplicate payment #8291
 
-If the system retries after a network failure, it must distinguish:
+If execution encounters a network failure, Noema must distinguish:
 
 Action never executed
 
 from:
 
-Action executed but response was lost
+Action executed but the response was lost
 
-Executable Intent can provide the semantic root for idempotent execution and Outcome verification.
+The Executable Intent provides semantic lineage for the operation, but idempotency identity remains Action- and execution-specific.
+
+Unknown execution state must not be treated as success or failure without appropriate verification or State Reconciliation.
 
 ⸻
 
@@ -721,83 +841,111 @@ For example:
 Executable Intent:
 Transfer $50,000 to Account #123
 
-Trust may determine:
+Trust may determine that a confirmation or approval control is required.
 
-REQUIRE_CONFIRMATION
+The canonical Trust outcomes remain:
 
-The Intent remains the same.
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
 
-Confirmation does not change what the Actor wants.
+Confirmation is a control requirement or precondition, not a fifth Trust outcome.
 
-It establishes an additional authorization or consent condition.
+Confirmation does not change what the Actor semantically requested.
+
+Approval may establish an additional governance condition, but approval does not itself establish execution success.
 
 ⸻
 
 28. Executable Intent and Clarification
 
-Clarification happens before Executable Intent when required semantic information is missing.
+Clarification occurs during Intent resolution when required semantic information is missing.
+
+The canonical flow is:
 
 Unresolved Intent
       ↓
-CLARIFY
+Context / State Reconciliation
+      ↓
+Material ambiguity remains
+      ↓
+CLARIFICATION_REQUIRED
+      ↓
+Clarification
+      ↓
+New Intent Version
       ↓
 Resolution
       ↓
 Executable Intent
 
-If new information creates another material ambiguity, the Intent can return to clarification.
+A material clarification response must not mutate an already admitted Intent version.
 
-Therefore:
+Instead:
 
-Executable
-    ↕
-Clarifying
+Intent v1
+   ↓
+Clarification
+   ↓
+Intent v2
+supersedes v1
+   ↓
+Resolution
+   ↓
+Executable Intent v2
 
-may occur more than once during a long-running Intent lifecycle.
+Clarification can recur during a long-running Intent lifecycle.
 
 ⸻
 
 29. Executable Intent and Confidence
 
-Confidence is an input into resolution.
+Confidence is an input to interpretation and resolution.
 
-Executable Intent is the result of successful resolution.
+Executable Intent is the result of sufficiently successful semantic resolution.
+
+Conceptually:
 
 Candidate Interpretation
         ↓
-Confidence + Evidence
+Confidence / Interpretation Metadata
+        +
+Evidence
+        +
+Context / State Reconciliation
         ↓
-Resolution
+Semantic Resolution
         ↓
 Executable Intent
 
-An Executable Intent should not require downstream components to interpret Model confidence again.
+An Executable Intent should not require downstream components to reinterpret Model confidence.
 
-Once the semantic claims have been resolved, their canonical values become authoritative for that lifecycle.
+Once semantic claims have been resolved, downstream components operate on the canonical representation and its supporting provenance.
+
+Confidence does not establish Fact Status, authority, or Trust.
 
 ⸻
 
-30. Executable Intent Should Be Deterministic
+30. Executable Intent Should Be Deterministically Evaluable
 
-Given the same:
+The purpose of an Executable Intent is to provide enough semantic structure for deterministic downstream evaluation.
 
-Executable Intent
-+
-relevant State
-+
-Policy
-+
-Authority
-+
+Given the same relevant:
+
+Executable Intent version
+State
+Policy version
+Authority information
 Constraints
+Capability / Graph versions
+Action Contract version
 
-the Trust evaluation should produce the same semantic decision.
+the applicable deterministic evaluation should have reproducible semantics.
 
-This is a central architectural property.
+The Model may remain probabilistic upstream.
 
-The Model may be probabilistic upstream.
-
-The Trust boundary should not be.
+The Trust boundary must not depend on an unconstrained probabilistic reinterpretation of the original request.
 
 ⸻
 
@@ -807,27 +955,31 @@ Conceptually, an Executable Intent may contain:
 
 ExecutableIntent
 ├── Identity
+├── Version
+├── Source
 ├── Actor
 ├── Intent
 ├── Action
 ├── Resources
 ├── Parameters
-├── Context
+├── Scope
+├── Context References
 ├── Constraints
-├── ExpectedOutcome
-├── Evidence
+├── Expected Outcome
 ├── Resolution
-└── Version
+└── Evidence References
 
 Not every field is mandatory for every Intent.
 
-The required fields depend on the semantic requirements of the Action.
+The required fields depend on the semantic requirements of the relevant Action and the conditions necessary for Trust evaluation.
+
+An Executable Intent should reference supporting evidence rather than embedding arbitrary evidence as though it were canonical enterprise truth.
 
 ⸻
 
 32. Identity
 
-Every Executable Intent should have a stable identity within its lifecycle.
+Every Intent should have a stable identity within its lifecycle.
 
 Conceptually:
 
@@ -837,20 +989,24 @@ intent_01...
 This allows Noema to associate:
 
 Clarifications
-Trust decisions
+Intent Versions
+Trust Decisions
 Approvals
 Actions
+Execution Attempts
 Events
 Outcomes
-Audit records
+Audit Records
 
-with the same semantic Intent.
+with the same semantic Intent lineage.
+
+Identity is distinct from version.
 
 ⸻
 
 33. Version
 
-Executable Intent may evolve during clarification or resolution.
+Executable Intent is version-specific.
 
 For example:
 
@@ -863,14 +1019,18 @@ After clarification:
 Intent v2
 Resource:
 Card#123
+supersedes:
+v1
 
-The history should preserve the semantic evolution.
+An admitted Intent version is immutable.
 
-This is especially important when the Intent results in consequential Actions.
+A material clarification, correction, or semantic change creates a new Intent Object version rather than mutating the existing one.
+
+Every consequential Trust Decision and execution record must reference the exact Intent version on which it was based.
 
 ⸻
 
-34. Evidence
+34. Evidence and Resolution Provenance
 
 The Executable Intent should retain references to the evidence used to resolve material claims.
 
@@ -878,14 +1038,19 @@ For example:
 
 Resource:
 Card#123
+Resolution:
+Resolved
 Evidence:
 Actor owns Card#123
 Card#123 is active
 User explicitly selected Card#123
+Current enterprise state confirms eligibility
 
-The evidence does not become the Intent.
+Evidence supports resolution.
 
-It supports the resolution of the Intent.
+It does not become the Intent.
+
+Similarly, Model confidence may be retained as interpretation metadata without becoming authoritative evidence or Fact Status.
 
 ⸻
 
@@ -900,13 +1065,23 @@ Renew Card
 Expected Outcome:
 Card renewed and active
 
-This is important because:
+This distinction is important because:
 
-Action success
+Action execution
 
-does not necessarily mean:
+does not necessarily establish:
 
 Intent satisfaction
+
+and:
+
+Expected Outcome
+
+does not establish:
+
+Actual Outcome
+
+Actual Outcome is established through execution observation and verification.
 
 ⸻
 
@@ -918,21 +1093,29 @@ Executable Intent
       ↓
 Trust
       ↓
-Action
+Action Contract
       ↓
-Observed State
+Execution
       ↓
-Outcome Verification
+Observed Enterprise State / Evidence
+      ↓
+State Reconciliation / Verification
+      ↓
+Outcome
 
 Noema can therefore distinguish:
 
-Executed
+Action dispatched
 
 from:
 
-Satisfied
+Action completed
 
-This distinction is central to trustworthy automation.
+and:
+
+Intent satisfied
+
+An EXECUTE Trust decision does not establish any of these outcomes by itself.
 
 ⸻
 
@@ -942,7 +1125,7 @@ An Executable Intent should not encode every implementation step.
 
 For example:
 
-Wrong:
+Wrong abstraction:
 Step 1:
 POST /customers/123
 Step 2:
@@ -959,7 +1142,9 @@ Instead:
 Executable Intent:
 Restore Customer #123 to Premium Plan
 
-The execution system determines the appropriate Actions and sequence.
+The Planner determines an appropriate Action sequence within the bounded Enterprise Action Graph, Capability Registry, Action Registry, and Action Contracts.
+
+Executable Intent expresses semantic requirements, not implementation choreography.
 
 ⸻
 
@@ -967,86 +1152,130 @@ The execution system determines the appropriate Actions and sequence.
 
 A prompt is an instruction to a Model.
 
-An Executable Intent is a semantic object.
+An Executable Intent is a canonical semantic object.
 
 Therefore:
 
 Prompt:
 "Please refund John's duplicate payment."
+
+versus:
+
 Executable Intent:
-RefundPayment(
-    Customer=John,
-    Payment=#8291
-)
+Action:
+RefundPayment
+Customer:
+John
+Payment:
+Payment#8291
+Reason:
+DuplicatePayment
 
 The latter can be:
 
 validated
-audited
 versioned
-authorized
+resolved
+audited
+evaluated by Trust
+planned
 executed
 verified
 
-without depending on natural-language interpretation.
+without requiring downstream components to reinterpret the original natural-language request.
 
 ⸻
 
 39. Executable Intent as the Semantic Boundary
 
-The most important architectural role of Executable Intent is establishing this boundary:
+The most important architectural role of Executable Intent is establishing the boundary between probabilistic interpretation and deterministic evaluation.
 
-┌──────────────────────────────────┐
-│       Probabilistic Layer        │
-│                                  │
-│ Language                         │
-│ Model interpretation             │
-│ Retrieval                        │
-│ Candidate generation             │
-│ Confidence                       │
-└────────────────┬─────────────────┘
-                 │
-                 ▼
+┌─────────────────────────────────────┐
+│         Probabilistic Layer         │
+│                                     │
+│ Source interpretation               │
+│ Language                            │
+│ Model inference                     │
+│ Retrieval                           │
+│ Candidate generation                │
+│ Confidence                          │
+└──────────────────┬──────────────────┘
+                   │
+                   ▼
+        HARD SCHEMA VALIDATION
+                   │
+                   ▼
+          ADMITTED INTENT
+                   │
+                   ▼
+      RESOLUTION / RECONCILIATION
+                   │
+                   ▼
         EXECUTABLE INTENT
-                 │
-                 ▼
-┌──────────────────────────────────┐
-│       Deterministic Layer        │
-│                                  │
-│ Trust                            │
-│ Authority                        │
-│ Policy                           │
-│ Constraints                     │
-│ Capability                      │
-│ State                            │
-│ Execution                        │
-│ Outcome verification             │
-└──────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────┐
+│         Deterministic Layer         │
+│                                     │
+│ Trust                               │
+│ Authority                           │
+│ Policy                              │
+│ Constraints                         │
+│ Capability                          │
+│ Planning                            │
+│ Action Contracts                    │
+│ Execution                           │
+│ Verification                        │
+└─────────────────────────────────────┘
 
-This boundary is one of the most important concepts in Noema.
+The hard schema validation/admission boundary is important because a Model-generated structure must not become canonical merely because it resembles the Intent schema.
 
 ⸻
 
 40. The Canonical Rule
 
-No probabilistic interpretation may directly invoke a consequential Action. It must first resolve into an Executable Intent that can be evaluated deterministically by the Trust layer.
+No probabilistic interpretation may directly invoke a consequential Action.
 
-This is a core Noema invariant.
+It must first pass through:
+
+Candidate Interpretation
+        ↓
+Hard Schema Validation
+        ↓
+Admitted Intent
+        ↓
+Resolution
+        ↓
+Executable Intent
+        ↓
+Deterministic Trust
+        ↓
+Bounded Action / Action Contract
+        ↓
+Execution
+
+No free-form Model output may bypass this boundary.
+
+The same principle applies when the Source of Intent is an agent, workflow, system, API, event, or other non-human source.
 
 ⸻
 
 41. What Makes an Intent Executable?
 
-An Intent is Executable when:
+An Intent is Executable when Noema has established the semantic information required for the relevant downstream evaluation.
+
+Typically:
 
 ✓ Actor is resolved
 ✓ Intent is resolved
 ✓ Material Resources are resolved
 ✓ Required parameters are resolved
+✓ Required scope is resolved
 ✓ Required Context is established
-✓ Relevant Constraints are known
-✓ Expected Outcome is sufficiently defined
-✓ No material ambiguity remains
+✓ Relevant current state is sufficiently reconciled
+✓ Required Constraints are known
+✓ Expected Outcome is sufficiently defined where applicable
+✓ No material semantic ambiguity remains
 
 Then:
 
@@ -1056,6 +1285,15 @@ Trust Evaluation
 
 can begin.
 
+Executable does not mean:
+
+✓ Authorized
+✓ Permitted
+✓ Successfully executed
+✓ Outcome achieved
+
+Those are separate states.
+
 ⸻
 
 42. What Prevents an Intent From Becoming Executable?
@@ -1063,23 +1301,37 @@ can begin.
 Examples include:
 
 ✗ Material ambiguity
-✗ Unknown Resource
+✗ Unknown required Resource
 ✗ Unknown required parameter
 ✗ Unresolved Actor
+✗ Unresolved target
 ✗ Missing required Context
 ✗ Conflicting evidence
 ✗ Unsupported Action
-✗ Missing required Outcome definition
+✗ Missing required scope
+✗ Insufficient semantic resolution
 
-The appropriate response may be:
+The appropriate response depends on the reason.
 
+For example:
+
+Material ambiguity
+        ↓
 CLARIFY
 
 or:
 
-DENY
+Material uncertainty that cannot be resolved safely
+        ↓
+ESCALATE
 
-depending on the reason.
+or:
+
+Requested Action is prohibited or cannot be permitted
+        ↓
+REJECT
+
+These are distinct from execution FAILED and execution UNKNOWN.
 
 ⸻
 
@@ -1087,7 +1339,7 @@ depending on the reason.
 
 Human:
 
-“Delete the old project.”
+"Delete the old project."
 
 Step 1 — Interpretation
 
@@ -1100,7 +1352,7 @@ Project A
 Project B
 Project C
 
-Step 3 — Evidence
+Step 3 — Evidence and State Reconciliation
 
 Project A:
 Archived 2 years ago
@@ -1119,7 +1371,12 @@ Step 5 — Resolution
 
 Human:
 
-“Project A.”
+"Project A."
+
+The response is validated and creates a new Intent version:
+
+Intent v2
+supersedes v1
 
 Step 6 — Executable Intent
 
@@ -1134,23 +1391,41 @@ Project A deleted
 
 Step 7 — Trust
 
+Trust evaluates:
+
 Authority:
 Valid
 Policy:
 Permitted
 Constraints:
 Satisfied
+Current State:
+Reconciled
 
-Step 8 — Action
+The resulting Trust outcome may be:
+
+EXECUTE
+
+if all applicable conditions are satisfied.
+
+Step 8 — Action Contract
+
+DeleteProject
+
+is bound to its registered Action Contract.
+
+Step 9 — Execution
 
 DeleteProject(ProjectA)
 
-Step 9 — Outcome
+Step 10 — Verification and Outcome
+
+Noema verifies the resulting enterprise state and establishes the actual Outcome.
 
 Project A:
 Deleted
 
-The Intent lifecycle is complete.
+The Trust decision permitted execution; verification establishes what actually happened.
 
 ⸻
 
@@ -1158,56 +1433,64 @@ The Intent lifecycle is complete.
 
 Noema should treat Executable Intent according to these principles:
 
-1. Executable Intent is the semantic handoff point between interpretation and execution.
-
-2. Executable does not mean authorized.
-
+1. Executable Intent is the semantic handoff point between Intent resolution and deterministic Trust evaluation.
+2. Executable does not mean authorized, permitted, or successful.
 3. Model output is not automatically an Executable Intent.
-
-4. Material ambiguity must be resolved before an Intent becomes Executable.
-
-5. The Executable Intent must be canonical and machine-readable.
-
-6. Downstream systems should not reinterpret the original human expression.
-
-7. Executable Intent should preserve the semantic Outcome being pursued.
-
-8. Trust evaluates Executable Intent; it does not create it.
-
-9. Actions execute from the resolved semantic representation, not directly from Model output.
-
-10. Executable Intent remains subject to current state and Trust evaluation.
+4. Hard schema validation and admission precede canonical Intent semantics.
+5. Material ambiguity must be resolved before an Intent becomes Executable.
+6. Authoritative Context and State Reconciliation should be used to resolve uncertainty where possible before asking the Actor.
+7. The Executable Intent must be canonical, typed, and machine-readable.
+8. An admitted Intent version is immutable.
+9. Material clarification or semantic change creates a new Intent version with explicit lineage.
+10. Downstream systems should not reinterpret the original Source of Intent.
+11. Executable Intent should preserve the semantic Outcome being pursued where applicable.
+12. Trust evaluates the Executable Intent; it does not create or authorize it merely by existence.
+13. Actions execute from bounded semantic representations and registered Action Contracts, not directly from Model output.
+14. Capability existence does not imply authorization or successful execution.
+15. Executable Intent remains subject to current relevant state and Trust evaluation.
+16. Confidence informs interpretation and resolution but does not establish authority, Fact Status, or Trust.
+17. Unknown and conflicting state must remain explicit rather than being converted into a confident guess.
+18. Actual Outcome is established through execution observation and verification, not by the Executable Intent itself.
 
 ⸻
 
 45. Final Definition
 
-An Executable Intent is the canonical, sufficiently resolved representation of an Actor’s Intent from which Noema can deterministically evaluate Trust and derive permissible Actions without requiring further probabilistic interpretation of the original request.
+An Executable Intent is the canonical, sufficiently resolved representation of a Source of Intent from which Noema can deterministically evaluate Trust and derive permissible Actions without requiring further probabilistic interpretation of the original request.
 
-The fundamental pipeline is:
+The canonical pipeline is:
 
-Human Intent
+Source of Intent
       ↓
-Model Interpretation
+Candidate Interpretation
       ↓
-Evidence + Confidence
+Hard Schema Validation
       ↓
-Resolution
+Admitted Intent
       ↓
-┌─────────────────────┐
-│ EXECUTABLE INTENT   │
-└──────────┬──────────┘
-           ↓
-       TRUST ENGINE
-           ↓
-     ┌─────┼─────┐
-     ↓     ↓     ↓
-  PERMIT CLARIFY DENY
-     ↓
-   ACTION
-     ↓
-  OUTCOME
+Context / State Reconciliation
+      ↓
+Semantic Resolution
+      ↓
+EXECUTABLE INTENT
+      ↓
+Deterministic Trust
+      ↓
+EAG / Capability Selection
+      ↓
+Action Contract
+      ↓
+Execution
+      ↓
+Verification / State Reconciliation
+      ↓
+Outcome
 
 The shortest formulation is:
 
-Intent expresses what the Actor wants. Executable Intent makes that desire explicit enough for Noema to decide whether and how it may act.
+Intent expresses what the Actor wants.
+Executable Intent makes that meaning explicit enough
+for Noema to evaluate it deterministically.
+Trust determines whether Noema may act.
+Execution determines what happened.
+Verification establishes the Outcome.

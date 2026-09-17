@@ -9,15 +9,21 @@ Canonical Path: intent/intent-lifecycle.md
 
 1. Definition
 
-The Intent Lifecycle defines the canonical states and transitions through which an Intent passes from initial human expression to resolution, execution, and final Outcome.
+The Intent Lifecycle defines the canonical semantic and control states through which an Intent progresses from initial Actor expression through interpretation, grounding, resolution, Executable Intent, Trust evaluation, execution, verification, and final Outcome.
 
 An Intent is not a single event.
 
-It is a persistent semantic object that evolves as Noema acquires information, resolves ambiguity, evaluates Trust, invokes Actions, and observes Outcomes.
+It is a persistent semantic object whose lifecycle records how Noema interprets, resolves, governs, executes, and verifies the Actor’s request.
 
-The lifecycle therefore exists to answer:
+The lifecycle therefore answers:
 
-What is the current semantic state of this Intent, and what must happen before it can transition to the next state?
+What is the current state of this Intent,
+what has been established,
+what remains unresolved,
+and what conditions are required
+before it can transition?
+
+The lifecycle state must not be confused with the semantic meaning of the Intent or with the State of an external business Resource.
 
 ⸻
 
@@ -25,7 +31,7 @@ What is the current semantic state of this Intent, and what must happen before i
 
 A naive agent architecture often treats a request as:
 
-User Request
+Actor Request
      ↓
 Model
      ↓
@@ -33,9 +39,9 @@ Tool Call
      ↓
 Result
 
-This collapses fundamentally different states into one operation.
+This collapses fundamentally different semantic and execution states into one operation.
 
-Noema instead recognizes:
+Noema instead recognizes distinct stages:
 
 Expression
     ↓
@@ -45,21 +51,25 @@ Grounding
     ↓
 Resolution
     ↓
-Validation
+Executable Intent
     ↓
 Trust
     ↓
 Execution
     ↓
+Verification
+    ↓
 Outcome
 
 Each stage answers a different question.
+
+The lifecycle makes those distinctions explicit and auditable.
 
 ⸻
 
 3. The Core Lifecycle
 
-The canonical lifecycle is:
+The canonical conceptual lifecycle is:
 
 EXPRESSED
     ↓
@@ -71,111 +81,140 @@ RESOLVED
     ↓
 EXECUTABLE
     ↓
-AUTHORIZED
+TRUST_PENDING
     ↓
-EXECUTING
+ACTION
     ↓
-COMPLETED
+EXECUTION
+    ↓
+VERIFICATION
+    ↓
+OUTCOME
 
-But an Intent may branch into other states:
+The lifecycle may branch into states such as:
 
-                 ┌── AMBIGUOUS
-                 │       ↓
-INTERPRETED ─────┼── CLARIFICATION_REQUIRED
-                 │       ↓
-                 │   RESOLVED
-                 │
-                 └── INVALID
+INTERPRETED
+    ├── MATERIAL_AMBIGUITY
+    │       ↓
+    │   CLARIFICATION_REQUIRED
+    │       ↓
+    │   RESOLVING
+    │
+    ├── INVALID
+    └── GROUNDED
 RESOLVED
-   ↓
-POLICY_BLOCKED
-   ↓
-REJECTED
-EXECUTING
-   ├── FAILED
-   ├── PARTIALLY_COMPLETED
-   └── COMPLETED
+    ├── EXECUTABLE
+    ├── CLARIFICATION_REQUIRED
+    ├── ESCALATION_REQUIRED
+    └── REJECTED
+TRUST
+    ├── EXECUTE
+    ├── CLARIFY
+    ├── ESCALATE
+    └── REJECT
+EXECUTION
+    ├── EXECUTING
+    ├── UNKNOWN
+    ├── FAILED
+    └── VERIFICATION
+VERIFICATION
+    ├── OUTCOME_ESTABLISHED
+    ├── OUTCOME_UNKNOWN
+    └── RECOVERY / RE-EVALUATION
 
-The lifecycle is therefore a state machine, not merely a linear pipeline.
+The exact persistent state model may evolve, but the semantic distinctions must remain.
 
 ⸻
 
 4. Intent Identity Persists Across the Lifecycle
 
-The Intent should retain a stable identity throughout its lifecycle.
+An Intent retains its identity across lifecycle state transitions.
 
 Conceptually:
 
-Intent#123
+Intent#123:v1
 
-may transition through:
+may progress through:
 
 EXPRESSED
 → INTERPRETED
-→ AMBIGUOUS
+→ GROUNDED
 → RESOLVED
 → EXECUTABLE
-→ AUTHORIZED
+→ TRUST_PENDING
 → EXECUTING
-→ COMPLETED
+→ VERIFIED
 
-It should not become a new semantic object merely because its state changes.
+A state transition does not create a new semantic Intent.
 
 This enables:
 
-auditability
-traceability
-re-evaluation
-clarification
-retry
-cancellation
+* auditability
+* traceability
+* re-evaluation
+* clarification
+* retry
+* cancellation
+* causal explanation
+
+A material semantic modification creates a new Intent version rather than silently changing the existing version.
 
 ⸻
 
 5. Lifecycle State vs Intent Meaning
 
-The Intent’s meaning and lifecycle state are different concepts.
+Intent meaning and lifecycle state are distinct.
 
 For example:
 
 Intent:
-RenewCard(Card#123)
+    RenewCard(Card#123)
+Lifecycle State:
+    AMBIGUOUS
 
-may have:
+The Intent exists.
 
-State:
-AMBIGUOUS
-
-The Intent still exists.
-
-Its semantic representation is simply incomplete.
+Its semantic representation is not sufficiently resolved for execution.
 
 Therefore:
 
-Intent ≠ Intent State
+Intent Meaning
+    ≠
+Intent Lifecycle State
+
+Likewise:
+
+Intent State:
+    EXECUTING
+Business State:
+    Card = EXPIRED
+
+These are different state systems.
 
 ⸻
 
-6. EXPRESSed
+6. EXPRESSED
 
 Definition
 
-EXPRESSED means an Actor has communicated something that may constitute an Intent, but Noema has not yet established its canonical semantic representation.
+EXPRESSED means an Actor has communicated an expression that may constitute an Intent, but Noema has not yet established its canonical semantic representation.
 
 Example:
 
-“Can you sort out my card?”
+"Can you sort out my card?"
 
-At this point Noema has:
+At this point Noema may have:
 
 Actor:
-Known
+    known
 Expression:
-"Can you sort out my card?"
-Intent:
-Not yet resolved
+    "Can you sort out my card?"
+Canonical Intent:
+    not yet established
 
-The expression is evidence from which Intent is derived.
+The expression is evidence from which an Intent candidate may be constructed.
+
+Expression is not itself executable authority.
 
 ⸻
 
@@ -183,98 +222,140 @@ The expression is evidence from which Intent is derived.
 
 Definition
 
-INTERPRETED means Noema has constructed a candidate Intent representation from the Actor’s expression.
+INTERPRETED means Noema has constructed one or more candidate semantic representations from the Actor’s expression.
 
 Example:
 
 Intent:
-ResolveCardIssue
+    ResolveCardIssue
 Actor:
-User#123
+    User#123
 Resource:
-Unknown
-Outcome:
-CardIssueResolved
+    unresolved
+Expected Outcome:
+    CardIssueResolved
 
-The interpretation may still contain unresolved fields.
+The interpretation may still contain unresolved or competing semantic fields.
 
-Importantly:
+Interpretation is not authorization.
 
-Interpretation is not yet execution authority.
+Model output is not canonical merely because it has been generated.
+
+The candidate representation must pass hard schema validation and admission before becoming a canonical admitted Intent version.
 
 ⸻
 
-8. GROUNDED
+8. ADMITTED
 
 Definition
 
-GROUNDED means semantic references in the Intent have been connected to canonical concepts, Entities, Resources, Context, or other authoritative evidence.
+ADMITTED means a candidate Intent representation has passed the required hard schema validation and has been admitted as a canonical Intent version.
+
+Admission establishes structural validity.
+
+It does not establish that:
+
+* all semantic references are resolved
+* the Intent is executable
+* the Actor is authorized
+* the requested Action is permitted
+* the Outcome will succeed
+
+Conceptually:
+
+Interpretation
+      ↓
+Hard Schema Validation
+      ↓
+ADMITTED Intent Version
+
+An admitted Intent version is immutable.
+
+Material semantic changes produce a new version with supersedes.
+
+⸻
+
+9. GROUNDED
+
+Definition
+
+GROUNDED means material semantic references in the Intent have been connected to canonical concepts, Entities, Resources, Context, relationships, or relevant evidence.
 
 Example:
 
 Expression:
-"Renew the card I used yesterday."
+    "Renew the card I used yesterday."
 Grounding:
-"card I used yesterday"
-        ↓
-Transaction#981
-        ↓
-Card#123
+    "card I used yesterday"
+            ↓
+    Transaction#981
+            ↓
+    Card#123
 
-The Intent becomes:
+The Intent may then contain:
 
 RenewCard(Card#123)
 
-Grounding reduces reference ambiguity.
+Grounding reduces unresolved reference ambiguity.
+
+Grounding does not automatically establish that every fact is authoritative.
+
+Relevant evidence must be evaluated for authority, scope, freshness, and Fact Status.
 
 ⸻
 
-9. AMBIGUOUS
+10. AMBIGUOUS
 
 Definition
 
-AMBIGUOUS means Noema has identified multiple materially plausible interpretations and cannot safely select one.
+AMBIGUOUS means Noema has identified multiple materially valid interpretations and insufficient evidence to determine which one the Actor intended.
 
 Example:
 
 Intent:
-CancelSubscription
+    CancelSubscription
 Candidate Resources:
-Subscription#123
-Subscription#456
+    Subscription#123
+    Subscription#456
 
-Noema should not arbitrarily choose one.
+Noema must not arbitrarily choose one.
 
-This state is fundamental to Noema’s deterministic Trust architecture.
+Model confidence may rank candidates, but it does not resolve material ambiguity by itself.
+
+Material ambiguity prevents the Intent from becoming Executable Intent until resolved.
 
 ⸻
 
-10. CLARIFICATION_REQUIRED
+11. CLARIFICATION_REQUIRED
 
 Definition
 
-CLARIFICATION_REQUIRED means the Intent cannot safely progress without additional information from the Actor or another authoritative source.
+CLARIFICATION_REQUIRED means a material semantic gap prevents safe resolution and requires additional information from the Actor or an authoritative source.
 
 Example:
 
 Intent:
-TransferFunds
+    TransferFunds
 Amount:
-$500
+    $500
 Destination:
-UNKNOWN
+    UNKNOWN
 
-Noema asks:
+Noema may ask:
 
-“Which account should receive the $500?”
+Which account should receive the $500?
 
-The clarification targets the unresolved semantic field.
+The clarification should target the unresolved semantic field rather than require the Actor to restate the entire request.
+
+CLARIFICATION_REQUIRED is a lifecycle/resolution state.
+
+It is distinct from the Trust outcome CLARIFY.
 
 ⸻
 
-11. CLARIFICATION
+12. CLARIFICATION
 
-Clarification is a lifecycle activity, not necessarily the final state of the Intent.
+Clarification is a resolution activity, not simply a terminal lifecycle state.
 
 Conceptually:
 
@@ -284,165 +365,285 @@ CLARIFICATION_REQUIRED
     ↓
 Actor Response
     ↓
-INTERPRETED / GROUNDED
+VALIDATE / INTERPRET
     ↓
-RESOLVED
+RESOLVE
 
 A single Intent may require multiple clarification cycles.
 
+Where a clarification materially changes the semantic meaning of an admitted Intent, the resulting representation becomes a new Intent version.
+
+Noema must preserve the prior version and the clarification provenance.
+
 ⸻
 
-12. RESOLVED
+13. RESOLVING
+
+RESOLVING represents the active semantic resolution process.
+
+Resolution may use:
+
+* explicit Actor references
+* validated Context
+* authoritative enterprise data
+* State Reconciliation
+* relationships
+* deterministic rules
+* Actor clarification
+* evidence and provenance
+
+The objective is to establish what the Actor means, not to determine whether execution is permitted.
+
+Resolution must not silently manufacture missing semantics.
+
+If a material ambiguity remains, the Intent returns to CLARIFICATION_REQUIRED, ESCALATE, or another explicitly defined control state as appropriate.
+
+⸻
+
+14. RESOLVED
 
 Definition
 
-RESOLVED means the semantic representation of the Intent is sufficiently complete and unambiguous for Noema to determine what the Actor means.
+RESOLVED means Noema has established a sufficiently complete and unambiguous semantic representation of the Intent.
 
 Example:
 
 Intent:
-TransferFunds
+    TransferFunds
 Actor:
-User#123
+    User#123
 Source:
-Checking#1
+    Checking#1
 Destination:
-Savings#2
+    Savings#2
 Amount:
-$500
+    $500
 
 The meaning is now resolved.
 
-However:
+Resolved does not mean:
 
-Resolved does not mean executable.
+* executable
+* authorized
+* executed
+* successful
 
-Trust, Policy, Capability, and current State may still prevent execution.
+Trust and execution requirements remain separate.
 
 ⸻
 
-13. VALIDATED
+15. VALIDATION
 
-A resolved Intent may undergo validation against the canonical ontology and domain rules.
+A resolved Intent must satisfy the applicable semantic and structural validation requirements before becoming Executable Intent.
 
 Validation can establish:
 
-required fields exist
-types are correct
-references are valid
-constraints are coherent
-relationships are valid
+* required fields exist
+* types are correct
+* references are valid
+* constraints are coherent
+* relationships are valid
+* scope is valid
+* the semantic structure conforms to the canonical ontology
+
+Validation may be an internal transition rather than a persistent lifecycle state.
+
+The distinction remains architecturally important:
+
+Resolved
+    ↓
+Validation
+    ↓
+Executable Intent
+
+Hard schema validation also exists earlier at Intent admission. These are distinct validation purposes and must not be conflated.
+
+⸻
+
+16. EXECUTABLE
+
+Definition
+
+EXECUTABLE means the Intent has become an Executable Intent: its material semantic requirements are sufficiently established for deterministic Trust evaluation and potential execution as one or more bounded Actions.
+
+Example:
+
+Intent:
+    RenewCard(Card#123)
+Required semantic information:
+    resolved
+Relevant Capability:
+    available
+Constraints:
+    validated
+
+Executable Intent does not mean:
+
+authorized
+
+and does not mean:
+
+successful
+
+Trust remains the authority boundary before consequential execution.
+
+⸻
+
+17. TRUST_PENDING
+
+TRUST_PENDING means an Executable Intent is awaiting the applicable deterministic Trust evaluation.
+
+Trust evaluates the resolved semantic request against relevant:
+
+* Policy
+* Authority
+* current State
+* Constraints
+* Capability availability
+* governance conditions
+* Action and execution requirements
+
+Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+EXECUTE means the resolved path satisfies the applicable Trust conditions and may proceed.
+
+It does not mean the Action has succeeded.
+
+⸻
+
+18. TRUST OUTCOME: EXECUTE
+
+EXECUTE is a Trust decision indicating that the resolved Intent satisfies the applicable conditions for proceeding.
 
 Conceptually:
 
-RESOLVED
-   ↓
-VALIDATED
+Executable Intent
+      ↓
+Trust
+      ↓
+EXECUTE
+      ↓
+Action
 
-Whether VALIDATED is represented as a persistent lifecycle state or as an internal transition is an implementation decision.
+The distinction is important:
 
-The semantic distinction should nevertheless exist.
+EXECUTE
+    ≠
+Execution succeeded
 
-⸻
-
-14. EXECUTABLE
-
-Definition
-
-EXECUTABLE means Noema has enough semantic information and available Capabilities to construct an executable plan for satisfying the Intent, subject to Trust and Policy.
-
-Example:
-
-Intent:
-RenewCard(Card#123)
-Capability:
-CardRenewal
-Required information:
-Resolved
-Constraint validation:
-Passed
-
-The Intent is now actionable.
+Execution still requires Action invocation, execution-state tracking, verification, and Outcome determination.
 
 ⸻
 
-15. AUTHORIZED
+19. TRUST OUTCOME: CLARIFY
 
-Definition
+CLARIFY is a Trust outcome indicating that Noema cannot safely make the required decision without additional information or clarification.
 
-AUTHORIZED means the Intent has passed the applicable Trust and Policy requirements and may proceed to execution.
+This may occur when a material issue remains unresolved at the Trust boundary.
 
-Example:
+CLARIFY should not be confused with the Intent resolution mechanism itself.
+
+Conceptually:
+
+Trust
+  ↓
+CLARIFY
+  ↓
+Clarification / Resolution
+  ↓
+New or updated Intent version
+  ↓
+Trust re-evaluation
+
+Clarification does not grant authority.
+
+⸻
+
+20. TRUST OUTCOME: ESCALATE
+
+ESCALATE is a Trust outcome indicating that Noema cannot safely resolve the decision autonomously and requires an authorized human or organizational process.
+
+Examples may include:
+
+* unresolved authority
+* conflicting authoritative evidence
+* governance conditions requiring human review
+* exceptional policy conditions
+
+Escalation is not equivalent to failure.
+
+The reason and required escalation path must be recorded.
+
+⸻
+
+21. TRUST OUTCOME: REJECT
+
+REJECT is a Trust outcome indicating that the resolved Intent must not proceed.
+
+Possible causes include:
+
+* prohibited capability
+* insufficient authority
+* policy violation
+* unsupported execution path
+* invalid Trust conditions
+* explicit governance prohibition
+
+The rejection reason must be recorded.
+
+REJECT is distinct from execution failure.
+
+⸻
+
+22. POLICY BLOCKED
+
+POLICY_BLOCKED may be represented as a reason or control state associated with a Trust decision rather than as a fifth Trust outcome.
+
+For example:
 
 Intent:
-RefundPayment($500)
-Trust:
-Permitted
+    RefundPayment($50,000)
 Policy:
-Permitted
-Authority:
-Valid
+    Amounts > $10,000 require approval
 
-The distinction is critical:
+Trust may produce:
 
-EXECUTABLE ≠ AUTHORIZED
+ESCALATE
 
-A system may know exactly how to execute something without being permitted to do so.
+with reason:
+
+APPROVAL_REQUIRED
+
+or:
+
+REJECT
+
+if Policy explicitly prohibits the operation.
+
+This preserves the canonical four Trust outcomes without collapsing governance reasons into the outcome enumeration.
 
 ⸻
 
-16. POLICY_BLOCKED
+23. EXECUTING
 
 Definition
 
-POLICY_BLOCKED means the Intent is semantically valid but cannot proceed because a Policy prohibits or restricts execution.
+EXECUTING means one or more bounded Actions associated with the Intent are currently being performed.
 
 Example:
 
 Intent:
-RefundPayment($50,000)
-Policy:
-Amounts > $10,000 require manager approval
-
-The Intent is not necessarily invalid.
-
-It is blocked by governance.
-
-⸻
-
-17. REJECTED
-
-Definition
-
-REJECTED means Noema has determined that the Intent cannot or should not proceed.
-
-Possible reasons include:
-
-policy violation
-insufficient authority
-invalid request
-unsupported Capability
-contradictory Constraints
-
-The reason must be recorded.
-
-⸻
-
-18. EXECUTING
-
-Definition
-
-EXECUTING means one or more Actions associated with the Intent are currently being performed.
-
-Example:
-
-Intent:
-RenewCard
+    RenewCard
 State:
-EXECUTING
+    EXECUTING
 Actions:
-VerifyEligibility
-CreateReplacementCard
+    VerifyEligibility
+    RenewCard
 
 Execution state must not be confused with Intent meaning.
 
@@ -454,245 +655,301 @@ regardless of which Action is currently running.
 
 ⸻
 
-19. COMPLETED
+24. UNKNOWN
 
-Definition
+UNKNOWN is a first-class epistemic or execution state.
 
-COMPLETED means the expected Outcome of the Intent has been satisfied according to the applicable semantic criteria.
+For example:
 
-Example:
+Action submitted
+    ↓
+Provider timeout
+    ↓
+Actual external state unknown
 
-Intent:
-RenewCard
-Expected Outcome:
-Card active
-Observed Outcome:
-Card active
-State:
-COMPLETED
+A timeout must not automatically become:
 
-Completion is determined by Outcome semantics, not merely successful Action invocation.
-
-⸻
-
-20. FAILED
-
-Definition
-
-FAILED means execution occurred but the expected Outcome was not achieved and the Intent cannot currently proceed automatically.
-
-Example:
-
-Intent:
-RenewCard
-Action:
-CreateReplacementCard
-Result:
-Provider unavailable
-State:
 FAILED
 
-Failure should preserve:
+nor:
 
-failure cause
-Actions attempted
-observed State
-Outcome status
+COMPLETED
+
+Noema must verify external state before retrying an operation where duplicate execution is consequential.
+
+Unknown may therefore trigger:
+
+Verification
+    ↓
+State Reconciliation
+    ↓
+Recovery / Retry / Escalation
+
+The exact representation may be execution-specific, but the distinction must remain.
 
 ⸻
 
-21. PARTIALLY_COMPLETED
+25. COMPLETED / OUTCOME SATISFIED
 
-A Composite Intent may be partially completed.
+An Intent reaches its terminal successful state only when its Expected Outcome has been satisfied according to applicable semantic and verification criteria.
+
+Example:
+
+Intent:
+    RenewCard
+Expected Outcome:
+    CardActive
+Observed State:
+    CardActive
+Verification:
+    Confirmed
+
+Therefore:
+
+COMPLETED
+
+means the Intent’s expected semantic Outcome has been established.
+
+A successful API response alone is insufficient.
+
+⸻
+
+26. FAILED
+
+FAILED means execution and recovery have not established the expected Outcome and the Intent cannot currently proceed automatically.
+
+Example:
+
+Intent:
+    RenewCard
+Action:
+    CreateReplacementCard
+Result:
+    Provider unavailable
+
+The failure record should preserve:
+
+* cause
+* Actions attempted
+* execution attempts
+* observed State
+* verification results
+* relevant evidence
+* recovery actions
+
+An individual Action failure does not necessarily make the Intent permanently failed.
+
+⸻
+
+27. PARTIALLY_COMPLETED
+
+A Composite Intent may be partially satisfied.
 
 Example:
 
 Composite:
-TransferBalance + CloseAccount
+    TransferBalance + CloseAccount
 TransferBalance:
-COMPLETED
+    COMPLETED
 CloseAccount:
-FAILED
+    FAILED
 
-The parent should not be represented simply as:
+The composite must preserve the constituent states.
 
-FAILED
+A parent-level partial state is appropriate only where the composition semantics permit a partially satisfied composite.
 
-without preserving the constituent states.
-
-A Composite Intent may therefore have:
-
-PARTIALLY_COMPLETED
-
-where semantically appropriate.
+The parent must not be represented simply as FAILED if doing so would erase material child Outcome information.
 
 ⸻
 
-22. CANCELLED
+28. CANCELLED
 
-Definition
-
-CANCELLED means the Actor or an authorized system has withdrawn the Intent before successful completion.
+CANCELLED means the Actor or an authorized control mechanism has withdrawn the Intent before successful completion, subject to whether cancellation remains possible.
 
 Example:
 
 Intent:
-BookFlight
-State:
-EXECUTING
-Actor:
-"Cancel that."
+    BookFlight
+Control:
+    CANCELLED
 
-The Intent transitions to:
+Cancellation is a control state, not a Trust outcome.
 
-CANCELLED
+Cancellation must not silently mutate the semantic meaning of an immutable admitted Intent version.
 
-subject to whether cancellation is still possible.
+If cancellation materially changes the semantic lifecycle representation, the control event and relevant version relationships must be preserved.
 
 ⸻
 
-23. EXPIRED
+29. EXPIRED
 
-Definition
-
-EXPIRED means the Intent can no longer be meaningfully satisfied because its temporal validity has elapsed.
+EXPIRED means the Intent can no longer be meaningfully satisfied within its defined temporal validity.
 
 Example:
 
 Intent:
-BookFlight
+    BookFlight
 Constraint:
-DepartToday
-CurrentTime:
-After departure
+    DepartToday
+Current Time:
+    After departure
 
-The Intent may transition to:
+The Intent may become:
 
 EXPIRED
 
 rather than FAILED.
 
-The distinction matters because the system did not necessarily fail to execute it; its validity window ended.
+The distinction matters because expiration reflects loss of temporal validity rather than necessarily an execution failure.
 
 ⸻
 
-24. SUPERSEDED
+30. SUPERSEDED
 
-An Intent may be replaced by a newer Intent from the same Actor.
+An Intent version may be superseded by a newer version.
 
 Example:
 
-Intent A:
-BookFlight for Monday
-Intent B:
-Actually, make it Tuesday.
+Intent#123:v1
+    BookFlight(Monday)
+Intent#123:v2
+    BookFlight(Tuesday)
+    supersedes = Intent#123:v1
 
-Intent A may become:
+The prior version remains part of the historical record.
 
-SUPERSEDED
+SUPERSEDED is a version/control relationship, not a Trust outcome.
 
-while Intent B becomes the active Intent.
-
-This preserves history without continuing to treat the old request as authoritative.
+An older version must not silently continue to execute after it has been superseded where the superseding change invalidates its authority or semantic applicability.
 
 ⸻
 
-25. INVALID
+31. INVALID
 
-Definition
+INVALID means the candidate representation violates the semantic or structural requirements of the Intent Language or applicable ontology.
 
-INVALID means the candidate Intent violates the semantic requirements of the Intent Language or domain ontology.
-
-Example:
+Examples:
 
 TransferFunds
 Amount:
-"banana"
+    "banana"
 
 or:
 
 TransferFunds
 Source:
-Card#123
+    Account#123
 Destination:
-SameCard#123
-Domain Rule:
-Source != Destination
+    Account#123
+Domain Constraint:
+    Source != Destination
 
-Invalidity should be distinguished from ambiguity.
+Invalidity is distinct from ambiguity.
+
+Ambiguity means multiple materially valid interpretations remain.
+
+Invalidity means the represented interpretation is not valid under the applicable semantic rules.
 
 ⸻
 
-26. UNSUPPORTED
+32. UNSUPPORTED
 
-An Intent may be semantically clear but impossible to satisfy because Noema has no applicable Capability.
+An Intent may be semantically clear but lack an available bounded Capability capable of satisfying it.
 
 Example:
 
-“Teleport me to London.”
-
+"Teleport me to London."
 Intent:
-TeleportPerson
-State:
-UNSUPPORTED
+    TeleportPerson
+Capability:
+    unavailable
 
-The meaning is clear.
+The meaning may be clear.
 
-The system simply cannot satisfy it.
+The system simply has no supported execution path.
+
+Unsupported capability should not be confused with Trust rejection or execution failure.
 
 ⸻
 
-27. State Transition Rules
+33. State Transition Rules
 
 Transitions should be governed by explicit conditions.
 
-Examples:
+Conceptually:
 
 EXPRESSED
-→ INTERPRETED
+    → INTERPRETED
 
 when a candidate semantic representation has been constructed.
 
 INTERPRETED
-→ GROUNDED
+    → ADMITTED
 
-when material references are grounded.
+when hard schema validation succeeds.
 
-GROUNDED
-→ AMBIGUOUS
+ADMITTED
+    → GROUNDED / RESOLVING
 
-when multiple materially plausible interpretations remain.
+when semantic resolution begins.
 
-GROUNDED
-→ RESOLVED
+RESOLVING
+    → AMBIGUOUS
 
-when semantic ambiguity is eliminated.
+when multiple materially valid interpretations remain.
+
+AMBIGUOUS
+    → CLARIFICATION_REQUIRED
+
+when additional semantic information is required.
+
+RESOLVING
+    → RESOLVED
+
+when material semantic ambiguity has been eliminated.
 
 RESOLVED
-→ EXECUTABLE
+    → EXECUTABLE
 
-when required Capabilities and execution information exist.
+when the material requirements for Executable Intent are satisfied.
 
 EXECUTABLE
-→ AUTHORIZED
+    → TRUST_PENDING
 
-when Trust and Policy permit execution.
+when the Intent is ready for Trust evaluation.
 
-AUTHORIZED
-→ EXECUTING
+TRUST_PENDING
+    → EXECUTE
 
-when execution begins.
+when applicable Trust conditions are satisfied.
+
+TRUST_PENDING
+    → CLARIFY / ESCALATE / REJECT
+
+when the corresponding Trust condition applies.
+
+EXECUTE
+    → EXECUTING
+
+when a bounded Action begins.
 
 EXECUTING
-→ COMPLETED
+    → VERIFICATION
 
-when the expected Outcome is satisfied.
+when an Action attempt reaches a state requiring Outcome verification.
+
+VERIFICATION
+    → COMPLETED
+
+when the Expected Outcome is verified.
+
+Other terminal or control states may be entered where their explicit conditions apply.
 
 ⸻
 
-28. No Silent State Transitions
+34. No Silent State Transitions
 
-Noema should not silently move an Intent from:
+Noema must not silently move an Intent from:
 
 AMBIGUOUS
 
@@ -702,38 +959,60 @@ RESOLVED
 
 because a Model produced a more confident guess.
 
-A material semantic transition requires evidence sufficient for the relevant state change.
+A material semantic transition requires evidence sufficient for the relevant transition.
 
-This is central to Noema’s deterministic architecture.
+Likewise, Noema must not silently convert:
+
+UNKNOWN
+
+to:
+
+FAILED
+
+or:
+
+COMPLETED
+
+without appropriate verification.
 
 ⸻
 
-29. Model Confidence Does Not Define Lifecycle State
+35. Model Confidence Does Not Define Lifecycle State
 
 Suppose the Model produces:
 
 Confidence:
-0.97
+    0.97
 
 for:
 
 CancelSubscription(Subscription#123)
 
-If two subscriptions remain materially plausible, the Intent remains:
+If:
 
-AMBIGUOUS
+Subscription#123
+Subscription#456
 
-Confidence is evidence.
+remain materially valid candidates, the Intent remains ambiguous.
 
-It is not authority.
+Confidence is interpretation metadata.
+
+It is not:
+
+* lifecycle authority
+* semantic resolution
+* Fact Status
+* authorization
+* Trust
+* Outcome
 
 ⸻
 
-30. Evidence-Driven Transitions
+36. Evidence-Driven Transitions
 
-Lifecycle transitions should be supported by evidence.
+Lifecycle transitions should be supported by evidence appropriate to the transition.
 
-For example:
+Examples:
 
 AMBIGUOUS
       ↓
@@ -745,7 +1024,7 @@ or:
 
 GROUNDED
       ↓
-Authoritative database lookup
+Authoritative enterprise lookup
       ↓
 RESOLVED
 
@@ -753,39 +1032,49 @@ or:
 
 EXECUTABLE
       ↓
-Policy evaluation
+Trust evaluation
       ↓
-POLICY_BLOCKED
+REJECT
 
-The transition itself should be auditable.
+or:
+
+EXECUTING
+      ↓
+External state reconciliation
+      ↓
+VERIFIED OUTCOME
+
+The evidence supporting a material transition should be auditable.
 
 ⸻
 
-31. Lifecycle and Provenance
+37. Lifecycle and Provenance
 
-Every meaningful state transition should ideally record:
+Every material state transition should record, where applicable:
 
-previous state
-new state
-timestamp
-actor/system responsible
-reason
-evidence
+* previous state
+* new state
+* timestamp
+* responsible Actor or system
+* reason
+* evidence references
+* Intent version
+* relevant Policy or Contract version
 
 Example:
 
-Intent#123
+Intent#123:v1
 AMBIGUOUS → RESOLVED
 Reason:
-Actor clarified destination account.
+    Actor clarified destination account.
 Evidence:
-ConversationTurn#42
+    ConversationTurn#42
 
-This creates an auditable semantic history.
+This creates an auditable semantic history without requiring disclosure of private Model chain-of-thought.
 
 ⸻
 
-32. Lifecycle and Clarification Loops
+38. Lifecycle and Clarification Loops
 
 Clarification may repeat.
 
@@ -799,6 +1088,8 @@ CLARIFICATION_REQUIRED
     ↓
 Actor response
     ↓
+RESOLVING
+    ↓
 AMBIGUOUS
     ↓
 CLARIFICATION_REQUIRED
@@ -807,42 +1098,39 @@ Actor response
     ↓
 RESOLVED
 
-Noema must support multiple clarification rounds without losing prior semantic state.
+Noema must support multiple clarification rounds without losing prior semantic state or provenance.
+
+Each material clarification should be associated with the relevant Intent version.
 
 ⸻
 
-33. Lifecycle and Intent Modification
+39. Lifecycle and Intent Modification
 
-An Actor may modify an existing Intent.
+An Actor may modify an Intent.
 
 Example:
 
-“Book the flight for Friday.”
+"Book the flight for Friday."
+then:
+"Actually, make it Saturday."
 
-Then:
+The canonical model should not silently mutate the already-admitted Intent version.
 
-“Actually, make it Saturday.”
+Instead:
 
-The Intent may be updated:
+Intent#123:v1
+    BookFlight(Friday)
+Intent#123:v2
+    BookFlight(Saturday)
+    supersedes = Intent#123:v1
 
-Constraint:
-date = Saturday
+The current version represents the current semantic Intent.
 
-or replaced by a new version.
-
-The canonical model should preserve:
-
-Intent identity
-version
-change history
-superseded values
-current values
-
-where required.
+Historical versions remain immutable.
 
 ⸻
 
-34. Intent Versioning
+40. Intent Versioning
 
 An Intent may have versions:
 
@@ -853,62 +1141,81 @@ Intent#123:v3
 Example:
 
 v1:
-BookFlight(Monday)
+    BookFlight(Monday)
 v2:
-BookFlight(Tuesday)
+    BookFlight(Tuesday)
 v3:
-BookFlight(Tuesday, nonstop)
+    BookFlight(Tuesday, nonstop)
 
-The current version represents the Actor’s current Intent.
+A version change is required when semantic meaning materially changes.
 
-Previous versions remain part of the audit history.
+Versioning preserves:
+
+* prior meaning
+* provenance
+* clarification history
+* Trust decisions
+* execution history
+* supersession relationships
+
+This prevents historical execution records from being reinterpreted under a later semantic version.
 
 ⸻
 
-35. Lifecycle and Composite Intents
+41. Lifecycle and Composite Intents
 
 Composite Intents require both:
 
-parent lifecycle state
+composite lifecycle state
 
 and:
 
-child lifecycle states
+constituent Intent states
 
 Example:
 
 Composite:
-EmployeeOffboarding
-Parent:
-EXECUTING
+    EmployeeOffboarding
 Children:
-RevokeGitHub     COMPLETED
-DisableEmail     EXECUTING
-NotifyManager    RESOLVED
+    RevokeGitHub      COMPLETED
+    DisableEmail      EXECUTING
+    NotifyManager     RESOLVED
 
-The parent state should be derived according to explicit composition semantics.
+The composite state must be derived from explicit composition semantics.
+
+A parent state does not automatically authorize, execute, or complete its children.
+
+Each consequential child remains subject to its own semantic resolution, Trust, Action, execution, and verification requirements.
 
 ⸻
 
-36. Lifecycle and Independent Children
+42. Lifecycle and Independent Children
 
 A child Intent may resolve independently of another child.
 
 Example:
 
 Composite:
-UpdateProfile
-├── UpdateAddress     RESOLVED
-├── UpdatePhone       AMBIGUOUS
-└── UpdatePreferences RESOLVED
+    UpdateProfile
+Children:
+    UpdateAddress       RESOLVED
+    UpdatePhone         AMBIGUOUS
+    UpdatePreferences   RESOLVED
 
-Noema should not discard the resolved semantic information simply because one child requires clarification.
+Noema should not discard resolved semantic information merely because another child requires clarification.
+
+A child may proceed independently only when:
+
+* the composition semantics permit it
+* its own material requirements are resolved
+* its own Trust conditions are satisfied
+* proceeding does not violate a dependency or shared Constraint
 
 ⸻
 
-37. Lifecycle and Parent Completion
+43. Lifecycle and Parent Completion
 
-A Composite Intent should only reach COMPLETED when its required Outcome semantics are satisfied.
+A Composite Intent should reach successful completion only when its defined Outcome semantics are satisfied.
 
 For example:
 
@@ -917,47 +1224,49 @@ CloseAccount
 
 If both are required:
 
-Transfer = COMPLETED
-Close = COMPLETED
-Parent = COMPLETED
+TransferBalance = COMPLETED
+CloseAccount    = COMPLETED
+Parent          = COMPLETED
 
 If:
 
-Transfer = COMPLETED
-Close = FAILED
+TransferBalance = COMPLETED
+CloseAccount    = FAILED
 
-then:
+then the parent cannot be marked COMPLETED unless the composition semantics explicitly define another satisfaction criterion.
 
-Parent ≠ COMPLETED
-
-unless the domain explicitly defines a different success criterion.
+Child Outcomes must remain individually auditable.
 
 ⸻
 
-38. Lifecycle and Action Retry
+44. Lifecycle and Action Retry
 
 An Action may fail while the Intent remains active.
 
 Example:
 
 Intent:
-SendInvoice
-Action attempt #1:
-FAILED
-Retry:
-Action attempt #2
-Outcome:
-SUCCESS
+    SendInvoice
+Action Attempt #1:
+    FAILED
+Action Attempt #2:
+    SUCCESS
+Verified Outcome:
+    InvoiceSent
 
-The Intent lifecycle need not become permanently FAILED because one Action attempt failed.
+The Intent lifecycle need not become permanently failed because one Action attempt failed.
 
 Therefore:
 
-Action State ≠ Intent State
+Action State
+    ≠
+Intent State
+
+Retry remains bounded by idempotency, Action Contracts, current State, Trust conditions, and verification requirements.
 
 ⸻
 
-39. Lifecycle and Execution Attempts
+45. Lifecycle and Execution Attempts
 
 An Intent may have multiple execution attempts.
 
@@ -965,12 +1274,17 @@ Conceptually:
 
 Intent#123
 Attempt#1
-  Action → FAILED
+    Action → FAILED
+Verification / Recovery
+    ↓
 Attempt#2
-  Action → SUCCESS
-Intent → COMPLETED
+    Action → EXECUTE
+    ↓
+    VERIFIED
+Intent
+    → COMPLETED
 
-The lifecycle should preserve the distinction between:
+The lifecycle must preserve the distinction between:
 
 attempt failure
 
@@ -978,286 +1292,342 @@ and:
 
 Intent failure
 
+Retries must not assume that an uncertain external operation failed.
+
+External State should be verified before retrying when duplicate execution is consequential.
+
 ⸻
 
-40. Lifecycle and Compensation
+46. Lifecycle and Compensation
 
-If an executed Action must be compensated, the Intent may remain active while compensation occurs.
+If an executed Action requires compensation, the Intent lifecycle may remain active while compensation occurs.
 
 Example:
 
 ChargeCustomer
-     ↓
+      ↓
 ProvisionService
-     ↓
+      ↓
 Provisioning fails
-     ↓
+      ↓
+Compensation Action
+      ↓
 RefundCustomer
 
-The execution history records the compensation.
+Compensation is an execution concern.
 
-The final Intent state depends on its expected Outcome.
+Intent Composition and Lifecycle record the semantic dependency and resulting Outcomes but do not imply that every Action is transactionally reversible.
+
+The final Intent state depends on its Expected Outcome and verified resulting State.
 
 ⸻
 
-41. Lifecycle and External State
+47. Lifecycle and External State
 
-Intent lifecycle should not be confused with business-domain State.
+Intent lifecycle must not be confused with business-domain State.
 
 Example:
 
-Intent:
-RenewCard
-State:
-EXECUTING
-Card State:
-Expired
+Noema:
+    Intent#123 = EXECUTING
+Enterprise:
+    Card#456 = EXPIRED
 
-After execution:
+After execution and verification:
 
-Intent:
-COMPLETED
-Card State:
-Active
+Noema:
+    Intent#123 = COMPLETED
+Enterprise:
+    Card#456 = ACTIVE
 
-The two state systems are related but distinct.
+The systems are related.
+
+They are not the same State model.
+
+The enterprise remains authoritative for relevant business State.
 
 ⸻
 
-42. Lifecycle and Outcome Verification
+48. Lifecycle and Outcome Verification
 
 An Action returning success does not necessarily mean the Intent is complete.
 
 Example:
 
 Action:
-UpdateDatabase
-Result:
-Success
-
-But:
-
+    UpdateDatabase
+Action Result:
+    Success
 Expected Outcome:
-Customer can log in
+    Customer can log in
 
 If login remains impossible, the Intent is not completed.
 
 Therefore:
 
-Intent completion is determined by verified Outcome, not merely Action success.
+Action Success
+    ≠
+Intent Completion
+
+Completion requires verified satisfaction of the Expected Outcome.
 
 ⸻
 
-43. Lifecycle and Determinism
+49. Lifecycle and Determinism
 
 Noema should maintain deterministic rules for lifecycle transitions wherever possible.
 
-For example:
+Examples:
 
-if required_resource_missing
+required material resource unresolved
     → CLARIFICATION_REQUIRED
-if policy_denied
-    → POLICY_BLOCKED
-if outcome_verified
+Trust condition requires additional information
+    → CLARIFY
+policy requires authorized human review
+    → ESCALATE
+policy or governance prohibits execution
+    → REJECT
+verified Expected Outcome
     → COMPLETED
+external execution state unknown
+    → UNKNOWN / VERIFICATION
 
-The Model may assist with interpretation.
+The Model may assist with interpretation and candidate generation.
 
-It should not arbitrarily determine lifecycle state transitions.
+It must not arbitrarily determine lifecycle transitions that have deterministic semantic criteria.
 
 ⸻
 
-44. Lifecycle and the Trust Engine
+50. Lifecycle and the Trust Boundary
 
-The Trust Engine operates on an Intent that has reached sufficient semantic resolution.
-
-Conceptually:
-
-Intent
-   ↓
-Resolved
-   ↓
-Executable
-   ↓
-Trust Engine
-   ↓
-Authorized / Rejected
-
-This preserves the architectural separation:
+The lifecycle preserves the architectural separation:
 
 Model:
-"What does the Actor mean?"
-Noema:
-"Is the meaning sufficiently resolved?"
+    What might the Actor mean?
+Intent Resolution:
+    What does the Actor mean after grounding and reconciliation?
+Executable Intent:
+    Is the semantic representation sufficiently complete
+    for deterministic Trust evaluation?
 Trust:
-"May it be executed?"
+    May this resolved Intent proceed?
 Execution:
-"Perform the permitted Action."
+    Perform the permitted Action.
+Verification:
+    What actually happened?
 Outcome:
-"Did the intended state occur?"
+    Was the Actor's expected semantic state achieved?
+
+This separation prevents probabilistic interpretation from directly invoking consequential enterprise Actions.
 
 ⸻
 
-45. Lifecycle and Business State
+51. Lifecycle and Business State
 
-Noema owns Intent State.
+Noema owns the lifecycle state of Intent.
 
-The business system owns Business State.
+The enterprise system owns authoritative Business State.
 
 For example:
 
 Noema:
-Intent#123 = EXECUTING
-Bank:
-Account#456 = OPEN
+    Intent#123 = EXECUTING
+Enterprise:
+    Account#456 = OPEN
 
 After successful execution:
 
 Noema:
-Intent#123 = COMPLETED
-Bank:
-Account#456 = CLOSED
+    Intent#123 = COMPLETED
+Enterprise:
+    Account#456 = CLOSED
 
-Noema observes and reasons about business State but does not become the authoritative owner of it.
+Noema may observe, reconcile, and reason over Business State.
+
+It does not become the authoritative owner of that external state merely by representing it in Context or State Reconciliation.
 
 ⸻
 
-46. Terminal States
+52. Terminal States and Control States
 
-A terminal state is a state from which the current Intent cannot normally continue.
+A terminal state is a state from which the current Intent version cannot normally continue.
 
-Examples:
+Conceptual terminal outcomes include:
 
 COMPLETED
 FAILED
+REJECTED
 CANCELLED
 EXPIRED
-REJECTED
-SUPERSEDED
 UNSUPPORTED
 INVALID
+SUPERSEDED
 
-A new Intent may be created or an existing Intent may be explicitly re-opened according to domain rules, but this should not happen implicitly.
+However, terminality is contextual.
+
+A failed execution may lead to recovery and another bounded attempt before the Intent becomes terminal.
+
+A superseded version may remain historically terminal even while a newer version continues.
+
+A new Intent version may be created where the Actor changes the request.
+
+No terminal state should silently reopen itself.
 
 ⸻
 
-47. Non-Terminal States
+53. Non-Terminal States
 
-Typical non-terminal states include:
+Typical non-terminal semantic or control states include:
 
 EXPRESSED
 INTERPRETED
+ADMITTED
 GROUNDED
+RESOLVING
 AMBIGUOUS
 CLARIFICATION_REQUIRED
 RESOLVED
 EXECUTABLE
-AUTHORIZED
+TRUST_PENDING
 EXECUTING
+VERIFICATION
+UNKNOWN
 PARTIALLY_COMPLETED
-POLICY_BLOCKED
 
-The exact persistent state model may evolve, but the semantic distinctions should remain.
+The exact persistence model may evolve.
 
-⸻
-
-48. Canonical State Machine
-
-                         ┌──────────────┐
-                         │  AMBIGUOUS   │
-                         └──────┬───────┘
-                                │
-                                ▼
-                     ┌────────────────────┐
-                     │ CLARIFICATION_REQ. │
-                     └─────────┬──────────┘
-                               │
-                               ▼
-┌──────────┐    ┌─────────────┐    ┌───────────┐
-│ EXPRESSED├───►│ INTERPRETED ├───►│ GROUNDED  │
-└──────────┘    └─────────────┘    └─────┬─────┘
-                                         │
-                                         ▼
-                                  ┌────────────┐
-                                  │  RESOLVED  │
-                                  └─────┬──────┘
-                                        │
-                                        ▼
-                                  ┌────────────┐
-                                  │ EXECUTABLE │
-                                  └─────┬──────┘
-                                        │
-                                        ▼
-                                  ┌────────────┐
-                                  │ AUTHORIZED │
-                                  └─────┬──────┘
-                                        │
-                                        ▼
-                                  ┌────────────┐
-                                  │ EXECUTING  │
-                                  └─────┬──────┘
-                                        │
-                         ┌──────────────┼──────────────┐
-                         ▼              ▼              ▼
-                    COMPLETED       FAILED      PARTIAL
-
-With policy and authority branches:
-
-RESOLVED / EXECUTABLE
-        │
-        ├── POLICY_BLOCKED
-        ├── REJECTED
-        └── UNSUPPORTED
+The semantic distinctions must remain explicit.
 
 ⸻
 
-49. Canonical Transition Rules
+54. Canonical State Model
 
-Rule 1 — Every Intent Has Identity
+                         ┌────────────────────┐
+                         │ MATERIAL AMBIGUITY │
+                         └──────────┬─────────┘
+                                    │
+                                    ▼
+                         ┌────────────────────┐
+                         │ CLARIFICATION_REQ. │
+                         └──────────┬─────────┘
+                                    │
+                                    ▼
+                              RESOLVING
+                                    │
+                                    ▼
+┌───────────┐   ┌─────────────┐   ┌───────────┐
+│ EXPRESSED ├─► │ INTERPRETED ├─► │  ADMITTED │
+└───────────┘   └─────────────┘   └─────┬─────┘
+                                        │
+                                        ▼
+                                   GROUNDED
+                                        │
+                                        ▼
+                                   RESOLVED
+                                        │
+                                        ▼
+                                  EXECUTABLE
+                                        │
+                                        ▼
+                                 TRUST_PENDING
+                                        │
+                   ┌────────────────────┼────────────────────┐
+                   ▼                    ▼                    ▼
+                EXECUTE               CLARIFY             ESCALATE
+                   │                    │                    │
+                   ▼                    └──► RESOLVING       │
+               EXECUTING                                      │
+                   │                                          │
+                   ▼                                          │
+              VERIFICATION                                    │
+                   │                                          │
+            ┌──────┼──────┐                                   │
+            ▼      ▼      ▼                                   ▼
+        COMPLETED UNKNOWN FAILED                            REJECTED
+Other lifecycle/control states:
+    INVALID
+    UNSUPPORTED
+    CANCELLED
+    EXPIRED
+    SUPERSEDED
+    PARTIALLY_COMPLETED
 
-State changes do not create a new Intent identity.
+Trust outcomes remain exactly:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+They should not be expanded to include execution outcomes such as SUCCESS or FAILED.
+
+⸻
+
+55. Canonical Transition Rules
+
+Rule 1 — Every Admitted Intent Version Has Identity
+
+State changes do not create a new identity.
+
+Material semantic changes create a new version.
 
 Rule 2 — State Must Be Explicit
 
-Noema must know the current lifecycle state of every active Intent.
+Noema must maintain an explicit lifecycle/control state for every active Intent version.
 
-Rule 3 — Ambiguity Blocks Material Execution
+Rule 3 — Material Ambiguity Blocks Executability
 
-An unresolved material ambiguity must transition into clarification rather than silent guessing.
+An unresolved material ambiguity must not be silently guessed through execution.
 
 Rule 4 — Resolution Precedes Executability
 
-An Intent cannot become Executable while material semantic fields remain unresolved.
+An Intent cannot become Executable Intent while material semantic requirements remain unresolved.
 
 Rule 5 — Executability Does Not Imply Authorization
 
 Capability availability does not grant permission.
 
-Rule 6 — Authorization Precedes Execution
+Rule 6 — Trust Precedes Consequential Execution
 
-Actions requiring Trust must not execute before the applicable Trust decision.
+A consequential Action must not execute unless the applicable Trust decision permits it.
 
-Rule 7 — Action Success Does Not Equal Intent Completion
+Rule 7 — Trust EXECUTE Does Not Mean Success
 
-Completion requires satisfaction of the expected Outcome.
+EXECUTE permits the resolved path to proceed.
 
-Rule 8 — Partial Failure Must Be Representable
+It does not establish an Outcome.
 
-Composite Intents must preserve individual child states.
+Rule 8 — Action Success Does Not Equal Intent Completion
 
-Rule 9 — Terminal States Require Explicit Re-entry
+Completion requires verified satisfaction of the Expected Outcome.
 
-Completed, cancelled, rejected, or expired Intents should not silently resume.
+Rule 9 — Unknown Is Not Failure
 
-Rule 10 — State Transitions Must Be Auditable
+An uncertain external execution state must not be converted into failure without verification.
 
-Material transitions should retain reason and provenance.
+Rule 10 — Partial Completion Must Be Representable
+
+Composite Intents must preserve individual child states and Outcomes.
+
+Rule 11 — Child Authority Is Independent
+
+A child Intent does not inherit authorization merely because its parent or another child was authorized.
+
+Rule 12 — Terminal States Require Explicit Re-entry or New Version
+
+Completed, cancelled, rejected, expired, or superseded Intent versions must not silently resume.
+
+Rule 13 — State Transitions Must Be Auditable
+
+Material transitions should retain reason, provenance, and relevant evidence.
+
+Rule 14 — Business State Remains External Authority
+
+Intent lifecycle state must not replace authoritative enterprise Business State.
 
 ⸻
 
-50. Lifecycle Invariants
-
-Noema should maintain several invariants.
+56. Lifecycle Invariants
 
 Invariant 1
 
@@ -1267,142 +1637,182 @@ is invalid.
 
 Invariant 2
 
-UNRESOLVED → AUTHORIZED
+UNRESOLVED → TRUST EXECUTE
 
 is invalid.
 
 Invariant 3
 
-EXECUTABLE → AUTHORIZED
+EXECUTABLE → TRUST EXECUTE
 
-requires applicable Trust/Policy evaluation.
+requires applicable deterministic Trust evaluation.
 
 Invariant 4
 
-EXECUTING → COMPLETED
+TRUST EXECUTE → CONSEQUENTIAL ACTION
 
-requires Outcome satisfaction.
+requires the relevant execution controls and Action Contract.
 
 Invariant 5
 
-A child Intent cannot inherit authorization merely because its parent was authorized.
+EXECUTING → COMPLETED
+
+requires verified Expected Outcome satisfaction.
 
 Invariant 6
 
-An Intent cannot silently change semantic meaning while retaining the same version.
+UNKNOWN → RETRY
+
+is invalid without the applicable verification and idempotency controls.
+
+Invariant 7
+
+A child Intent cannot inherit Trust authorization from a parent.
+
+Invariant 8
+
+An admitted Intent version cannot silently change semantic meaning.
+
+Invariant 9
+
+Lifecycle state cannot establish Business State.
+
+Invariant 10
+
+A later Intent version cannot retroactively rewrite the semantic meaning of an earlier version.
 
 ⸻
 
-51. Lifecycle and Audit Trail
+57. Lifecycle and Audit Trail
 
 A canonical audit record might look like:
 
-Intent#123
+Intent#123:v1
 09:00  EXPRESSED
-      Source: User
+       Source: User
 09:00  INTERPRETED
-      Objective: TransferFunds
+       Objective: TransferFunds
+09:00  ADMITTED
+       Schema: Valid
 09:01  GROUNDED
-      Destination: Savings#456
+       Destination: Savings#456
 09:01  RESOLVED
-      Evidence: User clarification
+       Evidence: User clarification
 09:01  EXECUTABLE
-      Capability: TransferFunds
-09:01  AUTHORIZED
-      Trust: Permit
+       Required semantics: Complete
+09:01  TRUST
+       Decision: EXECUTE
 09:02  EXECUTING
-      Action: Transfer
+       Action: Transfer
+09:02  VERIFICATION
+       Evidence: Ledger reconciliation
 09:02  COMPLETED
-      Outcome: FundsTransferred
+       Outcome: FundsTransferred
 
-This provides a complete semantic history.
+This provides a causal semantic history from expression through verified Outcome.
 
 ⸻
 
-52. Lifecycle and Observability
+58. Lifecycle and Observability
 
-The lifecycle gives Noema a common vocabulary for operational metrics.
+The lifecycle provides Noema with a common vocabulary for operational metrics.
 
-Examples:
+Examples include:
 
 clarification_rate
 resolution_latency
-authorization_latency
+trust_latency
 execution_latency
+verification_latency
 completion_rate
 failure_rate
-policy_block_rate
+escalation_rate
+rejection_rate
 average_retries
 partial_completion_rate
+unknown_rate
 
-These metrics can reveal where the system is failing:
+These metrics help identify where the system is failing:
 
 Interpretation
 Resolution
 Trust
 Execution
+Verification
 Outcome
 
-rather than treating everything as “agent failure.”
+rather than treating every failure as generic “agent failure.”
 
 ⸻
 
-53. Lifecycle and Human Experience
+59. Lifecycle and Human Experience
 
-The lifecycle should also determine what the Actor sees.
+The lifecycle should determine what the Actor sees without exposing internal implementation details.
 
-For example:
+Examples:
 
-AMBIGUOUS
+CLARIFICATION_REQUIRED
 → "Which account do you mean?"
-POLICY_BLOCKED
-→ "This requires manager approval."
+TRUST / ESCALATE
+→ "This requires additional review."
 EXECUTING
 → "I'm processing that now."
 COMPLETED
 → "Your card has been renewed."
 FAILED
 → "The renewal could not be completed because the card provider is unavailable."
+UNKNOWN
+→ "I can't yet confirm the final status. I'm checking the transaction state."
 
-The user-facing experience is therefore a projection of the underlying Intent State.
+The user-facing experience is therefore a projection of relevant Intent and execution state.
+
+The interface should communicate material state without exposing private Model reasoning.
 
 ⸻
 
-54. Lifecycle and Noema’s Core Thesis
+60. Lifecycle and Noema’s Core Thesis
 
 The lifecycle reinforces one of Noema’s central architectural claims:
 
-Noema owns Intent State, not Business State.
+Noema owns Intent State.
+Enterprise systems own Business State.
 
 Noema is responsible for knowing:
 
-what was requested
-what was understood
-what remains ambiguous
-what was clarified
-what is executable
-what was authorized
-what was attempted
-what Outcome was observed
+* what was expressed
+* what was interpreted
+* what was admitted
+* what was grounded
+* what remains ambiguous
+* what was clarified
+* what was resolved
+* what became Executable Intent
+* what Trust decided
+* what Actions were attempted
+* what was verified
+* what Outcome was established
 
-The external system remains authoritative for:
+The enterprise remains authoritative for:
 
-accounts
-payments
-cards
-customers
-orders
-inventory
+* accounts
+* payments
+* cards
+* customers
+* orders
+* inventory
+* balances
+* ledgers
+* transaction state
 
 and other business-domain State.
 
 ⸻
 
-55. Final Lifecycle Model
+61. Final Lifecycle Model
 
 The canonical conceptual model is:
 
-                    HUMAN EXPRESSION
+                    ACTOR EXPRESSION
                            │
                            ▼
                        EXPRESSED
@@ -1411,44 +1821,63 @@ The canonical conceptual model is:
                       INTERPRETED
                            │
                            ▼
-                       GROUNDED
+                       ADMITTED
+                           │
+                           ▼
+                  GROUNDED / RESOLVING
                            │
                     ┌──────┴──────┐
                     │             │
                     ▼             ▼
-                AMBIGUOUS       RESOLVED
+                AMBIGUOUS      RESOLVED
                     │             │
                     ▼             ▼
-              CLARIFICATION   EXECUTABLE
+        CLARIFICATION_REQUIRED  EXECUTABLE
                     │             │
                     └──────┬──────┘
                            │
                            ▼
-                      AUTHORIZED
+                     TRUST PENDING
                            │
-                           ▼
-                       EXECUTING
-                           │
-                 ┌─────────┼─────────┐
-                 ▼         ▼         ▼
-             COMPLETED   FAILED   PARTIAL
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+           EXECUTE       CLARIFY     ESCALATE
+              │            │            │
+              ▼            │            │
+          EXECUTING        │            │
+              │            │            │
+              ▼            │            ▼
+         VERIFICATION      │         REJECT
+              │            │
+        ┌─────┼─────┐      │
+        ▼     ▼     ▼      │
+    COMPLETED UNKNOWN FAILED
 
-With terminal alternatives:
+With independent control and terminal states:
 
 INVALID
 UNSUPPORTED
-REJECTED
-POLICY_BLOCKED
 CANCELLED
 EXPIRED
 SUPERSEDED
+PARTIALLY_COMPLETED
+
+The lifecycle is not merely a pipeline.
+
+It is a governed state machine connecting semantic interpretation, resolution, Trust, bounded execution, verification, and Outcome.
 
 ⸻
 
-56. Final Definition
+62. Final Definition
 
-The Intent Lifecycle is the canonical state machine governing an Intent from human expression through interpretation, grounding, resolution, authorization, execution, and verified Outcome, while explicitly representing ambiguity, clarification, rejection, failure, cancellation, expiration, and partial completion.
+The Intent Lifecycle is the canonical state machine governing an Intent from Actor expression through interpretation, admission, grounding, resolution, Executable Intent, Trust evaluation, bounded execution, verification, and Outcome, while explicitly representing ambiguity, clarification, rejection, escalation, failure, uncertainty, cancellation, expiration, supersession, and partial completion.
 
 The shortest canonical formulation is:
 
-An Intent is not merely received and executed; it progresses through a governed semantic lifecycle whose state determines what Noema knows, what remains unresolved, what may happen next, and whether the Actor’s intended Outcome has actually been achieved.
+An Intent is not merely received and executed.
+It progresses through a governed semantic lifecycle
+whose state records what Noema has established,
+what remains unresolved, what may happen next,
+what Trust permits, what execution has established,
+and whether the Actor's intended Outcome
+has actually been achieved.

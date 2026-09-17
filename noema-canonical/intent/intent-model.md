@@ -9,18 +9,19 @@ Canonical Path: intent/intent-model.md
 
 1. Definition
 
-The Intent Model is Noema’s canonical structural model for representing an Actor’s intended Outcome as a typed, contextual, constrained, and resolvable semantic object.
+The Intent Model is Noema’s canonical structural model for representing an Actor’s intended objective as a typed, contextual, constrained, versioned, and resolvable semantic object.
 
-The Intent Model defines what an Intent contains.
+The Intent Model defines what an Intent contains and how its semantic components relate.
 
 It does not define:
 
 * how natural language is interpreted — see intent-language.md
+* how ambiguity is identified — see intent-ambiguity.md
 * how ambiguity is resolved — see intent-ambiguity.md
 * how clarification occurs — see clarification.md
 * how confidence is evaluated — see confidence.md
 * how an Intent progresses through time — see intent-lifecycle.md
-* how execution is performed — see the Action and Capability ontology
+* how execution is planned or performed — see the Action, Capability, Execution, and Action Contract specifications
 
 The Intent Model is the structural foundation connecting these systems.
 
@@ -28,38 +29,43 @@ The Intent Model is the structural foundation connecting these systems.
 
 2. The Core Idea
 
-Noema must not represent an Intent as:
+Noema must not represent an Intent only as:
 
 "Renew my card"
 
-or merely as:
+or as an implementation-level operation such as:
 
 RenewCard(Card#123)
 
-That representation loses information that may be necessary for Trust, clarification, execution, and Outcome verification.
+That representation may omit information required for resolution, Trust evaluation, execution, and Outcome verification.
 
-The canonical model is closer to:
+The canonical semantic object is closer to:
 
 Intent
 ├── Identity
+├── Version
+├── Source
 ├── Actor
 ├── Objective
 ├── Resources
+├── Entities
+├── Parameters
+├── Scope
 ├── Context
 ├── Constraints
 ├── Preferences
 ├── Expected Outcome
 ├── Relationships
 ├── Provenance
-└── Lifecycle State
+└── Lifecycle Reference
 
-The exact implementation may evolve.
+The exact implementation and serialization may evolve.
 
-The semantic structure must remain stable.
+The semantic structure and its invariants must remain stable.
 
 ⸻
 
-3. Intent as a Semantic Object
+3. Intent as a First-Class Semantic Object
 
 An Intent is a first-class object in Noema.
 
@@ -67,36 +73,177 @@ Conceptually:
 
 Intent {
     identity
+    version
+    source
     actor
     objective
     resources
+    entities
+    parameters
+    scope
     context
     constraints
     preferences
-    outcome
+    expected_outcome
     relationships
     provenance
-    state
+    lifecycle_reference
 }
 
-This means an Intent can be:
+An Intent is not merely a message, prompt, API call, or execution command.
 
-created
-updated
-clarified
-resolved
-authorized
-executed
-observed
-completed
-rejected
-cancelled
+Its semantic identity persists across resolution, clarification, Trust evaluation, execution, verification, and Outcome establishment.
 
-without losing its identity.
+Historical admitted versions are immutable.
+
+A material semantic change produces a new Intent version rather than silently mutating the historical object.
 
 ⸻
 
-4. Intent Is Not an Action
+4. Intent Identity and Intent Version Are Distinct
+
+Noema must distinguish:
+
+Intent Identity
+
+from:
+
+Intent Version
+
+Conceptually:
+
+Intent#123:v1
+Intent#123:v2
+Intent#123:v3
+
+The Intent identity correlates the semantic object across its lifecycle.
+
+The version identifies a specific immutable semantic representation.
+
+A material clarification, modification, or other semantic change creates a new version with an explicit relationship such as:
+
+v2.supersedes = v1
+
+No historical Intent version is silently rewritten.
+
+This preserves causal auditability and prevents semantic drift.
+
+⸻
+
+5. Source of Intent
+
+Every Intent has a Source of Intent.
+
+The Source identifies where the expression or event giving rise to the Intent originated.
+
+Examples include:
+
+Human
+Agent
+System
+Workflow
+API/Application
+Enterprise Event
+
+Source and Actor are distinct.
+
+For example:
+
+Source:
+Customer-facing application
+Actor:
+User#123
+
+or:
+
+Source:
+Enterprise workflow
+Actor:
+Organization#456
+
+An originating event or system does not automatically establish authorization to perform an Action.
+
+Source establishes provenance and origin, not authority.
+
+⸻
+
+6. Actor
+
+Every Intent must identify an Actor where the Intent semantics require one, or use an explicitly defined system-level origin where the ontology permits it.
+
+The Actor answers:
+
+Who intends the Outcome?
+
+Examples include:
+
+User#123
+Organization#456
+System#789
+Agent#321
+AuthorizedDelegate#555
+
+Actor identity may affect:
+
+* authority
+* permissions
+* applicable policy
+* available Resources
+* contextual defaults
+* execution scope
+
+Actor resolution and authority are separate concerns.
+
+No inference may manufacture identity or authority that has not been established by an authoritative source.
+
+⸻
+
+7. Objective
+
+The Objective represents the central semantic goal of the Intent.
+
+Examples include:
+
+RenewCard
+CancelSubscription
+TransferFunds
+CreateProject
+UpdateAddress
+NotifyCustomer
+
+Where a corresponding canonical concept exists, the Objective should reference that canonical concept.
+
+It should not be an arbitrary model-generated phrase treated as authoritative merely because it is syntactically valid.
+
+The Objective describes what the Actor wants accomplished.
+
+It does not specify the implementation strategy.
+
+⸻
+
+8. Objective vs Natural-Language Expression
+
+Natural language is an expression of meaning.
+
+The Intent Model represents the resulting semantic structure.
+
+For example:
+
+Expression:
+"Can you get my account working again?"
+
+may produce a candidate representation:
+
+Objective:
+RestoreAccountAccess
+
+The original expression remains available through provenance.
+
+The canonical semantic object should preserve the material semantic commitments established by the expression and available evidence without fabricating unsupported meaning.
+
+⸻
+
+9. Intent Is Not an Action
 
 This distinction is foundational.
 
@@ -117,238 +264,226 @@ Possible Actions:
 ├── RenewCard
 └── ReplaceCard
 
-The Intent remains stable even if the Action strategy changes.
+The Intent can remain semantically stable even when the execution strategy changes.
+
+An Intent may reference an Action candidate or eventually produce one or more Actions, but an Intent is not itself an Action.
 
 ⸻
 
-5. Intent Is Not an Outcome
+10. Intent Is Not a Capability
 
-An Intent describes the Actor’s desired objective.
+A Capability represents a bounded operation the system is able to perform.
 
-An Outcome describes the resulting condition.
+An Intent represents the Actor’s desired objective.
 
-Example:
+For example:
 
 Intent:
-RenewCard
-Expected Outcome:
-Card is active and usable
+RestoreAccountAccess
+Possible Capabilities:
+├── VerifyIdentity
+├── ResetPassword
+└── InvalidateSessions
+
+Capability availability does not establish:
+
+* permission
+* authorization
+* policy compliance
+* current applicability
+* Trust
+* execution success
+
+The Intent Model therefore remains capability-agnostic.
+
+⸻
+
+11. Intent Is Not an Outcome
+
+An Intent describes the desired objective.
+
+An Expected Outcome describes the condition that would constitute satisfaction of that objective.
+
+An Actual Outcome describes what verification establishes after execution.
 
 Therefore:
 
-Intent → seeks Outcome
+Intent
+   ↓
+Expected Outcome
+   ↓
+Execution
+   ↓
+Observed Evidence
+   ↓
+Actual Outcome
 
-rather than:
-
-Intent = Outcome
+Intent and Outcome must not be collapsed into one object or state.
 
 ⸻
 
-6. Intent Is Not Business State
+12. Intent Is Not Business State
 
-Noema owns Intent State.
+Noema owns Intent semantics and Intent lifecycle information.
 
-The domain system owns Business State.
+The relevant enterprise system remains the source of truth for Business State.
 
 Example:
 
 Intent:
 RenewCard(Card#123)
-Intent State:
-EXECUTING
-Card State:
-EXPIRED
+Intent lifecycle:
+EXECUTABLE
+Enterprise Business State:
+Card#123 = EXPIRED
 
 Later:
 
-Intent State:
-COMPLETED
-Card State:
-ACTIVE
+Intent lifecycle:
+OUTCOME_PENDING
+Enterprise Business State:
+Card#123 = ACTIVE
 
-Noema observes the Card State to determine whether the expected Outcome has been achieved.
+Noema uses authoritative enterprise state and verification evidence to establish whether the Expected Outcome has been achieved.
 
-⸻
-
-7. Intent Identity
-
-Every Intent must have a stable identity.
-
-Conceptually:
-
-IntentID
-
-Example:
-
-Intent#7f31
-
-Identity allows Noema to correlate:
-
-conversation
-clarifications
-state transitions
-Actions
-authorization decisions
-execution attempts
-Outcomes
-audit events
-
-with the same semantic Intent.
+Noema does not become the source of truth for the Card’s domain state merely by representing or observing it.
 
 ⸻
 
-8. Intent Version
+13. Resources
 
-An Intent may change over time.
+Resources identify domain objects materially affected by, referenced by, or required to satisfy an Intent.
 
-Therefore the model should distinguish:
+Examples include:
 
-Intent Identity
-
-from:
-
-Intent Version
-
-Example:
-
-Intent#123:v1
-Intent#123:v2
-Intent#123:v3
-
-If the Actor says:
-
-“Actually, make that tomorrow.”
-
-the Intent may become:
-
-Intent#123:v2
-
-rather than silently mutating historical state.
-
-⸻
-
-9. Actor
-
-Every Intent has an Actor.
-
-Intent
-└── Actor
-
-The Actor answers:
-
-Who intends this Outcome?
-
-Example:
-
-Actor:
-User#123
-
-The Actor may be:
-
-human
-organization
-system
-agent
-authorized delegate
-
-depending on the domain.
-
-Actor identity may influence:
-
-authority
-permissions
-preferences
-Policy
-available Resources
-
-⸻
-
-10. Objective
-
-The Objective represents the central semantic goal.
-
-Examples:
-
-RenewCard
-CancelSubscription
-TransferFunds
-CreateProject
-UpdateAddress
-NotifyCustomer
-
-The Objective should come from the canonical ontology wherever a corresponding concept exists.
-
-It should not be an arbitrary Model-generated phrase.
-
-⸻
-
-11. Objective vs Natural-Language Expression
-
-Consider:
-
-“Can you get my account working again?”
-
-The expression is linguistic.
-
-The Objective might resolve to:
-
-RestoreAccountAccess
-
-The original wording should remain available through provenance, but the canonical Intent should use the semantic concept.
-
-⸻
-
-12. Resources
-
-Resources identify the domain objects affected by the Intent.
-
-Example:
-
-Intent:
-RenewCard
-Resource:
 Card#123
+Account#456
+Payment#789
+Project#321
+Invoice#555
 
-Resources may include:
+Resources may have semantic roles such as:
 
-primary resource
-source resource
-destination resource
-related resources
-collection resources
+primary
+source
+destination
+subject
+related
+collection
 
-The exact roles depend on the Intent.
+The exact roles depend on the Intent type.
+
+Material Resources must be resolved and grounded before an Intent can become Executable.
 
 ⸻
 
-13. Entity References
+14. Resource Roles
+
+A Resource is not merely an identifier.
+
+Its role within an Intent must be explicit where role affects semantics.
+
+For example:
+
+TransferFunds
+├── source      = Account#1
+├── destination = Account#2
+└── amount      = 500 USD
+
+Swapping the source and destination changes the meaning materially.
+
+Resource role is therefore part of the semantic representation and must not be inferred downstream from implementation conventions.
+
+⸻
+
+15. Entity References
 
 An Intent may reference Entities that are not themselves the primary Resource.
 
 Example:
 
-“Send the invoice to Sarah.”
+"Send the invoice to Sarah."
+
+Conceptually:
 
 Resource:
 Invoice#123
 Entity:
 Sarah#456
 
-The distinction matters because:
+An Entity may represent:
 
-Resource
+* participant
+* recipient
+* owner
+* destination
+* reference
+* organization
+* related semantic object
 
-is an object being operated upon, while:
-
-Entity
-
-may be a participant, reference, destination, owner, recipient, or other semantic object.
+The distinction between Resource and Entity is semantic rather than merely technical.
 
 ⸻
 
-14. Context
+16. Parameters
 
-Context contains information required to interpret the Intent correctly.
+Parameters contain typed values required to express the semantics of an Intent.
+
+Examples include:
+
+amount = 500 USD
+quantity = 3
+deadline = 2026-08-30T17:00
+duration = 30 days
+
+Parameters must retain semantic type information.
+
+A parameter is not merely an arbitrary string extracted from language.
+
+Parameter requirements are determined by the canonical Intent type and applicable domain semantics.
+
+⸻
+
+17. Scope
+
+Scope determines the extent of an Intent.
+
+Examples include:
+
+single resource
+specific collection
+all matching resources
+specific organizational scope
+specific geographic scope
+
+Scope must be explicit when it materially affects meaning.
+
+For example:
+
+"Delete this project."
+
+is materially different from:
+
+"Delete all inactive projects."
+
+Scope must never be expanded through an implicit assumption merely because a broader operation is technically available.
+
+⸻
+
+18. Context
+
+Context contains information relevant to interpreting or resolving an Intent.
+
+Examples include:
+
+* conversation context
+* session context
+* temporal context
+* domain context
+* Actor context
+* environment context
+* system context
+* validated enterprise observations
 
 Example:
 
@@ -357,25 +492,17 @@ Conversation:
 Follow-up:
 "Add Sarah to it."
 
-The second Intent can resolve:
+The second Intent may use conversational Context to resolve:
 
 project = Noema
 
-through conversational Context.
+Context can help establish semantic references, but Context is not inherently authoritative.
 
-Context may include:
-
-conversation context
-session context
-environment context
-temporal context
-domain context
-Actor context
-system context
+Its scope, freshness, authority, and Fact Status must be assessed where material.
 
 ⸻
 
-15. Context Is Not Intent
+19. Context Is Not Intent
 
 Context helps determine what an Intent means.
 
@@ -388,408 +515,429 @@ CurrentWorkspace = Engineering
 Intent:
 CreateProject("Noema")
 
-The workspace grounds the Intent but is not necessarily the Objective.
+The workspace may ground the Intent without becoming its Objective or being treated as an explicit Actor constraint.
+
+Context should not silently introduce material requirements that the Actor did not express or that authoritative evidence does not establish.
 
 ⸻
 
-16. Constraints
+20. Constraints
 
-Constraints define boundaries the resulting execution must respect.
+Constraints define semantic boundaries that the resulting execution must respect.
 
 Example:
 
-“Transfer $500 to savings, but don’t use my emergency account.”
+"Transfer $500 to savings, but don't use my emergency account."
 
-Intent:
+Conceptually:
+
+Objective:
 TransferFunds
-Amount:
-$500
-Destination:
-Savings
+Parameters:
+amount = 500 USD
+Resources:
+destination = Savings
 Constraint:
-Source != EmergencyAccount
+source != EmergencyAccount
 
-Constraints are semantically significant.
+Constraints are part of the Intent’s semantic commitments.
 
-They must not be discarded during planning.
+They must survive resolution, planning, and execution.
+
+No planner or Action selection mechanism may silently discard them.
 
 ⸻
 
-17. Preferences
+21. Preferences
 
 Preferences express desirable properties that may be relaxed under defined conditions.
 
 Example:
 
-“I’d prefer the cheapest flight.”
-
+"I'd prefer the cheapest flight."
 Preference:
 MinimizePrice
 
 Compare:
 
-“The flight must cost less than $500.”
-
+"The flight must cost less than $500."
 Constraint:
-Price <= $500
+Price <= 500 USD
 
-Noema must preserve this distinction.
+Preferences can influence planning or selection where the system is permitted to optimize.
+
+They cannot override:
+
+* hard constraints
+* policy
+* authority
+* Trust conditions
+* explicit prohibitions
 
 ⸻
 
-18. Constraints vs Preferences
+22. Constraints vs Preferences
 
-A useful conceptual hierarchy is:
+The distinction is semantic:
 
-Hard Constraint
-    ↓
-Must be satisfied
-Soft Constraint / Preference
-    ↓
-Should be satisfied where possible
+Constraint
+    =
+condition that must be satisfied
+Preference
+    =
+desirable property to optimize or preserve where possible
 
 The system must not convert a Preference into a mandatory Constraint without justification.
 
 Likewise, it must not weaken an explicit Constraint into a Preference.
 
+Where an Intent type supports priority among preferences, that priority must be explicitly represented or deterministically established.
+
 ⸻
 
-19. Expected Outcome
+23. Expected Outcome
 
-The Expected Outcome describes what the Actor expects to be true after successful satisfaction.
+The Expected Outcome describes the condition the Actor expects after successful satisfaction of the Intent.
 
 Example:
 
 Intent:
 RenewCard
 Expected Outcome:
-Card.State = Active
+Card#123.state = ACTIVE
 
-The Outcome provides the semantic completion criterion.
+The Expected Outcome provides a semantic target for verification.
+
+It does not assert that the condition is already true.
+
+It does not guarantee that execution will succeed.
 
 ⸻
 
-20. Outcome Verification
+24. Expected Outcome vs Actual Outcome
 
-Noema should distinguish:
+Noema must distinguish:
 
 Expected Outcome
 
 from:
 
-Observed Outcome
+Actual Outcome
 
 Example:
 
 Expected:
-Card.State = Active
+Card#123.state = ACTIVE
 Observed:
-Card.State = Active
+Card#123.state = ACTIVE
 
-Only after appropriate verification should the Intent become:
+The Actual Outcome is established from appropriate verification evidence.
 
-COMPLETED
+A Trust decision of EXECUTE does not establish an Outcome.
+
+Execution must occur, and verification must establish what actually happened.
 
 ⸻
 
-21. Provenance
+25. Provenance
 
-Every significant component of an Intent should have provenance where practical.
+Significant Intent components should carry provenance where practical.
 
 Example:
 
 Resource:
 Card#123
 Provenance:
-Actor expression:
+Expression:
 "the card I used yesterday"
 Evidence:
 Transaction#789
 
-Provenance allows Noema to answer:
+Provenance allows Noema to answer questions such as:
 
-Why does Noema believe this is what the Actor meant?
+Why was this Resource selected?
+Which evidence supported this interpretation?
+Which Intent version introduced this value?
+What changed during clarification?
+
+Provenance supports causal auditability.
+
+It is not a substitute for authoritative state or authorization.
 
 ⸻
 
-22. Explicit vs Inferred Values
+26. Explicit vs Inferred Values
 
-The Intent Model should distinguish between information:
+The Intent Model should distinguish information that was:
 
-explicitly provided
+explicitly expressed
 
-and information:
+from information that was:
 
-inferred from Context or evidence
+inferred, grounded, or resolved from Context and evidence
 
 Example:
 
-“Renew my card.”
+"Renew my card."
 
 Explicit:
 
 Objective = RenewCard
 
-Potentially inferred:
+Potentially resolved:
 
 Resource = Card#123
 
-if the Actor has only one eligible card.
+if authoritative enterprise state establishes that only one eligible card satisfies the reference.
 
-This distinction becomes important for Trust and clarification.
+The distinction is important for clarification, Trust, provenance, and auditability.
+
+An inferred value is not authoritative merely because a model inferred it confidently.
 
 ⸻
 
-23. Confidence Is Metadata
+27. Evidence, Fact Status, and Confidence
 
-Confidence should not redefine the Intent.
+Evidence, Fact Status, and Confidence are distinct.
 
-Conceptually:
+Evidence answers:
+
+What supports this claim?
+
+Fact Status describes the epistemic status of the relevant claim.
+
+Canonical Fact Status values include:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Confidence answers:
+
+How strongly does a particular interpretation or claim appear supported?
+
+Confidence is not authorization, Trust, or Fact Status.
+
+A model may have high confidence in a candidate interpretation while the underlying claim remains UNVERIFIED or CONFLICTED.
+
+⸻
+
+28. Intent State
+
+Intent lifecycle information is associated with the Intent but is governed by intent-lifecycle.md.
+
+The Intent Model must not redefine lifecycle semantics.
+
+For example:
 
 Intent:
 RenewCard(Card#123)
-Confidence:
-0.96
+Lifecycle:
+EXECUTABLE
 
-The confidence value describes the interpretation process.
+The lifecycle may subsequently progress through Trust evaluation, execution, verification, and Outcome establishment.
 
-It is not itself a semantic component of:
-
-RenewCard(Card#123)
-
-See confidence.md.
+Trust decisions and execution states must not be collapsed into the semantic structure of the Intent itself.
 
 ⸻
 
-24. Intent State
+29. Semantic Resolution
 
-The Intent Model includes lifecycle state as metadata about the Intent.
+An Intent is semantically resolved when the information necessary to establish its material meaning has been determined sufficiently for downstream deterministic evaluation.
+
+Resolution may require:
+
+* Resource grounding
+* Entity resolution
+* Context resolution
+* State Reconciliation
+* constraint resolution
+* temporal resolution
+* scope resolution
+* reference resolution
+* deterministic domain rules
+
+Resolution is not the same as execution.
+
+Resolution is also not the same as authorization.
+
+⸻
+
+30. Material Ambiguity
+
+The Intent Model must be capable of representing unresolved alternatives without forcing an arbitrary choice.
 
 Example:
 
 Intent:
-RenewCard(Card#123)
-State:
-RESOLVED
+RenewCard
+Resource Candidates:
+├── Card#456
+└── Card#789
 
-State is defined by intent-lifecycle.md.
+If the distinction is materially relevant, the Intent remains unresolved with respect to that semantic dimension.
 
-The model should reference the lifecycle rather than redefine it.
+intent-ambiguity.md determines when such a distinction constitutes material ambiguity and when clarification is required.
+
+The model must not collapse multiple materially valid interpretations merely to produce a single executable object.
 
 ⸻
 
-25. Relationships
+31. Required vs Unknown vs Not Applicable
 
-Intent components may have semantic relationships.
+The model must distinguish:
+
+known
+unknown
+not applicable
+ambiguous
 
 Example:
 
-TransferFunds
-    PRECEDES
-CloseAccount
+destination:
+UNKNOWN
 
-or:
+is different from:
 
-NotifyCustomer
-    DEPENDS_ON
-RefundPayment
+destination:
+NOT_APPLICABLE
 
-Relationships become especially important for Composite Intents.
+and different from:
 
-⸻
+destination:
+AMBIGUOUS
 
-26. Composite Intents
+These states have different semantic consequences.
 
-An Intent may contain multiple constituent Intents.
-
-Example:
-
-“Transfer my remaining balance and close the account.”
-
-Intent#123
-├── TransferBalance
-└── CloseAccount
-
-The parent is a Composite Intent.
-
-Each child retains its own semantic identity.
+Missing information must not be silently converted into irrelevance.
 
 ⸻
 
-27. Composite Intent Structure
+32. Semantic Completeness
 
-Conceptually:
+An Intent is semantically complete when all information required to establish its material meaning is available.
 
-CompositeIntent {
-    identity
-    actor
-    intents[]
-    relationships[]
-    constraints[]
-    expected_outcome
-}
+This does not mean every possible field must be populated.
 
-Example:
+For example:
 
-CompositeIntent:
-CloseAccount
-Children:
-├── TransferBalance
-└── CloseAccount
-Relationship:
-TransferBalance PRECEDES CloseAccount
+CreateProject("Noema")
+
+may not require:
+
+description
+logo
+billing_plan
+
+if those fields are optional for the relevant Intent type.
+
+Semantic completeness is therefore determined by the canonical Intent schema and applicable domain semantics, not by a universal requirement that every field be populated.
 
 ⸻
 
-28. Conditional Intents
+33. Defaults
 
-An Intent may be conditional.
+Defaults may resolve non-material omissions when they are:
 
-Example:
+* explicitly defined
+* deterministic
+* domain-valid
+* within scope
+* policy-compatible
+* non-material to the Actor’s objective
 
-“If the payment fails, retry it.”
+Defaults must not:
 
-Conceptually:
+* invent material intent
+* expand scope
+* manufacture authority
+* select among materially ambiguous alternatives
+* override explicit constraints
 
-ConditionalIntent {
-    condition:
-        Payment.Failed
-    intent:
-        RetryPayment
-}
-
-The condition must remain explicit.
-
-⸻
-
-29. Alternative Intents
-
-An Actor may explicitly allow alternatives.
-
-Example:
-
-“Either renew my card or replace it.”
-
-AlternativeIntent
-├── RenewCard
-└── ReplaceCard
-
-The alternatives represent mutually acceptable ways of satisfying the Actor’s objective.
-
-Noema must not automatically execute both.
+A default that changes the semantic meaning of the Intent is not a valid silent default.
 
 ⸻
 
-30. Negated Intent and Prohibition
+34. Temporal Semantics
 
-The Intent Model must support negative semantic constraints.
-
-Example:
-
-“Don’t use my emergency account.”
-
-Constraint:
-Source != EmergencyAccount
-
-Negation should not be represented merely as absent data.
-
-It must be explicit where it materially constrains execution.
-
-⸻
-
-31. Quantification
-
-The model must support scope and quantity.
-
-Example:
-
-“Delete all inactive projects.”
-
-Objective:
-DeleteProject
-Scope:
-All
-Filter:
-State = Inactive
-
-Compare:
-
-“Delete this project.”
-
-Scope:
-Single
-Resource:
-Project#123
-
-This distinction is critical for preventing unintended scope expansion.
-
-⸻
-
-32. Temporal Semantics
-
-An Intent may contain temporal information.
-
-Examples:
+An Intent may contain temporal semantics such as:
 
 Date:
 2026-08-28
 Deadline:
-2026-08-30
+2026-08-30T17:00
 Before:
 17:00
 Recurring:
 Every Monday
 
-Temporal information belongs in the Intent where it affects the Actor’s desired Outcome or execution constraints.
+Temporal information belongs in the semantic representation when it affects:
+
+* the desired Outcome
+* execution constraints
+* scope
+* validity
+* ordering
+* conditions
+
+Temporal interpretation must be explicit enough for deterministic downstream evaluation where material.
 
 ⸻
 
-33. Location Semantics
+35. Location Semantics
 
-Where relevant, Intent may contain geographic or logical location.
+Where relevant, an Intent may contain geographic or logical location.
 
 Example:
 
-“Find me a hotel near the conference venue.”
+"Find me a hotel near the conference venue."
+
+Conceptually:
 
 Objective:
 FindHotel
 Context:
 ConferenceVenue = X
 Constraint:
-Distance <= 2km
+Distance <= 2 km
 
-Location should be represented semantically rather than retained only as raw language.
+Location references must be grounded where they materially affect execution or Outcome.
+
+A location inferred from Context remains subject to the same evidence and resolution requirements as other material references.
 
 ⸻
 
-34. Numeric and Scalar Values
+36. Numeric and Scalar Values
 
-Values should be typed.
+Values must retain semantic types.
 
 Instead of:
 
 amount = "500"
 
-the semantic model should distinguish:
+the semantic representation should preserve:
 
 amount:
     value = 500
     currency = USD
 
-Similarly:
+Likewise, the model may need typed representations for:
 
-duration
-distance
-percentage
-quantity
-timestamp
+* duration
+* distance
+* percentage
+* quantity
+* timestamp
+* rate
+* count
 
-should retain their semantic types.
+Units and domains must not be discarded where they materially affect meaning.
 
 ⸻
 
-35. Optionality
+37. Optionality
 
 Not every field is required for every Intent.
 
@@ -816,107 +964,220 @@ Message
 
 The required structure is determined by the canonical Intent type and its domain definition.
 
+The Intent Model therefore defines a common structural foundation rather than requiring one universal field set for every Intent.
+
 ⸻
 
-36. Required vs Unknown
+38. Conditional Semantics
 
-The model must distinguish:
-
-known
-
-from:
-
-unknown
-
-and:
-
-not applicable
+An Intent may contain explicit conditional semantics.
 
 Example:
 
-destination:
-UNKNOWN
+"If the payment fails, retry it."
 
-is different from:
+Conceptually:
 
-destination:
-NOT_APPLICABLE
-
-This prevents missing information from being silently interpreted as irrelevant information.
-
-⸻
-
-37. Null Is Not Ambiguity
-
-An absent field does not necessarily mean ambiguity.
-
-For example:
-
-flight_number:
-NOT_APPLICABLE
-
-is different from:
-
-flight_number:
-UNKNOWN
-
-and different again from:
-
-flight_number:
-AMBIGUOUS
-
-The Intent Model should preserve these semantic distinctions.
-
-⸻
-
-38. Semantic Completeness
-
-An Intent is semantically complete when all information necessary to determine its meaning is available.
-
-This does not necessarily mean every possible field is populated.
-
-For example:
-
+Condition:
+Payment.Failed
 Intent:
-CreateProject("Noema")
+RetryPayment
 
-may not require:
+The condition must remain explicit.
 
-description
-logo
-billing_plan
+The model or planner must not invent conditional relationships that materially alter the Actor’s intent.
 
-if those are optional.
-
-Semantic completeness is therefore determined by the Intent’s schema and domain semantics.
+Conditions are semantic relationships, not workflow implementation instructions.
 
 ⸻
 
-39. Executability
+39. Alternative Semantics
 
-An Intent becomes executable when:
+An Actor may explicitly allow alternatives.
 
-meaning is resolved
-+
-required Resources are grounded
-+
-required Constraints are known
-+
-appropriate Capability exists
-+
-execution prerequisites are satisfied
+Example:
 
-But:
+"Either renew my card or replace it."
 
-Executable ≠ Authorized
+Conceptually:
 
-Authorization remains a separate Trust decision.
+Alternative:
+├── RenewCard
+└── ReplaceCard
+
+The alternatives represent mutually acceptable semantic paths for satisfying the stated objective.
+
+Alternatives do not imply that all alternatives should execute.
+
+Selection among alternatives must respect:
+
+* Intent semantics
+* Constraints
+* Policy
+* Authority
+* Trust
+* available capabilities
+* current state
 
 ⸻
 
-40. Capability Binding
+40. Negation and Prohibition
 
-An Intent may be associated with one or more Capabilities capable of satisfying it.
+Negative requirements must be represented explicitly when they materially constrain execution.
+
+Example:
+
+"Don't use my emergency account."
+
+Conceptually:
+
+Constraint:
+source != EmergencyAccount
+
+Negation should not be represented merely through absent data.
+
+The specific representation of prohibitions depends on the canonical constraint and ontology model.
+
+A negative constraint is not an instruction to bypass the prohibited condition through another interpretation.
+
+⸻
+
+41. Quantification
+
+The model must support scope and quantity.
+
+Example:
+
+"Delete all inactive projects."
+
+Conceptually:
+
+Objective:
+DeleteProject
+Scope:
+ALL
+Filter:
+State = INACTIVE
+
+Compare:
+
+"Delete this project."
+
+Conceptually:
+
+Scope:
+SINGLE
+Resource:
+Project#123
+
+Quantification must be explicit where it materially affects the set of Resources affected.
+
+Noema must not infer broad quantification from a singular expression.
+
+⸻
+
+42. Relationships
+
+Intent components may have explicit semantic relationships.
+
+Examples include:
+
+PRECEDES
+DEPENDS_ON
+CONDITIONAL_ON
+ALTERNATIVE_TO
+
+A relationship is meaningful only where its semantics are defined by the relevant ontology or Intent type.
+
+Natural-language ordering words such as “then” are evidence for a relationship, not by themselves proof of an execution workflow.
+
+Semantic relationships must not be confused with the Enterprise Action Graph.
+
+The Intent Model represents semantic relationships.
+
+The Planner maps resolved semantic requirements into bounded Actions and the Enterprise Action Graph.
+
+⸻
+
+43. Composite Intents
+
+An Intent may contain or reference multiple constituent Intents.
+
+Example:
+
+"Transfer my remaining balance and close the account."
+
+Conceptually:
+
+Composite Intent#123
+├── Intent#124:v1 TransferBalance
+└── Intent#125:v1 CloseAccount
+
+Each constituent Intent retains its own identity and version.
+
+Composition does not merge the children into an indistinguishable execution command.
+
+The semantic relationships between the constituents are represented explicitly.
+
+⸻
+
+44. Composite Intent Structure
+
+Conceptually:
+
+CompositeIntent {
+    identity
+    version
+    source
+    actor
+    intents[]
+    relationships[]
+    shared_context[]
+    constraints[]
+    expected_outcome
+    provenance
+}
+
+A Composite Intent is a semantic composition.
+
+It is not an execution workflow.
+
+For example:
+
+TransferBalance
+    PRECEDES
+CloseAccount
+
+expresses a semantic dependency that the Planner may later translate into an execution sequence.
+
+The exact execution sequence remains an execution concern.
+
+⸻
+
+45. Partial Resolution of Composite Intents
+
+Constituent Intents may resolve independently where the composition semantics permit it.
+
+For example:
+
+Child A:
+RESOLVED
+Child B:
+CLARIFICATION_REQUIRED
+
+This does not automatically make the entire Composite Intent executable or ineligible for any partial progress.
+
+Whether a child may proceed independently depends on the explicit semantic dependencies and constraints of the composition.
+
+Trust and execution conditions remain applicable to each child.
+
+Authority and Trust are not inherited from the parent merely because the child belongs to the same composition.
+
+⸻
+
+46. Capability Binding
+
+An Intent may be associated with candidate Capabilities capable of satisfying its semantic objective.
 
 Example:
 
@@ -927,21 +1188,30 @@ Candidate Capabilities:
 ├── SendSMS
 └── SendPush
 
-The Intent should not become tightly coupled to a specific Capability merely because one implementation is currently preferred.
+The Intent should not become semantically coupled to one Capability merely because that implementation is currently preferred.
+
+Capability selection belongs to bounded planning and execution.
+
+Capability existence does not establish:
+
+permission
+authorization
+applicability
+availability
+Trust
+success
 
 ⸻
 
-41. Action Planning
+47. Action Planning
 
-The Intent Model does not prescribe the exact Actions required.
+The Intent Model does not prescribe the exact Actions required to satisfy an Intent.
 
 Example:
 
 Intent:
 RestoreAccountAccess
-
-Potential execution:
-
+Possible execution:
 VerifyIdentity
     ↓
 ResetPassword
@@ -950,35 +1220,400 @@ InvalidateSessions
     ↓
 VerifyAccess
 
-The Action sequence is an execution concern.
+The Planner selects or constructs a bounded execution path using the Enterprise Action Graph, Capability Registry, Action Contracts, current state, and Trust constraints.
 
-The Intent Model defines the semantic objective that the sequence must satisfy.
+The Intent defines the semantic objective and requirements that the plan must satisfy.
 
 ⸻
 
-42. Intent and Execution Plan
+48. Intent and Execution Plan
 
 These are separate objects.
 
+Conceptually:
+
 Intent
+   ↓
+Executable Intent
+   ↓
+Trust
    ↓
 Execution Plan
    ↓
 Actions
 
-The Execution Plan may change without changing the Actor’s Intent.
+An Execution Plan may change without changing the Actor’s semantic Intent.
 
-This separation is essential for implementation flexibility.
+Likewise, different valid plans may satisfy the same Intent.
+
+The plan must remain within the capabilities, contracts, policies, authority, and Trust conditions established by Noema.
 
 ⸻
 
-43. Canonical Conceptual Schema
+49. Executable Intent
+
+Executable Intent is a specific resolved state of an Intent, not a different semantic category of desire.
+
+An Intent becomes Executable when its material semantic requirements have been sufficiently established to support deterministic Trust evaluation and potential Action execution.
+
+This generally requires:
+
+* material meaning resolved
+* material Resources grounded
+* required parameters resolved
+* scope established
+* relevant Context established
+* relevant State reconciled
+* constraints explicit and evaluable
+* required relationships resolved
+* no material ambiguity remaining
+
+Executable Intent does not mean:
+
+authorized
+
+and does not mean:
+
+successful
+
+Trust subsequently determines whether the Executable Intent may proceed.
+
+⸻
+
+50. Trust Relationship
+
+The Trust Engine evaluates the resolved semantic object against the conditions required for safe and governed execution.
+
+Conceptually:
+
+Resolved Intent
+      ↓
+Executable Intent
+      ↓
+Trust Evaluation
+      ↓
+┌───────────┬───────────┬───────────┬──────────┐
+│ EXECUTE   │ CLARIFY   │ ESCALATE  │ REJECT   │
+└───────────┴───────────┴───────────┴──────────┘
+
+Trust evaluates the Intent against relevant:
+
+* current state
+* policy
+* authority
+* constraints
+* capability and Action applicability
+* Action Contracts
+* security conditions
+* other deterministic governance requirements
+
+Trust does not rewrite the Actor’s objective merely to obtain an executable path.
+
+EXECUTE means the resolved path satisfies the applicable Trust conditions to proceed.
+
+It does not mean execution has succeeded.
+
+⸻
+
+51. Authority Is Not an Intent Field That Can Be Inferred Freely
+
+The Intent Model may represent the Actor and the semantic requirements relevant to authority.
+
+It must not treat authority as an arbitrary Actor-provided value.
+
+Authority depends on the relevant:
+
+Actor
+Action
+Resource
+Scope
+Current State
+Policy
+Authorization source
+
+Technical authorization, policy authorization, and business authorization are distinct concepts.
+
+The Intent Model expresses what is intended.
+
+Trust determines whether the resolved execution path may proceed under the applicable authority and governance conditions.
+
+⸻
+
+52. Intent State vs Trust Decision vs Execution State vs Outcome
+
+Noema must not collapse these concepts into one status field.
+
+They answer different questions:
+
+Intent Lifecycle:
+Where is the Intent in its semantic/control lifecycle?
+Trust Decision:
+May the resolved path proceed under current governance conditions?
+Execution State:
+What is happening with the Actions and execution attempts?
+Outcome:
+What condition did verification establish?
+
+For example:
+
+Intent:
+EXECUTABLE
+Trust:
+EXECUTE
+Execution:
+IN_PROGRESS
+Outcome:
+PENDING
+
+These states are compatible and describe different dimensions.
+
+The canonical lifecycle and execution specifications define their respective semantics.
+
+⸻
+
+53. Cancellation, Expiration, and Supersession
+
+Cancellation, expiration, and supersession must not be treated as semantic rewrites of a historical Intent.
+
+An admitted Intent version remains immutable.
+
+A cancellation or material modification may be represented through:
+
+* explicit control state
+* a new Intent version
+* a new control Intent
+* an explicit supersession relationship
+
+depending on the applicable lifecycle semantics.
+
+Cancellation is not equivalent to Trust REJECT.
+
+Expiration is not equivalent to execution failure.
+
+Supersession does not erase historical versions.
+
+⸻
+
+54. Intent Model and State Reconciliation
+
+State Reconciliation is relevant to the Intent Model wherever external state is necessary to establish semantic meaning or determine whether a reference is still valid.
+
+For example:
+
+"Renew the card I used yesterday."
+
+may require reconciliation across:
+
+Transaction History
+Card Records
+Customer Records
+Eligibility State
+
+State Reconciliation may resolve the reference without asking the Actor.
+
+It may also reveal:
+
+multiple candidates
+stale evidence
+conflicting records
+missing state
+
+The resulting semantic status must preserve those distinctions rather than forcing a single value.
+
+⸻
+
+55. Intent Model and Intent Language
+
+intent-language.md answers:
+
+How does Noema represent semantic meaning?
+
+intent-model.md answers:
+
+What structural components constitute an Intent?
+
+The distinction is:
+
+Intent Language
+    =
+canonical semantic representation language/model
+Intent Model
+    =
+canonical structural composition of an Intent
+
+Intent Language can represent unresolved, resolved, and composite semantic structures.
+
+Executable Intent is a resolved lifecycle state produced when the semantic requirements are sufficiently established.
+
+⸻
+
+56. Intent Model and Intent Ambiguity
+
+intent-ambiguity.md determines when the Intent structure contains materially unresolved alternatives.
+
+For example:
+
+Resource Candidates:
+├── Card#456
+└── Card#789
+
+The Intent Model provides a structure capable of representing the alternatives.
+
+The Ambiguity specification determines:
+
+* whether the alternatives are materially distinct
+* whether available evidence resolves them
+* whether clarification is required
+
+The Intent Model must therefore support ambiguity without encoding an arbitrary resolution.
+
+⸻
+
+57. Intent Model and Clarification
+
+Clarification operates on semantic gaps in the Intent.
+
+For example:
+
+Intent:
+RenewCard
+Resource:
+AMBIGUOUS
+├── Card#456
+└── Card#789
+
+A clarification request may ask the Actor to identify the intended card.
+
+If the response materially changes the Intent semantics, it creates a new admitted Intent version.
+
+The original version remains immutable.
+
+A clarification response does not itself establish:
+
+* authority
+* business truth
+* policy compliance
+* Trust
+* execution success
+
+The response must re-enter validation and resolution.
+
+⸻
+
+58. Intent Model and Confidence
+
+confidence.md determines how Noema represents epistemic support for interpretation.
+
+The Intent Model provides the semantic object being interpreted and resolved.
+
+Therefore:
+
+Intent
+   +
+Evidence
+   +
+Fact Status
+   +
+Confidence
+
+must remain conceptually distinct.
+
+High confidence cannot override:
+
+* material ambiguity
+* conflicting authoritative state
+* constraints
+* policy
+* authority
+* Trust requirements
+
+Confidence supports reasoning about evidence quality.
+
+It does not determine permission.
+
+⸻
+
+59. Intent Model and Lifecycle
+
+intent-lifecycle.md determines how an Intent version progresses through:
+
+receipt
+interpretation
+validation
+admission
+resolution
+clarification
+executability
+Trust evaluation
+execution
+verification
+Outcome
+
+The Intent Model defines the structural object that moves through that lifecycle.
+
+Lifecycle state must not be used as a substitute for:
+
+* Business State
+* Trust Decision
+* Execution State
+* Actual Outcome
+
+Historical versions remain auditable.
+
+⸻
+
+60. Intent Model and Determinism
+
+Noema’s deterministic boundary depends on the Intent Model being explicit enough to support deterministic evaluation.
+
+The probabilistic interpretation layer may generate:
+
+candidate semantic representation
+
+Noema must then establish through hard validation, resolution, evidence, and State Reconciliation:
+
+whether the representation is admissible
+whether its material meaning is resolved
+whether required Resources are grounded
+whether required constraints are evaluable
+whether it can become Executable Intent
+
+No probabilistic interpretation may directly invoke a consequential Action.
+
+The architectural boundary is:
+
+Expression
+    ↓
+Candidate Semantic Representation
+    ↓
+Hard Schema Validation / Admission
+    ↓
+Canonical Intent
+    ↓
+Resolution + State Reconciliation
+    ↓
+Executable Intent
+    ↓
+Trust
+    ↓
+Bounded Action
+    ↓
+Execution
+    ↓
+Verification
+    ↓
+Outcome
+
+⸻
+
+61. Canonical Conceptual Schema
 
 A useful conceptual representation is:
 
 Intent {
-    id: IntentID
+    identity: IntentID
     version: Version
+    source: Source
     actor: Actor
     objective: Concept
     resources: [
@@ -987,28 +1622,36 @@ Intent {
     entities: [
         Entity
     ]
-    context: Context
+    parameters: [
+        TypedParameter
+    ]
+    scope: Scope
+    context: ContextReferences
     constraints: [
         Constraint
     ]
     preferences: [
         Preference
     ]
-    expected_outcome: Outcome
+    expected_outcome: ExpectedOutcome
     relationships: [
         Relationship
     ]
     provenance: Provenance
-    state: IntentState
+    lifecycle_reference: IntentLifecycleReference
 }
 
-This is conceptual, not a commitment to a specific serialization format.
+This is a conceptual semantic model.
+
+It is not a commitment to a specific programming language, database schema, API representation, or serialization format.
+
+The model may be extended by domain-specific Intent types without changing the universal semantic principles.
 
 ⸻
 
-44. Minimal Intent
+62. Minimal Intent
 
-The smallest meaningful Intent should contain enough information to answer:
+The smallest meaningful Intent contains enough information to establish:
 
 Who wants what?
 
@@ -1026,16 +1669,25 @@ User#123
 Objective:
 CreateProject
 
-Additional fields are added as required by the specific Intent.
+Additional fields become required according to the Intent type and domain semantics.
+
+A minimal Intent is not necessarily Executable Intent.
+
+It may require further resolution before deterministic Trust evaluation is possible.
 
 ⸻
 
-45. Fully Grounded Intent
+63. Fully Resolved Intent
 
-A fully grounded Intent might look conceptually like:
+A fully resolved Intent might look conceptually like:
 
 Intent {
-    id: Intent#123
+    identity:
+        Intent#123
+    version:
+        v2
+    source:
+        CustomerApplication
     actor:
         User#456
     objective:
@@ -1047,80 +1699,100 @@ Intent {
     constraints:
         preserve_billing_relationship = true
     expected_outcome:
-        Card#789.state = Active
+        Card#789.state = ACTIVE
     provenance:
-        resource_resolution = Transaction#555
-    state:
-        RESOLVED
+        resource_resolution =
+            Transaction#555
+    lifecycle:
+        EXECUTABLE
 }
 
-This is sufficiently explicit for downstream Trust and execution processing.
+This representation is sufficiently explicit for deterministic Trust evaluation, subject to current state, policy, authority, contracts, and other applicable conditions.
+
+It does not itself constitute a Trust decision.
 
 ⸻
 
-46. Example: “Renew My Card”
+64. Example: “Renew My Card”
 
 Natural language:
 
-“Please renew my card.”
+"Please renew my card."
 
-Initial representation:
-
-Intent {
-    actor: User#123
-    objective: RenewCard
-    resource: UNKNOWN
-}
-
-If the user has one eligible card:
-
-Intent {
-    actor: User#123
-    objective: RenewCard
-    resource: Card#456
-}
-
-If the user has multiple eligible cards:
-
-Intent {
-    actor: User#123
-    objective: RenewCard
-    resource:
-        Card#456
-        Card#789
-    state:
-        AMBIGUOUS
-}
-
-The model therefore directly supports Noema’s clarification architecture.
-
-⸻
-
-47. Example: “Renew the Card I Used Yesterday”
+Initial canonical representation may contain:
 
 Intent {
     actor:
         User#123
     objective:
         RenewCard
-    resource:
-        Card#456
+    resources:
+        Card = UNKNOWN
+}
+
+If authoritative state establishes one eligible card:
+
+Intent {
+    actor:
+        User#123
+    objective:
+        RenewCard
+    resources:
+        Card = Card#456
+}
+
+If multiple materially valid cards remain:
+
+Intent {
+    actor:
+        User#123
+    objective:
+        RenewCard
+    resources:
+        CardCandidates:
+            Card#456
+            Card#789
+    resolution:
+        material_ambiguity = true
+}
+
+The Intent Model preserves the unresolved alternatives.
+
+intent-ambiguity.md and clarification.md determine whether and how the ambiguity is resolved.
+
+⸻
+
+65. Example: “Renew the Card I Used Yesterday”
+
+Conceptually:
+
+Intent {
+    actor:
+        User#123
+    objective:
+        RenewCard
+    resources:
+        Card = Card#456
     context:
-        usage_reference:
+        usage_reference =
             yesterday
     provenance:
         Card#456
             ← Transaction#789
             ← "used yesterday"
     expected_outcome:
-        Card#456.state = Active
+        Card#456.state = ACTIVE
 }
 
-The linguistic reference has become a grounded semantic reference.
+The linguistic reference has become a grounded semantic reference through evidence and resolution.
+
+If multiple cards satisfy the reference, the Resource remains ambiguous rather than being selected arbitrarily.
 
 ⸻
 
-48. Example: “Transfer $500 to Savings”
+66. Example: “Transfer $500 to Savings”
+
+Conceptually:
 
 Intent {
     actor:
@@ -1128,23 +1800,35 @@ Intent {
     objective:
         TransferFunds
     resources:
-        source = Checking#1
-        destination = Savings#2
-    constraints:
-        amount = 500 USD
-    expected_outcome:
-        Savings#2.balance += 500 USD
+        source =
+            Checking#1
+        destination =
+            Savings#2
+    parameters:
+        amount =
+            500 USD
 }
 
-If the source account is ambiguous:
+Additional constraints, scope, authority requirements, and Expected Outcome semantics may be required by the domain.
 
-state = AMBIGUOUS
+If the source account is materially ambiguous:
+
+resolution:
+    source = AMBIGUOUS
+
+The Intent is not Executable until the ambiguity is resolved or otherwise deterministically eliminated.
+
+For consequential financial actions, current state and applicable authority and policy conditions must also be evaluated by Trust.
 
 ⸻
 
-49. Example: Composite Intent
+67. Example: Composite Intent
 
-“Refund the payment and email me the receipt.”
+Natural language:
+
+"Refund the payment and email me the receipt."
+
+Conceptually:
 
 CompositeIntent {
     actor:
@@ -1153,13 +1837,13 @@ CompositeIntent {
         Intent {
             objective:
                 RefundPayment
-            resource:
+            resources:
                 Payment#456
         },
         Intent {
             objective:
                 SendReceipt
-            resource:
+            resources:
                 Payment#456
         }
     ]
@@ -1169,13 +1853,19 @@ CompositeIntent {
         SendReceipt
 }
 
+The relationship expresses semantic dependency.
+
+The Planner determines the bounded Action sequence required to satisfy the composition.
+
+Each constituent remains subject to its own resolution, Trust, Action Contract, execution, and verification requirements.
+
 ⸻
 
-50. Intent Model and Canonical Ontology
+68. Intent Model and Canonical Ontology
 
-The Intent Model depends on the ontology defined elsewhere in the repository.
+The Intent Model depends on canonical ontology definitions established elsewhere in the repository.
 
-For example:
+Relevant primitives may include:
 
 Actor
 Capability
@@ -1189,233 +1879,200 @@ Relationship
 Resource
 State
 
-should have canonical definitions.
+The Intent Model composes these primitives.
 
-The Intent Model composes those primitives.
+It should not silently redefine their canonical meanings.
 
-It should not redefine them.
-
-⸻
-
-51. Intent Model and Intent Language
-
-intent-language.md answers:
-
-How does Noema represent meaning?
-
-intent-model.md answers:
-
-What structural components constitute an Intent?
-
-The distinction is:
-
-Intent Language
-    = semantic language
-Intent Model
-    = semantic structure
+Domain-specific extensions may add concepts and structures where the universal ontology permits them.
 
 ⸻
 
-52. Intent Model and Intent Ambiguity
+69. Semantic Representation vs Wire Schema
 
-intent-ambiguity.md determines when the structure contains materially unresolved alternatives.
+The Intent Model is a semantic model.
 
-For example:
+Its conceptual structure does not require a particular:
 
-resource:
-{
-    candidate_a,
-    candidate_b
-}
+* JSON schema
+* database schema
+* API format
+* programming language
+* message protocol
+* serialization format
 
-The Intent Model allows the representation.
+A concrete implementation may introduce transport-specific representations.
 
-The Ambiguity specification determines:
-
-whether the difference is material
-
-and:
-
-whether clarification is required
+Those representations must preserve the material semantics and invariants of the canonical Intent Model.
 
 ⸻
 
-53. Intent Model and Confidence
+70. Versioning and Semantic Stability
 
-confidence.md determines how Noema represents evidence about interpretation quality.
+The Intent Model must support evolution without silently changing historical meaning.
 
-The Intent Model provides the object being evaluated.
+Changes to the model or Intent type must be versioned where they can alter semantic interpretation.
 
-Therefore:
+An Intent version identifies the exact semantic representation used at a point in the lifecycle.
 
-Intent
-   +
-Evidence
-   +
-Confidence
+Historical versions must remain interpretable using the relevant ontology, Intent-type, policy, and contract versions.
 
-must remain conceptually distinct.
+Canonical does not mean immutable forever at the schema level.
+
+It means semantic changes are explicit, versioned, and auditable.
 
 ⸻
 
-54. Intent Model and Lifecycle
-
-intent-lifecycle.md determines how the Intent transitions between states.
-
-The Intent Model contains or references the current state.
-
-Therefore:
-
-Intent Model
-    ↓
-Intent State
-    ↓
-Lifecycle Rules
-
-⸻
-
-55. Intent Model and Trust
-
-The Trust Engine consumes the resolved Intent.
-
-Conceptually:
-
-Intent Model
-      ↓
-Resolved Intent
-      ↓
-Trust Evaluation
-      ↓
-Authorized / Rejected
-
-Trust should not modify the Actor’s original objective merely to make execution easier.
-
-⸻
-
-56. Intent Model and Determinism
-
-Noema’s deterministic boundary depends on the Intent Model being explicit enough to support deterministic decisions.
-
-The Model may generate:
-
-candidate Intent
-
-Noema should determine:
-
-whether it is sufficiently complete
-whether it is ambiguous
-whether it satisfies semantic requirements
-whether it can proceed
-
-This is one of the primary reasons the Intent Model must be canonical.
-
-⸻
-
-57. Intent Model Invariants
+71. Intent Model Invariants
 
 Invariant 1
 
-Every Intent has an Actor or an explicitly defined system-level origin.
+Every Intent has an Intent Identity and a specific immutable Version once admitted.
 
 Invariant 2
 
-Every Intent has a canonical Objective.
+Every Intent has a Source of Intent and an Actor where the Intent semantics require one or an explicitly defined system-level origin.
 
 Invariant 3
 
-Material Resources must be grounded before execution.
+Every admitted Intent uses canonical semantic concepts appropriate to its Intent type and domain.
 
 Invariant 4
 
-Material ambiguity must be representable.
+Material Resources must be grounded before an Intent becomes Executable.
 
 Invariant 5
 
-Constraints must not be silently discarded.
+Material ambiguity must be representable and must not be resolved through unsupported guessing.
 
 Invariant 6
 
-Preferences must not silently become hard Constraints.
+Constraints must survive resolution, planning, and execution.
 
 Invariant 7
 
-Expected Outcomes must remain distinct from Actions.
+Preferences must not silently become hard Constraints.
 
 Invariant 8
 
-Intent State must remain distinct from Business State.
+Expected Outcomes must remain distinct from Actions and Capabilities.
 
 Invariant 9
 
-Intent identity must survive lifecycle transitions.
+Intent lifecycle state must remain distinct from Business State, Trust Decision, Execution State, and Actual Outcome.
 
 Invariant 10
 
+Evidence, Fact Status, and Confidence must remain conceptually distinct.
+
+Invariant 11
+
+Authority must not be manufactured through Intent interpretation or user-provided assertions alone.
+
+Invariant 12
+
+An Intent version must remain semantically stable throughout its lifecycle.
+
+Invariant 13
+
+Material semantic changes must create a new Intent version rather than mutate historical meaning.
+
+Invariant 14
+
 Execution implementation must remain replaceable without changing the Intent’s semantic identity.
+
+Invariant 15
+
+A Trust decision of EXECUTE must not be treated as proof of execution success or Outcome completion.
 
 ⸻
 
-58. What the Intent Model Protects Against
+72. What the Intent Model Protects Against
 
 Without a canonical model, different parts of Noema may interpret the same request differently.
 
 The Intent Model protects against:
 
-semantic drift
-implicit assumptions
-lost constraints
-lost context
-untyped references
-implementation coupling
-ambiguous execution
-unverifiable completion
-model-dependent state
+* semantic drift
+* implicit assumptions
+* lost constraints
+* lost context
+* untyped references
+* scope expansion
+* implementation coupling
+* ambiguous execution
+* unsupported authority assumptions
+* unverifiable completion
+* model-dependent state
 
-It gives every downstream subsystem the same semantic object to operate on.
-
-⸻
-
-59. The Architectural Role
-
-The Intent Model sits at the center of Noema’s architecture:
-
-                 Human Expression
-                        │
-                        ▼
-               Interpretation
-                        │
-                        ▼
-              ┌─────────────────┐
-              │   INTENT MODEL   │
-              │                 │
-              │ Actor           │
-              │ Objective       │
-              │ Resources       │
-              │ Context         │
-              │ Constraints     │
-              │ Outcome         │
-              │ Provenance      │
-              └────────┬────────┘
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-          Resolution          Trust
-              │                 │
-              └────────┬────────┘
-                       ▼
-                   Execution
-                       │
-                       ▼
-                    Outcome
-
-The Intent Model is therefore the semantic contract connecting interpretation to execution.
+It gives downstream subsystems a shared semantic object without requiring those subsystems to share implementation details.
 
 ⸻
 
-60. Final Definition
+73. Architectural Role
 
-The Intent Model is Noema’s canonical structural representation of an Actor’s intended objective, including the Resources, Entities, Context, Constraints, Preferences, expected Outcome, relationships, provenance, and lifecycle state required to resolve, govern, execute, and verify that Intent.
+The Intent Model sits at the semantic center of Noema:
+
+                    Source of Intent
+                           │
+                           ▼
+                Candidate Interpretation
+                           │
+                           ▼
+              Hard Schema Validation / Admission
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │   INTENT MODEL   │
+                  │                  │
+                  │ Identity         │
+                  │ Version          │
+                  │ Source           │
+                  │ Actor            │
+                  │ Objective        │
+                  │ Resources        │
+                  │ Entities         │
+                  │ Parameters       │
+                  │ Scope            │
+                  │ Context          │
+                  │ Constraints      │
+                  │ Preferences      │
+                  │ Expected Outcome │
+                  │ Relationships    │
+                  │ Provenance       │
+                  └────────┬─────────┘
+                           │
+                    Resolution +
+                  State Reconciliation
+                           │
+                           ▼
+                  Executable Intent
+                           │
+                           ▼
+                         Trust
+                           │
+                  ┌────────┼────────┐
+                  ▼        ▼        ▼
+               Action   Clarify  Escalate/Reject
+                  │
+                  ▼
+               Execution
+                  │
+                  ▼
+              Verification
+                  │
+                  ▼
+                Outcome
+
+The Intent Model is therefore the semantic contract connecting interpretation and resolution to Trust, execution, and Outcome verification.
+
+It does not itself authorize, execute, or verify.
+
+⸻
+
+74. Final Definition
+
+The Intent Model is Noema’s canonical structural representation of an Actor’s intended objective, including the Resources, Entities, Parameters, Scope, Context, Constraints, Preferences, Expected Outcome, semantic relationships, provenance, identity, and version required to resolve, govern, execute, and verify that Intent.
 
 The shortest canonical formulation is:
 
-An Intent is a first-class, typed semantic object that captures who wants what, what it concerns, under which conditions, toward which Outcome, and with what evidence—without coupling that meaning to how the system eventually executes it.
+An Intent is a first-class, typed, versioned semantic object that captures who wants what, what it concerns, under which conditions and scope, toward which Expected Outcome, and with what provenance, without coupling that meaning to how the system eventually executes it.
