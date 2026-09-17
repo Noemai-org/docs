@@ -9,7 +9,7 @@ Canonical Path: execution/retries.md
 
 1. Definition
 
-A retry is a new execution attempt of an Action whose previous attempt did not establish a definitive successful Outcome, performed under explicitly defined retry semantics and safety constraints.
+A retry is a new execution attempt of the same logical Action after a previous attempt failed to establish the required Outcome, performed under explicit retry semantics and safety constraints.
 
 A retry is not simply:
 
@@ -17,13 +17,15 @@ run the same thing again
 
 It is:
 
-re-evaluate
-    ↓
-determine whether retry is safe
-    ↓
+evaluate current conditions
+        ↓
+determine whether retry is permitted and safe
+        ↓
 create a new execution attempt
-    ↓
-observe the result
+        ↓
+observe and verify the result
+
+A retry preserves the semantic identity of the logical Action. It does not create a new Intent merely because another attempt is required.
 
 ⸻
 
@@ -33,31 +35,94 @@ Noema must never retry a consequential Action merely because the previous attemp
 
 Before retrying, Noema must determine:
 
-Is retry permitted?
-Is retry safe?
-Are preconditions still satisfied?
-Could the previous attempt have succeeded?
-Is the Action idempotent or otherwise protected?
-Has the retry budget been exhausted?
+* whether retry is permitted;
+* whether retry is safe;
+* whether the Action remains valid;
+* whether required preconditions remain satisfied;
+* whether the previous attempt may already have produced the intended effect;
+* whether authorization remains valid;
+* whether required idempotency protection exists;
+* whether the retry budget remains;
+* whether the current Plan and Action Contract remain applicable.
 
 ⸻
 
-3. Why Retries Exist
+3. Retry in the Noema Architecture
+
+Retry is an execution control mechanism downstream of Intent, Trust, planning, Action Contracts, and execution.
+
+The canonical relationship is:
+
+Source of Intent
+      ↓
+Candidate Interpretation
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
+Resolution
+      ↓
+Context / State Reconciliation
+      ↓
+Deterministic Trust
+      ↓
+EAG / Planner
+      ↓
+Action Contract
+      ↓
+Final Runtime Validation
+      ↓
+Execution Attempt
+      ↓
+Verification / State Reconciliation
+      ↓
+Retry Evaluation
+      ↓
+New Execution Attempt
+
+Retry does not bypass any upstream safety boundary.
+
+⸻
+
+4. Hard Schema Validation and Admission
+
+Retry-related definitions, policies, decisions, and execution records must themselves pass the applicable hard schema validation and admission boundary before they become canonical execution inputs.
+
+External retry information is untrusted until validated.
+
+This includes:
+
+* provider responses;
+* consumer responses;
+* retry-after metadata;
+* failure classifications;
+* execution state reports;
+* event payloads;
+* model-generated classifications;
+* user-provided claims.
+
+Persistence alone does not make retry information authoritative.
+
+⸻
+
+5. Why Retries Exist
 
 Distributed execution is inherently unreliable.
 
-An Action can produce:
+An Action may encounter:
 
-timeout
-connection failure
-provider error
-process crash
-network partition
-rate limit
-temporary unavailability
-unknown execution state
+* timeout;
+* connection failure;
+* provider error;
+* process crash;
+* network partition;
+* rate limit;
+* temporary unavailability;
+* dependency failure;
+* unknown execution state.
 
-A failure to receive a response does not necessarily mean the external Action did not occur.
+Failure to receive a response does not necessarily mean the external Action did not occur.
 
 Therefore Noema must distinguish:
 
@@ -71,52 +136,56 @@ before considering retry.
 
 ⸻
 
-4. Retry Is a New Attempt
+6. Retry Is a New Attempt
 
-Each retry is a distinct execution attempt.
+Every retry is a distinct execution attempt.
 
-Action A
+Logical Action A
  ├── Attempt 1
  ├── Attempt 2
  └── Attempt 3
 
-The attempts should have distinct identities:
+Attempts should have distinct identities such as:
 
-action_id
+action_instance_id
 execution_id
 attempt_id
+attempt_number
 
-This is important for:
+The exact identity model is defined by the broader execution model and contracts.
 
-auditability
-idempotency
-observability
-reconciliation
-provider correlation
+Distinct attempt identity is necessary for:
+
+* auditability;
+* idempotency;
+* observability;
+* reconciliation;
+* provider correlation;
+* recovery.
 
 ⸻
 
-5. Retry Does Not Reset Execution History
+7. Retry Does Not Reset Execution History
 
 If:
 
 Attempt 1 → TIMEOUT
 Attempt 2 → SUCCESS
 
-the execution history remains:
+the historical execution record remains:
 
 Attempt 1: TIMEOUT
 Attempt 2: SUCCESS
 
-Noema must preserve the complete attempt history.
+Noema must not rewrite Attempt 1 as though it never occurred.
 
-It should not rewrite the first attempt as though it never occurred.
+The retry establishes a new attempt, not a correction of historical execution history.
 
 ⸻
 
-6. Retry vs Re-execution
+8. Retry vs Re-execution
 
-These concepts should remain distinct.
+These concepts remain distinct.
 
 Retry
 
@@ -124,78 +193,222 @@ The same semantic Action is attempted again because the previous attempt did not
 
 Re-execution
 
-A new execution of an Action that is intentionally invoked again, potentially because the user or workflow explicitly requested it.
+A new execution of an Action is intentionally requested, potentially because the user or workflow explicitly requested the operation again.
 
-Example:
+For example:
 
 User:
 "Send the report again."
 
 is not necessarily a retry.
 
+The resulting Intent and Action semantics determine whether the request is a new logical Action or a retry of an existing one.
+
 ⸻
 
-7. Retry vs Compensation
+9. Retry vs Compensation
 
 A retry attempts to achieve the same intended effect.
 
 Compensation attempts to mitigate or reverse an effect that has already occurred.
 
 Retry:
-charge payment again
+attempt the same intended operation again
 Compensation:
-refund a payment that was already charged
+perform a separate corrective Action
 
-Confusing these can create severe side effects.
+For example:
+
+charge payment
+        ↓
+retry if confirmed not to have occurred
+refund payment
+        ↓
+compensation after a charge has occurred
+
+Noema must not use compensation semantics to justify a retry or vice versa.
 
 ⸻
 
-8. Retry vs Reconciliation
+10. Retry vs Reconciliation
 
 Reconciliation attempts to determine what actually happened.
 
 Retry:
 "Try it again."
 Reconciliation:
-"Find out whether it already happened."
+"Determine whether it already happened."
 
 For uncertain consequential Actions:
 
 UNKNOWN
    ↓
+STATE RECONCILIATION
+   ↓
+postcondition / business-state evaluation
+
+Only when sufficient authoritative evidence establishes that the required effect did not occur should retry normally become a candidate.
+
+⸻
+
+11. State Reconciliation Is First-Class
+
+State Reconciliation is a platform capability, not merely an implementation detail of retry.
+
+The relevant flow is:
+
+Enterprise System of Record
+        ↓
+Observation
+        ↓
+Hard Schema Validation / Admission
+        ↓
+State Reconciliation
+        ↓
+Reconciled Facts / Fact Status / Evidence
+        ↓
+Retry Evaluation
+
+This is particularly important when:
+
+* execution is UNKNOWN;
+* responses are delayed;
+* systems are eventually consistent;
+* multiple systems disagree;
+* an attempt may have committed before communication failed;
+* provider state cannot be established from the original response.
+
+⸻
+
+12. Fact Status
+
+Fact Status is distinct from:
+
+* Evidence;
+* Execution Status;
+* Context;
+* Outcome.
+
+A useful canonical set is:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+For example:
+
+Evidence:
+provider response received at 12:01
+Fact Status:
+VERIFIED for claim X
+
+Evidence is what was observed or supplied.
+
+Fact Status describes the current epistemic status of the relevant claim after appropriate validation and reconciliation.
+
+Model confidence is not Fact Status.
+
+⸻
+
+13. Unknown Is First-Class
+
+UNKNOWN means that Noema cannot currently establish the relevant execution or business-state fact.
+
+It does not mean:
+
+FAILED
+
+and it does not mean:
+
+SUCCEEDED
+
+An unknown state must not be converted into either outcome merely to make retry logic easier.
+
+⸻
+
+14. Unknown Execution State
+
+Consider:
+
+Noema
+  ↓
+POST /charge
+  ↓
+Provider processes charge
+  ↓
+Network connection fails
+  ↓
+No response
+
+Noema cannot conclude:
+
+charge failed
+
+The correct execution state may be:
+
+UNKNOWN
+
+The next step is reconciliation.
+
+⸻
+
+15. Unknown Must Trigger Reconciliation Before Retry
+
+For consequential Actions:
+
+UNKNOWN
+   ↓
 RECONCILE
    ↓
-Did postcondition occur?
+determine current state
 
-Only if reconciliation establishes that the required effect did not occur should retry normally become a candidate.
+If reconciliation establishes:
 
-⸻
+payment.status = SETTLED
 
-9. Retry State Machine
+then:
 
-Conceptually:
+do not retry
 
-ATTEMPTED
-   │
-   ├── SUCCESS ───────────────► COMPLETE
-   │
-   ├── DEFINITIVE FAILURE ────► RETRY EVALUATION
-   │
-   └── UNKNOWN ────────────────► RECONCILIATION
-                                      │
-                              ┌───────┴───────┐
-                              ▼               ▼
-                           EFFECT          NO EFFECT
-                          EXISTS              │
-                              │              ▼
-                              ▼          RETRY EVALUATION
-                           COMPLETE
+If sufficient authoritative evidence establishes:
+
+required effect did not occur
+
+then retry may become eligible.
+
+If reconciliation remains:
+
+UNKNOWN
+
+Noema must not guess.
+
+The Action may instead require continued reconciliation, escalation, or another policy-defined control path.
 
 ⸻
 
-10. Retry Eligibility
+16. Hard Validation of External Execution Information
 
-A retry should be considered only when:
+Provider and consumer execution responses must not be treated as authoritative merely because they report:
+
+failed
+success
+not found
+already processed
+retryable
+
+They must first pass the applicable validation and admission rules.
+
+Semantic authority remains claim-specific.
+
+A source can provide evidence without being authoritative for every claim.
+
+⸻
+
+17. Retry Eligibility
+
+A retry should be considered only when the applicable conditions establish that:
 
 retry policy permits it
 AND
@@ -205,15 +418,19 @@ Action remains valid
 AND
 required preconditions are satisfied
 AND
-authorization remains valid
+required authorization remains valid
 AND
 retry is safe
 AND
-no existing successful effect has been established
+no successful effect has been established
+AND
+no conflicting active attempt owns execution
+
+Additional Action-specific conditions may apply.
 
 ⸻
 
-11. Preconditions Must Be Re-Evaluated
+18. Preconditions Must Be Re-Evaluated
 
 A retry is not exempt from preconditions.
 
@@ -223,9 +440,7 @@ Attempt 1:
 balance = ₦100,000
 withdraw ₦100,000
 timeout
-
 Before retry:
-
 balance = ₦0
 
 The original precondition:
@@ -234,28 +449,79 @@ balance >= ₦100,000
 
 is no longer satisfied.
 
-Therefore:
+Therefore the retry must not proceed merely because the first attempt was uncertain.
 
-retry = BLOCKED
+The current Action Contract and relevant state determine whether the next step is blocking, replanning, clarification, escalation, or another control path.
 
 ⸻
 
-12. Authorization Must Be Re-Evaluated
+19. Authorization Must Be Re-Evaluated
 
-Authorization may change between attempts.
+Authorization can change between attempts.
 
 Example:
 
 Attempt 1:
-authorization = APPROVED
+authorization = valid
 Attempt 2:
-authorization = REVOKED
+authorization = revoked
 
-The retry must not proceed simply because the first attempt was authorized.
+The second attempt must not inherit the first attempt’s authorization blindly.
+
+Technical authorization, policy authorization, and business authorization remain distinct.
+
+A retry key or previous Trust decision does not grant authority.
 
 ⸻
 
-13. Idempotency Is a Primary Retry Safety Mechanism
+20. Trust Outcomes Remain Canonical
+
+Retry evaluation must not create additional Trust outcomes.
+
+The canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Retry-specific states such as:
+
+RETRYABLE
+RECONCILE_FIRST
+BLOCKED
+REQUIRES_REVALIDATION
+WAITING
+RETRY_SCHEDULED
+BUDGET_EXHAUSTED
+
+are execution or control semantics.
+
+EXECUTE means that the applicable Trust conditions permit proceeding. It does not mean that the retry will succeed.
+
+⸻
+
+21. Trust EXECUTE Does Not Mean Success
+
+A Trust decision of:
+
+EXECUTE
+
+means the resolved Action satisfies the applicable Trust conditions and is permitted to proceed.
+
+It does not establish:
+
+execution success
+
+and it does not establish:
+
+enterprise business-state change
+
+Execution and verification establish what happened.
+
+⸻
+
+22. Idempotency Is a Primary Retry Safety Mechanism
 
 Retries are safest when the Action is idempotent.
 
@@ -267,7 +533,7 @@ For example:
 
 set account.status = ACTIVE
 
-Repeated execution produces the same final state.
+Repeated execution can produce the same resulting state.
 
 Contrast:
 
@@ -275,48 +541,50 @@ charge ₦100,000
 
 which is not inherently idempotent.
 
-Retrying it can produce:
+Blindly repeating it can produce:
 
 ₦100,000
 +
 ₦100,000
 
-instead of one charge.
+instead of one intended charge.
 
 ⸻
 
-14. Idempotency Keys
+23. Idempotency Keys
 
-For non-idempotent external operations, Noema may require an idempotency mechanism.
-
-Example:
-
-idempotency_key = intent_123/action_456
-
-The provider can use the key to recognize duplicate attempts.
+For operations that require protection against duplicate effects, the Action Contract may define an idempotency mechanism.
 
 Conceptually:
+
+idempotency_key = logical_action_id
+
+The provider may use that key to recognize repeated attempts of the same logical operation.
+
+For example:
 
 Attempt 1:
 charge(key=abc123)
 Attempt 2:
 charge(key=abc123)
-Provider:
-same logical operation
+
+The provider may recognize both attempts as belonging to the same logical operation.
 
 The exact mechanism belongs to the Action Contract and consumer/provider integration.
 
 ⸻
 
-15. Idempotency Does Not Mean Retry Is Always Safe
+24. Idempotency Does Not Mean Retry Is Always Safe
 
 Even an idempotent Action may have:
 
-side effects
-rate limits
-external dependencies
-time-sensitive conditions
-authorization changes
+* side effects;
+* rate limits;
+* external dependencies;
+* time-sensitive conditions;
+* authorization changes;
+* resource contention;
+* policy constraints.
 
 Therefore:
 
@@ -324,93 +592,101 @@ idempotent
 ≠
 automatically retryable
 
-Idempotency is a safety property, not a retry permission.
+Idempotency is a safety property, not retry permission.
 
 ⸻
 
-16. Unknown Execution State
+25. Retry and Idempotency Identity
 
-The most dangerous retry case is:
+The idempotency identity should be linked to the logical Action rather than generated independently for every attempt.
 
-UNKNOWN
+Conceptually:
 
-Example:
+Intent Version
+      ↓
+Action Instance
+      ↓
+Idempotency Identity
+      ↓
+Attempt 1
+Attempt 2
+Attempt 3
 
-Noema
-  ↓
-POST /charge
-  ↓
-provider processes charge
-  ↓
-network connection fails
-  ↓
-Noema receives no response
+Creating a new idempotency identity for every retry can defeat the protection against duplicate effects.
 
-Noema cannot conclude:
-
-charge failed
-
-The correct state is:
-
-charge outcome = UNKNOWN
+Materially changing the semantic Action creates a new logical Action and therefore requires a new semantic identity.
 
 ⸻
 
-17. Unknown Must Trigger Reconciliation Before Retry
+26. Retry and Intent Identity
 
-For consequential Actions:
+A retry normally preserves the exact admitted intent_version.
 
-UNKNOWN
+For example:
+
+Intent v7
    ↓
-reconcile
+Action A
    ↓
-postcondition evaluation
+Attempt 1
+   ↓
+Attempt 2
 
-If:
+Both attempts remain associated with Intent v7.
 
-payment.status = SETTLED
+The admitted Intent is immutable.
 
-then:
-
-do not retry
-
-If:
-
-payment does not exist
-
-and sufficient evidence establishes this:
-
-retry may become eligible
+A material change to the requested goal or meaning creates a new Intent version with explicit lineage rather than silently modifying the original.
 
 ⸻
 
-18. Retry After Definitive Failure
+27. Resolved Identity Must Be Preserved
+
+For consequential Actions, retry lineage must preserve the resolved:
+
+* actor;
+* principal;
+* Action;
+* exact target;
+* resource;
+* scope;
+* resolution identity;
+* relevant delegation/effective identity.
+
+A retry must not silently change the target or actor.
+
+If those semantics change, the system is no longer merely retrying the same logical Action.
+
+⸻
+
+28. Retry After Definitive Failure
 
 A retry may be more straightforward when failure is definitive.
 
 Example:
 
-provider:
-HTTP 503
-operation not accepted
+Provider:
+503 Service Unavailable
+Contract establishes:
+operation was not accepted
 
-If the provider contract establishes that:
+Retry may become eligible, subject to:
 
-operation was not processed
+* retry policy;
+* current preconditions;
+* current authorization;
+* idempotency requirements;
+* budget;
+* Action risk;
+* current Plan validity.
 
-then retry may be safe, subject to:
-
-retry policy
-preconditions
-authorization
-idempotency
-budget
+A transport error alone does not establish that the operation was not accepted.
 
 ⸻
 
-19. Error Classification
+29. Error Classification
 
-Retry decisions should depend on error class.
+Retry decisions should depend on structured error classification.
 
 A useful conceptual classification is:
 
@@ -443,8 +719,9 @@ Normally not retryable.
 Unknown
 
 timeout after request transmission
+consumer crash after dispatch
 
-Requires reconciliation.
+Requires reconciliation where duplicate effects are possible.
 
 Authorization
 
@@ -455,34 +732,54 @@ Normally not automatically retryable.
 Precondition
 
 insufficient balance
+resource already inactive
 
-Normally requires state change or replanning, not blind retry.
+Normally requires state change, clarification, or replanning rather than blind retry.
 
 ⸻
 
-20. Retryability Must Be Explicit
+30. Retryability Must Be Explicit
 
 The executor should not infer:
 
-"network error → retry"
+network error → retry
 
-solely from the transport error.
+solely from a transport error.
 
-The Action Contract or retry policy should define what classes of failures are retryable.
+The Action Contract or applicable Retry Policy should define retryable conditions.
 
 Conceptually:
 
 RetryPolicy {
     max_attempts
+    max_elapsed_time
     retryable_failures
     backoff
     timeout
     jitter
+    requires_idempotency
+    reconcile_before_retry
 }
+
+The actual schema belongs to the contract and policy definitions.
 
 ⸻
 
-21. Retry Budget
+31. Retry Classification
+
+A useful execution-level classification is:
+
+RETRYABLE
+NOT_RETRYABLE
+RECONCILE_FIRST
+REPLAN_REQUIRED
+HUMAN_INTERVENTION_REQUIRED
+
+These are retry-control decisions, not Trust outcomes.
+
+⸻
+
+32. Retry Budget
 
 Retries must be bounded.
 
@@ -501,7 +798,7 @@ Noema must not retry indefinitely by default.
 
 ⸻
 
-22. Retry Budget vs Execution Timeout
+33. Retry Budget vs Execution Timeout
 
 These are different controls.
 
@@ -509,7 +806,7 @@ Execution timeout
 
 How long one attempt may execute.
 
-max_execution_time = 30s
+max_attempt_duration = 30s
 
 Retry budget
 
@@ -517,13 +814,13 @@ How many attempts may be made.
 
 max_attempts = 3
 
-Both may be required.
+Both may apply simultaneously.
 
 ⸻
 
-23. Time-Based Retry Budgets
+34. Time-Based Retry Budgets
 
-A retry policy may also constrain total retry duration.
+A Retry Policy may also constrain total retry duration.
 
 Example:
 
@@ -535,28 +832,32 @@ max_attempts = 10
 
 Noema must stop retrying after the retry window expires.
 
+Expiration is a control condition and must not be interpreted as evidence that the Action succeeded or failed.
+
 ⸻
 
-24. Exponential Backoff
+35. Exponential Backoff
 
-Retries should generally not happen immediately when failures are transient.
+Retries commonly use backoff for transient failures.
 
-A common strategy:
+Conceptually:
 
 delay = base × 2^attempt
 
-Example:
+For example:
 
 Attempt 1 → immediate
 Attempt 2 → 1s
 Attempt 3 → 2s
 Attempt 4 → 4s
 
-The exact values are policy-defined.
+Exact values are policy-defined.
+
+Backoff changes scheduling, not the semantic decision of whether retry is permitted.
 
 ⸻
 
-25. Jitter
+36. Jitter
 
 Distributed systems may require randomized jitter to prevent synchronized retries.
 
@@ -564,28 +865,29 @@ Conceptually:
 
 delay = exponential_backoff + jitter
 
-However, jitter affects scheduling rather than semantic decision-making.
+Jitter may make the exact scheduling time non-deterministic.
 
-The decision to retry must remain deterministic under the same policy and state; the exact scheduling delay may be intentionally non-deterministic.
-
-⸻
-
-26. Retry Storms
-
-Unbounded or synchronized retries can create:
-
-service overload
-queue saturation
-cascading failures
-rate-limit amplification
-
-Therefore retry policy is also a system stability mechanism.
+The underlying retry decision should remain determined by structured policy and state.
 
 ⸻
 
-27. Retry and Rate Limits
+37. Retry Storms
 
-A provider may respond:
+Unbounded or synchronized retries can cause:
+
+* service overload;
+* queue saturation;
+* cascading failures;
+* rate-limit amplification;
+* dependency exhaustion.
+
+Retry policy is therefore both an execution-safety mechanism and a system-stability mechanism.
+
+⸻
+
+38. Retry and Rate Limits
+
+A provider may return:
 
 429 Too Many Requests
 
@@ -593,13 +895,13 @@ Noema should respect provider-defined retry guidance such as:
 
 Retry-After
 
-where available.
+when that information is validated and applicable.
 
-Repeatedly retrying immediately can worsen the failure.
+Repeatedly retrying immediately can amplify the failure.
 
 ⸻
 
-28. Retry and Dependency Failure
+39. Retry and Dependency Failure
 
 Suppose:
 
@@ -609,101 +911,104 @@ Payment Service
   ↓
 Bank
 
-If the bank is unavailable:
+If the bank is unavailable, repeatedly retrying the Payment Service may not improve the situation.
 
-retrying aggressively against Payment Service
-
-may not help.
-
-Retry policy should consider the actual failure domain.
+Retry policy should account for the actual failure domain and dependency state where available.
 
 ⸻
 
-29. Retry and Circuit Breaking
+40. Retry and Circuit Breaking
 
 Repeated failures may justify temporarily preventing further attempts.
 
 Conceptually:
 
-healthy
-  ↓
-failures
-  ↓
+HEALTHY
+   ↓
+FAILURES
+   ↓
 OPEN
-  ↓
-wait
-  ↓
+   ↓
+WAIT
+   ↓
 HALF_OPEN
-  ↓
-test
+   ↓
+TEST
 
-Circuit-breaking is an execution infrastructure concern but can influence retry eligibility.
+Circuit breaking is execution infrastructure.
+
+It can influence whether a retry may be scheduled, but it does not itself establish business Outcome.
 
 ⸻
 
-30. Retry and Concurrency
+41. Retry and Concurrency
 
-Retries can overlap with previous attempts if the original execution is merely slow.
+Retries can overlap with previous attempts if the original attempt is merely slow.
 
 Example:
 
-Attempt 1 still running
+Attempt 1 still executing
 Attempt 2 starts
 
 This can create duplicate execution.
 
-Noema should therefore know whether the previous attempt is:
+Before starting another attempt, Noema should establish whether the previous attempt is:
 
-finished
-failed
-unknown
-still executing
-
-before starting another attempt.
+* completed;
+* definitively failed;
+* unknown;
+* still executing;
+* owned by another execution consumer.
 
 ⸻
 
-31. No Concurrent Retries by Default
+42. No Concurrent Retries by Default
 
 For consequential Actions:
 
-Noema should not create concurrent retry attempts unless the Action Contract explicitly permits concurrent execution.
-
-The default should be:
-
 one active attempt per logical Action
+
+should be the default unless the Action Contract explicitly permits concurrent execution.
+
+Concurrent attempts require explicit semantics because they may create duplicate or conflicting effects.
 
 ⸻
 
-32. Retry and Execution Leases
+43. Retry and Execution Leases
 
-Long-running execution may use a lease:
+Long-running execution may use an execution lease.
+
+Conceptually:
 
 attempt owns execution lease
 
-A retry should not begin until:
+A retry should not begin until the previous ownership is:
 
-lease expired
-OR
-attempt definitively terminated
+definitively terminated
 
-This prevents two consumers from believing they independently own the same execution.
+or:
+
+lease has safely expired
+
+according to the execution model.
+
+A distributed lock is only a mechanism; it is not itself proof that duplicate effects are impossible.
 
 ⸻
 
-33. Retry and Consumer Crashes
+44. Retry and Consumer Crashes
 
 Consider:
 
 consumer receives Action
- ↓
+        ↓
 executes external operation
- ↓
+        ↓
 consumer crashes
 
-Noema may not know whether the operation completed.
+Noema may not know whether the external operation completed.
 
-Therefore recovery should produce:
+The appropriate state may therefore be:
 
 UNKNOWN
 
@@ -711,11 +1016,11 @@ rather than:
 
 FAILED
 
-until sufficient evidence exists.
+until sufficient evidence establishes the result.
 
 ⸻
 
-34. Retry and Postconditions
+45. Retry and Postconditions
 
 Postconditions are central to safe retry.
 
@@ -723,234 +1028,265 @@ Attempt
    ↓
 Observed Evidence
    ↓
-Postcondition
+State Reconciliation
    ↓
-Satisfied?
+Postcondition Evaluation
+   ↓
+Result
 
 If:
 
 YES
 
-then:
-
-no retry
+then no retry is required.
 
 If:
 
 NO
 
-then:
-
-evaluate retry policy
+retry may be evaluated.
 
 If:
 
 UNKNOWN
 
-then:
+reconciliation remains necessary.
 
-reconcile
+A previous Action’s postcondition does not become permanently true merely because it was once observed.
 
 ⸻
 
-35. Retry and Precondition/Postcondition Relationship
+46. Retry and Precondition/Postcondition Relationship
 
 A useful execution loop is:
 
-Evaluate Preconditions
+Evaluate Runtime Preconditions
         ↓
 Execute
         ↓
 Observe
         ↓
-Evaluate Postconditions
+Verify / Reconcile
         ↓
- ┌──────┼──────────┐
- ▼      ▼          ▼
-PASS   FAIL      UNKNOWN
- │      │          │
- ▼      ▼          ▼
-DONE  Retry?    Reconcile
-          │
-          ▼
-   Re-evaluate
-   Preconditions
+Evaluate Required Postconditions
+        ↓
+ ┌──────────┼──────────┐
+ ▼          ▼          ▼
+PASS       FAIL      UNKNOWN
+ │          │          │
+ ▼          ▼          ▼
+DONE   Retry Eval   Reconcile
+             │
+             ▼
+       Revalidate
+
+The exact verification and reconciliation path is Action-specific.
 
 ⸻
 
-36. Retry and Compensation
-
-Suppose:
-
-Step A → SUCCESS
-Step B → SUCCESS
-Step C → FAILURE
-
-Retrying C may be correct if safe.
-
-But if C partially executed:
-
-Step C → UNKNOWN
-
-the system should reconcile before either:
-
-retry C
-
-or:
-
-compensate A/B
-
-⸻
-
-37. Retry and Partial Effects
+47. Retry and Partial Effects
 
 An Action can fail after producing partial effects.
 
 Example:
 
 create_user
-
-Provider creates the user but response is lost.
+Provider creates user
+but response is lost
 
 Noema sees:
 
 UNKNOWN
 
-Blind retry may create:
+Blind retry may create a duplicate user.
 
-duplicate user
-
-unless:
-
-idempotency key
-
-or:
-
-postcondition reconciliation
-
-prevents it.
+Idempotency protection or State Reconciliation should establish whether the intended effect already exists before another attempt.
 
 ⸻
 
-38. Retry and Semantic Identity
+48. Retry and Composite Actions
 
-Retries must preserve the identity of the logical Action.
+For composite Actions, retry semantics must preserve parent and child identities.
+
+Conceptually:
+
+Plan P
+ ├── Action A
+ ├── Action B
+ └── Action C
+      ├── Attempt 1
+      └── Attempt 2
+
+A retry of C is not automatically a retry of A or B.
+
+Previously committed child effects must be considered before retrying subsequent work.
+
+Replanning and compensation remain distinct mechanisms.
+
+⸻
+
+49. Retry and Compensation After Partial Execution
+
+Suppose:
+
+Step A → SUCCESS
+Step B → SUCCESS
+Step C → UNKNOWN
+
+Noema must reconcile Step C before deciding whether to:
+
+* retry C;
+* compensate prior effects;
+* escalate;
+* replan.
+
+Compensation must not be used merely because execution is uncertain.
+
+⸻
+
+50. Retry and Semantic Identity
+
+Retries preserve the identity of the logical Action.
+
+Conceptually:
 
 logical_action_id = A123
-
-Attempts:
-
 attempt_1
 attempt_2
 attempt_3
 
-This enables Noema to reason:
+This allows Noema to distinguish:
 
-these attempts represent one intended Action
+three attempts of one intended Action
 
-rather than three independent Actions.
+from:
 
-⸻
-
-39. Retry and User Intent
-
-A retry must not change the underlying Intent.
-
-Intent:
-"Renew my card."
-
-Attempt 1 and Attempt 2 remain attempts to realize:
-
-the same resolved Intent
-
-A retry must not silently introduce a new interpretation.
+three independent Actions
 
 ⸻
 
-40. Retry and Planning
+51. Retry and Planning
 
 A retry normally does not require a new Plan if:
 
-same Action
-same Intent
-same semantic objective
+* the same semantic Action remains valid;
+* the same Intent remains applicable;
+* the same objective remains valid;
+* required conditions remain satisfied.
 
-But a failed precondition or changed external state may invalidate the existing Plan.
+However, changed external state can invalidate the existing Plan.
 
-Then:
+For example:
 
-retry
+Attempt fails
+    ↓
+precondition changes
+    ↓
+existing Plan no longer valid
+    ↓
+REPLAN
 
-may become:
-
-replan
+Retry must not be used to compensate for an invalid Plan.
 
 ⸻
 
-41. Retry vs Replan
+52. Retry vs Replan
 
 Retry
 
 Same Action remains valid.
-
 A → failure
 A → retry
 
 Replan
 
 Current Action or Plan is no longer valid.
-
-A → precondition failure
+A → changed state
       ↓
-new plan
+new Plan
 
-Noema must not use retries to compensate for an invalid plan.
+A replan may contain different Actions.
+
+It must account for all effects already produced by previous execution attempts.
 
 ⸻
 
-42. Retry and Human Intervention
+53. Plan Validity vs Runtime Eligibility
+
+A Plan being structurally valid does not guarantee that a retry is currently executable.
+
+For example:
+
+Plan = VALID
+
+while:
+
+authorization = revoked
+
+or:
+
+precondition = NOT_SATISFIED
+
+or:
+
+resource state = UNKNOWN
+
+The runtime eligibility decision must use current applicable state and controls.
+
+⸻
+
+54. Retry and Human Intervention
 
 Human intervention may be required when:
 
-retry budget exhausted
-authorization changed
-risk increased
-provider state ambiguous
-postcondition cannot be established
-policy requires approval
+* retry budget is exhausted;
+* authorization changed;
+* risk increased;
+* provider state remains ambiguous;
+* postcondition cannot be established;
+* policy requires approval;
+* recovery options are exhausted.
 
 Example:
 
 Attempt 1 → UNKNOWN
+      ↓
 Reconciliation → UNKNOWN
-Retry not safe
-        ↓
+      ↓
+Retry not safely established
+      ↓
+ESCALATE
+      ↓
 Human Intervention
+
+Human intervention does not rewrite the previous execution history.
 
 ⸻
 
-43. Retry and Risk
+55. Retry and Risk
 
-The higher the Action’s consequence, the stronger the retry safeguards should be.
+The required retry safeguards depend on the Action’s consequence and applicable Trust policy.
 
-A conceptual policy:
+A policy may require:
 
 Low risk:
 limited automatic retry
 Medium risk:
-retry with idempotency and bounded attempts
+bounded retry + idempotency
 High risk:
-reconciliation + explicit safety conditions
+reconciliation + stronger runtime conditions
 Critical:
-human or policy-controlled retry
+explicit policy or human-controlled transition
 
-Risk semantics belong to the Trust model.
+These are illustrative policy structures, not universal risk thresholds.
+
+Risk informs Trust and execution policy; risk itself does not authorize retry.
 
 ⸻
 
-44. Retry and Authorization Expiry
+56. Retry and Authorization Expiry
 
-Authorization may expire during retry.
+Authorization may expire between attempts.
 
 Example:
 
@@ -961,62 +1297,89 @@ Attempt 1:
 Attempt 2:
 12:01
 
-The second attempt must not inherit the first attempt’s authorization blindly.
+Attempt 2 must not inherit the first attempt’s authorization blindly.
+
+The applicable authorization and policy semantics determine whether a new Trust evaluation is required.
 
 ⸻
 
-45. Retry and Policy Changes
+57. Retry and Policy Changes
 
 Policies can change between attempts.
 
 Example:
 
 Attempt 1:
-policy version 3
+Policy v3
 Attempt 2:
-policy version 4
+Policy v4
 
 Noema must define whether the retry:
 
-uses original policy snapshot
+* remains governed by the original policy snapshot;
+* must satisfy current policy;
+* requires explicit revalidation.
 
-or:
-
-must satisfy current policy
-
-For consequential Actions, this should be explicit rather than inferred.
+For consequential Actions, this behavior must be explicit rather than inferred.
 
 ⸻
 
-46. Retry and Contract Versioning
+58. Retry and Contract Versioning
 
 Likewise:
 
-ActionContract v1
+Action Contract v1
 
-may differ from:
+may differ semantically from:
 
-ActionContract v2
+Action Contract v2
 
-A retry should preserve the semantic contract under which the logical Action was created, unless the execution model explicitly permits migration.
+A retry normally preserves the semantic contract associated with the logical Action unless the execution model explicitly permits migration.
+
+Published contract meaning must not silently change underneath historical attempts.
 
 ⸻
 
-47. Retry and Determinism
+59. Version Lineage
 
-Retry decisions should be deterministic from:
+Retry records may need to preserve relevant versions including:
 
-Action
-attempt history
-current state
-preconditions
-authorization
-policy
-retry policy
-risk
-evidence
+* intent_version;
+* Action version;
+* Action Contract version;
+* Trust Contract version;
+* Trust Decision version;
+* policy version;
+* EAG version;
+* Capability Registry version;
+* integration mapping version;
+* system/provider version;
+* resource/business-state version;
+* retry policy version.
 
-Given the same inputs, the decision should be reproducible:
+Transport or schema versions are separate from semantic contract versions.
+
+Historical records remain immutable.
+
+⸻
+
+60. Retry and Determinism
+
+The semantic retry decision should be deterministic from the applicable structured inputs, including:
+
+* logical Action identity;
+* attempt history;
+* current reconciled state;
+* preconditions;
+* authorization;
+* policy;
+* Retry Policy;
+* risk;
+* evidence;
+* idempotency state;
+* active execution state.
+
+Conceptually:
 
 RETRY
 DO_NOT_RETRY
@@ -1024,69 +1387,119 @@ RECONCILE
 INTERVENE
 REPLAN
 
+The exact scheduling delay may include intentional non-determinism such as jitter.
+
 ⸻
 
-48. Retry and LLMs
+61. Retry and LLMs
 
-LLMs should not independently decide:
+An LLM must not independently decide:
 
 "this probably failed, let's try again."
 
-For consequential Actions, retry decisions should be derived from:
+For consequential Actions, retry decisions should derive from:
 
-structured execution state
-structured errors
-postcondition evaluation
-retry policy
-risk policy
+* structured execution state;
+* validated errors;
+* State Reconciliation;
+* postcondition evaluation;
+* Retry Policy;
+* preconditions;
+* authorization;
+* Trust requirements;
+* idempotency state.
 
-An LLM may assist with classification of unstructured provider messages, but the final retry decision should be deterministic.
+An LLM may assist in classifying unstructured provider messages, but the resulting information remains non-authoritative until validated and deterministically admitted.
+
+The LLM cannot directly trigger consequential execution.
 
 ⸻
 
-49. Retry Observability
+62. Retry Observability
 
-Every attempt should expose:
+Every attempt should expose structured information such as:
 
 logical_action_id
 execution_id
 attempt_id
 attempt_number
+intent_version
 started_at
 completed_at
 failure_class
 error
 precondition_snapshot
 postcondition_result
+reconciliation_reference
 retry_decision
-retry_policy
+retry_policy_version
 next_attempt_at
 
-This allows operators to understand:
+This allows operators to answer:
 
-why did Noema retry?
-
-⸻
-
-50. Retry Auditability
-
-A consequential retry should answer:
-
-Why was it retried?
-Which attempt preceded it?
-What evidence established that retry was safe?
-Which policy permitted it?
-Were preconditions revalidated?
-Was authorization revalidated?
-Was idempotency protection present?
-
-The execution record should make these questions answerable.
+Why did Noema retry?
 
 ⸻
 
-51. Retry Events
+63. Retry Auditability
 
-Conceptually useful events include:
+A consequential retry should make it possible to determine:
+
+* why it was retried;
+* which attempt preceded it;
+* what evidence established retry eligibility;
+* whether State Reconciliation occurred;
+* which preconditions were evaluated;
+* which authorization was evaluated;
+* which policy permitted retry;
+* which Action Contract governed it;
+* what idempotency protection existed;
+* whether the previous attempt could have succeeded;
+* what changed between attempts.
+
+This is part of Noema’s causal audit model.
+
+⸻
+
+64. Causal Retry Audit
+
+A consequential retry should preserve a lineage similar to:
+
+Source of Intent
+      ↓
+Intent Version
+      ↓
+Resolved Actor / Action / Target
+      ↓
+Trust Decision
+      ↓
+Plan
+      ↓
+Action Contract
+      ↓
+Execution
+      ↓
+Attempt 1
+      ↓
+Evidence
+      ↓
+State Reconciliation
+      ↓
+Retry Evaluation
+      ↓
+Attempt 2
+      ↓
+Verification / Reconciliation
+      ↓
+Outcome
+
+The audit should explain the transition without exposing private model chain-of-thought.
+
+⸻
+
+65. Retry Events
+
+Conceptually useful execution events include:
 
 ACTION_ATTEMPT_STARTED
 ACTION_ATTEMPT_FAILED
@@ -1099,11 +1512,13 @@ RECONCILIATION_STARTED
 RECONCILIATION_COMPLETED
 RETRY_BUDGET_EXHAUSTED
 
-Exact event naming belongs to the broader execution event model.
+Exact event naming belongs to the broader Event Model.
+
+Event occurrence does not itself establish business-state truth.
 
 ⸻
 
-52. Retry Policy
+66. Retry Policy
 
 A Retry Policy may conceptually contain:
 
@@ -1119,195 +1534,655 @@ RetryPolicy {
     reconcile_before_retry
 }
 
-Not every Action needs every field.
+Not every Action requires every field.
+
+The policy must remain subordinate to:
+
+* Action semantics;
+* Action Contract;
+* Trust;
+* authorization;
+* current state;
+* system/provider constraints.
 
 ⸻
 
-53. Retry Classification
+67. Retry Policy Does Not Grant Authority
 
-A useful canonical classification:
+A Retry Policy can say:
 
-RETRYABLE
-NOT_RETRYABLE
-RECONCILE_FIRST
+retry at most 3 times
+
+It cannot independently grant permission to execute the Action.
+
+Authorization and Trust remain separate.
+
+Likewise:
+
+idempotency_key
+retry_budget
+backoff
+
+do not constitute authority.
+
+⸻
+
+68. Retry and Capability Availability
+
+A retry requires an available execution path.
+
+If the required Capability or consumer is unavailable, Noema must not invent an alternative operation merely to continue retrying.
+
+The planner is bounded by:
+
+Enterprise Action Graph
+Capability Registry
+Action Model
+Action Contracts
+
+Noema may replan when the original execution path is no longer available, subject to Trust and Intent semantics.
+
+⸻
+
+69. Retry and Security
+
+Retry infrastructure must preserve the structural security boundary.
+
+The following are untrusted inputs until appropriately validated:
+
+* user input;
+* model output;
+* retrieved enterprise text;
+* tool responses;
+* provider responses;
+* consumer reports;
+* external events.
+
+The model must not have direct credentials or arbitrary enterprise access.
+
+No free-form model output may directly create or authorize a retry execution.
+
+The executor must operate through explicit capabilities and Action Contracts.
+
+⸻
+
+70. Retry and Read-Only Actions
+
+Idempotency is most critical for side-effecting Actions, but retry safety also applies to read-only operations.
+
+Repeated read operations can still be consequential when they:
+
+* access protected data;
+* trigger rate limits;
+* consume expensive resources;
+* invoke external systems;
+* produce audit or operational effects.
+
+Therefore read-only does not mean retry policy can be ignored.
+
+⸻
+
+71. Retry and Operational Memory
+
+Operational Memory may retain:
+
+* previous attempts;
+* retry decisions;
+* failure patterns;
+* reconciliation results;
+* intervention history.
+
+Operational Memory is historical execution knowledge.
+
+It is not:
+
+* enterprise business-state authority;
+* authorization authority;
+* permission;
+* a replacement for State Reconciliation;
+* generic model memory.
+
+Historical retry records must not be treated as current truth without appropriate revalidation.
+
+⸻
+
+72. Replay
+
+Replay of retry history is non-executing by default.
+
+Replay may reconstruct:
+
+what happened
+why retry was selected
+what evidence existed
+which policy applied
+
+It must not silently create a new external side effect.
+
+A replay that intentionally creates a new execution is a new explicitly governed operation, not historical replay.
+
+⸻
+
+73. Retry and Time
+
+Retry decisions are time-sensitive.
+
+Relevant temporal values may include:
+
+* attempt start time;
+* attempt completion time;
+* policy effective time;
+* authorization validity;
+* resource version time;
+* evidence observation time;
+* retry-window deadline;
+* contract expiry;
+* provider retry guidance.
+
+Recency alone does not establish authority.
+
+A newer observation from a non-authoritative source cannot automatically override an older authoritative observation.
+
+⸻
+
+74. Retry and Concurrency Control
+
+A retry must account for concurrent state changes.
+
+Where appropriate, safe execution may require:
+
+* transactions;
+* atomic conditional mutations;
+* resource versions;
+* ETags;
+* compare-and-set;
+* leases;
+* reservations;
+* provider idempotency keys.
+
+The exact mechanism belongs to the relevant Action Contract and integration.
+
+⸻
+
+75. Retry and Expiration
+
+A retry may become invalid when:
+
+* the Intent expires;
+* the Action Contract expires;
+* authorization expires;
+* policy validity ends;
+* the retry window closes;
+* the resource is no longer eligible;
+* the Plan becomes stale;
+* a provider operation is no longer valid.
+
+Expiration is not itself proof that an external Action failed or succeeded.
+
+⸻
+
+76. Retry and Cancellation
+
+Cancellation is distinct from retry.
+
+A cancelled logical Action must not automatically become retryable.
+
+If cancellation occurs after an external operation has already committed, the resulting business state must still be reconciled.
+
+Cancellation does not erase historical attempts.
+
+⸻
+
+77. Retry and Human Decisions
+
+A human may authorize a predefined retry transition where policy permits it.
+
+The human decision must itself be validated against:
+
+* human identity;
+* required authority;
+* Intent version;
+* Action;
+* target;
+* current state;
+* applicable policy.
+
+A human approval does not itself establish execution success.
+
+It also does not silently mutate the admitted Intent.
+
+⸻
+
+78. Retry Lifecycle
+
+A conceptual retry lifecycle is:
+
+ATTEMPT COMPLETED
+      ↓
+RETRY EVALUATING
+      ↓
+ ┌───────────────┬────────────────┬──────────────────┐
+ ▼               ▼                ▼
+RETRYABLE     RECONCILE       NOT RETRYABLE
+ │               │                │
+ ▼               ▼                ▼
+SCHEDULE      STATE RESULT       STOP
+ │               │
+ ▼          ┌────┴────┐
+NEW ATTEMPT ▼         ▼
+          EFFECT     NO EFFECT
+          EXISTS        │
+             │          ▼
+             ▼      RETRY EVALUATION
+           STOP
+
+Other control states may include:
+
+WAITING
+BLOCKED
+REQUIRES_REVALIDATION
 REPLAN_REQUIRED
 HUMAN_INTERVENTION_REQUIRED
+BUDGET_EXHAUSTED
 
-These are decisions, not merely error codes.
+These are execution-control states, not Trust outcomes.
 
 ⸻
 
-54. Retry Decision Matrix
+79. Retry Decision Matrix
 
-Situation	Default Decision
-Definitive transient failure	Retry if policy permits
+Situation	Default execution interpretation
+Definitive transient failure	Retry if policy and safety conditions permit
 Definitive permanent failure	Do not retry
-Precondition failure	Re-evaluate/replan
+Precondition failure	Re-evaluate and potentially replan
 Authorization failure	Do not automatically retry
 Unknown external outcome	Reconcile first
 Postcondition satisfied	Do not retry
 Postcondition not satisfied	Evaluate retry policy
 Retry budget exhausted	Stop
-Idempotency unavailable for unsafe Action	Block retry
-Policy requires human approval	Intervene
-Contract no longer valid	Replan
-Previous attempt still running	Do not start concurrent retry
+Idempotency unavailable for unsafe Action	Block retry or require another governed path
+Policy requires human approval	Escalate to intervention
+Contract no longer valid	Replan or stop
+Previous attempt still running	Do not start concurrent retry by default
+Required Capability unavailable	Replan or escalate; do not invent a capability
+Reconciliation remains UNKNOWN	Do not blind retry
 
 ⸻
 
-55. Retry Invariants
+80. Retry Does Not Establish Outcome
+
+A retry is an attempt to establish the required result.
+
+It does not itself establish:
+
+SUCCESS
+
+After every retry, Noema must still observe and verify the result.
+
+The final Outcome is determined from execution evidence, verification, and appropriate enterprise state authority.
+
+Outcome is distinct from enterprise Business State.
+
+⸻
+
+81. Retry and Outcome Classification
+
+The execution layer should distinguish:
+
+ATTEMPT STATUS
+
+from:
+
+OUTCOME
+
+and from:
+
+ENTERPRISE BUSINESS STATE
+
+For example:
+
+Attempt 1:
+UNKNOWN
+Attempt 2:
+COMPLETED
+Verification:
+postcondition established
+Outcome:
+SUCCESS
+
+The enterprise system remains authoritative for the corresponding business-state fact.
+
+⸻
+
+82. Retry Decision Is Not Outcome
+
+The following are decisions or control states:
+
+RETRY
+DO_NOT_RETRY
+RECONCILE
+REPLAN
+ESCALATE
+
+They must not be presented as Outcomes.
+
+Likewise:
+
+RETRYABLE
+REQUIRES_REVALIDATION
+BUDGET_EXHAUSTED
+
+are not Trust outcomes.
+
+⸻
+
+83. Retry and Precondition Snapshots
+
+A retry evaluation should preserve the relevant precondition and state snapshot.
+
+The snapshot records what was known at that point.
+
+It is historical.
+
+It does not become current enterprise truth merely because it was used to authorize an attempt.
+
+A later retry requires current evaluation of volatile conditions.
+
+⸻
+
+84. Retry Invariants
 
 Invariant 1
 
-A retry is a new attempt of the same logical Action.
+A retry is a new execution attempt of the same logical Action.
 
 Invariant 2
 
-Every attempt must have a distinct execution identity.
+Every execution attempt must have a distinct attempt identity.
 
 Invariant 3
 
-Retries must be bounded.
+Retry lineage must preserve the exact admitted Intent version.
 
 Invariant 4
 
-Retries must not be triggered solely by uncertainty.
+Retries must preserve the semantic identity of the logical Action unless a new Action is explicitly created.
 
 Invariant 5
 
-Unknown execution state requires reconciliation before retry when duplicate effects are possible.
+Retries must be bounded.
 
 Invariant 6
 
-Required preconditions must be re-evaluated before retry.
+Retries must not be triggered solely by uncertainty.
 
 Invariant 7
 
-Authorization must be revalidated when required by policy or contract.
+Unknown execution state requires reconciliation before retry when duplicate or consequential effects are possible.
 
 Invariant 8
 
-Retry safety must be established for non-idempotent Actions.
+Relevant preconditions must be re-evaluated before retry.
 
 Invariant 9
 
-A satisfied postcondition terminates the need for retry.
+Authorization must be revalidated when required by policy, contract, or changed authority state.
 
 Invariant 10
 
-Retries must not create concurrent executions of the same consequential Action unless explicitly permitted.
+Retry safety must be established for non-idempotent Actions.
 
 Invariant 11
 
-Retry must not silently change the user’s Intent.
+Idempotency does not itself grant retry permission.
 
 Invariant 12
 
-Retry must not be used to compensate for an invalid Plan.
+A satisfied postcondition terminates the need for retry.
 
 Invariant 13
 
-Retry decisions must be deterministic given the same structured state and policies.
+Retries must not create concurrent executions of the same consequential Action unless explicitly permitted.
 
 Invariant 14
 
-Retry history must be immutable and auditable.
+A retry must not silently change the actor, target, resource, scope, or semantic Action.
 
 Invariant 15
 
-Retry policy must distinguish transient failure from unknown outcome.
+A retry must not silently change the user’s Intent.
 
 Invariant 16
 
-Retry exhaustion must produce an explicit terminal state.
+Retry must not be used to compensate for an invalid Plan.
 
 Invariant 17
 
-Retry must respect Action risk and Trust requirements.
+Replanning and retry are distinct execution controls.
 
 Invariant 18
 
-A retry must not bypass authorization, policy, or precondition checks.
+Retry decisions must respect current applicable Trust, policy, authorization, and preconditions.
+
+Invariant 19
+
+Trust EXECUTE does not establish execution success.
+
+Invariant 20
+
+Retry history must remain immutable and auditable.
+
+Invariant 21
+
+Retry policy must distinguish definitive failure from unknown execution state.
+
+Invariant 22
+
+Provider or consumer claims must not become authoritative merely because they report retryability.
+
+Invariant 23
+
+Hard schema validation and admission must precede canonical use of external execution information.
+
+Invariant 24
+
+State Reconciliation must be available as a first-class path for uncertain execution state.
+
+Invariant 25
+
+Fact Status must remain distinct from Evidence, Execution Status, Context, and Outcome.
+
+Invariant 26
+
+Timeout alone must not be treated as proof of failure.
+
+Invariant 27
+
+Idempotency identities must protect the logical Action rather than create independent semantics for each retry attempt.
+
+Invariant 28
+
+A retry must not bypass Action Contracts or the Capability Registry.
+
+Invariant 29
+
+A retry must not invent capabilities, permissions, authority, or recovery Actions.
+
+Invariant 30
+
+The model must not directly authorize or trigger consequential retries.
+
+Invariant 31
+
+Replay must not create external side effects by default.
+
+Invariant 32
+
+Operational Memory must not be treated as enterprise business-state authority.
+
+Invariant 33
+
+Historical precondition, authorization, and reconciliation snapshots must not be treated as current truth without revalidation.
+
+Invariant 34
+
+Retry decisions must account for concurrency and active execution ownership.
+
+Invariant 35
+
+Retry expiration and budget exhaustion must produce explicit control states.
+
+Invariant 36
+
+Compensation must remain distinct from retry.
+
+Invariant 37
+
+A retry does not establish an Outcome.
+
+Invariant 38
+
+Enterprise systems remain authoritative for the corresponding enterprise Business State.
+
+Invariant 39
+
+Read-only Actions may still require retry controls when their execution is consequential.
+
+Invariant 40
+
+The causal record of every consequential retry must preserve the Intent, Action, Trust, Contract, evidence, reconciliation, attempts, and resulting Outcome.
 
 ⸻
 
-56. Canonical Mental Model
+85. Canonical Mental Model
 
-                     ACTION
-                        │
-                        ▼
-                 PRECONDITIONS
-                        │
-                        ▼
-                    EXECUTE
-                        │
-                        ▼
-                    ATTEMPT
-                        │
-          ┌─────────────┼──────────────┐
-          ▼             ▼              ▼
-       SUCCESS        FAILURE        UNKNOWN
-          │             │              │
-          ▼             ▼              ▼
-        DONE      RETRY EVALUATION   RECONCILE
-                        │              │
-                 ┌──────┼──────┐       │
-                 ▼      ▼      ▼       ▼
-              RETRY   STOP   REPLAN  EFFECT?
-                 │               │      │
-                 ▼               │  ┌───┴───┐
-            NEW ATTEMPT           │  ▼       ▼
-                 │               │ YES      NO
-                 └───────────────┘  │        │
-                                    ▼        ▼
-                                   DONE   RETRY EVAL
+                    LOGICAL ACTION
+                          │
+                          ▼
+                 RUNTIME PRECONDITIONS
+                          │
+                          ▼
+                 TRUST / AUTHORIZATION
+                          │
+                          ▼
+                  ACTION CONTRACT
+                          │
+                          ▼
+                   EXECUTE ATTEMPT
+                          │
+             ┌────────────┼────────────┐
+             ▼            ▼            ▼
+          SUCCESS       FAILURE      UNKNOWN
+             │            │            │
+             ▼            ▼            ▼
+            DONE     RETRY EVAL    RECONCILE
+                          │            │
+                   ┌──────┼──────┐     │
+                   ▼      ▼      ▼     ▼
+                 RETRY   STOP   REPLAN EFFECT?
+                   │               │    │
+                   ▼               │ ┌──┴──┐
+              NEW ATTEMPT          │ ▼     ▼
+                   │               │YES    NO
+                   └───────────────┘ │      │
+                                     ▼      ▼
+                                    DONE  RETRY EVAL
 
 ⸻
 
-57. Canonical Execution Loop
+86. Canonical Execution Loop
 
-The complete Noema execution loop becomes:
+The complete retry-aware execution loop is:
 
-Resolved Intent
+Source of Intent
       ↓
-Plan
+Candidate Interpretation
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
+Resolve Actor / Action / Target
+      ↓
+Context / State Reconciliation
+      ↓
+Deterministic Trust
+      ↓
+EAG / Planner
       ↓
 Action Contract
       ↓
-Precondition Evaluation
-      ↓
-Authorization / Trust Evaluation
+Final Runtime Preconditions
       ↓
 Execute Attempt
       ↓
 Observe Evidence
       ↓
+Verify / State Reconciliation
+      ↓
 Postcondition Evaluation
       ↓
-┌───────────┼────────────┐
-▼           ▼            ▼
-SUCCESS    FAILURE      UNKNOWN
-│           │            │
-▼           ▼            ▼
-DONE    Retry Policy   Reconcile
-            │            │
-       ┌────┼────┐       │
-       ▼    ▼    ▼       ▼
-     RETRY STOP REPLAN  Outcome?
-       │                 │
-       ▼             ┌───┴───┐
-   Revalidate        ▼       ▼
-   Preconditions   SUCCESS  NO EFFECT
-       │                    │
-       ▼                    ▼
-   New Attempt          Retry Eval
+ ┌────────────┼─────────────┐
+ ▼            ▼             ▼
+SUCCESS      FAILURE       UNKNOWN
+ │            │             │
+ ▼            ▼             ▼
+DONE     Retry Evaluation  Reconcile
+              │             │
+        ┌─────┼─────┐       │
+        ▼     ▼     ▼       ▼
+      RETRY  STOP REPLAN  Effect?
+        │                    │
+        ▼                ┌───┴───┐
+Revalidate Runtime       ▼       ▼
+Preconditions          YES      NO
+        │               │        │
+        ▼               ▼        ▼
+ New Attempt           DONE   Retry Eval
 
 ⸻
 
-58. Final Definition
+87. Canonical Retry Principle
 
-A retry is a bounded, policy-governed re-attempt of the same logical Action after a previous attempt failed to establish its required Outcome. Retries require fresh evaluation of relevant preconditions, authorization, execution state, and safety constraints. When the result of the previous attempt is unknown, Noema must reconcile before retrying whenever duplicate or consequential effects are possible.
+The retry loop is not:
+
+failure → retry
+
+It is:
+
+attempt
+  ↓
+observe
+  ↓
+verify / reconcile
+  ↓
+determine current state
+  ↓
+evaluate retry eligibility
+  ↓
+revalidate
+  ↓
+retry only if safe and permitted
+
+This distinction is fundamental to safe distributed execution.
+
+⸻
+
+88. Final Definition
+
+A retry is a bounded, policy-governed new execution attempt of the same logical Action after a previous attempt failed to establish the required Outcome.
+
+A retry preserves the exact semantic identity of the logical Action and its admitted Intent version while creating a distinct execution attempt. Before retrying, Noema must evaluate current preconditions, authorization, Trust requirements, Action Contract validity, execution ownership, retry policy, idempotency protection, and relevant enterprise state.
+
+When the result of a previous attempt is unknown, Noema must use State Reconciliation before retrying whenever duplicate or consequential effects are possible.
 
 The core invariant is:
 
-Noema never retries because “something went wrong.” It retries only when the system can establish that another attempt is permitted, safe, still relevant to the same Intent, and capable of producing the required Outcome without creating an uncontrolled duplicate effect.
+Noema never retries because "something went wrong."
+It retries only when the system can establish that another
+attempt is permitted, safe, still relevant to the same logical
+Action and Intent, and capable of proceeding without creating
+an uncontrolled duplicate or violating current enterprise
+constraints.
+
+A retry is therefore an execution control decision, not a guess, not a new Intent, not compensation, and not evidence of success.

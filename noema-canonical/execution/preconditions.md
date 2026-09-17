@@ -9,11 +9,11 @@ Canonical Path: execution/preconditions.md
 
 1. Definition
 
-A precondition is an explicit condition that must hold before an Action may safely and validly execute.
+A precondition is an explicit, evaluable condition that must be established before an Action may safely and validly execute.
 
 Preconditions answer:
 
-“What must be true before we allow this Action to happen?”
+“What must be established before this Action may execute?”
 
 The canonical relationship is:
 
@@ -27,21 +27,30 @@ Postconditions
       ↓
 Outcome
 
-A precondition is therefore an entry condition for execution, not a prediction about what will happen afterward.
+A precondition is therefore an execution-entry condition, not a prediction about what will happen afterward.
 
 ⸻
 
 2. Core Principle
 
-Noema must not execute an Action merely because the Action is valid in the abstract. The conditions required for that specific execution must also hold at the execution boundary.
+Noema must not execute an Action merely because the Action is valid in the abstract.
+
+The conditions required for that specific execution must also hold at the appropriate execution boundary.
 
 An Action may have been:
 
-planned
-authorized
-contractually valid
+* planned;
+* structurally valid;
+* associated with a valid Action Contract;
+* permitted by a prior Trust decision;
 
-and still be unsafe to execute because a required precondition is no longer true.
+and still be unsafe or invalid to execute because a required runtime condition is no longer satisfied.
+
+Therefore:
+
+Action Validity
+      ≠
+Current Execution Eligibility
 
 ⸻
 
@@ -62,23 +71,15 @@ If the card has already been replaced:
 
 card.status = REPLACED
 
-the Action should not execute merely because the original plan was valid.
+the Action should not execute merely because the original Plan was valid.
 
-The current state invalidates the precondition.
+Current state invalidates the relevant precondition.
 
 ⸻
 
 4. Preconditions Are Runtime Guards
 
-Preconditions protect the boundary between:
-
-planning
-
-and:
-
-execution
-
-Conceptually:
+Preconditions protect the boundary between planning and execution.
 
 Plan
   ↓
@@ -88,10 +89,14 @@ Precondition Evaluation
   ↓
 ┌───────────────┐
 │               │
-PASS           FAIL
+PASS           FAIL / UNKNOWN
 │               │
 ▼               ▼
-Execute       Stop
+Continue       Stop / Reconcile
+
+A precondition check is therefore part of execution eligibility.
+
+It is not merely documentation attached to an Action.
 
 ⸻
 
@@ -99,11 +104,11 @@ Execute       Stop
 
 Intent expresses:
 
-What the user wants.
+What the source of Intent wants to accomplish.
 
 A precondition expresses:
 
-What must be true for an Action to safely realize that Intent.
+What must be established for a particular Action to safely realize that Intent.
 
 Example:
 
@@ -113,6 +118,8 @@ Precondition:
 customer account is active.
 
 The precondition does not become part of the user’s Intent.
+
+It belongs to the Action and its execution semantics.
 
 ⸻
 
@@ -132,9 +139,9 @@ A condition that must currently hold before a particular Action executes.
 
 refund.request.status = APPROVED
 
-A Constraint may generate a required precondition.
+A Constraint may establish or require a precondition.
 
-But they are not synonymous.
+They are not synonymous.
 
 ⸻
 
@@ -146,16 +153,18 @@ Authorization answers:
 
 A precondition answers:
 
-“Is the world currently in the state required for this Action?”
+“Is the relevant state currently suitable for this Action?”
 
 Both may be required.
 
 Authorization = PASS
-Preconditions = PASS
+Preconditions = SATISFIED
           ↓
        Execute
 
-Either failing is sufficient to block execution.
+Failure of either required gate prevents consequential execution.
+
+Authorization remains distinct from resource-state and execution preconditions.
 
 ⸻
 
@@ -163,18 +172,20 @@ Either failing is sufficient to block execution.
 
 Policy defines rules governing permissible behavior.
 
-A policy may establish a precondition.
+A policy may establish a required precondition.
 
 Example:
 
 Policy:
 refunds above ₦1m require manager approval.
 
-Resulting Action precondition:
+Resulting precondition:
 
 manager_approval.status = APPROVED
 
 Policy remains authoritative.
+
+The Planner or executor must not silently remove a policy-derived precondition.
 
 ⸻
 
@@ -183,12 +194,12 @@ Policy remains authoritative.
 The distinction is fundamental.
 
 PRECONDITION
-What must already be true
+What must already be established
         ↓
       ACTION
         ↓
 POSTCONDITION
-What should become true
+What should be established afterward
 
 Example:
 
@@ -198,6 +209,10 @@ Action:
 issue_replacement_card
 Postcondition:
 replacement_card.status = ACTIVE
+
+A precondition protects entry into execution.
+
+A postcondition verifies the expected effect afterward.
 
 ⸻
 
@@ -209,7 +224,7 @@ Bad:
 
 issue_refund()
 
-with an executor silently assuming:
+with the executor silently assuming:
 
 payment exists
 payment is refundable
@@ -222,6 +237,8 @@ payment.exists
 payment.refundable
 refund.status = NOT_ISSUED
 
+Hidden assumptions are not deterministic execution conditions.
+
 ⸻
 
 11. Preconditions Are Declarative
@@ -230,7 +247,6 @@ Where possible, preconditions should be represented as explicit predicates.
 
 Conceptually:
 
-Precondition:
 account.status == ACTIVE
 
 rather than:
@@ -257,15 +273,17 @@ customer seems eligible
 
 is not sufficiently precise for consequential execution.
 
+Where a condition cannot be deterministically evaluated, the system must preserve that uncertainty rather than manufacture a Boolean result.
+
 ⸻
 
 13. Preconditions and Evidence
 
-Evaluation requires evidence.
+Evaluation requires evidence or an applicable authoritative state observation.
 
 Precondition
      ↓
-Evidence
+Evidence / Observation
      ↓
 Evaluation
 
@@ -276,10 +294,10 @@ account.status = ACTIVE
 Evidence:
 Account Service
 account_123.status = ACTIVE
-
 Result:
-
 SATISFIED
+
+Evidence must be relevant to the exact claim being evaluated.
 
 ⸻
 
@@ -297,7 +315,7 @@ This is important because:
 
 UNKNOWN ≠ NOT_SATISFIED
 
-If the system cannot establish whether a safety-critical condition holds, it should not assume that it does.
+If Noema cannot establish whether a safety-critical condition holds, it must not assume that the condition is satisfied.
 
 ⸻
 
@@ -308,13 +326,13 @@ Suppose:
 Precondition:
 account.balance >= ₦100,000
 
-but the account service is unavailable.
+but the authoritative account service is unavailable.
 
 Noema cannot establish:
 
 TRUE
 
-The correct state is:
+The correct evaluation is:
 
 UNKNOWN
 
@@ -324,27 +342,25 @@ UNKNOWN
    ↓
 do not execute
 
-unless the Action Contract explicitly defines safe behavior under uncertainty.
+unless the Action Contract explicitly defines a safe execution semantics under that uncertainty.
+
+Any such behavior must be explicit and deterministic.
 
 ⸻
 
 16. Preconditions as Safety Gates
 
-For high-consequence Actions:
+For high-consequence Actions, an unknown required precondition should generally behave as blocked.
 
 UNKNOWN
+   ↓
+BLOCK
 
-should generally behave as:
-
-BLOCKED
-
-rather than:
-
-PROCEED
-
-This follows Noema’s broader deterministic safety principle:
+This follows the deterministic safety principle:
 
 Absence of sufficient evidence is not evidence that the condition is satisfied.
+
+BLOCKED, REQUIRES_REVALIDATION, or similar values are execution/control states, not additional Trust outcomes.
 
 ⸻
 
@@ -364,7 +380,9 @@ account.status = SUSPENDED
 
 A cached ACTIVE result cannot necessarily authorize execution at 10:05.
 
-Preconditions may therefore require freshness guarantees.
+Preconditions may therefore require explicit freshness guarantees.
+
+Freshness is claim-specific and Action-specific.
 
 ⸻
 
@@ -382,9 +400,92 @@ market.is_open = TRUE
 
 The execution boundary must evaluate such conditions at the relevant time.
 
+The applicable temporal semantics must be explicit.
+
 ⸻
 
-19. Preconditions and Race Conditions
+19. Preconditions and Fact Status
+
+Precondition evaluation must remain distinct from Fact Status.
+
+Fact Status describes the status of a particular claim:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+It does not itself mean:
+
+precondition = SATISFIED
+
+For example:
+
+Fact Status:
+VERIFIED
+Observed:
+account.status = SUSPENDED
+Precondition:
+account.status = ACTIVE
+Result:
+NOT_SATISFIED
+
+A verified fact can establish that a precondition is false.
+
+Likewise, an UNKNOWN fact may result in an UNKNOWN precondition.
+
+Fact Status is not Evidence, Precondition Result, Execution Status, or Outcome.
+
+⸻
+
+20. Hard Schema Validation and Admission
+
+External system responses, events, provider messages, retrieved enterprise data, and model-generated candidate information are not canonical execution inputs merely because they contain expected fields.
+
+Before information can be used as structured evidence for a consequential precondition, it must pass the relevant schema validation and admission boundary.
+
+External / Model Input
+        ↓
+Hard Schema Validation
+        ↓
+Admission / Semantic Validation
+        ↓
+Evidence / Observation
+        ↓
+State Reconciliation where required
+        ↓
+Precondition Evaluation
+
+Persistence does not confer authority.
+
+The model cannot bypass this boundary.
+
+⸻
+
+21. Preconditions and State Reconciliation
+
+Current enterprise state may be distributed across systems, eventually consistent, stale, or contradictory.
+
+State Reconciliation is therefore a first-class mechanism for establishing the state required by a precondition.
+
+Enterprise Systems
+      ↓
+Observations
+      ↓
+Hard Schema Validation / Admission
+      ↓
+State Reconciliation
+      ↓
+Reconciled Claims / Fact Status
+      ↓
+Precondition Evaluation
+
+Noema must not treat a cached, inferred, or partially observed state as current authoritative state merely because it is available.
+
+⸻
+
+22. Preconditions and Race Conditions
 
 A major execution problem is:
 
@@ -405,11 +506,11 @@ balance = ₦20,000
 Charge:
 ₦100,000
 
-A precondition check alone does not guarantee safety if the underlying state can change before execution.
+A precondition observation alone does not guarantee safety if the underlying state can change before the mutation.
 
 ⸻
 
-20. Atomic Preconditions
+23. Atomic Preconditions
 
 Where necessary, the precondition and mutation should be enforced atomically.
 
@@ -426,9 +527,11 @@ The principle is:
 
 When a precondition protects against a concurrent state change, the enforcement boundary must prevent a time-of-check/time-of-use race.
 
+The authoritative enterprise system or execution consumer may provide the atomic enforcement boundary.
+
 ⸻
 
-21. Preconditions and Concurrency
+24. Preconditions and Concurrency
 
 Two executions may independently satisfy the same precondition.
 
@@ -447,17 +550,17 @@ Without concurrency control, both may execute.
 
 Therefore preconditions must be considered alongside:
 
-locking
-transactions
-optimistic concurrency
-version checks
-atomic operations
-
-where appropriate.
+* transactions;
+* optimistic concurrency;
+* resource versions;
+* conditional writes;
+* locking where appropriate;
+* reservations or leases where appropriate;
+* atomic enterprise operations.
 
 ⸻
 
-22. Resource Preconditions
+25. Resource Preconditions
 
 Many preconditions concern Resources.
 
@@ -471,9 +574,15 @@ actor_can_delete(file_123)
 
 The Resource identity must be explicit.
 
+A generic condition such as:
+
+file.exists
+
+is insufficient where multiple Resources could satisfy it.
+
 ⸻
 
-23. State Preconditions
+26. State Preconditions
 
 A precondition may require a specific Resource state.
 
@@ -488,11 +597,11 @@ If:
 
 payment_123.status = CAPTURED
 
-the Action must not be executed again unless the contract explicitly permits it.
+the Action must not be executed again unless its semantics explicitly permit an already-captured state.
 
 ⸻
 
-24. Relationship Preconditions
+27. Relationship Preconditions
 
 An Action may require a relationship to exist.
 
@@ -503,51 +612,58 @@ remove_user_from_team
 
 Precondition:
 
-user_123 ∈ team_456
+user_123 ∈ team_456.members
 
-If the relationship does not exist, the Action may be invalid or already satisfied depending on its semantics.
+If the relationship does not exist, the Action may be invalid or already satisfied depending on the Action semantics.
 
-That distinction should be explicit.
+That distinction must be explicit.
 
 ⸻
 
-25. Capability Preconditions
+28. Capability Preconditions
 
-Execution may require a Capability.
+Execution may require a registered Capability.
 
 Example:
 
 Action:
 provision_server
 
-Precondition:
+Required capability:
 
-provisioning capability available
+server_provisioning
 
-If no compatible consumer exists:
+If no compatible Capability and Action Contract path exists:
 
 NO_EXECUTABLE_PATH
 
 rather than speculative execution.
 
+Capability availability does not itself grant authority.
+
 ⸻
 
-26. Authorization Preconditions
+29. Authorization Preconditions
 
-Authorization itself may be modeled as an execution gate.
+Authorization may be represented as an execution gate, but authorization and ordinary state preconditions remain distinct.
 
 Example:
 
-Precondition:
-authorization.status = APPROVED
+authorization = APPROVED
 
-However, authorization remains conceptually distinct from ordinary resource-state preconditions.
+must be evaluated through the applicable authorization and Trust semantics.
 
-The Trust subsystem is authoritative for authorization.
+Noema distinguishes:
+
+* technical authorization;
+* policy authorization;
+* business authorization.
+
+An authorization result is not merely another arbitrary Resource-state predicate.
 
 ⸻
 
-27. Human Approval Preconditions
+30. Human Approval Preconditions
 
 Some Actions require explicit human approval.
 
@@ -555,18 +671,20 @@ Example:
 
 Action:
 issue_refund(₦20,000,000)
-Precondition:
+Required:
 finance_manager_approval = APPROVED
 
-The planner may identify this requirement.
+The Planner may identify this requirement.
 
-The approval itself must be established before execution.
+The approval must be established through the defined human-intervention and authority mechanisms before execution.
+
+A human identity alone does not establish authorization.
 
 ⸻
 
-28. Evidence Preconditions
+31. Evidence Preconditions
 
-An Action may require evidence to exist.
+An Action may require specific evidence to exist.
 
 Example:
 
@@ -577,13 +695,15 @@ identity_verified
 required_documents_verified
 fraud_screening_completed
 
-These conditions must be established through the Evidence and Trust systems.
+These conditions must be established through the applicable Evidence, State Reconciliation, and Trust mechanisms.
+
+The existence of a document or model assertion does not automatically establish verification.
 
 ⸻
 
-29. Policy-Derived Preconditions
+32. Policy-Derived Preconditions
 
-Policies may dynamically create preconditions.
+Policies may dynamically establish required execution conditions.
 
 Example:
 
@@ -595,13 +715,15 @@ The Action may therefore require:
 
 enhanced_verification.status = COMPLETE
 
-The executor should not bypass this requirement because the original plan did not include it.
+The executor must not bypass this requirement because the original Plan did not explicitly include it.
+
+Policy-derived requirements must remain traceable to the applicable policy version.
 
 ⸻
 
-30. Preconditions and Planning
+33. Preconditions and Planning
 
-Planning should identify known preconditions.
+Planning should identify known preconditions and use them to establish dependencies.
 
 Example:
 
@@ -615,55 +737,63 @@ The dependency may arise because:
 issue_card.precondition:
 account_verified = TRUE
 
-Planning can therefore use preconditions to establish Action ordering.
+Planning may use preconditions to construct Action ordering.
+
+Planning does not establish that the preconditions are currently satisfied.
 
 ⸻
 
-31. Preconditions and Dynamic State
+34. Preconditions and Dynamic State
 
 Planning happens at one point in time.
 
-Execution happens later.
+Execution may happen later.
 
 Therefore:
 
-Plan-time precondition
+Plan-time assessment
+        ≠
+Execution-time satisfaction
 
-and:
+A Plan can establish:
 
-Execution-time precondition
+“This Action is potentially executable under the inputs and assumptions known at planning time.”
 
-must be distinguished.
-
-A plan can establish:
-
-"this Action is potentially executable"
-
-but the execution boundary must verify conditions that are required to hold at execution time.
+The execution boundary must still verify conditions that are required to hold when execution occurs.
 
 ⸻
 
-32. Precondition Revalidation
+35. Precondition Revalidation
 
 For mutable or high-risk Resources:
 
 Plan
  ↓
-Precondition check
+Precondition assessment
  ↓
 wait
  ↓
 Execution
  ↓
-Precondition recheck
+Precondition revalidation
  ↓
 Execute
 
-The required degree of revalidation depends on the Action’s risk and state volatility.
+The required degree of revalidation depends on:
+
+* Action risk;
+* state volatility;
+* time elapsed;
+* freshness requirements;
+* concurrency model;
+* policy;
+* Action Contract semantics.
+
+A previous successful evaluation does not automatically remain valid.
 
 ⸻
 
-33. Preconditions and Action Contracts
+36. Preconditions and Action Contracts
 
 An Action Contract should be capable of expressing relevant preconditions.
 
@@ -676,13 +806,16 @@ ActionContract {
     authorization
     idempotency
     postconditions[]
+    verification
 }
 
-The contract defines the executable boundary.
+The Action Contract defines the executable semantic boundary.
+
+The exact schema remains defined in contracts/action-contract.md.
 
 ⸻
 
-34. Preconditions and Idempotency
+37. Preconditions and Idempotency
 
 Idempotent execution does not eliminate preconditions.
 
@@ -691,7 +824,7 @@ A retry may encounter different state.
 Example:
 
 First attempt:
-precondition = PASS
+precondition = SATISFIED
 execution = UNKNOWN
 
 After reconciliation:
@@ -700,25 +833,27 @@ payment.status = SETTLED
 
 A retry should not execute merely because the original precondition was satisfied.
 
-Current state must be evaluated against the Action’s semantics.
+Current state and current Action semantics must be evaluated.
 
 ⸻
 
-35. Preconditions and Retries
+38. Preconditions and Retries
 
 A retry is a new execution attempt of the same semantic Action.
 
 Therefore the system should determine:
 
-Are the required preconditions still valid?
+Are the required runtime preconditions still satisfied?
 
 before retrying.
 
 A previous successful precondition evaluation does not automatically remain valid.
 
+If the Action has materially changed, it is a new semantic Action and requires its own evaluation and execution identity.
+
 ⸻
 
-36. Preconditions and Postconditions
+39. Preconditions and Postconditions
 
 A postcondition from one Action may become a precondition for another.
 
@@ -736,17 +871,17 @@ open_account
 Precondition:
 identity.status = VERIFIED
 
-This creates a dependency:
+This creates:
 
 A.postcondition
-        ↓
+       ↓
 B.precondition
 
-This is one of the core mechanisms by which execution plans become ordered.
+This relationship is one of the mechanisms through which execution Plans establish ordering.
 
 ⸻
 
-37. Preconditions and State Transitions
+40. Preconditions and State Transitions
 
 An Action can be modeled as:
 
@@ -763,11 +898,13 @@ State S'
    ▼
 Outcome
 
-The Action is therefore a controlled state transition.
+The Action is therefore a controlled transition attempt.
+
+The resulting enterprise Business State remains owned by the relevant enterprise authority.
 
 ⸻
 
-38. Preconditions and State Machine Validity
+41. Preconditions and State Machine Validity
 
 For a Resource state machine:
 
@@ -792,19 +929,17 @@ ACTIVE
 
 the Action may be:
 
-invalid
+* invalid;
+* already satisfied;
+* a no-op;
 
-or:
-
-already satisfied
-
-depending on the Action semantics.
+depending on the explicit Action semantics.
 
 This must not be inferred implicitly.
 
 ⸻
 
-39. Preconditions and Natural Idempotency
+42. Preconditions and Natural Idempotency
 
 An Action can be idempotent while still having preconditions.
 
@@ -812,24 +947,22 @@ Example:
 
 Action:
 set_status(ACTIVE)
-
 Precondition:
-
 resource.exists
 
 Repeated execution may remain safe, but the Resource must still exist.
 
+Whether an already-active Resource satisfies the Action must be determined by the Action semantics.
+
 ⸻
 
-40. Preconditions and Composite Actions
+43. Preconditions and Composite Actions
 
 A composite Action may have:
 
-Action-level preconditions
-
-and:
-
-Step-level preconditions
+* Action-level preconditions;
+* step-level preconditions;
+* branch-specific preconditions.
 
 Example:
 
@@ -847,11 +980,13 @@ while activate replacement may require:
 replacement exists
 replacement.status = ISSUED
 
+The dependencies must be explicit.
+
 ⸻
 
-41. Preconditions and Conditional Plans
+44. Preconditions and Conditional Plans
 
-A precondition can determine which path is valid.
+A precondition can determine which execution path is valid.
 
 Check eligibility
       │
@@ -862,13 +997,15 @@ TRUE      FALSE
  ▼         ▼
 Issue     Stop
 
-The planner may encode the branch.
+The Plan may encode the branch.
 
-Execution evaluates the actual condition.
+Execution evaluates the actual condition from admitted evidence and current state.
+
+A model must not predict the branch and treat the prediction as established state.
 
 ⸻
 
-42. Preconditions and Failure
+45. Preconditions and Failure
 
 If a required precondition is false:
 
@@ -878,50 +1015,51 @@ the Action should not execute.
 
 This is not an execution failure.
 
-It is an execution eligibility failure.
+The distinction is:
 
-The distinction matters:
+Precondition not satisfied
+    →
+Action was not eligible to execute
+Execution failure
+    →
+Action was eligible and was attempted,
+but execution failed
 
-Precondition failure:
-Action was not valid to execute.
-Execution failure:
-Action was valid and attempted, but did not complete successfully.
+This distinction is important for recovery, audit, and metrics.
 
 ⸻
 
-43. Preconditions and Intervention
+46. Preconditions and Intervention
 
 A failed precondition may require human intervention.
 
 Example:
 
 refund_amount > approval_threshold
-
-Precondition:
-
+Required:
 manager_approval = APPROVED
 
-If not approved:
+If approval is absent:
 
 BLOCKED
    ↓
 Human Intervention
 
-The Action remains unexecuted.
+The Action remains unexecuted unless the applicable intervention process establishes an allowed transition.
+
+Human intervention does not automatically override the precondition.
 
 ⸻
 
-44. Preconditions and Replanning
+47. Preconditions and Replanning
 
-A failed precondition may invalidate the current plan.
+A failed precondition may invalidate the current Plan.
 
 Example:
 
 Plan:
 issue_card
-
 Precondition:
-
 customer.eligible = TRUE
 
 Runtime evaluation:
@@ -930,15 +1068,19 @@ customer.eligible = FALSE
 
 Possible result:
 
-Plan invalidated
+Action blocked
    ↓
-replan
+Plan invalidated or re-evaluated
+   ↓
+Replan where permitted
 
 The system must not blindly continue.
 
+Replanning must account for the current reconciled state and any effects already produced.
+
 ⸻
 
-45. Preconditions and Clarification
+48. Preconditions and Clarification
 
 A missing precondition may sometimes indicate missing Intent information.
 
@@ -951,17 +1093,19 @@ destination
 
 If destination is absent from the resolved Intent:
 
-clarification
+CLARIFY
 
 may be required.
 
-The planner should not invent the missing value.
+The Planner must not invent the missing value.
+
+Clarification is an Intent-resolution mechanism, not a substitute for missing enterprise state.
 
 ⸻
 
-46. Preconditions and Determinism
+49. Preconditions and Determinism
 
-Precondition evaluation must be deterministic wherever the condition can be represented deterministically.
+Precondition evaluation must be deterministic wherever the condition can be represented and evaluated deterministically.
 
 Given:
 
@@ -969,18 +1113,17 @@ same state
 same evidence
 same policy version
 same evaluation rules
+same relevant context
 
-the result should be:
+the result should be the same.
 
-same result
-
-An LLM should not randomly decide that a safety-critical precondition “probably passes.”
+An LLM must not randomly decide that a safety-critical precondition “probably passes.”
 
 ⸻
 
-47. LLM-Assisted Preconditions
+50. LLM-Assisted Preconditions
 
-An LLM may assist in extracting facts from unstructured evidence.
+An LLM may assist with extracting candidate facts from unstructured evidence.
 
 Example:
 
@@ -990,15 +1133,23 @@ LLM extraction
  ↓
 "approval appears present"
 
-But the authoritative evaluation should still establish:
+This is candidate interpretation.
 
-approval.status = VERIFIED
+The authoritative execution condition must still be established through the deterministic admission, evidence, reconciliation, and Trust pipeline.
 
-through the deterministic Trust/Evidence pipeline.
+Candidate Interpretation
+        ↓
+Hard Schema Validation / Admission
+        ↓
+Evidence / Reconciliation
+        ↓
+Deterministic Evaluation
+
+Model confidence is not Fact Status and is not sufficient authority for a consequential precondition.
 
 ⸻
 
-48. Preconditions and External State
+51. Preconditions and External State
 
 External systems may change independently of Noema.
 
@@ -1008,13 +1159,15 @@ Example:
 
 inventory.available >= 1
 
-must reflect current inventory, not an old cached value where overselling is possible.
+must reflect current inventory where overselling is possible.
+
+A stale cache must not silently satisfy the condition.
 
 ⸻
 
-49. Preconditions and Transactions
+52. Preconditions and Transactions
 
-When multiple preconditions protect a single atomic mutation, they may need to be evaluated within the same transaction.
+When multiple preconditions protect a single atomic mutation, they may need to be enforced within the same transaction or equivalent atomic boundary.
 
 Example:
 
@@ -1027,9 +1180,11 @@ debit account
 
 Checking these separately from the mutation can introduce race conditions.
 
+The enterprise system or consumer may therefore need to enforce the conditions together with the mutation.
+
 ⸻
 
-50. Preconditions and Optimistic Concurrency
+53. Preconditions and Optimistic Concurrency
 
 A Resource version can be used as a precondition.
 
@@ -1045,13 +1200,15 @@ If the current version is:
 
 18
 
-the Action should fail its precondition rather than overwrite concurrent changes.
+the Action should not overwrite the concurrent change.
+
+Instead, the precondition fails or requires revalidation according to the Action Contract.
 
 This provides an explicit concurrency boundary.
 
 ⸻
 
-51. Preconditions and Atomicity
+54. Preconditions and Atomicity
 
 Where practical:
 
@@ -1060,14 +1217,16 @@ A precondition that protects the correctness of a state mutation should be enfor
 This minimizes:
 
 time-of-check
-→
+      ↓
 time-of-use
 
 gaps.
 
+Noema must distinguish an observational precondition check from an atomic enforcement guarantee.
+
 ⸻
 
-52. Precondition Composition
+55. Precondition Composition
 
 Multiple preconditions may be composed.
 
@@ -1078,14 +1237,16 @@ P1 AND P2 AND P3
 where:
 
 P1 = account active
-P2 = user authorized
+P2 = actor authorized
 P3 = sufficient balance
 
-All are required.
+All required predicates must be satisfied.
+
+The composition semantics must be explicit.
 
 ⸻
 
-53. Alternative Preconditions
+56. Alternative Preconditions
 
 Some Actions may allow alternative valid conditions.
 
@@ -1099,15 +1260,15 @@ verified_identity
 OR
 trusted_existing_session
 
-The equivalence must be explicitly defined.
+The Action Contract or applicable policy must explicitly define the equivalence.
 
 Noema must not invent alternative paths.
 
 ⸻
 
-54. Precondition Evaluation Order
+57. Precondition Evaluation Order
 
-Where evaluation itself has cost or side effects, the order may matter.
+Where evaluation itself has cost or operational impact, the order may matter.
 
 Example:
 
@@ -1115,13 +1276,13 @@ cheap local condition
        ↓
 expensive external verification
 
-However, evaluation order must never alter the semantic result.
+However, evaluation order must not alter the semantic result.
 
-Precondition checks should themselves ideally be side-effect free.
+Precondition evaluation should generally be observational and side-effect free.
 
 ⸻
 
-55. Preconditions Should Be Side-Effect Free
+58. Preconditions Should Be Side-Effect Free
 
 A precondition check should generally observe state rather than mutate it.
 
@@ -1137,9 +1298,11 @@ observe_balance()
 
 followed by the actual mutation under the appropriate atomicity guarantees.
 
+If a resource reservation is itself required, it should be modeled as an explicit registered Action or capability with its own Trust, Contract, execution, idempotency, and postcondition semantics.
+
 ⸻
 
-56. Preconditions and Observability
+59. Preconditions and Observability
 
 Every failed or unknown precondition should be observable.
 
@@ -1148,6 +1311,7 @@ The execution record should preserve:
 precondition
 evaluation result
 evidence
+Fact Status
 evaluation time
 reason
 
@@ -1160,26 +1324,29 @@ account.status = SUSPENDED
 Result:
 NOT_SATISFIED
 
+This should be traceable to the relevant Resource and observation.
+
 ⸻
 
-57. Preconditions and Auditability
+60. Preconditions and Auditability
 
 A consequential Action should be explainable in terms of the conditions that allowed it to execute.
 
 For example:
 
 Why was this Action executed?
-Because:
 account.status = ACTIVE
 authorization = APPROVED
-risk_level = ACCEPTABLE
 resource.version = 17
+required_policy_conditions = SATISFIED
 
-The exact evidence should be traceable.
+The exact evidence, versions, and evaluation context should be traceable.
+
+Auditability does not require exposing private model chain-of-thought.
 
 ⸻
 
-58. Preconditions and Security
+61. Preconditions and Security
 
 Preconditions must not be client-controlled facts.
 
@@ -1191,49 +1358,68 @@ request.preconditions = {
 
 A caller cannot establish their own authorization or safety conditions merely by asserting them.
 
-The system must obtain authoritative evidence.
+The system must obtain the required evidence through approved enterprise interfaces and deterministic admission and evaluation boundaries.
 
 ⸻
 
-59. Preconditions and Trust
+62. Preconditions and Trust
 
-Trust determines whether evidence is sufficient to accept a precondition.
+Trust determines whether the resolved Action path may proceed under applicable authority, policy, evidence, and constraints.
 
-Observed evidence
-      ↓
-Trust evaluation
-      ↓
-Precondition satisfaction
-
-A claim may exist without being trusted.
+Precondition evaluation is one input to that execution boundary.
 
 Therefore:
 
 claim exists
-≠
+     ≠
+claim is authoritative
+     ≠
 precondition satisfied
+     ≠
+Trust EXECUTE
+
+A precondition may be satisfied only after the relevant evidence/state has passed the applicable validation, reconciliation, authority, and policy checks.
+
+Trust remains distinct from the precondition predicate itself.
 
 ⸻
 
-60. Preconditions and Authorization
+63. Preconditions and Authorization
 
-A useful execution gate is:
+A useful consequential execution gate is:
 
-Intent valid
+Admitted Intent
       AND
-Plan valid
+Resolved Action / Target
       AND
-Authorization valid
+Applicable Trust Conditions
       AND
-Preconditions satisfied
+Required Authorization
+      AND
+Required Preconditions
       ↓
-Action may execute
+Action Contract
+      ↓
+Execute
 
-Failure of any required gate prevents execution.
+The exact evaluation order may vary by implementation.
+
+The semantic requirement does not:
+
+Every required authorization and precondition must be satisfied at the appropriate execution boundary before consequential execution.
+
+Trust outcomes remain:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Values such as BLOCKED, REQUIRES_REVALIDATION, and WAITING_FOR_STATE are execution/control states, not Trust outcomes.
 
 ⸻
 
-61. Preconditions and Postcondition Chains
+64. Preconditions and Postcondition Chains
 
 Execution workflows can form chains:
 
@@ -1256,104 +1442,139 @@ account OPEN
        ↓
 issue_card
 
-This creates a formal dependency graph.
+Each dependency must be established from actual execution evidence or reconciled state.
+
+The planner must not treat a planned predecessor as proof that its postcondition will occur.
 
 ⸻
 
-62. Preconditions and Plan Validity
+65. Preconditions and Plan Validity
 
-A plan may be structurally valid while being runtime-infeasible.
+A Plan may be structurally valid while being runtime-infeasible.
 
 Example:
 
 Plan:
 issue_card
-
-Structurally:
-
+Structural status:
 VALID
-
 Runtime:
-
 customer.eligibility = FALSE
 
 Therefore:
 
 Action blocked
-Plan may require replanning
+Plan may require re-evaluation or replanning
 
-This is why plan validity and runtime execution eligibility must remain distinct.
+Plan validity and runtime execution eligibility remain distinct.
 
 ⸻
 
-63. Precondition Lifecycle
+66. Preconditions and the Planner Boundary
+
+The Planner may:
+
+* identify known preconditions;
+* construct dependencies from preconditions;
+* select registered Actions whose preconditions can potentially be satisfied;
+* propose verification or reconciliation steps.
+
+The Planner may not:
+
+* invent precondition values;
+* declare unknown state satisfied;
+* invent capabilities;
+* invent authority;
+* modify Action Contract semantics;
+* bypass Trust;
+* bypass State Reconciliation;
+* treat model inference as authoritative state.
+
+Planning is bounded by the:
+
+Enterprise Action Graph
+Capability Registry
+Action Registry / Action Model
+Action Contracts
+Policies
+Enterprise constraints
+Reconciled state
+
+⸻
+
+67. Preconditions and the Execution Boundary
+
+The execution boundary must distinguish:
+
+Plan-time feasibility
+        ↓
+Action Contract validity
+        ↓
+Runtime precondition evaluation
+        ↓
+Authorization / Trust requirements
+        ↓
+Execution
+
+A Plan cannot guarantee that a mutable condition remains satisfied until execution.
+
+Where the Action Contract delegates a condition to a consumer or provider, that enforcement responsibility must be explicit.
+
+⸻
+
+68. Preconditions and Consumer Responsibility
+
+The consumer executing an Action must enforce the preconditions assigned to it by the Action Contract.
+
+Noema must not assume:
+
+“The consumer probably checked it.”
+
+The Contract must define responsibility.
+
+A consumer-side enforcement result may itself require validation or authoritative observation before Noema treats it as evidence of the required condition.
+
+⸻
+
+69. Preconditions and Noema Responsibility
+
+Noema is responsible for establishing the semantic conditions that it owns.
+
+The consumer is responsible for execution-local conditions it owns.
+
+The provider may enforce provider-specific constraints.
 
 Conceptually:
 
-DEFINED
-   ↓
-EVALUATING
-   ↓
-SATISFIED
+Noema:
+Intent / Trust / Policy / Contract validity
+Consumer:
+execution-local runtime invariants
+Provider:
+provider-specific execution constraints
 
-or:
-
-DEFINED
-   ↓
-EVALUATING
-   ↓
-NOT_SATISFIED
-
-or:
-
-DEFINED
-   ↓
-EVALUATING
-   ↓
-UNKNOWN
-
-A previously satisfied precondition may later require re-evaluation.
+These boundaries should be explicit.
 
 ⸻
 
-64. Precondition Snapshot
+70. Preconditions and Contract Boundaries
 
-For auditability, Noema may preserve the evaluated state:
+A precondition belongs at the layer that can actually enforce it.
 
-precondition_snapshot {
-    condition
-    evidence
-    evaluated_at
-    result
-}
+For example:
 
-This does not mean the snapshot remains true forever.
+Noema:
+authorization requirement satisfied
+Consumer:
+resource.version = 17
+Provider:
+payment instrument valid
 
-It records what was established at that time.
-
-⸻
-
-65. Precondition Expiration
-
-Some preconditions may have a validity duration.
-
-Example:
-
-identity_verification valid for 10 minutes
-
-After expiration:
-
-previously satisfied
-
-does not necessarily mean:
-
-currently satisfied
-
-The condition must be re-established.
+Conditions may be duplicated for defense in depth, but ownership and enforcement responsibility must remain clear.
 
 ⸻
 
-66. Preconditions and Long-Running Actions
+71. Preconditions and Long-Running Actions
 
 For long-running Actions, a precondition may be valid at start but cease to hold during execution.
 
@@ -1361,23 +1582,22 @@ Example:
 
 Action:
 provision infrastructure
-
-Precondition:
-
+Start precondition:
 account remains authorized
 
-If authorization is revoked mid-execution, the execution model must define whether the Action:
+If authorization is revoked during execution, the Execution Model must define whether the Action:
 
-continues
-pauses
-terminates
-compensates
+* continues;
+* pauses;
+* terminates;
+* requires intervention;
+* requires compensation.
 
-This belongs to execution lifecycle semantics, not merely the initial precondition check.
+This is not solved by the initial precondition check alone.
 
 ⸻
 
-67. Start Preconditions vs Continuous Invariants
+72. Start Preconditions vs Continuous Invariants
 
 This distinction is useful.
 
@@ -1399,7 +1619,7 @@ The Action Contract should define the distinction where necessary.
 
 ⸻
 
-68. Preconditions and Side Effects
+73. Preconditions and Side Effects
 
 An Action must not produce consequential side effects before required preconditions have been satisfied.
 
@@ -1413,15 +1633,15 @@ Correct:
 
 check authorization
  ↓
-check preconditions
+check required preconditions
  ↓
 execute payment
 
-Where the external operation itself atomically validates the relevant conditions, that boundary may serve as the authoritative enforcement point.
+Where the external operation atomically validates the relevant conditions, that boundary may serve as the authoritative enforcement point.
 
 ⸻
 
-69. Preconditions and Idempotent State
+74. Preconditions and Idempotent State
 
 For naturally idempotent Actions:
 
@@ -1433,19 +1653,21 @@ status = ACTIVE
 
 depending on whether the Action means:
 
-"make active"
+“Make active”
 
 rather than:
 
-"transition from pending to active"
+“Transition from PENDING to ACTIVE.”
 
-The semantic distinction must be explicit.
+The semantic distinction must be explicit in the Action Model and Action Contract.
 
 ⸻
 
-70. Preconditions and Action Semantics
+75. Preconditions and Action Semantics
 
 Two Actions with similar names may have different preconditions.
+
+For example:
 
 activate_card
 
@@ -1463,21 +1685,23 @@ could mean:
 requires:
 card.exists
 
-and succeed if already active.
+and succeed if the card is already active.
 
-Action semantics therefore determine precondition semantics.
+Action semantics determine precondition semantics.
+
+Noema must not infer equivalence from names.
 
 ⸻
 
-71. Preconditions and Failure Classification
+76. Preconditions and Failure Classification
 
-A useful distinction:
+A useful distinction is:
 
 PRECONDITION_NOT_SATISFIED
 
 means:
 
-The Action cannot currently execute under its contract.
+The Action cannot currently execute under its Contract.
 
 EXECUTION_FAILED
 
@@ -1495,23 +1719,19 @@ UNKNOWN
 
 means:
 
-The system cannot currently establish the relevant state.
+The system cannot currently establish the relevant state or execution result.
 
-These distinctions should remain canonical.
-
+These states must remain semantically distinct.
 ⸻
-
-72. Preconditions and Recovery
-
+## 77. Preconditions and Recovery
 Recovery depends on why the precondition failed.
-
 Example:
-
+```text
 balance insufficient
 
 may require:
 
-wait
+WAIT
 
 while:
 
@@ -1519,7 +1739,7 @@ authorization revoked
 
 may require:
 
-human intervention
+ESCALATE
 
 and:
 
@@ -1527,13 +1747,13 @@ resource deleted
 
 may require:
 
-replan
+REPLAN
 
-Noema should not apply a universal retry policy to precondition failures.
+No universal retry policy should be applied to precondition failures.
 
 ⸻
 
-73. Preconditions and Safety
+78. Preconditions and Safety
 
 For high-risk Actions:
 
@@ -1543,30 +1763,36 @@ should normally result in:
 
 BLOCK
 
-For low-risk or read-only Actions, the contract may permit a different behavior.
+or:
 
-The Action’s risk profile therefore influences how unknown preconditions are handled.
+REQUIRES_REVALIDATION
+
+For low-risk or read-only Actions, the Contract may permit a different behavior.
+
+The Action’s consequence and risk profile therefore influence how unknown preconditions are handled.
 
 ⸻
 
-74. Preconditions and Read Actions
+79. Preconditions and Read Actions
 
-Not every Action requires strict mutation preconditions.
+Not every Action requires mutation-level preconditions.
 
 Example:
 
 get_account_balance
 
-may only require:
+may require:
 
 account exists
 actor authorized to read
 
-The precondition model should be proportionate to the Action’s consequences.
+The precondition model should remain proportionate to the Action’s consequences.
+
+Read-only does not mean non-consequential. Access to protected information may itself require Trust and strict preconditions.
 
 ⸻
 
-75. Preconditions and Write Actions
+80. Preconditions and Write Actions
 
 State-changing Actions generally require stronger preconditions.
 
@@ -1581,9 +1807,11 @@ actor authorized
 account has no blocking dependencies
 retention policy permits deletion
 
+The exact requirements are domain-specific and must be explicit.
+
 ⸻
 
-76. Preconditions and External APIs
+81. Preconditions and External APIs
 
 A provider API may have its own preconditions.
 
@@ -1594,122 +1822,204 @@ capture payment only if payment.status = AUTHORIZED
 
 Noema should model this requirement where it is relevant to safe execution.
 
-Provider-side enforcement may ultimately be authoritative.
+Provider-side enforcement may ultimately be authoritative for the provider-owned state.
+
+The provider response remains subject to the applicable validation and evidence semantics.
 
 ⸻
 
-77. Preconditions and Consumer Responsibility
+82. Preconditions and Reconciliation After Uncertainty
 
-The consumer executing an Action must enforce the preconditions required by its Action Contract.
+If execution or precondition state becomes uncertain:
 
-Noema should not assume:
+UNKNOWN
 
-"the consumer probably checked it."
+Noema should reconcile the relevant state before taking a consequential next step where possible.
 
-The contract must define responsibility.
+UNKNOWN
+   ↓
+Observe authoritative systems
+   ↓
+Hard Schema Validation / Admission
+   ↓
+State Reconciliation
+   ↓
+Re-evaluate Preconditions
+   ↓
+Continue / Replan / Escalate / Reject
 
-⸻
-
-78. Preconditions and Noema Responsibility
-
-Noema is responsible for establishing the semantic conditions that it owns.
-
-The consumer is responsible for enforcing execution-local conditions it owns.
-
-This suggests a layered model:
-
-Noema:
-intent / trust / policy / contract validity
-Consumer:
-execution-specific runtime invariants
-Provider:
-provider-specific execution constraints
-
-These boundaries should be explicit.
+Noema must not resolve uncertainty by guessing.
 
 ⸻
 
-79. Preconditions and Contract Boundaries
+83. Preconditions and Intent Versioning
 
-A precondition belongs at the layer that can actually enforce it.
+Consequential precondition evaluations must retain the exact immutable Intent Object version associated with the Action.
 
-For example:
-
-Noema:
-authorization approved
-Consumer:
-resource version = 17
-Provider:
-payment instrument valid
-
-Duplicating conditions across layers may be useful for defense in depth, but ownership should remain clear.
-
-⸻
-
-80. Preconditions and Deterministic State
-
-Preconditions should preferably reference canonical state rather than free-form natural language.
-
-Bad:
-
-customer appears to be eligible
-
-Better:
-
-customer.eligibility_status == ELIGIBLE
-
-This makes execution behavior:
-
-observable
-testable
-auditable
-deterministic
-
-⸻
-
-81. Preconditions and Canonical Ontology
-
-Preconditions should use the concepts defined by Noema’s Ontology.
-
-For example:
-
-Actor
-Resource
-State
-Capability
-Policy
-Constraint
-Relationship
-
-rather than introducing ad hoc terminology for each execution integration.
-
-⸻
-
-82. Preconditions and Execution Contracts
-
-The canonical execution chain becomes:
-
-Executable Intent
-       ↓
-Action Plan
-       ↓
-Action Contract
-       ↓
-Preconditions
-       ↓
-Authorization
-       ↓
+Intent v1
+   ↓
+Resolved Action
+   ↓
+Precondition Evaluation
+   ↓
 Execution
-       ↓
+
+If the semantic request materially changes:
+
+Intent v1
+   ↓
+supersedes
+Intent v2
+
+the new Intent version must be evaluated independently.
+
+A precondition evaluation from Intent v1 must not silently become evidence for Intent v2.
+
+⸻
+
+84. Preconditions and Audit Versioning
+
+A consequential precondition evaluation should preserve the relevant semantic versions, including where applicable:
+
+Intent Version
+Action Version
+Action Contract Version
+Trust Decision Version
+Policy Version
+EAG / Capability Version
+Integration Version
+System / Provider Version
+Resource Version
+Precondition / Evaluation Rule Version
+
+This allows historical execution eligibility to remain interpretable even as current configuration evolves.
+
+⸻
+
+85. Preconditions and Replay
+
+Replay of precondition evaluation is non-executing by default.
+
+Replay must not:
+
+* create a new Action execution;
+* recreate business side effects;
+* silently alter historical precondition results;
+* treat current state as if it were the historical state.
+
+A historical evaluation remains associated with its original evidence, observations, state snapshot, versions, and evaluation context.
+
+A modern reevaluation is a distinct operation.
+
+⸻
+
+86. Preconditions and Operational Memory
+
+Precondition evaluations may contribute to Operational Memory.
+
+Operational Memory may retain:
+
+* recurring precondition failures;
+* historical evaluations;
+* reconciliation history;
+* execution context;
+* recovery patterns.
+
+Operational Memory is not:
+
+* enterprise Business State;
+* authoritative current Resource state;
+* a replacement for Evidence;
+* a replacement for State Reconciliation;
+* generic model memory.
+
+Historical satisfaction does not establish current satisfaction.
+
+⸻
+
+87. Canonical Precondition Flow
+
+The canonical flow is:
+
+Source of Intent
+      ↓
+Candidate Interpretation
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
+Resolve Actor / Action / Target / Resource
+      ↓
+Context / State Reconciliation
+      ↓
+Trust Constraints / Decision
+      ↓
+Action Graph / Planning
+      ↓
+Action Contract
+      ↓
+Runtime Preconditions
+      ↓
+Authorization / Required Trust Conditions
+      ↓
+Execution
+      ↓
 Postconditions
-       ↓
+      ↓
+Verification / Reconciliation
+      ↓
 Outcome
 
-The ordering of authorization and precondition checks may vary by implementation, but both must be satisfied before consequential execution.
+For a mutable or consequential Action:
+
+Plan-time Assessment
+      ↓
+Runtime Revalidation
+      ↓
+Preconditions Satisfied
+      ↓
+Atomic / Controlled Execution Boundary
+      ↓
+Postcondition Verification
+
+The exact ordering of Trust and individual precondition checks may vary by implementation, but no consequential Action may execute without satisfying its required semantic gates.
 
 ⸻
 
-83. Preconditions Invariants
+88. Causal Audit Chain
+
+A consequential execution should preserve the relationship:
+
+Source of Intent
+      ↓
+Intent Version
+      ↓
+Resolution
+      ↓
+Reconciled State / Evidence
+      ↓
+Trust Decision
+      ↓
+Action / Action Instance
+      ↓
+Action Contract
+      ↓
+Precondition Evaluation
+      ↓
+Execution Attempt
+      ↓
+Observation / Verification
+      ↓
+Postcondition Evaluation
+      ↓
+Outcome
+
+This provides causal traceability for why an Action was considered eligible and what subsequently happened.
+
+⸻
+
+89. Preconditions Invariants
 
 Invariant 1
 
@@ -1717,15 +2027,15 @@ An Action must not execute when a required precondition is not satisfied.
 
 Invariant 2
 
-UNKNOWN must not be treated as SATISFIED for consequential Actions.
+UNKNOWN must not be treated as SATISFIED for consequential Actions unless the Action Contract explicitly defines a safe deterministic behavior under that uncertainty.
 
 Invariant 3
 
-Preconditions must be explicit and evaluatable.
+Preconditions must be explicit and evaluable.
 
 Invariant 4
 
-Preconditions must be evaluated against sufficient evidence.
+Preconditions must be evaluated against sufficient evidence, observation, or reconciled state.
 
 Invariant 5
 
@@ -1733,89 +2043,169 @@ Precondition evaluation must be deterministic where the underlying condition is 
 
 Invariant 6
 
-A precondition snapshot records what was established at a point in time; it does not guarantee that the condition remains true.
+Fact Status must remain distinct from Precondition Result, Evidence, Execution Status, and Outcome.
 
 Invariant 7
 
-Time-sensitive preconditions must respect their freshness or validity window.
+A precondition snapshot records what was established at a point in time; it does not guarantee that the condition remains true.
 
 Invariant 8
 
-Preconditions must not be satisfied merely by caller assertion.
+Time-sensitive preconditions must respect their freshness or validity window.
 
 Invariant 9
 
-Preconditions must not silently replace authorization or policy evaluation.
+Preconditions must not be satisfied merely by caller assertion.
 
 Invariant 10
 
-Where race conditions are possible, preconditions protecting mutations must be enforced atomically or with appropriate concurrency control.
+External or model-generated information must pass the relevant schema validation and admission boundary before becoming eligible canonical input to consequential precondition evaluation.
 
 Invariant 11
 
-A failed precondition is distinct from an execution failure.
+State Reconciliation must be used where distributed, stale, conflicting, or uncertain enterprise state prevents sufficiently authoritative evaluation.
 
 Invariant 12
 
-A failed precondition must not automatically trigger retry.
+Preconditions must not silently replace authorization or policy evaluation.
 
 Invariant 13
 
-A postcondition from one Action may establish a precondition for another Action.
+Authorization and preconditions are distinct execution gates.
 
 Invariant 14
 
-Retries must re-evaluate relevant runtime preconditions.
+Where race conditions are possible, preconditions protecting mutations must be enforced atomically or with appropriate concurrency control.
 
 Invariant 15
 
-A materially changed Action requires its own precondition evaluation.
+A failed precondition is distinct from an execution failure.
 
 Invariant 16
 
-Precondition failures must be observable and auditable.
+A failed precondition must not automatically trigger retry.
 
 Invariant 17
 
-Preconditions must be evaluated at the layer responsible for enforcing them.
+Retries must re-evaluate relevant runtime preconditions.
 
 Invariant 18
 
-Noema must not invent missing precondition values from ambiguous Intent.
+A postcondition from one Action may establish a precondition for another Action.
+
+Invariant 19
+
+A materially changed Action requires its own precondition evaluation.
+
+Invariant 20
+
+Precondition failures and unknown evaluations must be observable and auditable.
+
+Invariant 21
+
+Preconditions must be evaluated and enforced at the layer responsible for them.
+
+Invariant 22
+
+Noema must not invent missing precondition values from ambiguous Intent or model inference.
+
+Invariant 23
+
+The Planner may identify and compose preconditions but cannot declare them satisfied or invent the authority required to satisfy them.
+
+Invariant 24
+
+A Plan’s structural validity does not guarantee runtime precondition satisfaction.
+
+Invariant 25
+
+Trust EXECUTE does not guarantee that runtime preconditions will remain satisfied until execution.
+
+Invariant 26
+
+A precondition evaluation must preserve the exact Intent version associated with the consequential Action.
+
+Invariant 27
+
+Resolved Actor, Action, Target, Resource, scope, and resolution identity must remain traceable through consequential precondition evaluation.
+
+Invariant 28
+
+A cache or historical observation must not satisfy a current precondition without sufficient authority and freshness.
+
+Invariant 29
+
+Conflicting evidence must not be resolved through arbitrary source selection.
+
+Invariant 30
+
+A precondition check must not be treated as an atomic mutation guarantee unless the relevant enforcement boundary actually provides that guarantee.
+
+Invariant 31
+
+Precondition semantics must be versioned where their meaning can change.
+
+Invariant 32
+
+Historical precondition evaluations must remain interpretable under the semantic versions used when they were established.
+
+Invariant 33
+
+Replay must not recreate execution side effects or silently alter historical precondition evaluations.
+
+Invariant 34
+
+Operational Memory may preserve precondition history but must not become authoritative enterprise state.
+
+Invariant 35
+
+Read-only Actions may have consequential preconditions when their information access or downstream effects are consequential.
+
+Invariant 36
+
+Noema must not convert uncertainty about a required precondition into a satisfied condition merely to continue execution.
 
 ⸻
 
-84. Canonical Mental Model
+90. Canonical Mental Model
 
-                     ACTION
-                        │
-                        ▼
-              ┌─────────────────┐
-              │ PRECONDITIONS   │
-              └────────┬────────┘
-                       │
-             ┌─────────┼─────────┐
-             ▼         ▼         ▼
-         SATISFIED   FALSE     UNKNOWN
-             │         │         │
-             ▼         ▼         ▼
-       AUTHORIZATION  BLOCK     BLOCK /
-             │                  RECONCILE
-             ▼
-          EXECUTE
-             │
-             ▼
+                         ACTION
+                            │
+                            ▼
+                   PRECONDITION SET
+                            │
+                            ▼
+              HARD VALIDATION / ADMISSION
+                            │
+                            ▼
+                  STATE RECONCILIATION
+                            │
+                            ▼
+                 PRECONDITION EVALUATION
+                            │
+              ┌─────────────┼─────────────┐
+              ▼             ▼             ▼
+         SATISFIED      NOT SATISFIED   UNKNOWN
+              │             │             │
+              ▼             ▼             ▼
+       TRUST / AUTH      BLOCK /        BLOCK /
+       CONDITIONS       REPLAN         RECONCILE
+              │
+              ▼
+          EXECUTION
+              │
+              ▼
        POSTCONDITIONS
-             │
-       ┌─────┼─────┐
-       ▼     ▼     ▼
-     TRUE   FALSE UNKNOWN
-       │      │      │
-       ▼      ▼      ▼
-    SUCCESS FAILURE RECONCILE /
-                     INTERVENE
+              │
+        ┌─────┼─────┐
+        ▼     ▼     ▼
+    SATISFIED FALSE UNKNOWN
+        │      │      │
+        ▼      ▼      ▼
+      OUTCOME RECOVERY RECONCILE /
+                       INTERVENE
 
-And across Actions:
+Across Actions:
 
 Action A
    │
@@ -1827,12 +2217,30 @@ Action A
              ▼
           Action B
 
+The critical distinction is:
+
+Planned
+   ≠
+Structurally Valid
+   ≠
+Currently Eligible
+   ≠
+Authorized
+   ≠
+Executed
+   ≠
+Successfully Verified
+
 ⸻
 
-85. Final Definition
+91. Final Definition
 
-A precondition is an explicit, evaluable condition that must be established before an Action may execute. Preconditions protect the execution boundary from stale state, invalid assumptions, unauthorized conditions, and unsafe state transitions.
+A precondition is an explicit, versioned, evaluable condition that must be established before an Action may execute safely and validly.
+
+Preconditions protect the execution boundary from stale state, invalid assumptions, missing authority, policy violations, concurrency races, and unsafe state transitions. They are evaluated against sufficient evidence and, where required, reconciled enterprise state, while remaining distinct from Intent, Constraints, Authorization, Trust, Execution Status, Postconditions, and Outcome.
 
 The core invariant is:
 
-Noema does not execute an Action because the plan says it should. It executes only when the Action’s required authorization and runtime preconditions are satisfied at the appropriate execution boundary. If a required condition is false or cannot be established, Noema stops, reconciles, intervenes, or replans rather than guessing.
+Noema does not execute an Action because a Plan says it should. It executes only when the Action’s required semantic gates and runtime preconditions are satisfied at the appropriate execution boundary.
+
+If a required condition is false or cannot be established, Noema stops, reconciles, revalidates, intervenes, or replans according to explicit semantics rather than guessing.

@@ -11,7 +11,7 @@ Canonical Path: execution/action-model.md
 
 The Action Model defines the canonical representation, semantics, lifecycle, and relationships of Actions within Noema.
 
-An Action is the executable expression of an Intent’s desired change.
+An Action is a typed semantic operation that represents an operation a validated Intent may request to perform.
 
 It answers:
 
@@ -21,10 +21,11 @@ It does not by itself answer:
 
 * Who may perform it?
 * Whether it is currently permitted?
+* Which Capability can perform it?
 * How it is executed?
 * What happened after execution?
 
-Those concerns belong to Actor, Trust, Capability, Execution, and Outcome respectively.
+Those concerns belong to Actor, Trust, Capability, Action Contract, Execution, Verification, and Outcome respectively.
 
 ⸻
 
@@ -50,7 +51,7 @@ POST /payments/123/refund
 
 is an implementation mechanism.
 
-The Action Model sits between them.
+The Action Model sits between semantic Intent and implementation.
 
 ⸻
 
@@ -58,37 +59,43 @@ The Action Model sits between them.
 
 The canonical relationship is:
 
-Actor
-  │
-  │ expresses
-  ▼
+Source of Intent
+      │
+      ▼
 Intent
-  │
-  │ resolves to
-  ▼
+      │
+      │ resolves to
+      ▼
 Action
-  │
-  │ requires
-  ▼
+      │
+      │ bound to
+      ▼
+Action Instance
+      │
+      │ supported by
+      ▼
 Capability
-  │
-  │ governed by
-  ▼
+      │
+      │ evaluated by
+      ▼
 Trust
-  │
-  │ produces
-  ▼
+      │
+      │ produces
+      ▼
 Action Contract
-  │
-  │ consumed by
-  ▼
+      │
+      │ consumed by
+      ▼
 Execution System
-  │
-  │ produces
-  ▼
+      │
+      │ produces
+      ▼
+Verification
+      │
+      ▼
 Outcome
 
-This relationship is foundational to Noema’s ontology.
+This relationship is foundational to Noema’s execution model.
 
 ⸻
 
@@ -96,7 +103,7 @@ This relationship is foundational to Noema’s ontology.
 
 An Intent represents desired meaning.
 
-An Action represents the operation contained within that meaning.
+An Action represents an operation contained within that meaning.
 
 Therefore:
 
@@ -105,11 +112,11 @@ Intent ≠ Action
 Example:
 
 Intent:
-"Move ₦100,000 from my savings account to my current account."
+    "Move ₦100,000 from my savings account to my current account."
 Action:
-transfer_money
+    transfer_money
 
-The Intent carries:
+The Intent carries semantic context such as:
 
 Actor
 Action
@@ -121,20 +128,22 @@ Desired Outcome
 
 The Action identifies the operation itself.
 
+The Action Model must not absorb the complete semantics of Intent.
+
 ⸻
 
 5. Action vs Capability
 
 An Action describes what can be done conceptually.
 
-A Capability describes what an execution system is able to do.
+A Capability describes an available bounded ability to perform an Action.
 
 Example:
 
 Action:
-refund_payment
+    refund_payment
 Capability:
-payments.refund.v2
+    payments.refund.v2
 
 Therefore:
 
@@ -146,6 +155,8 @@ Capability
 
 An Action can exist even when no currently available Capability can execute it.
 
+Capability availability is an execution concern, not a redefinition of Action semantics.
+
 ⸻
 
 6. Action vs Action Contract
@@ -154,16 +165,20 @@ An Action is semantic.
 
 An Action Contract is executable and scoped.
 
-Action:
-refund_payment
-Action Contract:
-refund payment_123
-amount = ₦50,000
-currency = NGN
-consumer = payment-service
-expires_at = ...
+Example:
 
-The contract binds a general Action to a specific execution instance.
+Action:
+    refund_payment
+Action Contract:
+    refund payment_123
+    amount = ₦50,000
+    currency = NGN
+    consumer = payment-service
+    expires_at = ...
+
+The Action is reusable semantic meaning.
+
+The Action Contract binds a specific Action Instance to an authorized execution scope.
 
 ⸻
 
@@ -174,19 +189,18 @@ An Action must not be defined in terms of an API endpoint.
 Bad canonical model:
 
 Action:
-POST /v1/payments/{id}/refund
+    POST /v1/payments/{id}/refund
 
 Better:
 
 Action:
-refund_payment
+    refund_payment
 
 The consumer may implement that Action through:
 
 HTTP
 RPC
 GraphQL
-SQL
 SDK
 Queue
 Workflow
@@ -203,14 +217,16 @@ Every canonical Action should have a stable identifier.
 Example:
 
 action_id:
-refund_payment
+    refund_payment
 
 The identifier should be:
 
-stable
-machine-readable
-unique within its namespace
-implementation-independent
+* stable
+* machine-readable
+* unique within its namespace
+* implementation-independent
+
+The identifier represents semantic identity, not a transport operation.
 
 ⸻
 
@@ -221,9 +237,9 @@ A human-readable name may accompany the identifier.
 Example:
 
 action_id:
-refund_payment
+    refund_payment
 name:
-Refund Payment
+    Refund Payment
 
 The identifier is canonical.
 
@@ -239,10 +255,12 @@ Example:
 
 refund_payment
 Description:
-Return funds associated with an eligible payment
-to the original payer according to applicable rules.
+    Return funds associated with an eligible payment
+    to the original payer according to applicable rules.
 
 Descriptions should define semantics, not implementation details.
+
+An Action description must not silently introduce additional Actions or execution scope.
 
 ⸻
 
@@ -261,25 +279,27 @@ refund_payment {
 
 Inputs should be typed.
 
+The Action definition establishes the semantic schema for those inputs.
+
 ⸻
 
 12. Action Parameters
 
-Parameters instantiate the Action.
+Parameters instantiate an Action.
 
 For example:
 
 Action:
-refund_payment
+    refund_payment
 Parameters:
-payment = payment_123
-amount = 50000
-currency = NGN
-reason = duplicate_charge
+    payment = payment_123
+    amount = 50000
+    currency = NGN
+    reason = duplicate_charge
 
-The Action definition specifies what parameters are possible or required.
+The Action definition specifies which parameters are possible or required.
 
-The Intent supplies their values.
+The Intent supplies or determines their values through deterministic resolution and validation.
 
 ⸻
 
@@ -301,7 +321,9 @@ refund_payment {
     note          conditional
 }
 
-Conditional parameters may depend on other values.
+Conditional parameters may depend on other parameters or explicit Action semantics.
+
+A missing required parameter prevents creation of a valid Action Instance.
 
 ⸻
 
@@ -320,7 +342,9 @@ Another:
 currency:
     allowed = [NGN, USD, GBP]
 
-These constraints contribute to Validation.
+These constraints contribute to deterministic validation.
+
+They do not themselves establish authorization.
 
 ⸻
 
@@ -332,13 +356,15 @@ Example:
 
 refund_payment
 Precondition:
-payment.status = CAPTURED
+    payment.status = CAPTURED
 
-This does not necessarily mean Noema owns the payment state.
+The Action Model defines that the condition is semantically relevant.
 
-The execution consumer may be the authoritative source for the precondition.
+It does not necessarily own the underlying state.
 
-Noema can represent the requirement without becoming the system of record.
+The authoritative enterprise system may provide the state used to establish whether the precondition currently holds.
+
+Where multiple enterprise observations are required, State Reconciliation may be necessary before the precondition can be treated as satisfied.
 
 ⸻
 
@@ -349,12 +375,14 @@ Actions may define expected semantic postconditions.
 Example:
 
 refund_payment
-Expected Outcome:
-payment refund initiated
+Expected Postcondition:
+    refund initiated
 
-Postconditions should describe the intended business effect, not falsely assert that it occurred.
+A postcondition describes the intended semantic effect.
 
-The actual result comes from the execution consumer.
+It does not establish that the effect occurred.
+
+Actual execution and verification determine what happened.
 
 ⸻
 
@@ -362,19 +390,20 @@ The actual result comes from the execution consumer.
 
 An Action should define:
 
-What does this Action mean?
-What resources does it operate on?
-What parameters does it accept?
-What conditions must hold?
-What effect does it request?
+* What does this Action mean?
+* What resources does it operate on?
+* What parameters does it accept?
+* What semantic conditions must hold?
+* What effect does it request?
 
 It should not define:
 
-Which HTTP endpoint to call?
-Which database query to execute?
-Which SDK method to invoke?
+* Which HTTP endpoint to call
+* Which database query to execute
+* Which SDK method to invoke
+* Which credentials to use
 
-Those belong to the Capability / Consumer layer.
+Those belong to the Capability, Integration, Action Contract, and Execution layers.
 
 ⸻
 
@@ -385,19 +414,21 @@ Actions generally operate on one or more Resources.
 Example:
 
 Action:
-update_customer
+    update_customer
 Resource:
-customer_123
+    customer_123
 
 or:
 
 Action:
-transfer_money
+    transfer_money
 Resources:
-source_account
-destination_account
+    source_account
+    destination_account
 
 The Action Model should specify which resource roles are required.
+
+The exact resource must be resolved before consequential execution.
 
 ⸻
 
@@ -416,28 +447,29 @@ This is preferable to:
 
 resources = [account_1, account_2]
 
-because the meaning of each resource is explicit.
+because the semantic role of each Resource is explicit.
+
+The roles become part of Action Instance binding and Action Contract scope.
 
 ⸻
 
 20. Action and Actor
 
-Actions may have Actor requirements.
+Actions may define Actor requirements.
 
 Example:
 
 delete_customer
 
-may require:
+may require an authority class such as:
 
-Actor:
 customer_admin
 
 However, the Action itself does not grant authorization.
 
-It merely defines what the operation is and potentially what authority class is required.
+It defines semantic requirements that may be relevant to Trust evaluation.
 
-Trust determines whether the actual Actor may perform it.
+Trust determines whether the actual resolved Actor may perform the specific Action against the specific target under current conditions.
 
 ⸻
 
@@ -449,7 +481,7 @@ For example:
 
 refund_payment
 
-means refunding a specific payment.
+means refunding a specific eligible payment.
 
 It should not implicitly include:
 
@@ -457,7 +489,9 @@ close_account
 send_email
 delete_customer
 
-unless those are explicitly modeled as part of a composite Action.
+unless those operations are explicitly modeled as part of a composite Action.
+
+An Action must not silently expand its semantic or execution scope.
 
 ⸻
 
@@ -477,6 +511,8 @@ Atomic does not necessarily mean technically indivisible.
 
 It means the Action has one primary semantic purpose.
 
+Technical atomicity is an execution property and must not be inferred from semantic atomicity.
+
 ⸻
 
 23. Composite Actions
@@ -494,6 +530,8 @@ send_notification
 
 The Action Model should support composition without forcing unrelated operations into one Action definition.
 
+Each Action retains its own semantics and execution boundary.
+
 ⸻
 
 24. Action Composition
@@ -505,7 +543,7 @@ refund_payment
       ▼
 send_notification
 
-where the second Action depends on the first succeeding.
+where the second Action depends on verified successful completion of the first.
 
 Alternatively:
 
@@ -517,31 +555,35 @@ where they are independent.
 
 The dependency semantics must be explicit.
 
+Noema must not infer dependency solely from textual ordering.
+
 ⸻
 
 25. Action Dependencies
 
-Actions may declare dependencies on other Actions.
+Actions may declare dependencies on other Action Instances.
 
 Example:
 
 notify_customer
 requires:
-refund_payment.success
+    refund_payment.success
 
-This allows Noema to model execution ordering without embedding implementation logic.
+This allows Noema to model execution ordering without embedding implementation logic into the Action definition.
+
+A dependency on success must refer to a verified execution condition rather than merely the issuance or acceptance of another Action Contract.
 
 ⸻
 
 26. Action Idempotency
 
-An Action definition should indicate whether repeated execution is semantically safe.
+An Action definition should indicate its semantic repeatability characteristics.
 
 For example:
 
 get_customer
 
-is generally naturally repeatable.
+is generally repeatable.
 
 Whereas:
 
@@ -551,26 +593,30 @@ is not inherently idempotent.
 
 The Action Model should expose this semantic property.
 
+It does not replace the consumer’s concrete idempotency mechanism.
+
 ⸻
 
 27. Idempotency Semantics
 
-Possible conceptual classifications:
+Possible conceptual classifications include:
 
 SAFE_TO_REPEAT
 IDEMPOTENCY_SUPPORTED
 NOT_IDEMPOTENT
 UNKNOWN
 
-This informs Action Contract and consumer behavior.
+These classifications inform Action Contract and execution behavior.
 
-It does not replace the consumer’s actual idempotency mechanism.
+They do not guarantee that a particular integration is idempotent.
+
+Integration-specific idempotency behavior must be represented separately.
 
 ⸻
 
 28. Reversibility
 
-Actions may also have semantic reversibility.
+Actions may also have semantic reversibility characteristics.
 
 Example:
 
@@ -582,7 +628,7 @@ cancel_invoice
 
 But these are distinct Actions.
 
-Noema should not assume:
+Noema must not assume:
 
 Action A
 +
@@ -590,13 +636,13 @@ failure
 =
 inverse Action A
 
-unless explicitly modeled.
+unless a compensation or reversal relationship is explicitly modeled.
 
 ⸻
 
 29. Destructive Actions
 
-The Action Model should identify Actions with destructive or irreversible effects.
+The Action Model should identify Actions with destructive or potentially irreversible effects.
 
 Examples:
 
@@ -621,11 +667,13 @@ send_notification
 
 has an external side effect.
 
+Whereas:
+
 calculate_quote
 
 may be read-only.
 
-A conceptual classification:
+A conceptual classification may include:
 
 READ
 CREATE
@@ -637,6 +685,8 @@ CONTROL
 
 This taxonomy is illustrative and should evolve with the broader ontology.
 
+Side-effect classification does not itself determine Risk or Trust.
+
 ⸻
 
 31. Read vs Mutating Actions
@@ -645,20 +695,20 @@ A useful distinction is:
 
 Read Action
     ↓
-observes state
+observes or retrieves state
 Mutating Action
     ↓
-requests state change
+requests a state change
 
 Example:
 
 get_customer
-
-vs:
-
+vs
 update_customer
 
 Trust requirements may differ significantly between them.
+
+Read-only must not automatically be treated as non-consequential. Protected data access, reconciliation, or privileged investigation may still require deterministic Trust and authorization.
 
 ⸻
 
@@ -680,6 +730,10 @@ These attributes provide inputs to the Risk model.
 
 They do not themselves constitute a risk decision.
 
+Risk characteristics describe the Action.
+
+Risk evaluation determines the relevant decision for a specific Action Instance and context.
+
 ⸻
 
 33. Action Versioning
@@ -693,17 +747,15 @@ Example:
 refund_payment:v1
 refund_payment:v2
 
-Version changes should be meaningful and controlled.
+Version changes must be meaningful and controlled.
 
-A consumer should know which Action semantics a contract refers to.
+A consequential Action Contract must identify which Action semantics it references.
 
 ⸻
 
-34. Semantic Versioning
+34. Semantic vs Implementation Versioning
 
-The exact versioning strategy is an implementation decision.
-
-However, Noema should distinguish:
+Noema must distinguish:
 
 semantic change
 
@@ -717,11 +769,13 @@ HTTP endpoint
 
 does not necessarily require a new Action version.
 
-Changing:
+Changing the meaning of:
 
-meaning of refund_payment
+refund_payment
 
-may.
+may require a new Action version.
+
+Transport, integration, Capability, and Action Contract versions remain separate version dimensions.
 
 ⸻
 
@@ -745,6 +799,8 @@ Action {
         destructiveness
         risk
     }
+    dependencies
+    composition
 }
 
 This is a conceptual model, not yet the final wire schema.
@@ -753,7 +809,7 @@ This is a conceptual model, not yet the final wire schema.
 
 36. Action Registry
 
-Noema will likely require a canonical Action Registry.
+Noema requires a canonical Action Registry for the Actions that form part of its execution ontology.
 
 Conceptually:
 
@@ -767,11 +823,13 @@ Action Registry
 
 The registry provides stable semantic definitions.
 
+Registry entries must be versioned and preserve historical meaning.
+
 ⸻
 
 37. Action Registry vs Capability Registry
 
-These should remain separate.
+These must remain separate.
 
 Action Registry
 
@@ -783,7 +841,7 @@ Capability Registry
 
 Defines:
 
-Who/what can perform it?
+What bounded ability is available to perform it, and through which execution boundary?
 
 Example:
 
@@ -798,6 +856,8 @@ Capability Registry
 Consumer
     payment-service
 
+Neither registry should be treated as a substitute for the other.
+
 ⸻
 
 38. Multiple Capabilities for One Action
@@ -807,17 +867,15 @@ One Action may be executable through multiple Capabilities.
 Example:
 
 Action:
-send_notification
-
+    send_notification
 Capabilities:
+    email.send
+    sms.send
+    push.send
 
-email.send
-sms.send
-push.send
+The appropriate Capability may depend on Intent parameters, Context, enterprise configuration, policy, or explicit user preference.
 
-The Intent may specify a communication preference or the system may require clarification.
-
-The Capability layer determines what execution mechanisms are available.
+If the distinction materially affects the requested outcome and cannot be resolved deterministically, clarification may be required.
 
 ⸻
 
@@ -834,6 +892,8 @@ payments
 └── retrieve_payment
 
 Capability is therefore not synonymous with Action.
+
+A Capability represents an available bounded ability; an Action represents semantic meaning.
 
 ⸻
 
@@ -853,23 +913,25 @@ cancel_payment
 refund_payment
 void_payment
 
-Noema must resolve the distinction before producing an executable contract.
+Noema must resolve the distinction before producing an executable Action Contract.
 
-If ambiguity remains material:
+If the distinction remains materially ambiguous:
 
-WAITING_FOR_CLARIFICATION
+CLARIFY
+
+and no executable Action Contract exists.
 
 ⸻
 
 41. No Guessing at Action Boundaries
 
-A model should not choose an Action merely because it is statistically likely when the semantic consequences differ materially.
+A model must not select an Action merely because it is statistically likely when the semantic consequences differ materially.
 
 For example:
 
 "Stop my subscription."
 
-could potentially mean:
+could mean:
 
 cancel_subscription
 pause_subscription
@@ -886,6 +948,10 @@ not:
 LLM probability
         ↓
 cancel_subscription
+
+Probabilistic interpretation may generate candidates.
+
+Deterministic resolution determines whether a specific Action can be admitted for execution.
 
 ⸻
 
@@ -907,13 +973,17 @@ Describes what must be satisfied for Noema to permit execution.
 
 Example:
 
-Actor authorized
+Actor resolved
+authorization satisfied
 policy satisfied
-approval obtained
+required evidence available
+risk constraints satisfied
 
 Therefore:
 
 Precondition ≠ Authorization
+
+An Action may be semantically valid while a specific Action Instance is not permitted to execute.
 
 ⸻
 
@@ -927,18 +997,18 @@ Describes the intended semantic effect.
 
 Outcome
 
-Describes what actually happened.
+Describes what execution and verification establish actually happened.
 
 Example:
 
 Action:
-refund_payment
-Expected postcondition:
-refund initiated
-Actual outcome:
-refund transaction ID = xyz
+    refund_payment
+Expected Postcondition:
+    refund initiated
+Actual Outcome:
+    refund transaction ID = xyz
 
-The Action Model must not claim the postcondition occurred simply because the Action Contract was issued.
+The Action Model must not claim that the postcondition occurred merely because the Action Contract was issued or accepted.
 
 ⸻
 
@@ -954,9 +1024,9 @@ may only make sense when:
 
 transaction.status = PENDING
 
-Context determines whether the Action is applicable.
+Context provides information used to establish applicability.
 
-The Context Model supplies that information.
+Where current enterprise state is required, State Reconciliation may be necessary before Context can support an Action precondition.
 
 ⸻
 
@@ -967,9 +1037,9 @@ Policy can constrain an Action.
 Example:
 
 Action:
-transfer_money
+    transfer_money
 Policy:
-Transfers > ₦5M require two-person approval.
+    Transfers > ₦5M require two-person approval.
 
 The Action remains:
 
@@ -977,7 +1047,7 @@ transfer_money
 
 Policy does not redefine the Action.
 
-It governs its execution.
+Policy constrains whether a specific Action Instance may proceed.
 
 ⸻
 
@@ -993,13 +1063,13 @@ has materially different risk characteristics from:
 
 retrieve_account_balance
 
-The Risk Engine can use Action metadata as one input.
+The Risk model can use Action metadata as one input.
 
 Again:
 
-Action risk characteristic
+Action Risk Characteristic
 ≠
-final risk decision
+Final Risk Decision
 
 ⸻
 
@@ -1010,27 +1080,33 @@ The Trust Engine evaluates whether a specific instance of an Action may proceed.
 For example:
 
 Action:
-delete_account
+    delete_account
 
 does not mean:
 
 all delete_account Actions are trusted
 
-Trust evaluates:
+Trust evaluates the specific:
 
-this Actor
-this Resource
-this Action
-this Context
-this Evidence
-this Policy
-this Risk
+Actor
+Action
+Target
+Context
+Evidence
+Policy
+Authorization
+Risk
+Intent version
+
+The Action Model defines semantics.
+
+Trust makes the deterministic permission decision.
 
 ⸻
 
 48. Action Instance
 
-The distinction between Action Definition and Action Instance is useful.
+The distinction between Action Definition and Action Instance is fundamental.
 
 Action Definition
 
@@ -1043,7 +1119,11 @@ refund_payment(
     amount = ₦50,000
 )
 
-The Action Contract represents the authorized execution of an Action Instance.
+The Action Definition defines what the operation means.
+
+The Action Instance binds that meaning to specific resources and parameters.
+
+The Action Contract represents the authorized execution scope of the Action Instance.
 
 ⸻
 
@@ -1053,7 +1133,7 @@ An Action Instance may have its own identifier:
 
 action_instance_id
 
-This can be useful when a composite Intent contains multiple instances of the same Action.
+This is useful when a composite Intent contains multiple instances of the same Action.
 
 Example:
 
@@ -1063,9 +1143,9 @@ send_notification(customer_B)
 Both use:
 
 Action:
-send_notification
+    send_notification
 
-but are distinct instances.
+but they are distinct Action Instances.
 
 ⸻
 
@@ -1073,7 +1153,7 @@ but are distinct instances.
 
 The Action Definition itself is relatively static.
 
-The Action Instance has a lifecycle:
+The Action Instance has an execution-oriented lifecycle:
 
 IDENTIFIED
      ↓
@@ -1081,15 +1161,36 @@ BOUND
      ↓
 VALIDATED
      ↓
+READY_FOR_TRUST
+     ↓
 TRUSTED
      ↓
 CONTRACTED
      ↓
 EXECUTING
      ↓
-COMPLETED / FAILED
+VERIFYING
+     ↓
+COMPLETED / FAILED / UNKNOWN
 
-This lifecycle should not be confused with the Action Definition’s registry lifecycle.
+These statuses describe the Action Instance lifecycle.
+
+They should not be confused with:
+
+* Action Registry lifecycle
+* Trust outcomes
+* Action Contract lifecycle
+* Execution result
+* Intent status
+
+The canonical Trust outcome remains:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+TRUSTED above is shorthand for an Action Instance having received the applicable Trust EXECUTE decision, not a fifth Trust outcome.
 
 ⸻
 
@@ -1097,7 +1198,7 @@ This lifecycle should not be confused with the Action Definition’s registry li
 
 The Action Instance answers:
 
-What operation is this?
+What operation is this specific instance of?
 
 The Action Contract answers:
 
@@ -1111,6 +1212,8 @@ Trust
       ↓
 Action Contract
 
+The contract then crosses the execution boundary.
+
 ⸻
 
 52. Action Definition Ownership
@@ -1119,6 +1222,8 @@ Noema should own the canonical semantic definition of Actions that form part of 
 
 Execution consumers may provide implementation-specific metadata, but they should not redefine the semantic meaning of a canonical Action unilaterally.
 
+Enterprise-specific domain configuration may determine which Actions exist or are supported in a particular environment, but such configuration must remain explicit and versioned.
+
 ⸻
 
 53. Consumer Mapping
@@ -1126,9 +1231,9 @@ Execution consumers may provide implementation-specific metadata, but they shoul
 A consumer may declare:
 
 Capability:
-payments.refund
+    payments.refund
 implements:
-refund_payment
+    refund_payment
 
 This establishes:
 
@@ -1139,6 +1244,8 @@ Capability
 Consumer
 
 The mapping must be explicit.
+
+A system must not be considered a valid Action consumer merely because it exposes a technically compatible API.
 
 ⸻
 
@@ -1153,14 +1260,18 @@ resource support
 semantic version
 constraint support
 execution semantics
+verification semantics
+idempotency semantics
 
 A consumer must not claim to implement an Action if its behavior materially differs from the canonical Action semantics.
+
+Semantic incompatibility requires a distinct Action or Capability version, explicit translation, or another governed compatibility mechanism.
 
 ⸻
 
 55. Action Contract Generation
 
-The Action Model supplies the semantic schema used to construct the Action Contract.
+The Action Model supplies the semantic schema used to construct an Action Contract.
 
 Conceptually:
 
@@ -1173,6 +1284,8 @@ Trust Decision
 Capability
        ↓
 Action Contract
+
+The Action Contract adds execution scope, validity, consumer binding, provenance, and other execution-specific constraints.
 
 ⸻
 
@@ -1201,11 +1314,11 @@ currency = NGN
 
 Trust
 
-authorization = ALLOW
-policy = SATISFIED
-risk = ACCEPTABLE
+authorization = satisfied
+policy = satisfied
+risk = satisfied
 
-Contract
+Action Contract
 
 transfer_money(
     source = account_123,
@@ -1214,11 +1327,13 @@ transfer_money(
     currency = NGN
 )
 
+The contract remains subject to execution-time validation and verification.
+
 ⸻
 
 57. Example: Ambiguous Action
 
-User says:
+Source of Intent:
 
 "Stop my subscription."
 
@@ -1228,7 +1343,7 @@ cancel_subscription
 pause_subscription
 disable_auto_renewal
 
-If context cannot deterministically distinguish them:
+If Context and Intent semantics cannot deterministically distinguish them:
 
 Action = unresolved
 
@@ -1238,55 +1353,104 @@ No Action Contract
 
 and:
 
-WAITING_FOR_CLARIFICATION
+Trust → CLARIFY
+
+No probabilistic preference should silently become an executable Action.
 
 ⸻
 
 58. Example: Valid Action, Blocked Execution
 
 Intent:
+
 Delete customer account.
+
 Action:
-delete_customer_account.
+
+delete_customer_account
+
 Validation:
-VALID.
+
+VALID
+
 Trust:
-BLOCKED_BY_POLICY.
+
+REJECT
+
+because policy prohibits the operation.
 
 The Action exists.
 
-The Intent is valid.
+The Intent can be semantically valid.
 
-But execution is prohibited.
+Execution is still prohibited.
 
 This demonstrates:
 
-Action validity ≠ execution authorization
+Action validity
+≠
+execution authorization
 
 ⸻
 
 59. Example: Valid Action, No Capability
 
 Action:
+
 refund_payment
+
 Validation:
+
 VALID
+
 Trust:
-potentially ALLOW
+
+EXECUTE
+
 Capability:
+
 payments.refund unavailable
 
 The Action remains valid.
 
-The execution state may become:
+However, no executable Action Contract can be issued to a nonexistent or unavailable Capability.
+
+The execution journey may enter an operational state such as:
 
 WAITING_FOR_CAPABILITY
 
-No Action Contract should be issued to a nonexistent consumer.
+This is not a Trust outcome.
 
 ⸻
 
-60. Action Model Invariants
+60. Hard Boundary Between Semantics and Execution
+
+The Action Model participates in the deterministic execution boundary:
+
+Probabilistic
+    ↓
+interpret / propose candidate Action
+========== HARD BOUNDARY ==========
+Deterministic
+    ↓
+schema validation
+Action resolution
+parameter validation
+resource binding
+State Reconciliation
+Trust
+Capability binding
+Action Contract
+Execution
+Verification
+
+The model may propose an Action candidate.
+
+It cannot directly create an executable Action instance or bypass the Action Registry, Capability Registry, Trust, or Action Contract boundary.
+
+⸻
+
+61. Action Model Invariants
 
 Invariant 1
 
@@ -1310,7 +1474,7 @@ An Action does not imply execution.
 
 Invariant 6
 
-An Action does not imply successful outcome.
+An Action does not imply successful Outcome.
 
 Invariant 7
 
@@ -1322,45 +1486,101 @@ Action parameters must be explicitly typed.
 
 Invariant 9
 
-Material semantic changes require controlled versioning.
+Action resource roles must be explicit where multiple Resources are involved.
 
 Invariant 10
 
-An Action must not silently expand its execution scope.
+Material semantic changes require controlled versioning.
 
 Invariant 11
 
-Capabilities implement Actions; they do not redefine them.
+An Action must not silently expand its semantic or execution scope.
 
 Invariant 12
 
-An Action Contract binds a specific Action Instance to an authorized execution scope.
+Capabilities implement Actions; they do not redefine their canonical semantics.
 
 Invariant 13
 
-Ambiguous Action selection must not be resolved through unsupported guessing.
+An Action Contract binds a specific Action Instance to an authorized execution scope.
 
 Invariant 14
 
-Business-state truth remains with the authoritative execution system.
+Ambiguous Action selection must not be resolved through unsupported guessing.
+
+Invariant 15
+
+Action preconditions are distinct from Trust authorization conditions.
+
+Invariant 16
+
+Action postconditions are not evidence that the Action succeeded.
+
+Invariant 17
+
+Business-state truth remains with the authoritative enterprise system.
+
+Invariant 18
+
+Action Instance identity must distinguish multiple instances of the same Action.
+
+Invariant 19
+
+Action composition and dependencies must be explicit.
+
+Invariant 20
+
+Semantic idempotency characteristics must not be confused with an integration’s concrete idempotency mechanism.
+
+Invariant 21
+
+Reversal and compensation must be explicitly modeled and must not be inferred from failure.
+
+Invariant 22
+
+Risk characteristics are inputs to Risk evaluation and do not themselves constitute a risk decision.
+
+Invariant 23
+
+The Action Model must remain implementation-independent.
+
+Invariant 24
+
+No model output may directly become an executable Action without passing the deterministic validation and execution boundary.
+
+Invariant 25
+
+State-dependent Action preconditions must be established from appropriate current enterprise observations or reconciliation.
+
+Invariant 26
+
+An unavailable Capability does not invalidate the semantic definition of an Action.
+
+Invariant 27
+
+Read-only Actions may still be consequential and may require Trust and authorization.
+
+Invariant 28
+
+Historical Action semantics must remain stable for the version referenced by historical execution records.
 
 ⸻
 
-61. Canonical Mental Model
+62. Canonical Mental Model
 
 The Action Model can be reduced to:
 
 Intent
-"What does the Actor want?"
+"What does the Source of Intent want?"
         ↓
 Action
 "What operation does that Intent represent?"
         ↓
 Action Instance
-"On what resources, with what parameters?"
+"On what Resources, with what Parameters?"
         ↓
 Capability
-"What system can perform it?"
+"What bounded execution ability can perform it?"
         ↓
 Trust
 "May this specific instance proceed?"
@@ -1371,15 +1591,18 @@ Action Contract
 Execution
 "Perform it."
         ↓
+Verification
+"Can we establish what happened?"
+        ↓
 Outcome
-"What actually happened?"
+"What did the execution journey establish?"
 
 ⸻
 
-62. Final Definition
+63. Final Definition
 
-The Action Model defines Actions as stable, typed, implementation-independent semantic operations that can be instantiated by an Intent, evaluated by Trust, bound to an available Capability, and expressed as an explicit Action Contract for execution.
+The Action Model defines Actions as stable, typed, implementation-independent semantic operations that can be identified from Intent, instantiated against resolved Resources and Parameters, evaluated by deterministic Trust, bound to an available Capability, and expressed as an explicit Action Contract for execution.
 
 The core invariant is:
 
-Noema separates what an operation means from how it is implemented, whether it is permitted, and whether it actually succeeded. An Action defines the operation; Trust authorizes its instance; the Action Contract scopes its execution; and the consumer establishes the actual Outcome.
+Noema separates what an operation means from how it is implemented, whether it is permitted, and whether it actually succeeded. An Action defines the operation; an Action Instance binds it to a specific target and parameters; Trust determines whether that instance may proceed; the Action Contract scopes its execution; and the execution and verification layers establish the actual Outcome.
