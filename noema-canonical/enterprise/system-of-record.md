@@ -9,13 +9,13 @@ Canonical Path: enterprise/system-of-record.md
 
 1. Definition
 
-A System of Record (SoR) is the authoritative enterprise system responsible for maintaining the canonical state of a particular business domain, resource, or fact.
+A System of Record (SoR) is the authoritative enterprise system responsible for maintaining the canonical state of a particular business domain, resource, or claim within a defined scope.
 
 The System of Record concept establishes a critical boundary for Noema:
 
-Noema may understand, orchestrate, observe, and act upon enterprise state without becoming the authoritative owner of that state.
+Noema may understand, reconcile, orchestrate, observe, and act upon enterprise state without becoming the authoritative owner of that Business State.
 
-For example:
+Examples:
 
 CRM
 → customer record
@@ -25,7 +25,7 @@ HRIS
 → employee status
 IAM
 → identity and permissions
-Inventory system
+Inventory System
 → inventory state
 
 Noema integrates with these systems rather than replacing them.
@@ -34,18 +34,21 @@ Noema integrates with these systems rather than replacing them.
 
 2. Purpose
 
-The purpose of this concept is to prevent Noema from becoming a shadow system of record.
+The purpose of this concept is to prevent Noema from becoming a shadow System of Record for enterprise Business State.
 
-Noema will inevitably maintain state about executions:
+Noema necessarily maintains state about its own execution domain:
 
 Intent
 Trust Decision
 Action
 Execution
+Verification
 Outcome
 Intervention
+Audit
+Operational Memory
 
-That state is different from the underlying business state:
+That state is distinct from the underlying enterprise Business State:
 
 Customer
 Account
@@ -54,6 +57,7 @@ Employee
 Invoice
 Order
 Inventory
+Payment
 
 The distinction must remain explicit.
 
@@ -61,13 +65,13 @@ The distinction must remain explicit.
 
 3. Core Principle
 
-The enterprise owns business truth; Noema owns execution truth.
+The enterprise owns authoritative Business State; Noema owns and canonically manages its execution-domain state.
 
-This is one of the most important architectural boundaries in Noema.
+Conceptually:
 
 ENTERPRISE
-────────────────────────────
-Business Truth
+────────────────────────────────
+Business State / Business Truth
 customer
 account
 balance
@@ -75,22 +79,29 @@ invoice
 order
 employee
 inventory
+payment
+subscription
 NOEMA
-────────────────────────────
-Execution Truth
+────────────────────────────────
+Execution-Domain State
 intent
 resolution
 trust
 action
 execution
-outcome
+verification
+outcome record
 intervention
+audit
+operational memory
+
+Noema’s execution-domain Outcome records describe what Noema observed or established about an execution. They do not automatically become the authoritative enterprise Business State.
 
 ⸻
 
-4. Business Truth
+4. Business State
 
-Business Truth is the authoritative state of the enterprise domain.
+Business State is the authoritative state of an enterprise domain or resource.
 
 Examples:
 
@@ -99,16 +110,17 @@ Invoice.status = PAID
 Employee.status = ACTIVE
 Card.status = FROZEN
 Order.status = SHIPPED
+Payment.status = COMPLETED
 
-The authoritative value belongs to the designated enterprise System of Record.
+The authoritative value belongs to the designated enterprise System of Record for the relevant claim.
 
-Noema may cache or derive representations of these values, but those representations do not supersede the source.
+Noema may cache, project, reconcile, or derive representations of these values, but those representations do not supersede the enterprise authority.
 
 ⸻
 
-5. Execution Truth
+5. Execution-Domain State
 
-Noema owns facts about the execution journey it manages.
+Noema canonically manages facts about the execution journey it operates.
 
 Examples:
 
@@ -117,12 +129,13 @@ Intent resolved at 10:43
 Trust decision = EXECUTE
 Action submitted
 Execution timed out
-Outcome = UNKNOWN
+Execution state = UNKNOWN
+Verification completed
 Human intervention requested
 
-These are Noema-native facts.
+These are Noema execution-domain facts.
 
-The enterprise System of Record does not necessarily know this entire causal journey.
+An enterprise System of Record does not necessarily know or own this complete causal journey.
 
 ⸻
 
@@ -136,6 +149,7 @@ Intent:
 Noema may record:
 
 intent_id = 123
+intent_version = 2
 action = refund_payment
 trust_decision = EXECUTE
 execution_status = COMPLETED
@@ -147,19 +161,21 @@ refund.status
 refund.amount
 transaction_id
 
-Noema’s record of:
+Noema’s:
 
 execution_status = COMPLETED
 
 does not replace the payment system’s record of the actual financial state.
 
+Execution completion and enterprise Business State are related but distinct.
+
 ⸻
 
 7. One Fact, One Authority
 
-Where possible, every consequential enterprise fact should have a clearly defined authoritative source.
+Where possible, every consequential enterprise claim should have a clearly defined authoritative source.
 
-For example:
+Examples:
 
 Identity
 → Identity Provider
@@ -172,39 +188,51 @@ Payment Status
 Inventory
 → Inventory System
 
-Noema should know where the truth lives.
+Noema should know where the relevant enterprise truth is authoritative.
+
+This does not require one universal System of Record for the entire enterprise.
 
 ⸻
 
-8. Authority Is Domain-Specific
+8. Authority Is Domain- and Claim-Specific
 
 There is not necessarily one enterprise-wide System of Record.
 
-Different domains may have different authorities.
+Different domains, resources, and claims may have different authorities.
 
-             ENTERPRISE
-   ┌──────────┬───────────┬──────────┐
-   ▼          ▼           ▼          ▼
- Identity    Finance      HR       Inventory
-   │           │           │          │
-   ▼           ▼           ▼          ▼
-  IAM        Ledger       HRIS      ERP
+                 ENTERPRISE
+        ┌──────────┼──────────┬──────────┐
+        ▼          ▼          ▼          ▼
+    Identity     Finance      HR      Inventory
+        │          │          │          │
+        ▼          ▼          ▼          ▼
+       IAM       Ledger       HRIS       ERP
 
-Noema integrates across them.
+Authority may be scoped further by:
+
+claim
+resource
+tenant
+legal entity
+organization
+environment
+time
+
+Noema must preserve these boundaries when determining which source is authoritative for a consequential decision.
 
 ⸻
 
 9. Source of Truth vs Source of Evidence
 
-These terms must not be conflated.
+These concepts must not be conflated.
 
 System of Record
 
-The authoritative owner of a particular fact.
+The authoritative enterprise source for a defined claim or category of Business State.
 
 Source of Evidence
 
-A system that provides information useful for reasoning or verification.
+A system that provides information useful for reasoning, discovery, reconciliation, or verification.
 
 For example:
 
@@ -213,7 +241,9 @@ CRM
 Payment System
 → authoritative payment state
 
-The CRM may provide evidence about the customer, but it may not be authoritative for the payment.
+The CRM may provide evidence about the customer while not being authoritative for the payment.
+
+A source can therefore be useful evidence without being the System of Record for the claim under evaluation.
 
 ⸻
 
@@ -221,17 +251,21 @@ The CRM may provide evidence about the customer, but it may not be authoritative
 
 An API is not automatically a System of Record.
 
-An API is an interface to a system.
+An API is an interface through which Noema accesses an enterprise capability or system.
+
+Conceptually:
 
 API
  ↓
 Service
  ↓
-Database / Business System
+Business System
+ ↓
+Authoritative State
 
 The underlying service or system may own the authoritative state.
 
-Noema should therefore distinguish:
+Noema must therefore distinguish:
 
 interface
 
@@ -239,55 +273,108 @@ from:
 
 authority
 
+An API response may be authoritative for a claim if the enterprise designates the underlying system as authoritative, but the interface itself does not establish authority.
+
 ⸻
 
 11. Noema as an Execution System of Record
 
-Noema may itself become a System of Record for certain execution-domain facts.
+Noema may itself be the System of Record for certain execution-domain facts.
 
-For example:
+Examples:
 
 execution_id
 intent_id
 action_id
 trust_decision
 execution_state
+verification_state
 intervention
 execution_history
 
-This is compatible with the enterprise boundary because these are facts about Noema’s orchestration.
+This is compatible with the enterprise boundary because these are facts about Noema’s execution domain.
 
 Therefore:
 
-Noema should not avoid becoming a System of Record entirely; it should become the System of Record for the execution journey it owns.
+Noema should not avoid becoming a System of Record entirely. It should become authoritative for the execution-domain state it owns while remaining non-authoritative for enterprise Business State it does not own.
 
 ⸻
 
-12. Execution Journey
+12. Embedded Product Boundary
+
+Noema is Trusted Enterprise Execution Infrastructure embedded into enterprise products and workflows.
+
+Its relationship with Systems of Record therefore depends on the operating mode.
+
+Mode 1: Noema Full-Stack Execution
+
+Source of Intent
+      ↓
+Noema
+      ↓
+Intent
+      ↓
+Trust
+      ↓
+Action
+      ↓
+Enterprise System of Record
+      ↓
+Verification
+
+Mode 2: Independent Trust / Execution Boundary
+
+Human / Agent / Enterprise Orchestrator
+                ↓
+        Existing Intent / Action Flow
+                ↓
+              Noema
+                ↓
+       Trust / Execution Boundary
+                ↓
+        Enterprise Systems
+
+In both modes, Noema does not become the authoritative owner of the enterprise Business State merely because it participates in execution.
+
+⸻
+
+13. Execution Journey
 
 The execution journey can be modeled as:
 
-Intent
-   ↓
+Source of Intent
+      ↓
 Interpretation
-   ↓
+      ↓
+Candidate Intent
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
 Resolution
-   ↓
-Context
-   ↓
+      ↓
+Context / State Reconciliation
+      ↓
 Trust
-   ↓
-Action
-   ↓
+      ↓
+Action Graph / Planning
+      ↓
+Action Contract
+      ↓
 Execution
-   ↓
+      ↓
+Verification
+      ↓
 Outcome
+      ↓
+Audit / Operational Memory
 
 Noema should preserve this history as a coherent causal record.
 
 ⸻
 
-13. Business State Must Remain External
+14. Business State Must Remain External
 
 Suppose Noema executes:
 
@@ -307,26 +394,28 @@ But the canonical card state remains:
 Card System:
 status = FROZEN
 
-Noema should not maintain a competing:
+Noema should not maintain a competing authoritative:
 
 Noema:
 card.status = FROZEN
 
-as an authoritative business record.
+as Business State.
+
+It may retain an observation or reference to that state as part of execution context, evidence, audit, or Operational Memory.
 
 ⸻
 
-14. Cached Enterprise State
+15. Cached Enterprise State
 
 Noema may cache enterprise state for performance.
 
-For example:
+Example:
 
 Customer:
 id = 123
 status = ACTIVE
 
-But cached state is:
+A Noema cache is:
 
 derived
 
@@ -334,48 +423,52 @@ not:
 
 authoritative
 
-The cache should have an explicit freshness model.
+unless the enterprise explicitly designates that cache or projection as authoritative for the relevant claim.
+
+Cached representations should have an explicit freshness and provenance model.
 
 ⸻
 
-15. Stale State
+16. Stale State
 
 Consider:
 
 Noema cache:
 account.balance = $5,000
-
-Enterprise ledger:
-
+Enterprise Ledger:
 account.balance = $2,000
 
-The ledger wins.
+The ledger is authoritative for the balance.
 
 Noema must never treat stale cached state as authoritative merely because it has a locally stored value.
 
+If freshness is insufficient for the intended Action, Noema must reconcile or obtain current authoritative state before proceeding.
+
 ⸻
 
-16. Read-After-Write
+17. Read-After-Write
 
-After consequential execution, Noema may need to verify the resulting Business State against the System of Record.
+After consequential execution, Noema may need to verify the resulting Business State against the relevant System of Record.
+
+Conceptually:
 
 Action
   ↓
-Enterprise mutation
+Enterprise Mutation
   ↓
 Query System of Record
   ↓
 Verify Postcondition
   ↓
-Outcome
+Noema Outcome
 
-This is particularly important where execution responses are asynchronous or ambiguous.
+This is particularly important where execution responses are asynchronous, delayed, partial, or ambiguous.
 
 ⸻
 
-17. Unknown Outcome
+18. Unknown Outcome
 
-A critical case:
+A critical case is:
 
 Noema
    ↓
@@ -389,51 +482,98 @@ refund failed
 
 The request may have succeeded.
 
-Instead:
+The execution state may instead be:
 
-Execution:
-OUTCOME_UNKNOWN
+UNKNOWN
 
-Noema should reconcile against the System of Record.
+Noema should reconcile against the appropriate System of Record before retrying or declaring a definitive business outcome.
 
 ⸻
 
-18. Reconciliation
+19. Reconciliation
 
-Reconciliation resolves differences between:
+State Reconciliation is a first-class Noema platform capability.
 
-Noema Execution State
+It reconciles observations from enterprise systems into an explicit representation of the currently supported enterprise claims and their epistemic status.
 
-and:
+Conceptually:
 
-Enterprise Business State
+Enterprise Systems of Record
+          ↓
+Observations
+          ↓
+Hard Schema Validation / Admission
+          ↓
+State Reconciliation
+          ↓
+Reconciled Facts / Fact Status / Evidence
+          ↓
+Context
+          ↓
+Trust
 
-Example:
+For example:
 
 Noema:
 refund request submitted
-outcome unknown
-        ↓ query
+execution outcome = UNKNOWN
+        ↓ reconcile
 Payment System:
 refund completed
-
-Noema can then transition:
-
-OUTCOME_UNKNOWN
         ↓
-CONFIRMED_SUCCESS
+Noema:
+execution outcome = CONFIRMED_SUCCESS
 
 The payment system remains authoritative for the refund itself.
 
+Reconciliation does not transfer ownership of Business State to Noema.
+
 ⸻
 
-19. System-of-Record Discovery
+20. Fact Status
+
+Fact Status must remain distinct from Evidence, Context, Business State, Outcome, and model confidence.
+
+Relevant values include:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+For example:
+
+Claim:
+payment.status = COMPLETED
+Source:
+Payment System
+Evidence:
+payment status response
+Fact Status:
+VERIFIED
+
+A cached response may instead produce:
+
+Fact Status:
+STALE
+
+A conflict between authoritative sources may produce:
+
+Fact Status:
+CONFLICTED
+
+Noema must not use model confidence as a substitute for Fact Status.
+
+⸻
+
+21. System-of-Record Discovery
 
 Noema may need to determine:
 
-Which system owns this fact?
+“Which system is authoritative for this claim?”
 
-This may come from:
+This information may come from:
 
 Enterprise configuration
 Integration metadata
@@ -441,39 +581,47 @@ Action Contract
 API documentation
 Enterprise Action Graph
 Human configuration
+System metadata
 
-Noema should not infer authority purely from whichever system happens to return data first.
+Noema must not infer authority merely from whichever system happens to return data first.
+
+Authority must be explicitly represented or established through enterprise-defined semantics.
 
 ⸻
 
-20. Provenance
+22. Provenance
 
-Enterprise facts should retain provenance where consequential.
+Consequential enterprise observations should retain provenance.
 
 Conceptually:
 
-Fact {
+Observation {
+    claim
     value
     source
-    observed_at
-    version
     authority
+    observed_at
+    effective_at
+    version
+    schema_version
+    provenance
 }
 
 Example:
 
 balance = $5,000
 source = Ledger
-observed_at = 10:32:04
 authority = authoritative
+observed_at = 10:32:04
+version = 4812
 
-This allows Trust decisions to distinguish authoritative evidence from secondary information.
+This allows Noema to distinguish authoritative observations from secondary or stale information.
 
 ⸻
 
-21. Authority Hierarchy
+23. Authority Model
 
-When multiple sources provide conflicting information, Noema needs an authority model.
+When multiple sources provide information about the same claim, Noema needs an explicit authority model.
 
 Example:
 
@@ -487,13 +635,13 @@ Cache
     ↑
 temporary
 
-A conflict should not be resolved through model preference.
+A conflict must not be resolved through model preference, frequency, semantic plausibility, or recency alone.
 
-It should be resolved according to explicitly defined source authority.
+It must be resolved according to explicitly defined authority semantics.
 
 ⸻
 
-22. Conflicting Systems
+24. Conflicting Systems
 
 Suppose:
 
@@ -508,11 +656,23 @@ ACTIVE
 
 because it appears more frequently or semantically plausible.
 
-The relevant domain authority must be established.
+The relevant domain and claim authority must be established.
+
+If authority cannot be established and the claim is consequential, the state should remain explicitly:
+
+CONFLICTED
+
+or:
+
+UNKNOWN
+
+as appropriate.
+
+The model must not arbitrate enterprise truth.
 
 ⸻
 
-23. Authority Is Action-Dependent
+25. Authority Is Action- and Claim-Dependent
 
 The authoritative system may depend on the fact being evaluated.
 
@@ -525,13 +685,17 @@ Payment status
 Account balance
 → Ledger
 
-Noema’s Enterprise Action Graph should represent these relationships explicitly where useful.
+The same resource may therefore have different authoritative systems for different claims.
+
+Noema’s Enterprise Action Graph and integration metadata should represent these relationships where useful.
 
 ⸻
 
-24. System of Record and Context
+26. System of Record and Context
 
-Context should identify the source of important enterprise facts.
+Context should preserve the provenance and authority of important enterprise information.
+
+Conceptually:
 
 Context
 ├── customer
@@ -543,13 +707,21 @@ Context
 └── balance
      └── source = Ledger
 
+Where applicable, Context should also retain:
+
+authority
+observed_at
+effective_at
+version
+Fact Status
+
 This prevents Context from becoming an undifferentiated collection of potentially stale information.
 
 ⸻
 
-25. System of Record and Trust
+27. System of Record and Trust
 
-Trust should consider the authority of evidence.
+Trust should consider the authority and epistemic status of relevant enterprise evidence.
 
 For example:
 
@@ -559,32 +731,42 @@ Source:
 Ledger
 Authority:
 authoritative
+Fact Status:
+VERIFIED
 
-is stronger than:
+is materially different from:
 
 Evidence:
 account.balance = $5,000
 Source:
 cached analytics database
+Authority:
+derived
+Fact Status:
+STALE
 
-The distinction can materially affect high-risk execution.
+The distinction may determine whether a consequential Action can proceed.
+
+Trust does not itself establish enterprise authority. It evaluates the available evidence and enterprise-defined constraints deterministically.
 
 ⸻
 
-26. System of Record and Preconditions
+28. System of Record and Preconditions
 
-Preconditions should be evaluated against the appropriate authoritative state.
+Preconditions should be evaluated against the appropriate current enterprise state.
 
 Example:
 
 Precondition:
 balance >= $1,000
 
-For a financial Action, Noema should generally evaluate this against the authoritative financial source rather than an arbitrary cached representation.
+For a financial Action, Noema should generally evaluate this against the authoritative financial source or an explicitly authorized, sufficiently fresh representation of that source.
+
+A stale cache must not silently satisfy a precondition requiring current truth.
 
 ⸻
 
-27. System of Record and Postconditions
+29. System of Record and Postconditions
 
 Postconditions may require verification against the System of Record.
 
@@ -600,13 +782,15 @@ Verification:
 Subscription System
 → status = CANCELLED
 
-Only then should Noema mark the business outcome as confirmed.
+Noema can then record a confirmed execution outcome.
+
+The subscription system remains authoritative for the subscription’s Business State.
 
 ⸻
 
-28. System of Record and Action Contracts
+30. System of Record and Action Contracts
 
-An Action Contract should identify the enterprise capability and, where relevant, the authoritative resource system.
+An Action Contract should identify the enterprise capability and, where relevant, the authoritative system or authority source involved in execution and verification.
 
 Conceptually:
 
@@ -618,13 +802,21 @@ ActionContract {
     execution
     postconditions
     authority_source
+    verification_source
 }
 
-This helps Noema understand where execution occurs and where outcome verification should happen.
+This helps Noema understand:
+
+where execution occurs
+where relevant state lives
+where preconditions are evaluated
+where postconditions are verified
+
+An Action Contract does not transfer enterprise ownership of Business State to Noema.
 
 ⸻
 
-29. System of Record and Integrations
+31. System of Record and Integrations
 
 Integrations should expose enough metadata to establish:
 
@@ -634,6 +826,7 @@ resource ownership
 authority
 schema
 version
+consistency model
 
 For example:
 
@@ -648,9 +841,11 @@ refund
 capture
 void
 
+Integration metadata describes how Noema interacts with enterprise systems. It does not itself create enterprise authority.
+
 ⸻
 
-30. System of Record and Events
+32. System of Record and Events
 
 Events may originate from the authoritative system.
 
@@ -662,22 +857,24 @@ payment.refunded
       ↓
 Noema
 
-The event provides strong evidence that the System of Record changed.
+The event can provide evidence about a state transition.
 
-Noema should preserve:
+Noema should preserve, where required:
 
 event source
 event identity
 event timestamp
 event version
+schema version
+correlation
 
-where required for reconciliation and audit.
+The event’s source and authority must remain explicit.
 
 ⸻
 
-31. Events Are Not Automatically Authority
+33. Events Are Not Automatically Current State
 
-An event may be delayed, duplicated, reordered, or lost.
+An event may be delayed, duplicated, reordered, replayed, or absent.
 
 Therefore:
 
@@ -687,11 +884,13 @@ does not necessarily mean:
 
 current state = event payload
 
-For consequential verification, Noema may need to query the System of Record.
+For consequential verification, Noema may need to query and reconcile against the System of Record.
+
+Event absence is also not proof that the corresponding business occurrence did not happen.
 
 ⸻
 
-32. Eventual Consistency
+34. Eventual Consistency
 
 Enterprise architectures frequently contain:
 
@@ -701,14 +900,17 @@ event streams
 caches
 search indexes
 analytics systems
+materialized views
 
 These may temporarily disagree.
 
-Noema must understand the consistency guarantees of the system it is interacting with.
+Noema must understand the consistency guarantees and authority semantics of the system it is interacting with.
+
+A derived or eventually consistent view must not silently be treated as current authoritative state.
 
 ⸻
 
-33. Derived Systems
+35. Derived Systems
 
 Derived systems include:
 
@@ -719,13 +921,13 @@ materialized views
 caches
 event projections
 
-These are useful for Context and discovery.
+These are useful for discovery, Context, investigation, and reconciliation.
 
-They should not be treated as authoritative unless the enterprise explicitly designates them as such.
+They should not be treated as authoritative unless the enterprise explicitly designates them as authoritative for the relevant claim.
 
 ⸻
 
-34. Noema’s Own Database
+36. Noema’s Own Database
 
 Noema’s database may contain:
 
@@ -733,11 +935,13 @@ intent records
 execution records
 action records
 trust decisions
+verification records
 audit records
 integration metadata
 reconciliation state
+operational memory
 
-This database is authoritative for these Noema-owned concepts.
+This database may be authoritative for Noema-owned execution-domain concepts.
 
 It is not automatically authoritative for:
 
@@ -746,10 +950,14 @@ payments
 employees
 customers
 inventory
+orders
+balances
+
+Noema’s persistence does not confer enterprise authority.
 
 ⸻
 
-35. Shadow System of Record
+37. Shadow System of Record
 
 A shadow System of Record occurs when Noema begins maintaining an independent authoritative representation of enterprise Business State.
 
@@ -760,23 +968,20 @@ account.balance = $10,000
 Noema:
 account.balance = $10,000
 
-Then Noema starts modifying its own copy:
+If Noema subsequently maintains and mutates its own authoritative copy:
 
 Noema:
 account.balance = $8,000
-
-while the enterprise ledger says:
-
-Enterprise:
+Enterprise Ledger:
 account.balance = $7,500
 
-At this point Noema has created conflicting business truth.
+Noema has created competing Business Truth.
 
 This should be avoided.
 
 ⸻
 
-36. Why Shadow State Is Dangerous
+38. Why Shadow State Is Dangerous
 
 Shadow Business State creates:
 
@@ -788,11 +993,11 @@ security exposure
 duplicated business logic
 operational complexity
 
-It also moves Noema toward becoming another enterprise application rather than an execution infrastructure layer.
+It also moves Noema toward becoming another enterprise application rather than Trusted Enterprise Execution Infrastructure.
 
 ⸻
 
-37. Reference vs Ownership
+39. Reference vs Ownership
 
 Noema should distinguish:
 
@@ -817,22 +1022,26 @@ The customer remains owned by the appropriate enterprise system.
 
 ⸻
 
-38. Entity Identity
+40. Enterprise Resource Identity
 
-Enterprise Resources should normally be referenced using stable enterprise identifiers.
+Enterprise resources should normally be referenced using stable enterprise identifiers.
 
-Example:
+Examples:
 
 customer_id
 account_id
 invoice_id
 payment_id
+order_id
+subscription_id
 
-Noema should avoid inventing a second identity for the same enterprise resource unless there is a specific architectural need.
+Noema should avoid inventing a second authoritative identity for the same enterprise resource unless there is a specific architectural need.
+
+Noema may maintain its own execution identifiers that reference enterprise resources.
 
 ⸻
 
-39. Tenant Boundaries
+41. Tenant Boundaries
 
 In multi-tenant environments:
 
@@ -843,70 +1052,152 @@ Tenant B
    ↓
 System of Record B
 
-Noema must maintain strict tenant boundaries.
+Noema must maintain strict tenant isolation.
 
 A resource from one tenant must never become accessible merely because another tenant has a similar identifier.
 
+Tenant scope must be preserved in:
+
+Context
+Identity
+Permissions
+Authority
+Execution
+Audit
+Operational Memory
+
 ⸻
 
-40. Organizational Authority
+42. Organizational Authority
 
-A System of Record can also establish organizational facts.
+A System of Record can establish organizational facts.
 
 For example:
 
 HRIS
 → employee belongs to Finance
 IAM
-→ employee has role Finance Manager
+→ employee has Finance Manager role
 
 Noema consumes these facts when evaluating enterprise authority.
 
-It should not manufacture organizational authority from behavioral patterns.
+It must not manufacture organizational authority from behavioral patterns, model inference, or historical execution alone.
 
 ⸻
 
-41. Human Configuration
+43. Human Configuration
 
 Some enterprise authority relationships may not exist in machine-readable systems.
 
-For example:
+Example:
 
 "All refunds above $10,000 require CFO approval."
 
 Noema may ingest such configuration into its enterprise model.
 
-But the configuration itself must have:
+The configuration should have, where appropriate:
 
 owner
+source
 version
 effective date
+scope
 provenance
 
-where appropriate.
+Human configuration is not automatically authoritative merely because it has been entered into Noema. Its authority must be established by the enterprise governance model.
 
 ⸻
 
-42. System-of-Record Metadata
+44. Hard Schema Validation and Admission
 
-A useful abstraction is:
+Enterprise data entering Noema must cross an explicit validation and admission boundary before being treated as a structured Noema input.
 
-SystemOfRecord {
-    system_id
-    domain
-    resource_types
-    authoritative_facts
-    capabilities
-    consistency_model
-    version
-    provenance
-}
+Conceptually:
 
-This metadata allows Noema to reason about enterprise authority without owning the underlying data.
+Enterprise API / Event / Tool Response
+              ↓
+       Hard Schema Validation
+              ↓
+            Admission
+              ↓
+      Context / Evidence / State
+
+The following must not become authoritative merely because they can be parsed:
+
+model-generated claims
+user-provided claims
+retrieved enterprise text
+tool output
+external messages
+unvalidated API payloads
+
+Persistence also does not establish authority.
+
+Authority comes from the enterprise source and its defined semantics.
 
 ⸻
 
-43. Authority Changes
+45. Authority and Knowledge State
+
+Enterprise truth and Noema’s current knowledge of that truth are distinct.
+
+For example:
+
+Enterprise:
+refund.status = COMPLETED
+
+while:
+
+Noema:
+knowledge state = UNKNOWN
+
+may occur when the authoritative observation has not yet been received or reconciled.
+
+Conversely, Noema may retain a historical observation that is no longer current.
+
+Noema must represent this epistemic distinction explicitly rather than pretending that lack of knowledge changes enterprise truth.
+
+⸻
+
+46. Authority and Freshness
+
+Authority and freshness are separate dimensions.
+
+A source may be authoritative but its locally cached observation may be stale.
+
+A recently received observation may also come from a non-authoritative source.
+
+Therefore:
+
+recent ≠ authoritative
+authoritative ≠ necessarily current
+
+Noema must evaluate both dimensions when current state matters.
+
+⸻
+
+47. System-of-Record Versioning
+
+Where authority or resource state changes over time, Noema may need to preserve relevant versions.
+
+Examples:
+
+business/resource version
+source assertion version
+event version
+schema/transport version
+contract version
+policy version
+integration mapping version
+graph/capability version
+
+These version dimensions are distinct.
+
+Historical execution records should preserve the versions necessary to reconstruct what authority and state were relied upon at the time.
+
+⸻
+
+48. Authority Changes
 
 Enterprise architecture evolves.
 
@@ -922,24 +1213,13 @@ Ledger A
     ↓
 Ledger B
 
-Noema must support changes in System-of-Record designation without requiring the core intent model to change.
+Noema must support changes in System-of-Record designation without requiring the core Intent model to change.
+
+The authority mapping itself is versioned enterprise configuration.
 
 ⸻
 
-44. System-of-Record Versioning
-
-Where authority changes over time, Noema may need to know:
-
-before migration:
-System A authoritative
-after migration:
-System B authoritative
-
-This matters when reconstructing historical execution decisions.
-
-⸻
-
-45. Historical Authority
+49. Historical Authority
 
 An old execution may have relied on:
 
@@ -951,28 +1231,38 @@ System B
 
 is authoritative today.
 
-Auditability therefore requires preserving enough provenance to understand which source was authoritative at the time of execution.
+Auditability therefore requires preserving enough provenance to determine which source was authoritative for the relevant claim at the time of execution.
+
+Current authority must not be retroactively substituted into historical execution records.
 
 ⸻
 
-46. System of Record and Auditability
+50. System of Record and Auditability
 
-A good audit record can answer:
+A consequential audit record should be able to answer:
 
-Which enterprise system supplied the relevant fact?
-Was that system authoritative?
-When was the fact observed?
-What version or revision was used?
-Did the authoritative state change before execution?
+Which enterprise system supplied the relevant observation?
+Which claim did it support?
+Was that system authoritative for the claim?
+What was the observation time?
+What was the effective time?
+What version or revision applied?
+What was the Fact Status?
+Was State Reconciliation performed?
+Which Intent version was evaluated?
+Which Trust Decision was made?
+Was the state revalidated before execution?
 Was postcondition verification performed?
 
+This forms part of Noema’s causal audit trail.
+
 ⸻
 
-47. System of Record and Determinism
+51. System of Record and Determinism
 
 Deterministic Trust requires deterministic authority resolution.
 
-Noema should not do:
+Noema must not do:
 
 System A says X
 System B says Y
@@ -982,26 +1272,30 @@ Model thinks X is probably right
 Instead:
 
 Conflict detected
-     ↓
+       ↓
 Authority relationship evaluated
-     ↓
+       ↓
 Authoritative source identified
-     ↓
-State verified
-     ↓
-Trust decision
+       ↓
+State observed / reconciled
+       ↓
+Fact Status established
+       ↓
+Trust evaluated
 
-If authority cannot be established:
+If authority cannot be established for a consequential claim, Noema must not guess.
+
+The applicable Trust result may be:
 
 CLARIFY
 ESCALATE
-or REJECT
+REJECT
 
-depending on policy.
+depending on the circumstances and enterprise policy.
 
 ⸻
 
-48. System of Record and Failure
+52. System of Record and Failure
 
 If the System of Record is unavailable:
 
@@ -1009,29 +1303,33 @@ GET /account/123
         ↓
 timeout
 
-Noema should not substitute arbitrary stale state for authoritative state when the Action requires current truth.
+Noema should not silently substitute arbitrary stale state for authoritative state when the Action requires current truth.
 
-The resulting state may be:
+The resulting knowledge condition may be:
 
-AUTHORITY_UNAVAILABLE
+UNKNOWN
 
-which Trust and Policy can handle explicitly.
+or another explicit operational condition.
+
+Trust and policy determine whether execution can proceed.
 
 ⸻
 
-49. Fail-Closed for Consequential Operations
+53. Fail-Closed for Consequential Operations
 
 For high-risk Actions:
 
 authoritative state unavailable
 
-should generally prevent execution unless enterprise Policy explicitly allows an alternative.
+should generally prevent execution unless enterprise Policy explicitly permits an alternative source or execution strategy.
 
 This prevents Noema from crossing the enterprise boundary based on uncertain Business State.
 
+Fail-closed is a policy/risk decision, not a universal semantic rule that every unavailable source must produce the Trust outcome REJECT.
+
 ⸻
 
-50. System of Record and Offline Execution
+54. System of Record and Offline Execution
 
 Offline or delayed execution requires special care.
 
@@ -1043,13 +1341,15 @@ but:
 
 Action executes at T2
 
-then the authoritative Business State may have changed.
+the authoritative Business State may have changed.
 
-The Action’s Preconditions may therefore need revalidation immediately before execution.
+Action Preconditions may therefore need revalidation immediately before execution.
+
+The earlier observation remains historically valid for the time it was observed but may no longer be sufficient for current execution.
 
 ⸻
 
-51. System of Record and Concurrency
+55. System of Record and Concurrency
 
 Two Noema executions may target the same enterprise resource.
 
@@ -1059,16 +1359,25 @@ Execution A:
 withdraw $5,000
 Execution B:
 withdraw $5,000
-
-Both may observe:
-
+Both observe:
 balance = $10,000
 
-If the enterprise System of Record supports transactional concurrency controls, Noema should rely on them rather than attempting to recreate ledger semantics locally.
+If the enterprise System of Record supports transactional concurrency controls, Noema should rely on those mechanisms rather than attempting to recreate ledger semantics locally.
+
+Useful enterprise mechanisms include:
+
+transactions
+resource versions
+ETags
+conditional writes
+reservations
+leases
+idempotency keys
+atomic business operations
 
 ⸻
 
-52. System of Record and Idempotency
+56. System of Record and Idempotency
 
 Idempotency belongs at the execution boundary.
 
@@ -1079,89 +1388,219 @@ idempotency_key
 
 The enterprise System of Record or capability implementation should enforce the business semantics of duplicate operations where supported.
 
+Noema’s execution record does not replace enterprise idempotency semantics.
+
 ⸻
 
-53. System of Record and Compensation
+57. System of Record and Compensation
 
 Compensation should mutate Business State through the authoritative enterprise capability.
 
 Noema should not directly manipulate a shadow representation to simulate rollback.
 
+Conceptually:
+
 Original Action
       ↓
-Enterprise
+Enterprise System
       ↓
 Compensation Action
       ↓
-Enterprise
+Enterprise System
+
+The compensation itself requires appropriate authorization and an explicit Action Contract.
 
 ⸻
 
-54. System of Record and Recovery
+58. System of Record and Recovery
 
 Recovery decisions belong to Noema’s execution layer.
 
 Business-state mutations remain enterprise-owned.
 
 Noema:
-retry / compensate / reconcile / escalate
+retry
+reconcile
+verify
+compensate
+escalate
 Enterprise:
-apply actual state transition
+apply actual Business State transition
+
+For an unknown execution:
+
+Historical execution state
+        ↓
+External operation state
+        ↓
+Current authoritative observation
+        ↓
+State Reconciliation
+        ↓
+Revalidate Trust / Preconditions
+        ↓
+Continue / Clarify / Escalate / Reject
+
+Noema must not guess the result of an ambiguous enterprise operation.
 
 ⸻
 
-55. System-of-Record Boundary
+59. Replay and Historical State
+
+Replay of enterprise observations or events is non-executing by default.
+
+Replaying:
+
+historical event
+historical observation
+historical execution record
+
+must not silently create a new enterprise business occurrence.
+
+Historical authority, observations, Trust decisions, and execution records remain historical.
+
+A modern reevaluation against current state is a separate operation and must not mutate the historical record.
+
+⸻
+
+60. Operational Memory
+
+Noema may retain structured operational history about:
+
+cases
+executions
+failures
+interventions
+reconciliation
+verification
+recovery
+
+This Operational Memory is not a System of Record for enterprise Business State.
+
+It is also not generic AI memory.
+
+Its purpose is to preserve execution-domain knowledge and history useful for future operation, analysis, audit, and improvement.
+
+⸻
+
+61. Read-Only Operations
+
+System-of-Record access is not consequential only when it mutates data.
+
+A read-only operation may expose:
+
+financial information
+identity attributes
+privileged organizational information
+security information
+regulated data
+
+Therefore read-only access may require Trust, authorization, data-boundary evaluation, and appropriate auditability.
+
+read-only ≠ non-consequential
+
+⸻
+
+62. System-of-Record Boundary
 
 The boundary can be summarized as:
 
-┌──────────────────────────────────────────┐
-│              ENTERPRISE                 │
-│                                          │
-│      SYSTEMS OF RECORD                   │
-│                                          │
-│  Customer  Account  Ledger  HR  Orders  │
-│       │       │       │      │      │   │
-└───────┼───────┼───────┼──────┼──────┼───┘
-        │       │       │      │      │
-        └───────┴───────┼──────┴──────┘
-                        │
-                 Enterprise APIs
-                        │
-                        ▼
-┌──────────────────────────────────────────┐
-│                 NOEMA                    │
-│                                          │
-│ Intent → Trust → Action → Execution      │
-│                       │                  │
-│                       ▼                  │
-│                    Outcome               │
-│                                          │
-│     Execution System of Record           │
-└──────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│                  ENTERPRISE                  │
+│                                              │
+│            SYSTEMS OF RECORD                 │
+│                                              │
+│ Customer  Account  Ledger  HR  Orders       │
+│     │        │       │      │      │         │
+└─────┼────────┼───────┼──────┼──────┼─────────┘
+      │        │       │      │      │
+      └────────┴───────┼──────┴──────┘
+                       │
+                Enterprise Interfaces
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│                   NOEMA                      │
+│                                              │
+│ Source → Intent → Trust → Action → Execute  │
+│                                │             │
+│                                ▼             │
+│                           Verification       │
+│                                │             │
+│                                ▼             │
+│                             Outcome          │
+│                                              │
+│       Execution-Domain System of Record     │
+└──────────────────────────────────────────────┘
+
+Noema crosses the enterprise boundary to perform governed Actions, but it does not thereby acquire ownership of enterprise Business State.
 
 ⸻
 
-56. Canonical Invariants
+63. Canonical Architecture
+
+The canonical relationship between Systems of Record and Noema is:
+
+Enterprise Systems of Record
+          ↓
+Enterprise Observations
+          ↓
+Hard Schema Validation / Admission
+          ↓
+State Reconciliation
+          ↓
+Reconciled Facts
+          ↓
+Fact Status / Evidence
+          ↓
+Context
+          ↓
+Deterministic Trust
+          ↓
+Enterprise Action Graph / Planner
+          ↓
+Action Contract
+          ↓
+Enterprise Execution
+          ↓
+System of Record
+          ↓
+Verification
+          ↓
+Noema Outcome
+          ↓
+Audit / Operational Memory
+
+This preserves the fundamental separation:
+
+Enterprise
+→ authoritative Business State
+Noema
+→ authoritative execution-domain state
+
+⸻
+
+64. Canonical Invariants
 
 Invariant 1
 
-Every consequential enterprise fact should have a clearly understood authoritative source.
+Every consequential enterprise claim should have a clearly understood authoritative source where the enterprise architecture permits one to be defined.
 
 Invariant 2
 
-Noema must not become a shadow System of Record for Business State.
+Noema must not become a shadow System of Record for enterprise Business State.
 
 Invariant 3
 
-Noema may be the System of Record for the execution journey it owns.
+Noema may be the System of Record for the execution-domain state it owns.
 
 Invariant 4
 
-Enterprise Business State remains authoritative within the enterprise System of Record.
+Enterprise Business State remains authoritative within the appropriate enterprise System of Record.
 
 Invariant 5
 
-Cached or derived enterprise data is not authoritative unless explicitly designated as such.
+Cached or derived enterprise data is not authoritative unless explicitly designated as such for the relevant claim.
 
 Invariant 6
 
@@ -1169,11 +1608,11 @@ Source of evidence and System of Record are distinct concepts.
 
 Invariant 7
 
-An API is an interface, not necessarily the System of Record.
+An API is an interface, not necessarily a System of Record.
 
 Invariant 8
 
-Authority is domain-specific and may differ across enterprise resources.
+Authority is domain-, claim-, resource-, scope-, and time-specific.
 
 Invariant 9
 
@@ -1185,59 +1624,169 @@ Conflicting sources must be resolved through explicit authority semantics, not m
 
 Invariant 11
 
-Authoritative state should be revalidated when freshness materially affects execution safety.
+Recency does not establish authority.
 
 Invariant 12
 
-Unknown execution outcomes must be reconciled against the appropriate System of Record where possible.
+Authoritative state should be revalidated when freshness materially affects execution safety.
 
 Invariant 13
 
-Events are evidence of state transitions but do not necessarily establish current state.
+Unknown execution outcomes must be reconciled against the appropriate System of Record where possible.
 
 Invariant 14
 
-Noema must preserve provenance for consequential enterprise facts and execution decisions where required.
+Events are observations or evidence of enterprise occurrences and do not automatically establish current Business State.
 
 Invariant 15
 
-Historical audit records must preserve enough information to identify the authoritative source at the time of execution.
+Event absence does not prove non-occurrence.
 
 Invariant 16
 
-If authoritative state is unavailable, Noema must not silently substitute uncertain state for high-risk execution.
+Noema must preserve provenance for consequential enterprise observations and execution decisions where required.
 
 Invariant 17
 
-Noema should use enterprise transaction and concurrency semantics rather than recreating Business State management locally.
+Historical audit records must preserve enough information to identify the relevant authority and versions at the time of execution.
 
 Invariant 18
 
-Compensation and recovery must mutate Business State through authorized enterprise capabilities.
+If authoritative state is unavailable, Noema must not silently substitute uncertain state for high-risk execution.
 
 Invariant 19
 
-Enterprise resource identity should remain anchored to enterprise identifiers.
+Noema should use enterprise transaction and concurrency semantics rather than recreating Business State management locally.
 
 Invariant 20
 
-The boundary between enterprise Business Truth and Noema Execution Truth must remain explicit.
+Compensation and recovery must mutate Business State through authorized enterprise capabilities.
+
+Invariant 21
+
+Enterprise resource identity should remain anchored to enterprise identifiers.
+
+Invariant 22
+
+The boundary between enterprise Business Truth and Noema execution-domain state must remain explicit.
+
+Invariant 23
+
+Enterprise data must cross the appropriate hard schema validation and admission boundary before being used as structured Noema input.
+
+Invariant 24
+
+Persistence of an observation or response in Noema does not make that observation authoritative.
+
+Invariant 25
+
+Fact Status is distinct from Evidence, Context, Business State, Outcome, and model confidence.
+
+Invariant 26
+
+State Reconciliation is a first-class platform capability and must not be reduced to incidental integration behavior.
+
+Invariant 27
+
+Noema must preserve VERIFIED, UNVERIFIED, STALE, CONFLICTED, and UNKNOWN conditions where applicable rather than collapsing them into a binary truth value.
+
+Invariant 28
+
+Enterprise truth and Noema knowledge state must remain distinguishable.
+
+Invariant 29
+
+Model-generated claims cannot establish enterprise authority.
+
+Invariant 30
+
+Consequential decisions must reference the exact Intent Object version being evaluated.
+
+Invariant 31
+
+An admitted Intent is immutable; a material semantic change creates a new Intent version rather than silently changing historical meaning.
+
+Invariant 32
+
+Consequential execution requires the relevant actor, Action, target resource, and scope to be resolved sufficiently for deterministic authorization and Trust evaluation.
+
+Invariant 33
+
+The Enterprise Action Graph may represent authority relationships, but graph representation alone does not establish enterprise authority.
+
+Invariant 34
+
+The Planner cannot invent capabilities, authority, permissions, or Action Contract semantics.
+
+Invariant 35
+
+A Trust outcome of EXECUTE does not mean that enterprise execution or Business State transition has succeeded.
+
+Invariant 36
+
+Outcome records in Noema do not replace authoritative enterprise Business State.
+
+Invariant 37
+
+Unknown execution state must be reconciled before retrying a potentially completed consequential operation.
+
+Invariant 38
+
+Replay of observations or events must not silently create new enterprise business occurrences.
+
+Invariant 39
+
+Historical authority and state must not be retroactively replaced with current authority or state.
+
+Invariant 40
+
+Operational Memory is not enterprise Business State and does not become a shadow System of Record.
+
+Invariant 41
+
+Tenant and organizational boundaries must be preserved when accessing or reconciling Systems of Record.
+
+Invariant 42
+
+Read-only access may still be consequential and may require authorization, Trust, and auditability.
+
+Invariant 43
+
+Noema must not use arbitrary stale or secondary data as authoritative state when current enterprise truth is required.
+
+Invariant 44
+
+Noema must rely on explicit enterprise authority semantics rather than model inference when determining which system owns a consequential claim.
+
+Invariant 45
+
+System-of-Record metadata describes enterprise authority and integration semantics; it does not transfer ownership of Business State to Noema.
 
 ⸻
 
-57. Final Definition
+65. Final Definition
 
-A System of Record is the authoritative enterprise source for a defined category of Business State. Noema integrates with Systems of Record to obtain authoritative context, perform authorized Actions, and verify Outcomes, while maintaining its own authoritative record of the execution journey.
+A System of Record is the authoritative enterprise source for a defined category of Business State or claim within a defined scope and time.
+
+Noema integrates with Systems of Record to obtain authoritative observations, reconcile enterprise state, evaluate Trust, perform authorized Actions, and verify execution Outcomes while maintaining its own authoritative record of the execution-domain journey.
 
 The architectural boundary is therefore:
 
 ENTERPRISE
-owns:
-Business Truth
+owns authoritative Business State
 NOEMA
-owns:
-Execution Truth
+owns authoritative execution-domain state
 
-Or more precisely:
+More precisely:
 
-Noema should know where enterprise truth lives, use that truth to make deterministic execution decisions, and never quietly become the place where that truth lives.
+Noema should know where enterprise truth lives, establish which observations are authoritative for the claim being evaluated, reconcile current state when required, use that state within deterministic Trust and governed execution, and verify the resulting enterprise state without quietly becoming the place where that Business State lives.
+
+The fundamental rule is:
+
+Enterprise
+→ owns Business Truth
+Noema
+→ manages the journey through Intent, Trust, Action, Execution,
+  Verification, Outcome, Audit, and Operational Memory
+
+Noema therefore remains infrastructure for trusted enterprise execution rather than another owner of enterprise Business State.

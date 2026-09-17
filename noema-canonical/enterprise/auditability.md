@@ -9,11 +9,17 @@ Canonical Path: enterprise/auditability.md
 
 1. Definition
 
-Auditability is Noema’s ability to reconstruct, inspect, and verify the complete lifecycle of a consequential Intent—from what was requested and understood, through Trust evaluation and execution, to the resulting Outcome—without requiring Noema to own the underlying enterprise business state.
+Auditability is Noema’s ability to reconstruct, inspect, and verify the complete lifecycle of a consequential Intent—from what was requested and understood, through State Reconciliation, Trust evaluation, execution, verification, and the resulting Outcome—without requiring Noema to own the underlying enterprise business state.
 
 Auditability answers:
 
-What happened, why did it happen, who or what caused it, what evidence supported the decision, and what was the resulting outcome?
+What happened?
+Why did it happen?
+Who or what caused it?
+What did Noema know at the time?
+What evidence supported the decision?
+What state was observed and reconciled?
+What was the resulting Outcome?
 
 It is not merely logging.
 
@@ -25,18 +31,23 @@ Enterprise systems need to establish more than the fact that an operation occurr
 
 They need to establish:
 
-Who initiated it?
+Who or what initiated it?
 What did they intend?
 What did Noema understand?
-What Action was produced?
+What Intent version was admitted?
 What context was available?
+What enterprise observations were available?
+How were those observations reconciled?
+What Fact Status was established?
+What Action was selected?
 What Trust decision was made?
 Why was that decision made?
 Which policies applied?
 What evidence supported it?
 What was executed?
-Which external system performed it?
+Which external system performed the operation?
 What happened afterward?
+What was verified?
 What was the final Outcome?
 
 Noema’s auditability model exists to make this journey reconstructable.
@@ -45,17 +56,25 @@ Noema’s auditability model exists to make this journey reconstructable.
 
 3. Core Principle
 
-Every consequential execution should leave behind enough durable evidence to reconstruct the execution journey and the decisions that governed it.
+Every consequential execution should leave behind enough durable, attributable evidence to reconstruct the execution journey and the decisions that governed it.
 
 The canonical journey is:
 
-Human / Agent
+Source of Intent
       ↓
 Intent
       ↓
+Hard Schema Validation / Admission
+      ↓
 Intent Resolution
       ↓
-Context
+Enterprise Observations
+      ↓
+State Reconciliation
+      ↓
+Facts / Fact Status / Evidence
+      ↓
+Temporal Context
       ↓
 Trust Evaluation
       ↓
@@ -65,9 +84,13 @@ Execution
       ↓
 Enterprise System
       ↓
+Verification
+      ↓
 Outcome
+      ↓
+Operational Memory / Audit
 
-Auditability must connect these stages.
+Auditability must connect these stages without collapsing them into one state model.
 
 ⸻
 
@@ -75,19 +98,21 @@ Auditability must connect these stages.
 
 Traditional logging answers:
 
-"Something happened at 10:42."
+“Something happened at 10:42.”
 
 Auditability answers:
 
-"User X requested Y.
-Noema resolved the request to Intent Z.
-The relevant context was A.
-Action B was generated.
+“Actor X initiated Intent Y.
+Noema admitted Intent version Z.
+The request was resolved to interpretation A.
+Enterprise observations B and C were reconciled into facts with defined Fact Status.
+Action D was selected under the applicable Action Contract.
 Policy P and authorization evidence E were evaluated.
 Trust produced EXECUTE.
-Execution E began.
+Execution F began.
 Enterprise system Q performed the operation.
-The resulting Outcome was R."
+The resulting state was subsequently verified.
+Outcome R was established.”
 
 Logs may contribute to auditability.
 
@@ -109,15 +134,21 @@ Enterprise
 ├── ledgers
 └── business records
 Noema
-├── intent state
-├── resolution
-├── clarification
-├── context used
-├── trust decisions
+├── Intent versions
+├── resolution history
+├── clarification history
+├── context references
+├── observations and evidence references
+├── State Reconciliation records
+├── Fact Status classifications
+├── Trust decisions
 ├── action state
 ├── execution state
-├── evidence references
-└── outcome journey
+├── execution attempts
+├── verification history
+├── Noema Outcomes
+├── intervention / case state
+└── audit / operational records
 
 The distinction is fundamental.
 
@@ -131,38 +162,232 @@ account.balance = $4,250
 
 Noema may record:
 
-"At the time of Trust evaluation, the enterprise reported
-the account balance as $4,250."
+At Trust evaluation time:
+enterprise reported account.balance = $4,250
 
 Noema does not become the authoritative ledger.
 
+The audit record establishes what Noema observed and relied upon at a particular time.
+
 ⸻
 
-7. Auditability as a Causal Chain
+7. Domain State, Execution State, and Knowledge State
+
+Auditability must distinguish at least three temporal realities.
+
+Enterprise domain state
+
+What is actually true in the enterprise system of record.
+
+Noema execution-domain state
+
+What Noema owns about its own execution process.
+
+Examples:
+
+intent.status
+trust.decision
+execution.state
+execution.attempt
+case.state
+intervention.state
+
+Noema knowledge state
+
+What Noema currently knows or has established about enterprise reality.
+
+These states must not be conflated.
+
+For example:
+
+Enterprise domain state:
+refund = SUCCEEDED
+Noema knowledge state:
+refund status = UNKNOWN
+Reason:
+authoritative verification has not yet been obtained.
+
+What happened, what Noema knew, and what Noema inferred are different audit dimensions.
+
+⸻
+
+8. Observation, Evidence, Fact Status, and Context
+
+Auditability must preserve the distinction between:
+
+Observation
+    ↓
+Evidence
+    ↓
+Reconciliation
+    ↓
+Fact Status
+    ↓
+Context
+
+An observation is something received or obtained from a source.
+
+Evidence is information that supports or informs a claim.
+
+State Reconciliation evaluates observations against applicable authority, temporal validity, consistency, identity, and other rules.
+
+Fact Status is the deterministic classification of a claim after applicable reconciliation.
+
+Context is the information made available to a particular evaluation or execution.
+
+These concepts must not be treated as interchangeable.
+
+⸻
+
+9. Fact Status
+
+Fact Status is distinct from Evidence.
+
+Canonical Fact Status values are:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Fact Status represents the system’s classification of a claim under applicable source, authority, temporal, consistency, freshness, and reconciliation rules.
+
+It is not a measure of model confidence.
+
+For example:
+
+Evidence:
+provider response received at 10:42
+Fact Status:
+VERIFIED
+
+or:
+
+Evidence:
+two authoritative systems report conflicting states
+Fact Status:
+CONFLICTED
+
+The audit trail should preserve both the supporting evidence and the resulting Fact Status.
+
+⸻
+
+10. Hard Admission Boundary
+
+External inputs are not authoritative merely because they exist.
+
+The following must be treated as untrusted until they pass the relevant validation and admission boundary:
+
+user input
+model output
+retrieved enterprise text
+external event
+tool response
+integration payload
+external API response
+
+The canonical boundary is:
+
+Untrusted Input
+      ↓
+Hard Schema Validation / Admission
+      ↓
+Eligible Canonical Noema Input
+
+Persistence does not create authority.
+
+An unvalidated payload stored in an audit or diagnostic store remains unvalidated data.
+
+⸻
+
+11. Audit of Admission
+
+Where an external input materially contributes to a consequential journey, the audit trail should preserve:
+
+source
+source identity
+schema/version
+validation result
+admission time
+validation context
+mapping/integration version
+classification
+
+If the input was rejected, that rejection may itself be consequential and auditable.
+
+⸻
+
+12. Canonicality Is Scoped
+
+“Canonical” does not mean universally authoritative.
+
+Canonicality is scoped to:
+
+claim
+domain
+field
+tenant
+resource
+time
+authority
+semantic version
+
+Enterprise Systems of Record remain authoritative for enterprise business state.
+
+Noema may own canonical data within its execution domain, including:
+
+Intent versions
+Trust Decisions
+execution state
+execution attempts
+Noema Outcomes
+intervention state
+case state
+audit records
+Operational Memory
+
+A Noema audit record referencing an enterprise fact does not make Noema authoritative for that enterprise fact.
+
+⸻
+
+13. Auditability as a Causal Chain
 
 Audit records should establish relationships between events and decisions.
 
 Intent
   │
-  ├── resolved_from
+  ├── admitted_as
   ▼
-Executable Intent
+Intent Version
   │
-  ├── produced
+  ├── resolved_to
   ▼
-Action
+Resolved Intent
+  │
+  ├── informed_by
+  ▼
+Observations / Context
+  │
+  ├── reconciled_into
+  ▼
+Facts / Fact Status
   │
   ├── evaluated_by
   ▼
 Trust Evaluation
   │
-  ├── authorized_by
   ├── governed_by
   ├── supported_by
+  ├── authorized_by
   ▼
 Trust Decision
   │
-  ├── permitted
+  ├── permits
+  ▼
+Action
+  │
+  ├── executed_as
   ▼
 Execution
   │
@@ -170,7 +395,11 @@ Execution
   ▼
 Enterprise System
   │
-  ├── produced
+  ├── observed_by
+  ▼
+Verification
+  │
+  ├── establishes
   ▼
 Outcome
 
@@ -178,7 +407,7 @@ The audit trail should preserve these relationships.
 
 ⸻
 
-8. Audit Record
+14. Audit Record
 
 An audit record should establish at minimum:
 
@@ -191,34 +420,43 @@ operation
 state
 decision
 source
+authority
 causal relationship
+semantic version
 
 Additional fields depend on the event or object being recorded.
 
 ⸻
 
-9. Identity
+15. Identity
 
 Every consequential object should have a stable identifier.
 
 Examples:
 
 intent_id
+intent_version_id
 action_id
 trust_evaluation_id
+trust_decision_id
 execution_id
+execution_attempt_id
 event_id
+observation_id
+reconciliation_id
 outcome_id
 
 These identifiers allow independent records to be correlated.
 
 ⸻
 
-10. Correlation
+16. Correlation
 
 A complete execution should be traceable through a common correlation chain.
 
 intent_id
+    ↓
+intent_version_id
     ↓
 action_id
     ↓
@@ -226,19 +464,25 @@ trust_evaluation_id
     ↓
 execution_id
     ↓
+execution_attempt_id
+    ↓
 integration_request_id
     ↓
 provider_reference
     ↓
-event_id
+observation_id
+    ↓
+verification_id
     ↓
 outcome_id
 
-This is one of the most important properties of Noema’s enterprise audit model.
+Not every journey contains every identifier.
+
+The requirement is that applicable causal relationships remain reconstructable.
 
 ⸻
 
-11. Actor Attribution
+17. Actor Attribution
 
 Auditability must identify the relevant actor.
 
@@ -250,6 +494,8 @@ service
 system
 administrator
 integration
+workflow
+application
 
 Where an agent acts on behalf of a human, the audit trail should preserve both identities.
 
@@ -259,9 +505,11 @@ delegated_actor
         ↓
 Action
 
+Actor identity does not itself establish authorization.
+
 ⸻
 
-12. Actor vs Subject
+18. Actor vs Subject vs Resource
 
 The actor causing an operation and the entity affected by the operation may differ.
 
@@ -278,26 +526,48 @@ Auditability must preserve these distinctions.
 
 ⸻
 
-13. Intent Audit
+19. Intent Audit
 
 Noema should preserve the Intent that initiated a consequential journey.
 
 This may include:
 
 intent_id
-input
+intent_version
+source
+source_reference
 actor
 timestamp
 channel
+intent_kind
 resolution state
 resolved interpretation
 clarifications
+scope
 
 Where raw user input contains sensitive information, retention and access must follow applicable enterprise policy.
 
 ⸻
 
-14. Intent Resolution Audit
+20. Intent Version Audit
+
+An Intent Object is immutable once admitted to Trust.
+
+If clarification or another material change alters the semantic Intent:
+
+Intent v1
+    ↓
+supersedes
+    ↓
+Intent v2
+
+The audit trail must preserve both versions.
+
+Historical records must never silently reinterpret an earlier Intent version as the newer one.
+
+⸻
+
+21. Intent Resolution Audit
 
 When Noema resolves an Intent, the audit trail should establish:
 
@@ -308,14 +578,15 @@ context used
 ambiguities encountered
 clarifications obtained
 resolution outcome
+resolution identity
 
 This makes it possible to answer:
 
-What did Noema believe the user meant?
+What did Noema determine the source of Intent meant?
 
 ⸻
 
-15. Clarification History
+22. Clarification History
 
 Clarification is part of the execution journey and must therefore be auditable.
 
@@ -330,9 +601,28 @@ User:
 
 The audit trail should preserve that the original Intent was ambiguous and how the ambiguity was resolved.
 
+Clarification must not silently mutate the original Intent.
+
 ⸻
 
-16. Model Output
+23. Resolved Identity
+
+For consequential operations, audit records should preserve the resolved:
+
+actor
+action
+target
+resource
+scope
+resolution identity
+
+Entity ambiguity must be resolved before consequential execution.
+
+A historical audit record should make it possible to determine exactly which resource or subject the Action referred to.
+
+⸻
+
+24. Model Output
 
 Where a model contributes to Intent interpretation, auditability may preserve relevant model metadata.
 
@@ -342,31 +632,43 @@ model identifier
 model version
 input reference
 candidate interpretation
-confidence
+model confidence
 timestamp
+inference context
 
 The model’s internal reasoning trace is not required to establish auditability.
 
-The canonical semantic result is.
+The canonical semantic result and the deterministic decisions that followed are.
 
 ⸻
 
-17. Confidence Is Historical Evidence
+25. Model Confidence Is Not Fact Status
 
-If model confidence materially influenced the transition into clarification or another state, that fact may be recorded.
+Model confidence may be recorded as interpretation metadata.
 
-Example:
+It must not be treated as:
 
-confidence:
+Fact Status
+authorization
+authority
+evidence validity
+policy satisfaction
+execution permission
+
+For example:
+
+model_confidence:
 0.92
 resolution:
 CLARIFICATION_REQUIRED
 
-This establishes what the model produced without allowing confidence to become authorization.
+The recorded confidence establishes what the model produced.
+
+It does not establish that the underlying claim is true or authorized.
 
 ⸻
 
-18. Context Audit
+26. Context Audit
 
 Trust decisions depend on context.
 
@@ -377,17 +679,50 @@ Examples:
 actor state
 resource state
 authorization state
+enterprise observations
+reconciled facts
+temporal facts
 environment
 historical facts
-enterprise records
+policy context
+integration state
 
 The audit trail does not necessarily need to duplicate the entire source database.
 
-It needs enough information or references to establish what was relied upon.
+It needs enough information or durable references to establish what was relied upon.
 
 ⸻
 
-19. Evidence Audit
+27. State Reconciliation Audit
+
+State Reconciliation is a first-class part of the audit journey.
+
+The canonical relationship is:
+
+Enterprise Observations
+        ↓
+State Reconciliation
+        ↓
+Reconciled Facts / State
+        ↓
+Fact Status
+
+The audit trail should establish:
+
+which observations were considered
+which sources were involved
+which authority rules applied
+which temporal rules applied
+which conflicts existed
+what reconciliation produced
+what Fact Status resulted
+when reconciliation occurred
+
+Temporal recency alone must not be represented as the reason an observation became authoritative.
+
+⸻
+
+28. Evidence Audit
 
 Every consequential Trust decision should be traceable to its supporting evidence.
 
@@ -396,13 +731,14 @@ Trust Decision
       ├── Evidence A
       ├── Evidence B
       ├── Evidence C
+      ├── Reconciliation R
       └── Policy P
 
 Evidence should preserve provenance.
 
 ⸻
 
-20. Evidence Provenance
+29. Evidence Provenance
 
 Where appropriate, an audit record should identify:
 
@@ -415,12 +751,17 @@ authority
 version
 freshness
 validity
+observation identity
 
 This allows an auditor to determine whether the evidence was appropriate at the time.
 
+Source identity and authority must remain distinct.
+
+A source can provide evidence without being authoritative for every claim.
+
 ⸻
 
-21. Evidence Snapshot vs Reference
+30. Evidence Snapshot vs Reference
 
 Noema may preserve either:
 
@@ -438,7 +779,7 @@ The historical Trust decision must remain explainable even if the underlying ent
 
 ⸻
 
-22. Policy Audit
+31. Policy Audit
 
 A Trust decision must identify the Policy context under which it was made.
 
@@ -451,28 +792,59 @@ version:
 decision:
 REJECT
 
-This matters because policies change.
+Policies change.
 
 An audit record must not make a historical decision appear to have been evaluated under today’s policy when it was actually evaluated under an earlier version.
 
 ⸻
 
-23. Authorization Audit
+32. Contract and Graph Version Audit
 
-Authorization should also be attributable.
+A consequential decision should preserve the semantic versions that governed it.
 
-authorization source
-authorization result
-authorization scope
-authorization timestamp
+Depending on the journey, this may include:
 
-The audit trail should establish:
+Intent Contract version
+Context Contract version
+Trust Contract version
+Action Contract version
+Execution Contract version
+Event Contract version
+Policy version
+Enterprise Action Graph version
+Capability Registry version
+integration mapping version
 
-What authorization information did Noema rely upon?
+The exact applicable versions must remain reconstructable.
 
 ⸻
 
-24. Risk Audit
+33. Authorization Audit
+
+Authorization should be attributable.
+
+The audit trail should establish:
+
+authorization source
+authorization type
+authorization result
+authorization scope
+authorization timestamp
+authorization version
+
+Noema should distinguish:
+
+technical authorization
+policy authorization
+business authorization
+
+Trust does not create enterprise permissions.
+
+The audit trail records what authorization information was relied upon and how it contributed to the decision.
+
+⸻
+
+34. Risk Audit
 
 Where risk contributes materially to a Trust decision, the relevant risk evaluation should be traceable.
 
@@ -487,33 +859,73 @@ ESCALATE
 
 The audit trail should connect these facts.
 
+Risk classification must not be treated as an implicit substitute for deterministic policy evaluation.
+
 ⸻
 
-25. Trust Decision Audit
+35. Trust Decision Audit
 
 A Trust decision should record:
 
-evaluation_id
+trust_evaluation_id
+trust_decision_id
+intent_version
 action_id
 actor
+target
 decision
 reasons
 evidence references
+Fact Status references
 policy references
 authorization result
 risk result
-Trust model version
+Trust Contract version
+Action Contract version
+Enterprise Action Graph / Capability Registry version
 timestamp
+validity window
+decision context identity
 
 The exact representation belongs to the Trust API and Trust model.
 
+The canonical Trust outcomes remain:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Revalidation is not a fifth Trust outcome.
+
 ⸻
 
-26. Deterministic Decision Reconstruction
+36. Trust EXECUTE Is Not Success
+
+A historical Trust decision of:
+
+EXECUTE
+
+means that the resolved execution path satisfied applicable Trust conditions and was permitted to proceed at that time.
+
+It does not establish that:
+
+execution succeeded
+enterprise state changed
+postconditions were satisfied
+Outcome was achieved
+
+The audit trail must preserve these as separate facts.
+
+⸻
+
+37. Deterministic Decision Reconstruction
 
 For consequential decisions, an auditor should be able to determine:
 
 Inputs
+   ↓
+Relevant state / evidence
    ↓
 Evaluation rules
    ↓
@@ -521,11 +933,11 @@ Decision
 
 The goal is not necessarily to reproduce every internal computation.
 
-The goal is to establish that the decision was produced according to the applicable deterministic Trust rules.
+The goal is to establish that the decision was produced according to the applicable deterministic Trust rules and versions.
 
 ⸻
 
-27. No “Because the AI Said So”
+38. No “Because the AI Said So”
 
 This is a core Noema auditability requirement.
 
@@ -550,6 +962,8 @@ risk:
 within threshold
 preconditions:
 satisfied
+Fact Status:
+VERIFIED
 evidence:
 fresh and authoritative
 
@@ -559,20 +973,24 @@ It does not become the authority for execution.
 
 ⸻
 
-28. Action Audit
+39. Action Audit
 
 The Action record should establish:
 
 what Action was created
 who or what created it
-which Intent produced it
+which Intent version produced it
 which resources it targets
 which Action Contract applies
 which version was used
+which capability was selected
+which graph version permitted its selection
+
+Action selection must remain bounded by the Enterprise Action Graph, Capability Registry, and registered Action Contracts.
 
 ⸻
 
-29. Action Mutation
+40. Action Mutation
 
 Consequential Actions should not silently mutate after Trust evaluation.
 
@@ -582,18 +1000,46 @@ Original Action
       ↓
 Modified Action
 
-the system should establish that a new Trust evaluation may be required.
+the system should establish whether a new Trust evaluation is required.
 
-The audit trail must preserve the relationship.
+The audit trail must preserve the relationship between versions.
 
 ⸻
 
-30. Execution Audit
+41. Planner Audit
+
+A planner may select or propose an Action within the allowed execution space.
+
+Auditability should establish:
+
+planner input
+graph version
+capability registry version
+candidate actions
+selected action
+selection identity
+Trust constraints
+
+Persistence of a plan does not create authority.
+
+A planner cannot:
+
+invent capabilities
+invent authority
+modify Action Contracts
+bypass Trust
+
+The audit trail should make the governing boundaries reconstructable.
+
+⸻
+
+42. Execution Audit
 
 Execution records should establish:
 
 execution_id
 action_id
+intent_version
 trust_evaluation_id
 executor
 start time
@@ -604,11 +1050,14 @@ integration calls
 failures
 retries
 human intervention
-final state
+verification
+final execution state
+
+Execution history should be sufficient to reconstruct consequential transitions.
 
 ⸻
 
-31. Execution State History
+43. Execution State History
 
 Recording only the final state is insufficient.
 
@@ -623,8 +1072,12 @@ retried
 waited
 was interrupted
 was compensated
+became UNKNOWN
+was subsequently reconciled
 
 The audit trail should preserve consequential state transitions.
+
+Example:
 
 PENDING
   ↓
@@ -640,7 +1093,7 @@ COMPLETED
 
 ⸻
 
-32. Retry Audit
+44. Retry Audit
 
 Every consequential retry should be attributable.
 
@@ -648,22 +1101,84 @@ attempt_1
     ↓
 FAILED
     ↓
+verification
+    ↓
 attempt_2
     ↓
 COMPLETED
 
 The audit trail should establish why another attempt was permitted.
 
+An UNKNOWN execution must not be blindly retried merely because no success response was received.
+
 ⸻
 
-33. Human Intervention Audit
+45. Unknown Execution Audit
+
+UNKNOWN is a first-class execution condition.
+
+For example:
+
+request submitted
+      ↓
+provider timeout
+      ↓
+execution = UNKNOWN
+
+This does not establish:
+
+success
+
+or:
+
+failure
+
+The audit trail should preserve:
+
+last known state
+uncertainty cause
+provider reference
+verification attempts
+reconciliation attempts
+subsequent authoritative observation
+final classification
+
+Timeout is not automatically failure.
+
+⸻
+
+46. Recovery and Revalidation Audit
+
+Recovery should preserve the distinction between historical execution state and current evaluation.
+
+Canonical recovery path:
+
+Historical Execution State
+        ↓
+External Operation State
+        ↓
+Current Authoritative Observation
+        ↓
+State Reconciliation
+        ↓
+Revalidate Trust / Preconditions
+        ↓
+Continue / Clarify / Escalate / Reject
+
+Revalidation is a new evaluation.
+
+It does not mutate the historical Trust decision.
+
+⸻
+
+47. Human Intervention Audit
 
 If a human becomes involved:
 
 Trust:
 ESCALATE
        ↓
-Human approval
+Human intervention
        ↓
 Trust / Execution continues
 
@@ -674,10 +1189,13 @@ what authority they possessed
 what decision they made
 when they made it
 what object they acted upon
+what justification was supplied
+
+Human intervention must not silently erase the automated history.
 
 ⸻
 
-34. External Execution Audit
+48. External Execution Audit
 
 Noema may invoke an external enterprise system.
 
@@ -690,12 +1208,14 @@ Integration
 External request
       ↓
 Provider response
+      ↓
+Observation
 
 Provider-specific identifiers should be retained where appropriate.
 
 ⸻
 
-35. External System Authority
+49. External System Authority
 
 The enterprise system remains authoritative for the business result.
 
@@ -713,35 +1233,63 @@ It does not replace the enterprise transaction ledger.
 
 ⸻
 
-36. Outcome Audit
+50. Outcome Audit
 
-The final Outcome should establish what actually happened.
+The final Outcome should establish what Noema determined actually happened after execution and verification.
+
+Example:
 
 Expected:
 card replaced
 Observed:
 provider confirms replacement
+Outcome:
+VERIFIED
 
 The audit trail should distinguish expected outcomes from observed outcomes.
 
 ⸻
 
-37. Expected vs Observed
+51. Expected vs Observed
 
 This distinction is critical.
 
 Action Contract:
 postcondition = card.status == REPLACED
 Execution:
-completed
-Outcome:
+COMPLETED
+Verification:
 enterprise reports card.status == REPLACED
+Outcome:
+VERIFIED
 
 Execution completion alone does not prove the postcondition.
 
 ⸻
 
-38. Failed Outcomes
+52. Outcome vs Enterprise State
+
+Outcome is not enterprise business state.
+
+Noema may record:
+
+Outcome:
+refund request submitted successfully
+
+while the enterprise remains authoritative for:
+
+refund.status
+ledger entries
+account balance
+settlement state
+
+Outcome describes the result established by the Noema journey.
+
+Enterprise state remains enterprise-owned.
+
+⸻
+
+53. Failed Outcomes
 
 An execution may succeed technically while the desired Outcome fails.
 
@@ -758,31 +1306,67 @@ Auditability must preserve this distinction.
 
 ⸻
 
-39. Audit Events
+54. Unknown Outcome
+
+An Outcome may remain:
+
+UNKNOWN
+
+when Noema cannot establish whether the intended result occurred.
+
+For example:
+
+Execution:
+UNKNOWN
+Enterprise verification:
+unavailable
+Outcome:
+UNKNOWN
+
+Later authoritative reconciliation may establish the actual enterprise state.
+
+The historical UNKNOWN Outcome must not be rewritten as though certainty existed at the earlier time.
+
+⸻
+
+55. Audit Events
 
 Events provide the chronological backbone of the audit trail.
 
 Examples:
 
 intent.created
+intent.admitted
 intent.clarification_requested
+intent.version_created
 intent.resolved
+observation.received
+observation.validated
+reconciliation.completed
+fact.status_classified
 action.created
 trust.evaluation_started
 trust.decision_recorded
 execution.started
 execution.failed
+execution.unknown
+execution.revalidated
 execution.retried
 execution.completed
-outcome.verified
+verification.started
+verification.completed
+outcome.recorded
+human.intervention
 
 ⸻
 
-40. Events Are Immutable Facts
+56. Events Are Historical Records
 
 An event represents something that happened.
 
-Historical events should not be rewritten merely because the current state has changed.
+Historical events should not be rewritten merely because current state has changed.
+
+Example:
 
 Event:
 trust.decision.recorded
@@ -793,9 +1377,11 @@ Policy changes
 
 The historical event remains true.
 
+A later evaluation is a new event.
+
 ⸻
 
-41. Append-Oriented Audit History
+57. Append-Oriented Audit History
 
 Consequential audit history should conceptually behave as an append-oriented record.
 
@@ -807,9 +1393,11 @@ Event 4
 
 Corrections should generally be represented as subsequent events rather than destructive edits.
 
+Historical corrections must preserve lineage.
+
 ⸻
 
-42. State vs History
+58. State vs History
 
 Current state:
 
@@ -832,7 +1420,7 @@ History tells us how it got there.
 
 ⸻
 
-43. Causality
+59. Causality
 
 Auditability should preserve causality wherever possible.
 
@@ -842,6 +1430,8 @@ clarification.requested
       ↓
 clarification.received
       ↓
+intent.version_created
+      ↓
 intent.resolved
       ↓
 action.created
@@ -850,12 +1440,21 @@ This is more useful than a flat list of unrelated timestamps.
 
 ⸻
 
-44. Temporal Accuracy
+60. Temporal Accuracy
 
 Audit records should distinguish:
 
 occurred_at
+observed_at
+received_at
 recorded_at
+validated_at
+reconciled_at
+decision_at
+execution_started_at
+execution_completed_at
+verified_at
+outcome_at
 
 An external event may have happened at one time and reached Noema later.
 
@@ -863,7 +1462,92 @@ These timestamps should not be conflated.
 
 ⸻
 
-45. Clock and Ordering
+61. Version Dimensions
+
+Historical reconstruction may depend on several independent version dimensions.
+
+Auditability should distinguish, where applicable:
+
+semantic version
+source version
+event / transport schema version
+contract version
+policy version
+integration mapping version
+Enterprise Action Graph version
+Capability Registry version
+resource version / concurrency token
+model version
+
+It should also preserve relevant temporal dimensions.
+
+A single generic version field is insufficient where these dimensions materially affect interpretation.
+
+⸻
+
+62. Historical Interpretation
+
+Historical reconstruction must use the versions applicable at the historical decision point.
+
+For example:
+
+Intent version:
+3
+Trust Contract:
+0.1
+Policy:
+7
+Action Contract:
+4
+Graph:
+12
+Integration mapping:
+8
+
+The current versions must not silently replace historical versions during reconstruction.
+
+⸻
+
+63. Replay Semantics
+
+Historical replay must be non-executing by default.
+
+A replay should use:
+
+historical Intent
+historical context
+historical observations
+historical versions
+historical policies
+historical decisions
+
+Historical replay must not create a new enterprise business occurrence.
+
+Modern re-evaluation is a distinct operation and must be explicitly identified as such.
+
+⸻
+
+64. Replay vs Re-evaluation
+
+These are different operations.
+
+Historical replay
+
+Answers:
+
+“What happened according to the historical execution path?”
+
+Re-evaluation
+
+Answers:
+
+“What would Noema decide using current or explicitly selected rules?”
+
+The latter must not rewrite the former.
+
+⸻
+
+65. Clock and Ordering
 
 Distributed systems may not provide a perfectly ordered global clock.
 
@@ -874,12 +1558,31 @@ sequence information
 causal identifiers
 event identifiers
 source timestamps
+resource versions
 
 rather than assuming that database insertion order alone represents real-world causality.
 
 ⸻
 
-46. Tenant Isolation
+66. Temporal Authority
+
+Recency does not equal authority.
+
+A later observation from a lower-authority source does not automatically supersede an earlier authoritative observation.
+
+Authority itself may be time-scoped.
+
+The audit trail should therefore preserve both:
+
+when the observation was produced
+
+and:
+
+what authority applied to it at that time
+
+⸻
+
+67. Tenant Isolation
 
 Audit data is enterprise data.
 
@@ -896,7 +1599,7 @@ Cross-tenant access requires explicit authority.
 
 ⸻
 
-47. Audit Access Control
+68. Audit Access Control
 
 Not every user who can see an execution should see every audit detail.
 
@@ -913,9 +1616,11 @@ sensitive authorization evidence
 
 Access should be governed by enterprise policy.
 
+Read-only audit access can itself be consequential when it exposes protected information and therefore may require Trust.
+
 ⸻
 
-48. Data Minimization
+69. Data Minimization
 
 Auditability does not mean storing everything forever.
 
@@ -924,6 +1629,7 @@ Noema should preserve what is necessary to establish:
 what happened
 why it happened
 who caused it
+what Noema knew
 what evidence was used
 what decision was made
 what outcome occurred
@@ -932,11 +1638,11 @@ Sensitive or unnecessary payloads should not be retained without a legitimate re
 
 ⸻
 
-49. Immutability
+70. Immutability and Integrity
 
 Historical audit records should be tamper-resistant.
 
-For consequential records, the system should provide mechanisms such as:
+For consequential records, the system may provide mechanisms such as:
 
 append-only storage
 cryptographic integrity
@@ -946,11 +1652,11 @@ immutable retention
 
 The specific implementation is not canonical at this stage.
 
-The requirement is integrity.
+The requirement is historical integrity.
 
 ⸻
 
-50. Audit Record Integrity
+71. Audit Record Integrity
 
 An auditor must be able to distinguish:
 
@@ -958,13 +1664,18 @@ original record
 
 from:
 
-modified or fabricated record
+modified
+corrected
+superseded
+or fabricated record
 
-Therefore integrity mechanisms should be appropriate to the risk of the operation.
+Corrections should preserve the original historical record where applicable and establish their relationship to it.
+
+Integrity mechanisms should be appropriate to the risk of the operation.
 
 ⸻
 
-51. Retention
+72. Retention
 
 Audit retention should be configurable according to:
 
@@ -978,7 +1689,7 @@ Noema should not assume that every record has the same retention period.
 
 ⸻
 
-52. Deletion and Retention Conflicts
+73. Deletion and Retention Conflicts
 
 Auditability must coexist with privacy and retention requirements.
 
@@ -990,7 +1701,7 @@ Implementation must distinguish immutable audit facts from sensitive payloads th
 
 ⸻
 
-53. Auditability and Privacy
+74. Auditability and Privacy
 
 Auditability is not permission to expose private data.
 
@@ -1007,7 +1718,7 @@ while preserving the ability to establish consequential facts.
 
 ⸻
 
-54. Auditability and Security
+75. Auditability and Security
 
 Security events may themselves become part of the audit trail.
 
@@ -1019,12 +1730,13 @@ policy violation
 credential failure
 privilege escalation
 manual override
+prohibited capability request
 
 This creates a broader enterprise security picture around Noema execution.
 
 ⸻
 
-55. Manual Overrides
+76. Manual Overrides
 
 Manual intervention is itself consequential.
 
@@ -1036,12 +1748,13 @@ authority
 reason
 timestamp
 new decision/state
+object affected
 
-No override should silently erase the automated history.
+No override should silently erase the automated history that preceded it.
 
 ⸻
 
-56. Trust Re-evaluation Audit
+77. Trust Re-evaluation Audit
 
 Suppose:
 
@@ -1057,7 +1770,9 @@ The audit history should show both.
 
 Evaluation 1
       ↓
-Context changed
+Context / evidence changed
+      ↓
+State Reconciliation
       ↓
 Evaluation 2
 
@@ -1065,19 +1780,21 @@ The first decision must not be rewritten.
 
 ⸻
 
-57. Auditability and Determinism
+78. Auditability and Determinism
 
 Determinism makes auditability substantially stronger.
 
-If:
+If the same applicable:
 
-same Action
-same policy
-same evidence
-same relevant context
-same Trust model
+Intent version
+Action
+policy
+evidence
+Fact Status
+relevant context
+Trust Contract
 
-are provided to the Trust Engine, the decision should be reproducible.
+are provided to the deterministic Trust Engine under the same applicable versions, the decision should be reproducible.
 
 This allows the enterprise to distinguish:
 
@@ -1089,7 +1806,7 @@ probabilistic model interpretation
 
 ⸻
 
-58. Auditability of Ambiguity
+79. Auditability of Ambiguity
 
 Ambiguity itself is auditable state.
 
@@ -1101,14 +1818,16 @@ State:
 AMBIGUOUS
 Reason:
 multiple matching actors
-Resolution:
-CLARIFICATION_REQUIRED
+Trust outcome:
+CLARIFY
 
 This demonstrates that Noema did not silently guess.
 
+The clarification and subsequent Intent version should remain linked to the original ambiguity.
+
 ⸻
 
-59. Auditability of Non-Execution
+80. Auditability of Non-Execution
 
 Not executing an Action is also an important event.
 
@@ -1126,11 +1845,11 @@ what Noema did
 
 and:
 
-what Noema deliberately refused to do.
+what Noema deliberately refused to do
 
 ⸻
 
-60. Auditability of “Why Not?”
+81. Auditability of “Why Not?”
 
 Enterprise operators frequently need to answer:
 
@@ -1145,19 +1864,22 @@ Risk threshold exceeded
 Human approval required
 Precondition failed
 Capability unavailable
+Enterprise state unknown
+Conflicting evidence
 Execution dependency unavailable
 
 This is a first-class audit requirement.
 
 ⸻
 
-61. Audit Queryability
+82. Audit Queryability
 
 Audit records should be queryable by important dimensions.
 
 Examples:
 
 intent_id
+intent_version_id
 actor_id
 action_id
 execution_id
@@ -1167,15 +1889,16 @@ tenant_id
 policy_id
 decision
 state
-time range
+fact_status
 integration
 outcome
+time range
 
 This enables operational investigation without requiring raw log archaeology.
 
 ⸻
 
-62. Audit Views
+83. Audit Views
 
 Different enterprise roles may require different views.
 
@@ -1192,19 +1915,21 @@ Operations
 
 The underlying audit model remains canonical.
 
+Views do not create separate semantic audit models.
+
 ⸻
 
-63. Audit API Relationship
+84. Audit API Relationship
 
 The Interfaces layer may expose audit information through APIs.
 
-However, 06-enterprise/auditability.md defines what must be auditable, not the API mechanics.
+However, enterprise/auditability.md defines what must be auditable, not the API mechanics.
 
-The interface boundary is defined separately under 05-interfaces.
+The interface boundary is defined separately under the Interfaces domain.
 
 ⸻
 
-64. Auditability and Observability
+85. Auditability and Observability
 
 These concepts overlap but are not identical.
 
@@ -1220,6 +1945,7 @@ latency
 throughput
 error rate
 resource usage
+queue depth
 
 Auditability
 
@@ -1233,17 +1959,18 @@ Intent
 Trust decision
 Action
 Execution
+Evidence
 Outcome
 
 Noema requires both, but they serve different purposes.
 
 ⸻
 
-65. Auditability and Debugging
+86. Auditability and Debugging
 
 Debugging investigates system behavior.
 
-Auditability establishes an authoritative historical account of consequential behavior.
+Auditability establishes a durable historical account of consequential behavior.
 
 A debug log may say:
 
@@ -1254,97 +1981,247 @@ An audit record should establish:
 Execution 123 entered RETRYING
 because attempt 1 failed with provider timeout.
 
-⸻
-
-66. Auditability and Memory
-
-Noema may retain historical information useful for future Intent resolution.
-
-That does not make all memory an audit record.
-
-Memory:
-useful historical context
-Audit:
-authoritative record of consequential events and decisions
-
-These should remain conceptually distinct.
+Debugging information may assist investigation without becoming canonical audit history.
 
 ⸻
 
-67. Auditability as Enterprise Trust
+87. Auditability and Operational Memory
 
-The enterprise value of Noema depends partly on being able to answer:
+Noema may retain historical information useful for future Intent resolution and operational improvement.
 
-Can I trust what happened?
-Can I prove why it happened?
-Can I reconstruct the decision?
-Can I identify who authorized it?
-Can I determine what system actually performed it?
+Operational Memory is structured historical execution and case information.
 
-Auditability provides that foundation.
+It is not:
+
+generic AI memory
+enterprise system of record
+current enterprise truth
+authorization
+
+Operational Memory may contain or reference audit information, but the concepts remain distinct.
 
 ⸻
 
-68. Canonical Audit Object Graph
+88. Auditability and Knowledge State
 
-                    INTENT
-                      │
-                      ▼
-                RESOLUTION
-                      │
-                      ▼
-                   ACTION
-                      │
-            ┌─────────┴─────────┐
-            ▼                   ▼
-         CONTEXT              CONTRACT
-            │                   │
-            └─────────┬─────────┘
-                      ▼
-                 TRUST EVAL
-                      │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-   AUTHORIZATION    POLICY         RISK
-        │             │             │
-        └─────────────┼─────────────┘
-                      ▼
-                  DECISION
-                      │
-                      ▼
-                  EXECUTION
-                      │
-                      ▼
-                INTEGRATION
-                      │
-                      ▼
-              ENTERPRISE SYSTEM
-                      │
-                      ▼
-                   OUTCOME
+The audit trail should distinguish:
+
+what happened
+
+from:
+
+what Noema knew
+
+and:
+
+what Noema inferred
+
+For example:
+
+Enterprise state:
+transaction = SETTLED
+Noema knowledge state at 10:42:
+UNKNOWN
+Noema observation at 10:47:
+provider reports SETTLED
+Reconciled Fact Status:
+VERIFIED
+
+This is essential for reconstructing decisions made under uncertainty.
+
+⸻
+
+89. Auditability of Read-Only Operations
+
+Read-only does not mean non-consequential.
+
+An operation that retrieves protected information may have significant enterprise consequences.
+
+Therefore the audit trail may need to establish:
+
+who requested access
+what information was requested
+which resources were accessed
+what authorization applied
+what Trust decision permitted access
+what information was disclosed
+
+Noema must not assume that absence of a write means absence of audit requirements.
+
+⸻
+
+90. Auditability and Concurrency
+
+Temporal history alone cannot guarantee concurrency safety.
+
+Where supported, auditability should preserve relevant:
+
+resource version
+ETag
+concurrency token
+transaction identity
+idempotency key
+reservation / lease identity
+conditional operation
+
+This allows auditors to determine whether the execution operated against the expected version of a resource.
+
+⸻
+
+91. TOCTOU Audit
+
+Time-of-check-to-time-of-use conditions should be reconstructable where materially relevant.
+
+For example:
+
+Trust evaluation:
+balance = $5,000
+Execution:
+conditional operation requires balance >= $5,000
+Enterprise:
+resource version changed
+
+The audit trail should make the temporal relationship visible.
+
+Noema should prefer enterprise atomic conditional operations where supported.
+
+⸻
+
+92. Auditability of Security Boundaries
+
+The model, user input, retrieved text, and tool responses are untrusted inputs.
+
+The model must not have direct enterprise credentials or unrestricted enterprise access.
+
+Auditability should preserve enough information to establish:
+
+source of proposal
+validated semantic object
+Trust decision
+registered capability
+Action Contract
+executor
+enterprise operation
+
+It must not require storing secrets or credentials.
+
+⸻
+
+93. Auditability Does Not Require Chain-of-Thought
+
+Noema’s auditability requirement is causal and semantic.
+
+It does not require storing private model reasoning traces.
+
+The system should instead preserve:
+
+input reference
+candidate interpretation
+validated Intent
+resolved context
+evidence
+Fact Status
+policy
+deterministic conditions
+Trust decision
+Action
+Execution
+verification
+Outcome
+
+This provides explainability without making private model reasoning an audit dependency.
+
+⸻
+
+94. Audit Object Graph
+
+The canonical audit object graph is:
+
+                         INTENT
+                           │
+                           ▼
+                      RESOLUTION
+                           │
+                           ▼
+                  HARD ADMISSION
+                           │
+                           ▼
+                    OBSERVATIONS
+                           │
+                           ▼
+                 STATE RECONCILIATION
+                           │
+                    ┌──────┴──────┐
+                    ▼             ▼
+                 EVIDENCE      FACT STATUS
+                    │             │
+                    └──────┬──────┘
+                           ▼
+                      CONTEXT
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+        ACTION GRAPH                  CONTRACT
+             │                           │
+             └─────────────┬─────────────┘
+                           ▼
+                      TRUST EVAL
+                           │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+    AUTHORIZATION       POLICY           RISK
+          │               │               │
+          └───────────────┼───────────────┘
+                          ▼
+                       DECISION
+                          │
+                          ▼
+                      EXECUTION
+                          │
+                          ▼
+                     INTEGRATION
+                          │
+                          ▼
+                  ENTERPRISE SYSTEM
+                          │
+                          ▼
+                     VERIFICATION
+                          │
+                          ▼
+                       OUTCOME
+                          │
+                          ▼
+               OPERATIONAL MEMORY
 
 Every significant node and relationship should be auditable.
 
 ⸻
 
-69. Minimum Audit Chain
+95. Minimum Audit Chain
 
 At minimum, a consequential operation should establish:
 
-1. Who initiated the Intent
-2. What Intent was received
-3. What Intent was resolved
-4. What Action was created
-5. What Trust evaluation occurred
-6. What evidence and policy supported it
-7. What Trust decision resulted
-8. What execution occurred
-9. What external system was involved
-10. What Outcome resulted
+1. Who or what initiated the Intent.
+2. What Intent was received.
+3. Whether and how it passed admission.
+4. What Intent version was admitted.
+5. What Intent was resolved.
+6. What actor, Action, target, and resource were resolved.
+7. What observations and context were used.
+8. What State Reconciliation occurred.
+9. What Fact Status resulted.
+10. What Action was created.
+11. What Trust evaluation occurred.
+12. What evidence and policy supported it.
+13. What Trust decision resulted.
+14. What execution occurred.
+15. What external system was involved.
+16. What verification occurred.
+17. What Outcome resulted.
 
 ⸻
 
-70. Canonical Audit Invariants
+96. Canonical Audit Invariants
 
 Invariant 1
 
@@ -1360,7 +2237,7 @@ Every consequential object must have stable identity.
 
 Invariant 4
 
-Intent, Action, Trust, Execution, and Outcome must remain distinguishable in the audit trail.
+Intent, Action, Trust, Execution, Verification, and Outcome must remain distinguishable in the audit trail.
 
 Invariant 5
 
@@ -1368,7 +2245,7 @@ Trust decisions must be traceable to their relevant evidence and policy.
 
 Invariant 6
 
-Model confidence must not be treated as authorization evidence.
+Model confidence must not be treated as authorization evidence or Fact Status.
 
 Invariant 7
 
@@ -1426,9 +2303,109 @@ Invariant 20
 
 Auditability must remain meaningful even when the underlying enterprise state has subsequently changed.
 
+Invariant 21
+
+Unvalidated external data must not become authoritative merely because it is persisted.
+
+Invariant 22
+
+Hard schema validation and admission must precede canonical use of external inputs.
+
+Invariant 23
+
+Fact Status must remain distinct from Evidence, Context, State, and Outcome.
+
+Invariant 24
+
+State Reconciliation must be a first-class auditable operation.
+
+Invariant 25
+
+Canonicality must always be scoped to the relevant domain, claim, authority, and temporal context.
+
+Invariant 26
+
+Source identity, authority, freshness, and authorization must remain distinct audit dimensions.
+
+Invariant 27
+
+Historical Intent versions admitted to Trust must remain immutable and identifiable.
+
+Invariant 28
+
+Material Intent changes must create a new Intent version linked through supersedes.
+
+Invariant 29
+
+Consequential audit records must preserve the resolved actor, Action, target, resource, scope, and resolution identity where applicable.
+
+Invariant 30
+
+Planner persistence must not create capabilities or authority.
+
+Invariant 31
+
+Action selection must remain traceable to the applicable Enterprise Action Graph, Capability Registry, and Action Contract.
+
+Invariant 32
+
+A Trust decision of EXECUTE must never be interpreted as proof of execution success or business Outcome.
+
+Invariant 33
+
+Outcome must remain distinct from enterprise business state.
+
+Invariant 34
+
+UNKNOWN must remain a first-class auditable condition.
+
+Invariant 35
+
+Timeout must not automatically be classified as execution failure.
+
+Invariant 36
+
+Recovery from UNKNOWN must use verification and State Reconciliation before consequential retry where required.
+
+Invariant 37
+
+Revalidation must create a new evaluation rather than mutate a historical Trust decision.
+
+Invariant 38
+
+Historical replay must be non-executing by default.
+
+Invariant 39
+
+Replaying an event must not create a new enterprise business occurrence.
+
+Invariant 40
+
+Historical corrections must be additive and preserve lineage.
+
+Invariant 41
+
+Operational Memory must not become a substitute for enterprise authority.
+
+Invariant 42
+
+Auditability must distinguish enterprise domain truth, Noema execution state, and Noema knowledge state.
+
+Invariant 43
+
+Model output and historical model metadata must not become authoritative merely because they are retained in the audit trail.
+
+Invariant 44
+
+Read-only access to protected enterprise information may be consequential and therefore auditable.
+
+Invariant 45
+
+Auditability must preserve sufficient temporal and version information to reconstruct the conditions under which a consequential decision was made.
+
 ⸻
 
-71. The Enterprise Audit Question
+97. The Enterprise Audit Question
 
 The ultimate test for Noema’s auditability is whether an authorized enterprise operator can reconstruct:
 
@@ -1436,13 +2413,19 @@ WHO
  ↓
 requested WHAT
  ↓
+Noema admitted WHICH Intent
+ ↓
 Noema understood WHAT
  ↓
-using WHICH context
+using WHICH observations and context
+ ↓
+reconciled into WHICH facts
+ ↓
+with WHICH Fact Status
  ↓
 created WHICH Action
  ↓
-evaluated under WHICH policy
+evaluated under WHICH policy and contracts
  ↓
 using WHICH evidence
  ↓
@@ -1452,24 +2435,28 @@ executed WHICH operation
  ↓
 against WHICH enterprise system
  ↓
+verified WHICH result
+ ↓
 producing WHICH Outcome
 
 If that chain cannot be reconstructed, the system is not sufficiently auditable.
 
 ⸻
 
-72. Final Definition
+98. Final Definition
 
-Auditability is the durable, attributable, and reconstructable record of Noema’s execution journey—from Intent through resolution, Trust, Action, Execution, and Outcome—preserving the evidence, policies, actors, state transitions, and causal relationships necessary to explain consequential behavior.
+Auditability is the durable, attributable, temporally accurate, and reconstructable record of Noema’s consequential execution journey—from Source of Intent through hard admission, Intent resolution, State Reconciliation, Trust, Action, Execution, Verification, and Outcome—preserving the evidence, Fact Status, policies, actors, versions, state transitions, and causal relationships necessary to explain consequential behavior.
 
 The fundamental distinction is:
 
 Enterprise:
 "What is the business state?"
 Noema:
-"What happened on the journey that attempted to change it,
+"What happened on the execution journey,
+what did Noema know at each relevant point,
+what evidence and rules governed its decisions,
 and why did Noema permit, stop, or escalate that journey?"
 
-That distinction should remain intact throughout the entire 06-enterprise domain.
-
 Noema should make every consequential decision explainable without becoming the system of record for the enterprise’s underlying business reality.
+
+Auditability therefore establishes a durable causal account of Noema’s execution domain while preserving the enterprise as the authority for enterprise business state.

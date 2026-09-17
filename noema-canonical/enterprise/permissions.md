@@ -9,47 +9,59 @@ Canonical Path: enterprise/permissions.md
 
 1. Definition
 
-Permissions define the operations an identity or principal is allowed to perform on enterprise resources under specified organizational, contextual, and policy constraints.
+Permissions define the authority an identity, principal, service, application, agent, role, group, or delegated principal has to perform a defined operation on an enterprise resource within specified scope, constraints, and validity conditions.
 
 Permissions answer:
 
-“Is this principal permitted to perform this operation on this resource in this context?”
+“Is this principal permitted to perform this operation on this resource under the applicable enterprise authorization semantics?”
 
-They are one of the enterprise facts that Noema consumes when evaluating Trust.
+Permissions are enterprise-defined authorization inputs that Noema may consume when evaluating Trust.
 
-Permissions are not the same as Intent, Capability, Role, Policy, or Trust.
+Permissions are not the same as Intent, Capability, Role, Policy, Authorization, Trust, or Outcome.
 
 ⸻
 
 2. Purpose
 
-Noema needs permissions to determine whether a proposed Action can legitimately cross the enterprise boundary.
+Noema needs permission information to determine whether a resolved Action may legitimately cross the enterprise execution boundary.
 
 The conceptual flow is:
 
-Intent
-   ↓
+Source of Intent
+      ↓
+Intent Interpretation
+      ↓
+Hard Schema Validation / Admission
+      ↓
 Intent Resolution
-   ↓
-Action
-   ↓
-Permission Evaluation
-   ↓
-Trust
-   ↓
+      ↓
+Resolved Actor / Action / Target
+      ↓
+Enterprise Authorization / Permission Evidence
+      ↓
+Context / State Reconciliation
+      ↓
+Deterministic Trust
+      ↓
+Action Contract
+      ↓
 Execution
 
-However, Noema should not assume that possession of a permission alone makes an Action executable.
+Permission is one input into this process, not the complete decision.
 
 Other constraints may still apply:
 
+Permission
 Policy
-Resource State
 Organizational Scope
-Risk
+Resource State
 Preconditions
-Approval Requirements
 Data Boundaries
+Risk
+Approval Requirements
+Freshness
+Temporal Constraints
+Capability Availability
 
 ⸻
 
@@ -68,17 +80,21 @@ refund any payment
 at any time
 for any amount
 
-The effective authority may instead be:
+Effective authority may instead be constrained by:
 
 refund_payment
 +
 Finance / Nigeria
 +
-≤ $5,000
+amount <= $5,000
 +
 active account
 +
-approved payment state
+eligible payment state
++
+current authorization
+
+The enterprise defines the semantics of that authority. Noema must not broaden them.
 
 ⸻
 
@@ -88,9 +104,7 @@ These concepts must remain distinct.
 
 Capability
 
-Describes:
-
-What the enterprise system can do.
+A Capability describes an operation the enterprise system exposes or permits Noema to invoke through an explicit integration boundary.
 
 Example:
 
@@ -98,54 +112,74 @@ cancel_subscription
 
 Permission
 
-Describes:
-
-Who is allowed to invoke that capability under defined conditions.
+A Permission describes whether a particular principal may exercise an operation under enterprise-defined conditions.
 
 Example:
 
 Alice
-→ permitted to cancel subscriptions
+→ permitted to cancel subscription
 
 Therefore:
 
 Capability ≠ Permission
 
+A capability can exist without a particular principal being permitted to use it.
+
+A principal can have permission for an operation that Noema does not currently possess as an executable Capability.
+
+Neither fact alone is sufficient for execution.
+
 ⸻
 
 5. Permission vs Role
 
-A Role groups organizational responsibility or authority.
+A Role groups organizational responsibility or authority according to enterprise-defined authorization semantics.
 
 Example:
 
 Role:
 Finance Manager
 
-A permission may be associated with that role:
+A role may grant or contribute to a permission:
 
 Finance Manager
 → approve_invoice
 
-But Noema should not assume the role itself is sufficient evidence of permission unless the enterprise authorization system establishes that relationship.
+However, Noema must not infer permission merely because a principal appears to hold a particular role unless the enterprise authorization model establishes that relationship.
+
+Role ≠ Permission
+
+Membership and role assignment are inputs to authorization, not universal authorization guarantees.
 
 ⸻
 
 6. Permission vs Authorization
 
-Authorization is the process or decision of determining whether an operation is allowed.
+Authorization is the process or decision by which an enterprise determines whether an operation is allowed.
 
-Permission is one of the facts that may contribute to that decision.
+Permission is one representation of authority that may contribute to that decision.
 
-Permission
+Conceptually:
+
+Principal
+    +
+Action
     +
 Resource
     +
+Scope
+    +
 Context
     +
-Policy
+Enterprise Policy
+    +
+Authorization State
     ↓
 Authorization Decision
+
+An enterprise may implement this through RBAC, ABAC, PBAC, ACLs, a centralized policy engine, or another authorization model.
+
+Noema should preserve the enterprise semantics rather than reducing them to a simplistic boolean when doing so would lose material meaning.
 
 ⸻
 
@@ -153,7 +187,7 @@ Authorization Decision
 
 Trust is broader than permission.
 
-A principal may have permission while the Action remains unsafe or unresolved.
+A principal may possess valid permission while an Action remains unsafe, ambiguous, unresolved, unavailable, or otherwise unsuitable for execution.
 
 Example:
 
@@ -164,11 +198,17 @@ Intent:
 Problem:
 multiple Johns identified
 
-The permission is valid, but Intent ambiguity prevents safe execution.
+The permission may be valid, but the target remains unresolved.
+
+The Trust result may therefore be:
+
+CLARIFY
 
 Therefore:
 
 Permission ≠ Trust
+
+Trust evaluates the complete resolved execution condition.
 
 ⸻
 
@@ -184,6 +224,7 @@ Permission {
     constraints
     validity
     source
+    provenance
 }
 
 For example:
@@ -203,11 +244,13 @@ active
 Source:
 Enterprise Authorization System
 
+This representation is conceptual. The canonical enterprise authorization representation remains defined by the enterprise system that owns the permission.
+
 ⸻
 
 9. Principal
 
-A permission must identify its subject.
+A Permission must identify its subject.
 
 The principal may be:
 
@@ -220,7 +263,9 @@ group
 organization
 delegated identity
 
-Where possible, the effective principal should resolve to a concrete identity or explicitly defined non-human principal.
+Where consequential execution requires an effective principal, Noema must resolve and preserve the relevant identity or explicitly defined non-human principal.
+
+The principal must not be inferred into authoritative authorization merely from model confidence.
 
 ⸻
 
@@ -233,6 +278,8 @@ Alice
 → Finance / Nigeria
 
 Noema consumes this authorization information rather than inventing it.
+
+For consequential Actions, the relevant principal, scope, authorization source, and applicable validity should be attributable.
 
 ⸻
 
@@ -253,13 +300,15 @@ from:
 
 service principal
 
-because their authority and audit semantics may differ.
+because their authority, credential model, delegation semantics, and audit requirements may differ.
+
+A service principal must not be treated as a human identity merely because it acts on behalf of one.
 
 ⸻
 
 12. Agent Permissions
 
-AI agents may also operate under explicit permissions.
+AI agents may operate under explicit enterprise-defined authority.
 
 Example:
 
@@ -267,7 +316,9 @@ Noema Agent
 → cancel_subscription
 → Customer Support
 
-An agent should not inherit unrestricted human authority simply because a human initiated the Intent.
+An agent must not inherit unrestricted human authority merely because a human initiated the Intent.
+
+Agent authority must be explicitly bounded by the applicable enterprise authorization and delegation model.
 
 ⸻
 
@@ -283,7 +334,7 @@ Noema
    ↓
 refund_payment
 
-The delegation should preserve:
+Delegation should preserve:
 
 delegator
 delegate
@@ -291,8 +342,11 @@ permission
 scope
 constraints
 validity
+purpose
 
 Delegation must not silently expand authority.
+
+Where delegation affects a consequential Action, the delegation relationship should be preserved in the authorization and causal audit record.
 
 ⸻
 
@@ -300,6 +354,7 @@ Delegation must not silently expand authority.
 
 Permissions may be scoped by:
 
+tenant
 organization
 legal entity
 region
@@ -308,7 +363,6 @@ team
 project
 resource
 resource type
-tenant
 environment
 
 Example:
@@ -321,6 +375,8 @@ Acme Nigeria Ltd.
 This does not imply authority over:
 
 Acme UK Ltd.
+
+Scope is part of the permission semantics and must be evaluated rather than discarded.
 
 ⸻
 
@@ -340,7 +396,9 @@ Alice
 → edit
 → every repository
 
-Resource-level permissions are often the strongest form of authorization evidence because they minimize scope.
+Resource-level permissions can provide narrowly scoped authorization evidence.
+
+Noema must preserve the exact target resource when evaluating consequential authorization.
 
 ⸻
 
@@ -361,6 +419,9 @@ amount
 currency
 region
 status
+resource ownership
+
+A resource-type permission must not be interpreted as unrestricted authority over every instance of that resource type.
 
 ⸻
 
@@ -377,7 +438,7 @@ business_unit = Finance
 time < 18:00
 environment = production
 
-Therefore permission evaluation may require enterprise Context.
+Permission evaluation may therefore require current enterprise Context and reconciled enterprise state.
 
 ⸻
 
@@ -393,11 +454,11 @@ amount <= $1,000
 Then:
 
 Refund $500
-→ permitted
+→ permitted under this permission
 Refund $5,000
-→ not permitted under this permission
+→ outside this permission
 
-The permission itself has not changed; the Action falls outside its constraint.
+The permission itself has not changed. The proposed Action falls outside its defined constraints.
 
 ⸻
 
@@ -412,12 +473,11 @@ Alice
 Valid:
 August 1 → August 31
 
-After expiration:
+After expiration, the permission may no longer be applicable.
 
-Permission:
-inactive
+Noema must not rely on stale authorization information for consequential operations when current authorization is required by policy or risk.
 
-Noema must not rely on stale authorization data for consequential operations.
+Temporal validity must use the relevant enterprise-defined semantics. Recency alone does not establish authority.
 
 ⸻
 
@@ -439,6 +499,8 @@ production.write
 
 Noema must preserve environment scope when evaluating permissions.
 
+A permission valid in one environment must not silently transfer to another.
+
 ⸻
 
 21. Read vs Write Permissions
@@ -459,6 +521,12 @@ cannot be assumed to have:
 
 update_account
 
+Read-only access can nevertheless be consequential when it exposes protected, regulated, privileged, or otherwise sensitive enterprise information.
+
+Therefore:
+
+read-only ≠ no Trust requirement
+
 ⸻
 
 22. Permission Granularity
@@ -475,7 +543,7 @@ System
 
 The enterprise authorization system determines the semantics.
 
-Noema should preserve the source representation rather than collapsing everything into a simplistic boolean where the distinction matters.
+Noema should preserve the source representation where the distinction affects authorization, scope, auditability, or Trust evaluation.
 
 ⸻
 
@@ -497,7 +565,9 @@ Finance Managers
    ↓ grants
 approve_invoice
 
-Noema should retain the provenance of the effective permission when possible.
+Noema should retain the provenance of the effective permission where available.
+
+An inherited permission must remain bounded by the enterprise authorization semantics that produced it.
 
 ⸻
 
@@ -515,13 +585,15 @@ Alice
 → scope = Nigeria Finance
 → source = Enterprise IAM
 
-This makes Trust decisions auditable.
+Permission provenance supports causal auditability.
+
+It must not be confused with private model reasoning.
 
 ⸻
 
 25. Effective Permission
 
-The effective permission is the permission actually applicable to the current Action.
+The effective permission is the authorization evidence applicable to the fully resolved Action at the relevant time and scope.
 
 Example:
 
@@ -534,7 +606,7 @@ Nigeria Finance
 Action:
 approve Invoice #123
 
-The effective permission exists only if the Action satisfies all relevant constraints.
+The effective permission exists only if the enterprise authorization semantics establish that this principal may perform this Action on this resource under the applicable constraints.
 
 ⸻
 
@@ -551,10 +623,14 @@ Resource Scope
 Policy
         ∩
 Temporal Constraints
+        ∩
+Environment
 
-the resulting authority is the effective authority.
+the resulting authority is the authority applicable to the Action.
 
-This is preferable to treating permissions as additive without boundaries.
+This is preferable to treating permissions as independently additive when the enterprise authorization model defines limiting intersections.
+
+Noema must not impose a universal algebra on enterprise authorization semantics that the enterprise itself does not define.
 
 ⸻
 
@@ -571,9 +647,9 @@ Explicit policy:
 Alice cannot approve invoices
 for Legal Entity X
 
-An explicit deny must not be overridden merely because another permission says “allow.”
+An explicit deny must be handled according to the enterprise authorization semantics.
 
-Noema should defer to the enterprise authorization semantics rather than impose its own deny precedence universally.
+Noema should not impose a universal deny-precedence rule across all authorization systems. Where the enterprise authorization system returns a final decision, Noema should consume that decision and its relevant evidence.
 
 ⸻
 
@@ -590,7 +666,7 @@ is revoked at:
 
 14:00
 
-A cached permission from:
+A cached permission observed at:
 
 13:30
 
@@ -598,7 +674,7 @@ may no longer be sufficient for a consequential execution at:
 
 14:15
 
-Freshness requirements therefore matter.
+Freshness and validity requirements therefore matter.
 
 ⸻
 
@@ -614,24 +690,35 @@ permission revoked
 project closed
 delegation expired
 resource ownership changed
+organizational scope changed
 
-Noema should validate relevant permissions when required by risk or policy.
+Noema should validate relevant permissions when required by policy, risk, action semantics, or freshness requirements.
+
+Permission drift must not be silently ignored for consequential execution.
 
 ⸻
 
 30. Permission Freshness
 
-Permission data should have associated provenance and freshness where practical.
+Permission evidence should have associated provenance and temporal information where practical.
 
 Conceptually:
 
 Permission
    ├── source
+   ├── authority
    ├── observed_at
+   ├── effective_from
    ├── expires_at
    └── version
 
+Freshness is claim- and Action-specific.
+
 A high-risk Action may require fresher authorization evidence than a low-risk Action.
+
+Freshness does not substitute for authority:
+
+recent ≠ authoritative
 
 ⸻
 
@@ -643,18 +730,16 @@ Example:
 
 Permission:
 cancel_order = allowed
-
 Business State:
-
 order.status = already_shipped
-
 Policy:
-
 shipped orders cannot be cancelled
 
-Result:
+The Action may therefore produce:
 
 REJECT
+
+Permission establishes authority to perform an operation; it does not override enterprise business-state constraints.
 
 ⸻
 
@@ -662,14 +747,18 @@ REJECT
 
 Permissions establish authority.
 
-Preconditions establish whether execution can occur given current state.
+Preconditions establish whether an Action may proceed against the current state.
+
+Conceptually:
 
 Permission
-→ may you do it?
+→ may this principal perform this Action?
 Precondition
-→ can it be done now?
+→ are the conditions for this execution currently satisfied?
 
 Both may be required.
+
+Preconditions should be evaluated against current, appropriately reconciled state.
 
 ⸻
 
@@ -688,11 +777,15 @@ payment.refund_status = completed
 
 The postcondition must be verified independently.
 
+Permission ≠ Execution Success
+
+The enterprise remains authoritative for the resulting business state.
+
 ⸻
 
 34. Permission and Risk
 
-The existence of permission does not eliminate risk.
+The existence of permission does not eliminate execution risk.
 
 Example:
 
@@ -709,6 +802,8 @@ human confirmation
 
 Trust therefore considers more than permission.
 
+Confirmation is a control requirement or precondition where applicable, not an additional Trust outcome.
+
 ⸻
 
 35. Permission and Ambiguity
@@ -717,7 +812,7 @@ Ambiguity can prevent permission from being meaningfully evaluated.
 
 Example:
 
-“Delete the old customer account.”
+"Delete the old customer account."
 
 If there are three possible accounts:
 
@@ -727,7 +822,7 @@ Account C
 
 Noema cannot reliably determine which resource the permission applies to.
 
-The correct response may be:
+The appropriate Trust result may therefore be:
 
 CLARIFY
 
@@ -737,19 +832,27 @@ rather than guessing.
 
 36. Permission and Intent Resolution
 
-Intent resolution should produce enough structure to evaluate permissions.
+Intent resolution must produce enough structure to evaluate authorization deterministically.
 
-Natural Language
+Conceptually:
+
+Source of Intent
       ↓
-Intent
+Candidate Intent
       ↓
-Target Resource
+Hard Schema Validation
+      ↓
+Admitted Intent
+      ↓
+Target Resolution
       ↓
 Requested Action
       ↓
-Permission Evaluation
+Permission / Authorization Evaluation
 
-If the target resource remains unresolved, authorization may be impossible to establish deterministically.
+For consequential Actions, the actor, requested Action, exact target resource, and relevant scope must be resolved before authorization can be meaningfully evaluated.
+
+An unresolved target must not be silently selected by the model.
 
 ⸻
 
@@ -770,13 +873,15 @@ Invoice owned by Germany Finance
 
 The permission may not apply.
 
-Organizational scope therefore acts as an important authorization constraint.
+Organizational scope therefore acts as an authorization constraint.
+
+Organizational membership remains distinct from authorization.
 
 ⸻
 
 38. Permission and Data Boundaries
 
-A permission to perform an Action does not necessarily imply permission to expose all data required to perform it.
+A permission to perform an Action does not necessarily imply permission to expose every item of data required to perform it.
 
 For example:
 
@@ -787,7 +892,11 @@ does not automatically imply access to:
 
 employee payroll information
 
-Data access must remain separately governed.
+Data access remains separately governed by enterprise data boundaries, permissions, policies, and applicable Trust conditions.
+
+Therefore:
+
+Action Permission ≠ Universal Data Access
 
 ⸻
 
@@ -799,15 +908,17 @@ Conceptually:
 
 Human Principal
       ↓
-Delegation
+Delegation / Agent Authority
       ↓
 Noema
       ↓
-Permission
+Permission / Authorization
       ↓
 Action
 
-The delegation should define the maximum authority Noema can exercise.
+The authority available to Noema must be explicitly bounded.
+
+A human initiating an Intent does not automatically grant Noema all of that human’s permissions.
 
 ⸻
 
@@ -829,31 +940,37 @@ Instead:
 
 permission unavailable
         ↓
+deterministic Trust evaluation
+        ↓
 policy-defined outcome
 
-such as:
+Potential outcomes include:
 
 REJECT
 ESCALATE
 CLARIFY
 
+EXECUTE must not be produced merely because some unrelated permission exists.
+
 ⸻
 
 41. Permission Inference
 
-Noema must distinguish explicit permission from inferred permission.
+Noema must distinguish explicit authorization from inferred authorization.
 
-Explicit
+Explicit:
 
 IAM:
 Alice → approve_invoice
 
-Inferred
+Inferred:
 
 Alice is a Finance Manager
 therefore probably can approve invoices
 
-The second is not sufficient authorization evidence unless the enterprise’s authorization model explicitly defines that relationship.
+The second is not sufficient authorization evidence unless the enterprise authorization model explicitly defines that relationship.
+
+Model inference may generate a candidate mapping, but it cannot establish enterprise authority.
 
 ⸻
 
@@ -865,13 +982,15 @@ Alice probably has authority to approve this.
 
 This is not a permission.
 
-Noema must not transform:
+Noema must never transform:
 
 model confidence
 
 into:
 
 enterprise authorization
+
+Model confidence is interpretation metadata, not Fact Status and not authority.
 
 ⸻
 
@@ -885,11 +1004,13 @@ ABAC
 PBAC
 ACL
 OAuth scopes
-service credentials
+service authorization
 delegation records
 enterprise policy engines
 
-Noema should preserve the source semantics.
+Noema should preserve the source semantics and provenance.
+
+Authentication credentials or tokens must not be treated as generic permission records, and model-generated claims must not become authoritative merely because they conform to a schema.
 
 ⸻
 
@@ -910,6 +1031,8 @@ Alice
 → approve_invoice
 
 Noema may consume the resulting effective authorization.
+
+The role relationship itself is not sufficient unless the enterprise authorization model defines it as granting the relevant permission.
 
 ⸻
 
@@ -932,7 +1055,9 @@ Department = Finance
 Region = Nigeria
 Amount < $10,000
 
-Noema’s Context model should be capable of carrying the attributes necessary for enterprise authorization.
+Noema’s Context model must be capable of carrying the attributes necessary to evaluate or transmit the enterprise authorization request.
+
+These attributes must have appropriate provenance, authority, freshness, and Fact Status where applicable.
 
 ⸻
 
@@ -948,29 +1073,39 @@ Authorization Request
    ↓
 Enterprise Policy Engine
    ↓
-ALLOW / DENY
+ALLOW / DENY / UNKNOWN
 
-Noema should consume the decision and its relevant evidence rather than reconstructing the enterprise’s entire authorization system unnecessarily.
+Noema should consume the enterprise decision and relevant evidence rather than unnecessarily reconstructing the enterprise’s entire authorization system.
+
+Where the provider is authoritative for the requested authorization decision, Noema should preserve that authority relationship and the decision context.
 
 ⸻
 
 47. Permission Decision
 
-A permission evaluation may result in:
+An enterprise authorization evaluation may produce:
 
 ALLOW
 DENY
 UNKNOWN
 
-Where the enterprise authorization system itself returns an uncertain or unavailable result, Noema should not reinterpret that as:
+These are authorization-provider semantics, not Noema’s canonical Trust outcomes.
+
+Noema must not reinterpret:
+
+UNKNOWN
+
+as:
 
 ALLOW
+
+An authorization result of UNKNOWN must be handled according to Trust, policy, risk, and execution requirements.
 
 ⸻
 
 48. Authorization Unavailability
 
-If the authorization provider is unavailable:
+If an authorization provider is unavailable:
 
 Noema
    ↓
@@ -980,19 +1115,21 @@ timeout
 
 the result is not necessarily:
 
-DENY
-
-nor:
-
 ALLOW
 
-It may be:
+It is also not universally required to become:
 
-AUTHORIZATION_UNKNOWN
+DENY
 
-Policy determines whether execution can continue.
+The authorization state may be:
+
+UNKNOWN
+
+Policy and risk determine the resulting Trust outcome.
 
 For high-risk operations, fail-closed behavior will often be appropriate.
+
+A timeout is an execution/information condition, not itself a canonical Trust outcome.
 
 ⸻
 
@@ -1000,25 +1137,38 @@ For high-risk operations, fail-closed behavior will often be appropriate.
 
 A simplified Trust evaluation may look like:
 
-Intent
-   ↓
+Admitted Intent
+      ↓
+Resolved Actor
+      ↓
 Resolved Action
-   ↓
-Identity
-   ↓
-Permission
-   ↓
+      ↓
+Resolved Target
+      ↓
+Permission / Authorization
+      ↓
 Organizational Scope
-   ↓
+      ↓
 Policy
-   ↓
-Resource State
-   ↓
+      ↓
+Reconciled Resource State
+      ↓
+Preconditions
+      ↓
 Risk
-   ↓
+      ↓
 Trust Decision
 
-The permission is one component of a larger deterministic decision.
+The canonical Trust outcomes are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+EXECUTE means the resolved path satisfies the applicable Trust conditions and is permitted to proceed.
+
+It does not mean execution has succeeded.
 
 ⸻
 
@@ -1029,14 +1179,20 @@ Execution should carry the authorization context that justified the Action where
 Example:
 
 Execution
+├── intent_version
 ├── principal
-├── permission evidence
-├── organizational scope
-├── policy version
+├── effective_principal
+├── permission_evidence
+├── authorization_decision
+├── organizational_scope
+├── policy_version
+├── action_contract_version
 ├── action
 └── resource
 
-This enables post-execution auditability.
+This enables post-execution causal auditability.
+
+Authorization evidence should not be silently mutated after execution. If current authorization changes later, the historical execution record remains historical.
 
 ⸻
 
@@ -1045,13 +1201,19 @@ This enables post-execution auditability.
 A consequential execution should be able to answer:
 
 Who was authorized?
-What permission allowed it?
-Where did that permission come from?
-What scope applied?
+What Action was authorized?
+What resource was targeted?
+What permission or authorization decision supported it?
+Where did that authority come from?
+What organizational scope applied?
 What constraints applied?
-When was the permission observed?
+When was the authorization observed?
 Was delegation involved?
 Was authorization revalidated?
+Which Intent version was evaluated?
+Which policy and Action Contract versions applied?
+
+This forms part of Noema’s causal audit trail.
 
 ⸻
 
@@ -1070,21 +1232,23 @@ refund_balance
 Action B:
 close_account
 
-Permission must be evaluated for each Action.
+Authorization must be evaluated for each consequential Action.
 
 Permission for:
 
 refund_balance
 
-does not automatically imply:
+does not automatically imply permission for:
 
 close_account
+
+Each Action must retain its own authorization context.
 
 ⸻
 
 53. Permission and Compensation
 
-Compensating Actions require their own authorization.
+Compensating Actions require appropriate authorization independently of the original Action.
 
 Example:
 
@@ -1101,6 +1265,8 @@ implies:
 
 permission(cancel_transfer)
 
+Compensation remains governed execution and must be represented by an explicit Action Contract.
+
 ⸻
 
 54. Permission and Human Intervention
@@ -1113,11 +1279,15 @@ Human Approver
    ↓
 Approval
    ↓
-Permission / Authorization
+Authorization / Permission
+   ↓
+Action
    ↓
 Execution
 
-The approval should be attributable to the approving principal and their organizational authority.
+The approval should be attributable to the approving principal and their applicable organizational authority.
+
+Approval is not itself a universal permission grant. Its effect is determined by enterprise policy and the applicable Action Contract.
 
 ⸻
 
@@ -1136,6 +1306,8 @@ execution resumes
 
 Policy may require authorization revalidation before the final Action.
 
+Revalidation should evaluate the current authorization state rather than rewriting the historical authorization decision.
+
 ⸻
 
 56. Permission and Delegation Chains
@@ -1152,7 +1324,9 @@ Noema
 
 Noema should preserve the delegation chain where it affects authority.
 
-The chain should not create more authority than the original principal possessed.
+The chain must not create more authority than the delegator could legitimately grant.
+
+Where delegation is temporal, scoped, or purpose-specific, those constraints must remain attached to the effective authority.
 
 ⸻
 
@@ -1164,69 +1338,355 @@ Delegated Authority
 ≤
 Delegator's Effective Authority
 
-Noema must not gain capabilities through delegation that the delegator could not legitimately grant.
+Delegation may narrow authority but must not expand the authority available to the delegate beyond what the enterprise authorization model permits.
+
+This applies recursively to delegation chains.
 
 ⸻
 
 58. Permission Boundary
 
-The permission boundary is where:
-
-Enterprise Authorization
-
-meets:
-
-Noema Trust
+The permission boundary is where enterprise authorization semantics become an input to Noema’s deterministic Trust evaluation.
 
 Conceptually:
 
-Enterprise
-    │
-    │ "This principal may perform X."
-    ▼
-Permission Evidence
-    │
-    ▼
+Enterprise Authorization
+          │
+          │
+          ▼
+Permission / Authorization Evidence
+          │
+          ▼
+Hard Schema Validation / Admission
+          │
+          ▼
+State Reconciliation where required
+          │
+          ▼
 Noema Trust
-    │
-    ├── Context
-    ├── Policy
-    ├── Risk
-    ├── Preconditions
-    └── Intent Resolution
-    │
-    ▼
-Execution Decision
+          │
+     ┌────┼────┐
+     ▼    ▼    ▼
+  Context Policy Risk
+     │    │    │
+     └────┼────┘
+          ▼
+      Trust Decision
+          │
+          ▼
+      Action Contract
+          │
+          ▼
+       Execution
+
+Noema does not become the enterprise authorization source of truth merely because it consumes permission information.
 
 ⸻
 
-59. Canonical Permission Model
+59. Permission Evidence and Fact Status
 
-                    Principal
-                        │
-                        ▼
-                    Permission
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-       Action        Resource        Scope
-          │             │             │
-          └─────────────┼─────────────┘
-                        ▼
-                    Constraints
-                        │
-                        ▼
-                     Validity
-                        │
-                        ▼
-                  Authorization
-                        │
-                        ▼
-                  Noema Trust
+Permission evidence must be distinguished from Fact Status.
+
+Fact Status describes the epistemic status of a relevant claim:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+For example:
+
+Permission claim:
+Alice may approve invoice #123
+Evidence:
+Enterprise IAM authorization response
+Fact Status:
+VERIFIED
+
+A model confidence score is not a Fact Status.
+
+Likewise:
+
+Fact Status = UNKNOWN
+
+must not be converted into:
+
+Permission = ALLOW
+
+Fact Status, Evidence, Permission, Authorization Decision, and Trust Decision are distinct concepts.
 
 ⸻
 
-60. Canonical Invariants
+60. Permission and State Reconciliation
+
+Permission-related enterprise state may change across multiple authoritative systems.
+
+Examples include:
+
+identity provider
+HR system
+IAM
+policy engine
+resource system
+organization directory
+delegation service
+
+Where authorization depends on multiple observations, Noema may use State Reconciliation to establish the current relevant claims.
+
+Conceptually:
+
+Enterprise Authorization Sources
+          ↓
+Observations
+          ↓
+Hard Schema Validation / Admission
+          ↓
+State Reconciliation
+          ↓
+Reconciled Claims / Fact Status / Evidence
+          ↓
+Authorization Evaluation
+          ↓
+Trust
+
+Reconciliation does not create enterprise authority. It determines which observed claims can currently be treated as reconciled inputs under the applicable authority model.
+
+⸻
+
+61. Permission and Unknown State
+
+Unknown authorization state is first-class.
+
+Examples:
+
+authorization provider unavailable
+delegation status unknown
+permission expiration unknown
+resource scope unresolved
+conflicting authorization sources
+current role membership unknown
+
+Noema must not guess.
+
+Depending on the Action and policy, an unknown authorization condition may lead to:
+
+CLARIFY
+ESCALATE
+REJECT
+
+or prevent execution until the required evidence becomes available.
+
+EXECUTE must require the applicable authorization conditions to be established, not merely assumed.
+
+⸻
+
+62. Permission, Intent Versioning, and Immutability
+
+Consequential authorization evaluation must reference the exact Intent Object version being evaluated.
+
+Once an Intent is admitted to Trust, it is immutable.
+
+If clarification or material change produces a new semantic request:
+
+Intent v1
+   ↓
+CLARIFICATION
+   ↓
+Intent v2
+   ↓
+supersedes v1
+
+The authorization evaluation for v1 must not silently become an authorization evaluation for v2.
+
+Each material Intent version must be evaluated against its own resolved actor, Action, target, context, and applicable authorization conditions.
+
+⸻
+
+63. Permission and Resolved Identity
+
+Permission evaluation requires the relevant actor and target identity to be resolved for consequential execution.
+
+The authorization record should preserve, where applicable:
+
+initiating_principal
+effective_principal
+delegator
+delegate
+actor
+subject
+target_resource
+resolution_identity
+resolution_version
+scope
+
+An agent acting on behalf of a human must not erase the human’s initiating identity or become indistinguishable from the human.
+
+Identity resolution and authorization remain separate stages.
+
+⸻
+
+64. Permission and the Enterprise Action Graph
+
+The Enterprise Action Graph may represent relationships such as:
+
+Principal
+   ↓
+Organization
+   ↓
+Capability
+   ↓
+Action
+   ↓
+Resource
+
+It may also represent policy, integration, workflow, and system relationships.
+
+Graph relationships are useful for planning and authorization context, but graph representation alone does not establish enterprise authority.
+
+The authority of a relationship depends on its source, provenance, scope, temporal validity, and enterprise semantics.
+
+The Planner may use the graph only within the bounds of the Capability Registry, Action Contracts, and Trust decision.
+
+⸻
+
+65. Permission and Capability Registry
+
+A Permission does not create a Noema Capability.
+
+Conversely, a registered Capability does not establish that a particular principal is authorized to use it.
+
+The execution boundary therefore requires both:
+
+Enterprise Authorization
+        +
+Noema Capability / Action Contract
+        +
+Trust Conditions
+        ↓
+Permitted Execution Path
+
+The Planner cannot:
+
+invent a capability
+invent a permission
+invent authority
+modify an Action Contract
+bypass Trust
+
+⸻
+
+66. Permission and Security Boundary
+
+Permission evaluation must be structurally separated from model authority.
+
+The following are untrusted inputs until appropriately validated and admitted:
+
+user input
+model output
+retrieved enterprise text
+tool responses
+external messages
+
+The model must not receive credentials merely to determine authorization, and it must not directly invoke enterprise systems outside explicit capability and integration boundaries.
+
+No free-form model output may become executable authorization.
+
+The executor must revalidate applicable execution constraints rather than trusting model-generated claims.
+
+⸻
+
+67. Canonical Permission Model
+
+                       Principal
+                           │
+                           ▼
+                      Permission
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+       Action           Resource          Scope
+          │                │                │
+          └────────────────┼────────────────┘
+                           ▼
+                      Constraints
+                           │
+                           ▼
+                        Validity
+                           │
+                           ▼
+                  Source / Authority
+                           │
+                           ▼
+                 Permission Evidence
+                           │
+                           ▼
+             Authorization Evaluation
+                           │
+                           ▼
+              State / Context Reconciliation
+                           │
+                           ▼
+                    Noema Trust
+                           │
+                           ▼
+                 Action Contract
+                           │
+                           ▼
+                      Execution
+
+⸻
+
+68. Canonical Permission Chain
+
+For a consequential Action, the causal chain should be representable as:
+
+Source of Intent
+      ↓
+Intent Object Version
+      ↓
+Resolved Principal / Actor
+      ↓
+Resolved Action
+      ↓
+Resolved Target Resource
+      ↓
+Enterprise Authorization Source
+      ↓
+Permission / Authorization Observation
+      ↓
+Hard Schema Validation / Admission
+      ↓
+State Reconciliation where required
+      ↓
+Fact Status / Evidence
+      ↓
+Authorization Evaluation
+      ↓
+Policy / Scope / Preconditions
+      ↓
+Trust Decision
+      ↓
+Action Contract
+      ↓
+Execution
+      ↓
+Verification
+      ↓
+Outcome / Audit
+
+This preserves the distinction between:
+
+authority
+evidence
+authorization
+Trust
+execution
+outcome
+
+⸻
+
+69. Canonical Invariants
 
 Invariant 1
 
@@ -1250,7 +1710,7 @@ Permission and Trust are distinct.
 
 Invariant 6
 
-Permissions must have an identifiable principal.
+Permissions must have an identifiable principal or explicitly defined non-human subject.
 
 Invariant 7
 
@@ -1270,7 +1730,7 @@ Explicit enterprise authorization takes precedence over model inference.
 
 Invariant 11
 
-Model confidence must never be treated as permission evidence.
+Model confidence must never be treated as permission evidence or authority.
 
 Invariant 12
 
@@ -1286,7 +1746,7 @@ Compensating Actions require appropriate authorization independently of the orig
 
 Invariant 15
 
-Permissions may become stale and must be revalidated where policy or risk requires.
+Permissions may become stale and must be revalidated where policy, risk, or Action semantics require.
 
 Invariant 16
 
@@ -1308,30 +1768,145 @@ Invariant 20
 
 A permission does not override business-state constraints, Preconditions, or enterprise Policy.
 
+Invariant 21
+
+Permission evidence must not be treated as authoritative merely because it has been persisted by Noema.
+
+Invariant 22
+
+Hard schema validation and admission must occur before externally supplied authorization data is used as canonical Noema input.
+
+Invariant 23
+
+Fact Status is distinct from Permission, Evidence, Authorization Decision, and Trust Decision.
+
+Invariant 24
+
+UNKNOWN authorization state must never be silently converted into ALLOW.
+
+Invariant 25
+
+Authority is claim-, resource-, scope-, temporal-, and source-specific; recency alone does not establish authority.
+
+Invariant 26
+
+Consequential authorization must evaluate the fully resolved actor, Action, target resource, and applicable scope.
+
+Invariant 27
+
+A material change to an admitted Intent creates a new Intent version and does not mutate the authorization evaluation of the prior version.
+
+Invariant 28
+
+A permission for one Action does not automatically authorize another Action.
+
+Invariant 29
+
+A permission to perform an Action does not automatically grant access to all data involved in that Action.
+
+Invariant 30
+
+A registered Capability does not imply principal authorization.
+
+Invariant 31
+
+Principal authorization does not create a Noema Capability.
+
+Invariant 32
+
+Planner selection cannot invent authority, permissions, capabilities, or Action Contract semantics.
+
+Invariant 33
+
+Trust EXECUTE does not imply successful enterprise execution or successful business state transition.
+
+Invariant 34
+
+Enterprise authorization remains enterprise-owned; Noema must not silently become the authorization source of truth.
+
+Invariant 35
+
+Delegation chains must preserve the initiating principal, effective principal, scope, constraints, and validity where they affect authority.
+
+Invariant 36
+
+Human approval does not automatically create unrestricted permission; its effect is determined by enterprise policy and the applicable Action Contract.
+
+Invariant 37
+
+Permission-related enterprise state may require State Reconciliation before consequential authorization can be evaluated.
+
+Invariant 38
+
+Historical authorization observations and decisions must remain distinguishable from current authorization state.
+
+Invariant 39
+
+Replay of authorization observations must not silently recreate authorization or execute an Action.
+
+Invariant 40
+
+Authorization evaluation must be reproducible from the relevant Intent version, principal resolution, authorization evidence, policy, scope, resource state, and applicable contract versions.
+
+Invariant 41
+
+No model-generated authorization claim may cross the Trust boundary as authoritative permission without an explicit enterprise authority source and deterministic admission.
+
+Invariant 42
+
+Read-only permission does not imply absence of Trust requirements when the requested observation is consequential.
+
+Invariant 43
+
+Permission constraints must not be silently discarded when converting enterprise authorization data into Noema Context or Trust inputs.
+
+Invariant 44
+
+A timeout or unavailable authorization source is an information condition and must be handled according to policy; it is not itself a canonical Trust outcome.
+
+Invariant 45
+
+Noema may consume enterprise authorization semantics, but it must not silently replace, broaden, or redefine them.
+
 ⸻
 
-61. Final Definition
+70. Final Definition
 
-Permissions are enterprise-defined expressions of authority that establish which principals may perform particular operations on particular resources within particular scopes and constraints.
+Permissions are enterprise-defined expressions of authority that establish which principals may perform particular operations on particular resources within particular scopes, constraints, environments, and validity conditions.
 
 For Noema:
 
-Permission
-    ↓
-is evidence
-    ↓
-Authorization
-    ↓
-is an input
-    ↓
-Trust
-    ↓
-supports
-    ↓
+Enterprise Authorization
+        ↓
+Permission / Authorization Evidence
+        ↓
+Validation / Admission
+        ↓
+State Reconciliation where required
+        ↓
+Authorization Evaluation
+        ↓
+Deterministic Trust
+        ↓
+Action Contract
+        ↓
 Execution
+        ↓
+Verification
+        ↓
+Outcome
 
 The key distinction is:
 
-The enterprise decides who is allowed to do what. Noema determines whether a specific Intent, under the available evidence and enterprise constraints, can safely become an executable Action.
+The enterprise defines who is authorized to perform what, under which conditions. Noema consumes that authority as an explicit, attributable input and determines whether a specific resolved Intent can safely and deterministically proceed through the Trust and execution boundary.
 
-This keeps authorization where it belongs while making permissions a first-class input into Noema’s deterministic Trust model.
+Noema does not invent permissions, infer authority from model confidence, silently escalate privileges, or replace the enterprise authorization source of truth.
+
+The permission boundary therefore preserves a fundamental Noema separation:
+
+Enterprise
+→ defines authority and business authorization
+Noema
+→ validates, reconciles, evaluates, governs, executes, verifies, and audits the specific execution journey
+
+This makes Permission a first-class enterprise input to deterministic Trust without collapsing Permission, Authorization, Trust, Execution, or Outcome into the same concept.

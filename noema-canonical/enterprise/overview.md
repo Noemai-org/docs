@@ -9,7 +9,7 @@ Canonical Path: enterprise/overview.md
 
 1. Definition
 
-The Enterprise domain defines the boundary between Noema and the enterprise systems, organizational structures, identities, policies, resources, and business state that Noema operates against.
+The Enterprise domain defines the boundary between Noema and the enterprise systems, organizational structures, identities, policies, resources, capabilities, data, and Business State against which Noema operates.
 
 Noema is not the enterprise.
 
@@ -24,7 +24,9 @@ transactions
 inventory
 organizational structure
 
-Instead, Noema operates across enterprise systems to turn human or agent Intent into controlled, auditable execution.
+Instead, Noema operates across enterprise systems to turn human, agent, system, workflow, or application Intent into controlled, auditable, and verifiable execution.
+
+The Enterprise domain therefore defines what remains enterprise-owned and authoritative and what Noema is responsible for within the execution journey.
 
 ⸻
 
@@ -39,14 +41,15 @@ The domain establishes the conceptual boundaries around:
 Identity
 Organization
 Business State
-Resources
 Data
-Policies
+Resources
 Capabilities
+Policies
 Integrations
-Audit
+Events
+Auditability
 
-These concepts provide the environment in which Noema resolves Intent, evaluates Trust, and executes Actions.
+These concepts provide the environment in which Noema resolves Intent, reconciles relevant enterprise state, evaluates Trust, executes Actions, verifies results, and records the resulting Outcome.
 
 ⸻
 
@@ -57,28 +60,33 @@ The fundamental architecture is:
 ┌──────────────────────────────────────────────┐
 │                  ENTERPRISE                  │
 │                                              │
-│  Identity   Organization   Business State    │
-│      │            │              │           │
-│      └────────────┼──────────────┘           │
-│                   │                          │
-│              Enterprise APIs                │
-│                   │                          │
-└───────────────────┼──────────────────────────┘
-                    │
-              Enterprise Boundary
-                    │
-┌───────────────────┼──────────────────────────┐
-│                   ▼                          │
-│                  NOEMA                       │
+│ Identity   Organization   Business State     │
+│     │            │              │            │
+│     └────────────┼──────────────┘            │
+│                  │                           │
+│          Enterprise Systems                  │
+│                  │                           │
+└──────────────────┼───────────────────────────┘
+                   │
+             Enterprise Boundary
+                   │
+┌──────────────────┼───────────────────────────┐
+│                  ▼                           │
+│                 NOEMA                       │
 │                                              │
-│   Intent → Trust → Action → Execution       │
+│ Intent → Context → Trust → Action            │
+│                         → Execution           │
+│                              → Verification   │
+│                                   → Outcome  │
 │                                              │
-└───────────────────┼──────────────────────────┘
-                    │
-                    ▼
-             Enterprise Systems
+└──────────────────┼───────────────────────────┘
+                   │
+                   ▼
+            Enterprise Systems
 
-Noema sits between intent and enterprise state change.
+Noema sits at the boundary between Intent and consequential enterprise execution.
+
+It does not replace the enterprise systems that own the underlying business state.
 
 ⸻
 
@@ -97,7 +105,7 @@ financial records
 customer records
 operational systems
 
-Noema is authoritative for the execution journey it manages:
+Noema is authoritative for the execution-domain state it manages, including:
 
 intent
 intent resolution
@@ -105,23 +113,27 @@ trust evaluation
 action selection
 execution state
 execution history
+verification state
 outcomes
 intervention
+causal audit
 
 This distinction is foundational.
+
+Noema may maintain representations, observations, caches, projections, and references to enterprise state, but those representations do not become enterprise authority merely because Noema stores them.
 
 ⸻
 
 5. Enterprise as External Authority
 
-Enterprise systems provide authoritative facts.
+Enterprise systems provide authoritative facts and operational capabilities.
 
 For example:
 
 Enterprise:
 account.balance = $5,000
 
-Noema may retrieve this fact.
+Noema may retrieve and reconcile this fact.
 
 It does not become the owner of:
 
@@ -135,6 +147,8 @@ Alice is a Finance Manager
 Noema may use this information.
 
 It does not become the authority that defines Alice’s employment status.
+
+Authority is claim-specific. A system authoritative for one enterprise claim may not be authoritative for another.
 
 ⸻
 
@@ -152,19 +166,26 @@ Permission
 Invoice
 Transaction
 Inventory
-        ↓ observed through integrations
-NOEMA STATE
+Organizational Membership
+        ↓
+observed through integrations
+        ↓
+NOEMA EXECUTION DOMAIN
 ────────────────────────
 Intent
 Context
 Trust
 Action
 Execution
+Verification
 Outcome
 Intervention
 Audit
+Operational Memory
 
-Noema may maintain references and derived representations of enterprise state without replacing the enterprise systems of record.
+Noema may maintain references and derived representations of enterprise state without replacing enterprise systems of record.
+
+Enterprise Business State and Noema execution-domain state must remain distinct.
 
 ⸻
 
@@ -180,25 +201,33 @@ Resources
 Capabilities
 Policies
 Integrations
+Events
 Auditability
 
 Together they describe the environment in which Noema operates.
+
+These concepts are related but must not be collapsed into a single notion of “enterprise context.”
 
 ⸻
 
 8. Identity
 
-Identity establishes:
+Identity establishes authoritative enterprise representations of principals and subjects.
+
+Identity may describe:
 
 who is acting
 who is affected
-who authorized an operation
+which principal authorized an operation
 which agent is acting
 which service is executing
+which external actor is involved
 
-Identity is authoritative in the enterprise.
+Noema consumes identity assertions and enterprise identity state as inputs to Intent resolution, Context, Trust, and execution.
 
-Noema consumes identity assertions and uses them as Trust inputs.
+Noema does not establish authoritative identity merely through model inference.
+
+Identity-related claims may require schema validation, admission, and State Reconciliation before they are suitable for consequential use.
 
 See:
 
@@ -208,7 +237,7 @@ identity.md
 
 9. Organizational Boundaries
 
-Organizational Boundaries establish where authority applies.
+Organizational Boundaries establish where enterprise authority, organizational applicability, and data access apply.
 
 They may include:
 
@@ -219,6 +248,7 @@ project
 legal entity
 region
 jurisdiction
+delegated scope
 
 An identity may be valid while still being outside the organizational scope required for a particular Action.
 
@@ -243,9 +273,11 @@ order
 balance
 transaction
 
-Noema observes and changes Business State through authorized interfaces.
+Noema observes and changes Business State through authorized enterprise interfaces.
 
 It should not create a competing system of record.
+
+Where current state is distributed across multiple systems, Noema may use State Reconciliation to establish the current claims relevant to an Intent. Reconciliation does not transfer authority from the enterprise to Noema.
 
 ⸻
 
@@ -259,16 +291,23 @@ what it may retain
 what it may expose
 what may reach a model
 what may cross integrations
+what may be logged
 
 The guiding principle is:
 
 Noema should have enough data to act safely, but not unrestricted access to enterprise data.
 
+Data access is itself governed by enterprise authorization, organizational scope, policy, and applicable Trust requirements.
+
+See:
+
+data-boundaries.md
+
 ⸻
 
 12. Resources
 
-Resources are the enterprise objects upon which Actions operate.
+Resources are enterprise objects upon which Actions operate.
 
 Examples:
 
@@ -284,7 +323,9 @@ document
 
 A Resource generally belongs to or is managed by an enterprise system.
 
-Noema references Resources and acts on them through Action Contracts.
+Noema references Resources and acts on them through explicit Action Contracts and enterprise capabilities.
+
+Resource identity, ownership, organizational scope, and current state remain enterprise-owned concerns.
 
 ⸻
 
@@ -309,8 +350,11 @@ who may do it
 when it may be done
 on which resources
 under which conditions
+within which organizational scope
 
-Those concerns belong to authorization and Trust.
+Those concerns belong to enterprise authorization, policy, Action Contracts, and Trust.
+
+The Capability Registry and Enterprise Action Graph bound what Noema may select or execute; they do not independently create enterprise authority.
 
 ⸻
 
@@ -324,9 +368,11 @@ refunds above $5,000 require approval
 only Finance Managers may approve invoices
 customer accounts may not be closed while disputes are open
 
-Policies provide the rules against which Trust evaluates an Action.
+Policies provide rules against which Trust evaluates a resolved Action.
 
-Noema may execute policies or consume policy decisions, but enterprise policy remains authoritative.
+Noema may deterministically evaluate policy conditions or consume authoritative enterprise policy decisions, but enterprise policy remains authoritative.
+
+Policy versions relevant to consequential decisions must be preserved.
 
 ⸻
 
@@ -342,34 +388,45 @@ webhooks
 schemas
 actions
 queries
+identity assertions
+state observations
 
 The integration boundary is where Noema’s execution model meets enterprise technology.
+
+Integration mappings must preserve sufficient provenance, version, authority, and scope information to prevent ambiguous or stale enterprise representations from silently becoming execution inputs.
 
 ⸻
 
 16. Auditability
 
-Enterprise execution must be explainable.
+Enterprise execution must be causally explainable.
 
 Auditability allows the enterprise to determine:
 
 what was requested
-who requested it
+who or what initiated it
 what Noema understood
+which Intent version was admitted
+what enterprise state was observed
 what evidence was used
+which organizational scope applied
 which policy applied
 what Trust decided
+what Action Contract was used
 what Action was executed
 what system executed it
-what happened afterward
+what was verified afterward
+what Outcome resulted
 
 Auditability connects the Noema execution journey to enterprise accountability.
+
+It does not require exposing private model chain-of-thought.
 
 ⸻
 
 17. Enterprise Action Graph
 
-The Enterprise Action Graph provides a structured representation of the enterprise environment.
+The Enterprise Action Graph provides a structured representation of the enterprise environment relevant to execution.
 
 Conceptually:
 
@@ -377,16 +434,22 @@ Identity
     │
     ├── belongs_to ──→ Organization
     │
-    └── authorized_for ──→ Capability
-                              │
-                              ▼
-                           Action
-                              │
-                              ▼
-                           Resource
-                              │
-                              ▼
-                       Business State
+    └── may_act_as / delegated_to ──→ Principal / Actor
+                                          │
+                                          ▼
+                                    Authorization
+                                          │
+                                          ▼
+                                     Capability
+                                          │
+                                          ▼
+                                        Action
+                                          │
+                                          ▼
+                                       Resource
+                                          │
+                                          ▼
+                                    Business State
 
 Additional relationships may connect:
 
@@ -395,14 +458,18 @@ Data
 Events
 Systems
 Integrations
+Legal Entities
+Organizational Scopes
 
-The graph allows Noema to reason over enterprise capabilities without hard-coding every workflow.
+The graph allows Noema to reason over enterprise capabilities and relationships without hard-coding every workflow.
+
+The graph is not itself a universal authority source. Relationships must retain provenance and applicable authority semantics.
 
 ⸻
 
 18. Enterprise Knowledge Sources
 
-The Enterprise Action Graph may be constructed from multiple sources:
+The Enterprise Action Graph and Noema’s enterprise context may be constructed from multiple sources:
 
 Enterprise APIs
 API schemas
@@ -413,10 +480,12 @@ Policies
 Human configuration
 Identity systems
 Organizational directories
+Resource systems
+Operational systems
 
 No single source is necessarily sufficient.
 
-The resulting graph should preserve provenance.
+The resulting representations should preserve provenance, source authority, temporal scope, and version information.
 
 ⸻
 
@@ -429,15 +498,23 @@ For example:
 Ledger
 → authoritative for balance
 Identity Provider
-→ authoritative for identity
-HR system
+→ authoritative for identity assertions
+HR System
 → authoritative for employment state
-API documentation
+IAM System
+→ authoritative for application access state
+API Documentation
 → descriptive of capability
+Enterprise Event
+→ observation/evidence about an occurrence
 Noema model inference
 → non-authoritative
 
 Noema must distinguish source authority from semantic usefulness.
+
+A source can be useful without being authoritative for a particular claim.
+
+Likewise, a schema-valid response does not automatically establish the truth of every claim contained within it.
 
 ⸻
 
@@ -456,8 +533,12 @@ payment status
 refund policy
 refund capability
 authorization
+organizational scope
+current relevant state
 
 Noema should not load the entire enterprise into Context.
+
+Context must be scoped according to the Intent, Action, data boundaries, authorization, and execution requirements.
 
 ⸻
 
@@ -473,17 +554,23 @@ may differ from:
 
 Context(t2)
 
-Noema must account for freshness when the difference could affect Trust or execution.
+Noema must account for freshness, authority, and reconciliation when the difference could affect Trust or execution.
+
+Freshness is claim-specific.
+
+A recent observation is not necessarily more authoritative than an older observation from the authoritative system.
 
 ⸻
 
 22. Enterprise State Is Not Noema Memory
 
-Noema may remember:
+Noema may retain:
 
 an Intent occurred
 an Action was attempted
 an execution failed
+an execution outcome was unknown
+an enterprise observation was received
 
 It should not treat its stored snapshot of:
 
@@ -493,7 +580,9 @@ order.status
 
 as permanently authoritative.
 
-The enterprise system remains the source of truth.
+The enterprise system remains the source of truth for enterprise Business State.
+
+Historical observations may remain valuable for audit and reconstruction without becoming current truth.
 
 ⸻
 
@@ -504,7 +593,16 @@ Authority can be represented as:
 Enterprise System
       │
       ▼
-Authoritative Fact
+Authoritative Observation
+      │
+      ▼
+Schema Validation / Admission
+      │
+      ▼
+State Reconciliation where required
+      │
+      ▼
+Claim / Fact Status / Evidence
       │
       ▼
 Noema Context
@@ -514,11 +612,23 @@ Trust Evaluation
 
 Noema should preserve the distinction between:
 
-observed fact
-
-and:
-
+enterprise observation
+evidence
+Fact Status
+reconciled state
 model interpretation
+
+These are not interchangeable.
+
+Fact Status may be:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Model confidence does not determine Fact Status.
 
 ⸻
 
@@ -549,11 +659,15 @@ subscription status
 
 Noema then resolves the Intent against this environment.
 
+The resulting Intent Object is schema-validated, versioned, and immutable once admitted to Trust.
+
+If material ambiguity is discovered later, clarification creates a new Intent version rather than silently mutating the admitted version.
+
 ⸻
 
 25. Enterprise and Trust
 
-Trust evaluates whether the resolved Action is sufficiently justified.
+Trust evaluates whether the resolved Action is sufficiently justified and permitted to proceed.
 
 Relevant enterprise inputs may include:
 
@@ -565,15 +679,18 @@ policy
 risk
 evidence
 capability
+current reconciled state
 
-The Trust Engine produces a deterministic decision:
+The Trust Engine produces one of the canonical decisions:
 
 EXECUTE
 CLARIFY
 ESCALATE
 REJECT
 
-or another explicitly defined state.
+Trust does not create enterprise permissions.
+
+EXECUTE means that the evaluated conditions permit progression. It does not mean that the enterprise Action has already succeeded.
 
 ⸻
 
@@ -593,15 +710,22 @@ Integration
 Enterprise Capability
    │
    ▼
+Enterprise System
+   │
+   ▼
 Business State Change
 
 The enterprise system remains responsible for the actual business-state mutation.
+
+No free-form model output may directly cross this boundary.
+
+Execution must use explicit, registered Action Contracts and bounded capabilities.
 
 ⸻
 
 27. Enterprise and Outcome
 
-After execution, Noema observes the enterprise result.
+After execution, Noema observes and verifies the enterprise result.
 
 Example:
 
@@ -610,12 +734,16 @@ freeze_card
 Enterprise:
 card.status = FROZEN
 
-Noema records:
+Noema may record:
 
 Outcome:
 SUCCESS
 
 while the enterprise remains authoritative for the underlying card state.
+
+Outcome is not Business State.
+
+An Outcome describes what Noema established about the Intent or execution journey; Business State describes the authoritative enterprise condition.
 
 ⸻
 
@@ -628,9 +756,19 @@ account.suspended
 employee.terminated
 order.shipped
 
-These events may update Noema’s Context or execution state.
+These events may contribute to:
 
-Events are evidence about enterprise state; they do not automatically become Noema-owned truth independent of their source.
+Context
+Evidence
+State Reconciliation
+execution state
+Operational Memory
+
+Events are not automatically Noema-owned truth.
+
+An authenticated or schema-valid event may still require semantic validation, authority evaluation, and reconciliation before establishing a particular enterprise claim.
+
+Event occurrence is distinct from the Business State derived from that occurrence.
 
 ⸻
 
@@ -638,17 +776,17 @@ Events are evidence about enterprise state; they do not automatically become Noe
 
 Enterprise systems may be eventually consistent.
 
-Therefore Noema must account for cases where:
+Therefore:
 
 Action succeeded
+      ↓
+Business State not yet visibly updated
 
-but:
-
-Business State
-
-has not yet reflected the result.
+may be possible.
 
 Outcome verification should respect the consistency characteristics of the underlying enterprise system.
+
+Absence of an immediately observable state change does not necessarily establish failure.
 
 ⸻
 
@@ -694,11 +832,18 @@ FAILED
 
 The enterprise may have successfully processed the Action.
 
-The correct state may be:
+The correct execution condition may be:
 
-OUTCOME_UNKNOWN
+UNKNOWN
 
-followed by reconciliation or verification.
+followed by:
+
+reconciliation
+verification
+
+before retry or further consequential action.
+
+Unknown is an epistemic condition, not automatically a Trust outcome.
 
 ⸻
 
@@ -715,6 +860,10 @@ Idempotency Key
 Enterprise System
 
 This allows Noema to retry safely without unintentionally repeating a business operation.
+
+Idempotency must be action-specific and tied to the relevant execution identity.
+
+An idempotency mechanism does not replace verification or State Reconciliation when execution outcome is unknown.
 
 ⸻
 
@@ -738,6 +887,7 @@ compensation
 reconciliation
 postconditions
 failure handling
+verification
 
 are necessary.
 
@@ -761,8 +911,11 @@ authorization
 policy
 Trust
 Action Contract
+organizational scope
 
 It is not an unrestricted rollback mechanism.
+
+A compensating Action may create a new business-state transition rather than literally restore the previous state.
 
 ⸻
 
@@ -776,15 +929,21 @@ Model
   ↓
 candidate interpretation
   ↓
+hard schema validation
+  ↓
 deterministic resolution
+  ↓
+State Reconciliation
   ↓
 deterministic Trust
   ↓
-deterministic Action Contract
+Action Contract
   ↓
 enterprise execution
+  ↓
+verification
 
-Noema must never cross the enterprise boundary based solely on model confidence.
+Noema must never cross the enterprise execution boundary based solely on model confidence.
 
 ⸻
 
@@ -802,7 +961,9 @@ Model confidence = 94%
 
 is not sufficient.
 
-Noema should transition into a deterministic clarification state when policy requires disambiguation.
+Noema should transition into deterministic clarification when the ambiguity materially affects the execution path.
+
+Ambiguity is a state to resolve, not an invitation to guess.
 
 ⸻
 
@@ -814,10 +975,13 @@ minimum required identity authority
 minimum required data
 minimum required capability
 minimum required resource scope
+minimum required organizational scope
 
 for each execution.
 
 This limits blast radius.
+
+Least privilege applies to both read and write operations. A read-only operation may still be consequential if it exposes protected enterprise information or privileged relationships.
 
 ⸻
 
@@ -833,11 +997,13 @@ ESCALATE
   ↓
 Human Approval
   ↓
-Trust / Validation
+Validation / Re-evaluation
   ↓
 Execution
 
 The approving identity and organizational authority must be preserved.
+
+The approval must remain bound to the relevant Intent version, Action, target, policy, and execution context.
 
 ⸻
 
@@ -853,9 +1019,16 @@ Data Boundaries
 Organizational Boundaries
 Trust
 Integration Security
+Capability Boundaries
 Auditability
 
-Noema’s security model therefore emerges from the interaction of these boundaries.
+Security must be structural.
+
+The model, user input, retrieved enterprise text, and tool responses are untrusted.
+
+The model must not hold enterprise credentials or unrestricted direct access to enterprise systems.
+
+No free-form model output may directly cause enterprise state change.
 
 ⸻
 
@@ -872,8 +1045,11 @@ retention controls
 redaction
 access controls
 regional constraints
+model-context controls
 
 Privacy requirements belong to enterprise policy and applicable governance.
+
+Noema should not expose enterprise data to models, integrations, logs, or telemetry beyond the authorized purpose and scope.
 
 ⸻
 
@@ -889,7 +1065,9 @@ Evidence
 Trust
 Audit
 
-rather than embedding jurisdiction-specific assumptions into the core execution engine.
+rather than embedding jurisdiction-specific assumptions into the universal execution engine.
+
+Enterprise-specific regulatory semantics should remain configurable and attributable to the relevant enterprise authority.
 
 ⸻
 
@@ -909,17 +1087,27 @@ correlation_id
 
 rather than indiscriminate raw enterprise payload logging.
 
+Observability data remains subject to data-boundary, privacy, retention, and tenant-isolation requirements.
+
 ⸻
 
 43. Enterprise Boundary and Audit
 
 The audit record should establish a causal chain:
 
-Intent
+Source of Intent
+   ↓
+Intent Version
    ↓
 Resolution
    ↓
-Context
+Enterprise Observations
+   ↓
+Schema Validation / Admission
+   ↓
+State Reconciliation
+   ↓
+Context / Evidence / Fact Status
    ↓
 Trust
    ↓
@@ -929,9 +1117,13 @@ Execution
    ↓
 Enterprise Response
    ↓
+Verification
+   ↓
 Outcome
 
 This provides the enterprise with an explainable execution history.
+
+The audit record should preserve relevant contract, policy, graph, capability, integration, and resolution versions needed to reconstruct the decision.
 
 ⸻
 
@@ -958,7 +1150,7 @@ Alice
 → Action
 → execution
 
-The agent should not erase the principal.
+The originating principal, delegation relationship, effective execution identity, and applicable organizational scope must not be erased.
 
 ⸻
 
@@ -967,6 +1159,16 @@ The agent should not erase the principal.
 Noema may operate alongside other enterprise agents.
 
 For example:
+
+User
+ ↓
+Enterprise Agent
+ ↓
+Noema
+ ↓
+Enterprise System
+
+or:
 
 User
  ↓
@@ -984,6 +1186,10 @@ originating principal
 delegation chain
 effective identity
 authorization scope
+organizational scope
+execution identity
+
+An agent does not become the human principal merely because it acts on the principal’s behalf.
 
 ⸻
 
@@ -1006,7 +1212,11 @@ from:
 
 external provider authority
 
-A provider response is evidence about an external system, not automatically the authoritative definition of enterprise Business State.
+A provider response is evidence about an external system.
+
+It is not automatically the authoritative definition of enterprise Business State.
+
+Where an external provider is authoritative for a specific externally owned claim, that authority must be explicitly scoped and represented.
 
 ⸻
 
@@ -1021,8 +1231,12 @@ schemas
 permissions
 workflow rules
 resource models
+identity mappings
+event formats
 
 Noema’s representation of enterprise capabilities must therefore support versioning and validation.
+
+A previously valid integration does not remain valid merely because its configuration is stored.
 
 ⸻
 
@@ -1034,13 +1248,15 @@ customer_id
 amount
 currency
 
-but the enterprise API changes:
+but the enterprise API changes to:
 
 customer_id
 amount
 currency_code
 
 Noema must detect the incompatibility rather than silently guessing how to transform the request.
+
+Schema compatibility must be established through explicit validation or versioned integration mapping.
 
 ⸻
 
@@ -1056,6 +1272,10 @@ changed
 
 Noema should validate capability availability before consequential execution where required.
 
+Capability metadata should retain version and applicability information.
+
+The model cannot react to capability drift by inventing a substitute capability or arbitrary enterprise operation.
+
 ⸻
 
 50. Enterprise Boundary and Policy Drift
@@ -1070,6 +1290,8 @@ Execution
 
 For long-running or high-risk Actions, policy may need to be re-evaluated.
 
+A later policy version does not silently rewrite a historical Trust Decision. It may govern a new evaluation or execution stage where the execution semantics require current policy.
+
 ⸻
 
 51. Enterprise Boundary and State Drift
@@ -1082,7 +1304,11 @@ may differ from:
 
 Business State at execution time
 
-For consequential operations, relevant Preconditions should be checked against current enterprise state.
+For consequential operations, relevant Preconditions should be checked against current enterprise state where required.
+
+State drift may require State Reconciliation and Trust re-evaluation.
+
+Historical observations and decisions remain historical.
 
 ⸻
 
@@ -1090,15 +1316,19 @@ For consequential operations, relevant Preconditions should be checked against c
 
 Recovery must operate within enterprise authority.
 
-If an Action fails:
+If an Action fails or becomes uncertain:
 
 Noema
  ↓
-Failure classification
+Failure / Unknown classification
  ↓
-Retry / Compensate / Escalate / Reconcile
+Reconcile / Verify
+ ↓
+Retry / Compensate / Escalate
 
-Noema must not perform arbitrary recovery mutations outside the Action model.
+Noema must not perform arbitrary recovery mutations outside the registered Action and capability model.
+
+Unknown execution state requires verification or reconciliation before a retry that could duplicate a business operation.
 
 ⸻
 
@@ -1108,42 +1338,258 @@ When execution outcome is uncertain:
 
 Noema
    ↓
-Enterprise query
+Enterprise query / observation
    ↓
-Current Business State
+Current enterprise state
    ↓
-Reconciliation
+State Reconciliation
+   ↓
+Verified / Unknown / Conflicted state
 
 This is preferable to guessing whether an Action succeeded.
 
+State Reconciliation is a first-class platform capability used both for pre-execution state establishment and post-execution recovery.
+
 ⸻
 
-54. Enterprise Boundary as a Contract
+54. Enterprise Boundary and Fact Status
 
-The Enterprise domain can therefore be understood as a contract:
+Enterprise observations and claims must not be confused with their epistemic status.
 
-Enterprise provides:
-    identity
-    organizational context
-    resources
-    capabilities
-    policies
-    business state
-    events
-    authoritative systems
+A relevant claim may be:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Evidence identifies what supports a claim.
+
+Fact Status identifies the current status of that claim after applicable validation and reconciliation.
+
+For example:
+
+Enterprise observation:
+payment.status = completed
+Evidence:
+ledger observation
+Fact Status:
+VERIFIED
+
+or:
+
+Enterprise query:
+no response
+Fact Status:
+UNKNOWN
+
+Unknown must remain explicit.
+
+Timeout, missing data, or unavailable systems do not automatically establish failure or rejection.
+
+⸻
+
+55. Enterprise Boundary and Versioning
+
+Enterprise execution may depend on multiple version dimensions.
+
+These should remain distinct:
+
+enterprise resource / business-state version
+identity record version
+source assertion version
+event / transport / schema version
+Noema contract version
+policy version
+integration mapping version
+Action Contract version
+Enterprise Action Graph version
+Capability Registry version
+Intent Object version
+
+Relevant temporal fields may include:
+
+occurred_at
+effective_at
+asserted_at
+observed_at
+received_at
+recorded_at
+decision_at
+execution_at
+outcome_at
+
+Historical decisions and executions must preserve the versions required to reconstruct their semantic meaning.
+
+⸻
+
+56. Enterprise Boundary and Replay
+
+Replaying an enterprise event, observation, or historical integration response is non-executing by default.
+
+Replay must not:
+
+recreate a business occurrence
+re-authorize an Action
+recreate identity authority
+reopen a delegation
+repeat a business mutation
+
+Historical decisions remain historical.
+
+A current reevaluation is a distinct operation using current authoritative enterprise state and currently applicable policy.
+
+⸻
+
+57. Enterprise Boundary and Operational Memory
+
+Noema may retain structured Operational Memory about execution history.
+
+Examples:
+
+previous execution attempts
+failure classifications
+reconciliation results
+interventions
+resolution references
+verification history
+
+Operational Memory is not:
+
+the enterprise system of record
+current enterprise Business State
+enterprise identity authority
+generic model memory
+
+It supports future execution, investigation, and learning while preserving enterprise authority boundaries.
+
+⸻
+
+58. Enterprise Boundary and Planner
+
+The Planner operates within established enterprise and Noema constraints.
+
+It may select or sequence operations only within:
+
+Enterprise Action Graph
+Capability Registry
+Action Contracts
+Trust Decision
+Applicable Policy
+Resolved Context
+
+The Planner cannot:
+
+invent capabilities
+invent authority
+expand organizational scope
+invent identity
+bypass Trust
+modify Action Contracts
+create unauthorized enterprise operations
+
+Planning is bounded autonomy, not unrestricted model-directed execution.
+
+⸻
+
+59. Canonical Enterprise Flow
+
+The canonical enterprise interaction model is:
+
+Source of Intent
+        ↓
+Intent Interpretation
+        ↓
+Candidate Intent
+        ↓
+Hard Schema Validation / Admission
+        ↓
+Enterprise Observations
+        ↓
+State Reconciliation
+        ↓
+Context / Evidence / Fact Status
+        ↓
+Identity / Organization / Resource Resolution
+        ↓
+Deterministic Trust
+        ↓
+Enterprise Action Graph / Capability Selection
+        ↓
+Action Contract
+        ↓
+Execution
+        ↓
+Enterprise Business State
+        ↓
+Verification / Reconciliation
+        ↓
+Outcome
+        ↓
+Causal Audit / Operational Memory
+
+The hard boundary is:
+
+Probabilistic
+────────────────────────
+interpret
+propose
+candidate-generate
+========== HARD BOUNDARY ==========
+Deterministic
+────────────────────────
+validate
+admit
+resolve
+reconcile
+evaluate
+authorize
+govern
+plan within bounds
+execute
+verify
+recover
+audit
+
+⸻
+
+60. Enterprise Boundary as a Contract
+
+The Enterprise domain can therefore be understood as a contract.
+
+The enterprise provides:
+
+identity
+organizational context
+resources
+capabilities
+policies
+business state
+events
+authoritative systems
+enterprise data
+
 Noema provides:
-    intent resolution
-    trust evaluation
-    action orchestration
-    execution state
-    recovery
-    auditability
+
+intent resolution
+context construction
+state reconciliation
+trust evaluation
+action orchestration
+bounded execution
+verification
+recovery
+causal auditability
+operational memory
 
 The boundary defines the responsibilities of each side.
 
+Noema may operate within enterprise systems, but it does not absorb their authority.
+
 ⸻
 
-55. What Noema Must Not Become
+61. What Noema Must Not Become
 
 The Enterprise domain establishes several explicit non-goals.
 
@@ -1156,22 +1602,27 @@ the enterprise CRM
 the enterprise authorization source of truth
 the enterprise database
 the enterprise organizational directory
+the enterprise Business State system of record
 
 Noema may integrate with all of these.
 
 It does not replace them.
 
+It may retain execution-domain representations and historical observations, but those representations must not become shadow enterprise authority.
+
 ⸻
 
-56. What Noema Does Become
+62. What Noema Does Become
 
-Noema becomes the system that understands and governs the journey from Intent to enterprise outcome.
+Noema becomes the infrastructure that understands, governs, executes, verifies, and records the journey from Intent to enterprise outcome.
 
-Human Intent
+Source of Intent
      ↓
 Intent Resolution
      ↓
 Enterprise Context
+     ↓
+State Reconciliation
      ↓
 Trust
      ↓
@@ -1179,15 +1630,19 @@ Action
      ↓
 Enterprise Execution
      ↓
+Verification
+     ↓
 Outcome
      ↓
-Auditable History
+Causal Audit
 
 This is the architectural wedge.
 
+The enterprise retains authority over the underlying business reality while Noema provides the trusted execution boundary around consequential actions.
+
 ⸻
 
-57. Enterprise Domain Relationships
+63. Enterprise Domain Relationships
 
 The major relationships are:
 
@@ -1210,23 +1665,33 @@ with:
 Policy ───────────────┐
 Data Boundary ────────┤
 Evidence ─────────────┤
+Fact Status ──────────┤
 Risk ─────────────────┤
+Current State ────────┤
                       ▼
-                    Trust
+                  Trust
                       │
                       ▼
                   Execution
+                      │
+                      ▼
+                  Verification
+                      │
+                      ▼
+                   Outcome
 
 And surrounding the entire journey:
 
                  Auditability
-                       │
-                       ▼
+                      │
+                      ▼
 Intent → Trust → Action → Execution → Outcome
+
+Integrations, Events, State Reconciliation, and Operational Memory support the journey without replacing enterprise authority.
 
 ⸻
 
-58. Canonical Enterprise Model
+64. Canonical Enterprise Model
 
                          ENTERPRISE
 ┌─────────────────────────────────────────────────────────┐
@@ -1257,12 +1722,19 @@ Intent → Trust → Action → Execution → Outcome
 ┌─────────────────────────────────────────────────────────┐
 │                         NOEMA                           │
 │                                                         │
-│     Intent → Context → Trust → Action → Execution       │
-│                                      │                  │
-│                                      ▼                  │
-│                                   Outcome               │
+│ Source of Intent                                        │
+│        ↓                                                │
+│ Intent → Context → Reconciliation → Trust               │
+│                                  ↓                      │
+│                              Action                     │
+│                                  ↓                      │
+│                            Execution                    │
+│                                  ↓                      │
+│                           Verification                  │
+│                                  ↓                      │
+│                             Outcome                     │
 │                                                         │
-│                       Auditability                      │
+│              Causal Audit / Operational Memory          │
 └────────────────────────┬────────────────────────────────┘
                          │
                          ▼
@@ -1270,7 +1742,7 @@ Intent → Trust → Action → Execution → Outcome
 
 ⸻
 
-59. Canonical Invariants
+65. Canonical Invariants
 
 Invariant 1
 
@@ -1302,7 +1774,7 @@ Enterprise authority must not be inferred solely from model output.
 
 Invariant 8
 
-Identity, authorization, capability, resource, and policy are distinct concepts.
+Identity, authorization, capability, resource, organization, and policy are distinct concepts.
 
 Invariant 9
 
@@ -1322,7 +1794,7 @@ Retries must account for enterprise idempotency and possible prior execution.
 
 Invariant 13
 
-Recovery and compensation must themselves remain within enterprise authorization and policy boundaries.
+Recovery and compensation must themselves remain within enterprise authorization, policy, capability, and Action Contract boundaries.
 
 Invariant 14
 
@@ -1330,15 +1802,15 @@ Cross-organizational and cross-legal-entity operations must be explicitly evalua
 
 Invariant 15
 
-Enterprise events are evidence about enterprise state and must retain source provenance.
+Enterprise events and observations must retain source provenance and must not automatically become authoritative state.
 
 Invariant 16
 
-Enterprise integrations must preserve sufficient identity, capability, schema, and version information to detect drift.
+Enterprise integrations must preserve sufficient identity, capability, schema, mapping, and version information to detect drift.
 
 Invariant 17
 
-Model-generated information is non-authoritative until validated through the appropriate deterministic mechanisms.
+Model-generated information is non-authoritative until validated and admitted through the appropriate deterministic mechanisms.
 
 Invariant 18
 
@@ -1352,11 +1824,111 @@ Invariant 20
 
 Noema must never bypass enterprise authority through inference, alternate integrations, cached state, or unauthorized identities.
 
+Invariant 21
+
+Enterprise observations must pass the applicable hard schema validation and admission boundary before being treated as canonical execution inputs.
+
+Invariant 22
+
+Persistence does not confer authority.
+
+Invariant 23
+
+Fact Status is distinct from Evidence, Context, Business State, and Outcome.
+
+Invariant 24
+
+Fact Status must support explicit states including VERIFIED, UNVERIFIED, STALE, CONFLICTED, and UNKNOWN.
+
+Invariant 25
+
+State Reconciliation is a first-class mechanism for establishing relevant current enterprise state across distributed systems.
+
+Invariant 26
+
+Canonicality is scoped to the relevant enterprise claim, source, authority, tenant, domain, and temporal semantics.
+
+Invariant 27
+
+Source, authority, freshness, evidence, and Fact Status are distinct dimensions.
+
+Invariant 28
+
+Unknown enterprise state must not be silently converted into failure, authorization, or rejection.
+
+Invariant 29
+
+Recency does not establish authority.
+
+Invariant 30
+
+Consequential execution must preserve the exact Intent Object version evaluated by Trust.
+
+Invariant 31
+
+An admitted Intent is immutable; material clarification or semantic change creates a new Intent version with supersedes.
+
+Invariant 32
+
+Resolved principal, Actor, organizational scope, Resource, target, delegation, and resolution identity must be preserved for consequential execution.
+
+Invariant 33
+
+The Planner cannot invent capabilities, authority, organizational scope, identities, or Action semantics, and cannot bypass Trust.
+
+Invariant 34
+
+Trust EXECUTE means the evaluated conditions permit progression; it does not mean enterprise execution has succeeded.
+
+Invariant 35
+
+Outcome is distinct from enterprise Business State.
+
+Invariant 36
+
+Replay of enterprise events or observations is non-executing by default and must not recreate business occurrences or authorization.
+
+Invariant 37
+
+Historical enterprise decisions and Noema execution records must remain interpretable using the versions applicable at the time.
+
+Invariant 38
+
+Noema must not become a shadow source of truth for enterprise Identity, Organization, Authorization, Resources, or Business State.
+
+Invariant 39
+
+Operational Memory may retain historical enterprise references but is not enterprise authority or generic model memory.
+
+Invariant 40
+
+Read-only enterprise operations may be consequential and may require Trust when they expose protected data or privileged relationships.
+
+Invariant 41
+
+External provider responses are not automatically authoritative for enterprise Business State.
+
+Invariant 42
+
+A model cannot establish enterprise identity, authorization, organizational authority, resource ownership, or Business State through inference.
+
+Invariant 43
+
+Consequential enterprise decisions must preserve causal provenance from source and authority through admission, reconciliation, resolution, Trust, Action, Execution, Verification, and Outcome.
+
+Invariant 44
+
+No free-form model output may directly cross the enterprise execution boundary.
+
+Invariant 45
+
+Enterprise authority remains external to Noema even when Noema maintains derived representations, cached observations, or execution-domain references to that authority.
+
 ⸻
 
-60. Final Definition
+66. Final Definition
 
-The Enterprise domain defines the external world against which Noema operates: the identities, organizations, resources, capabilities, policies, data, integrations, and Business State that constitute an enterprise’s operational reality.
+The Enterprise domain defines the external world against which Noema operates: the identities, organizations, resources, capabilities, policies, data, integrations, events, and Business State that constitute an enterprise’s operational reality.
 
 Noema sits at the boundary:
 
@@ -1368,10 +1940,13 @@ Noema sits at the boundary:
                  NOEMA
                     │
        understands Intent
-       establishes Context
+       validates and admits meaning
+       establishes relevant Context
+       reconciles enterprise state
        evaluates Trust
-       constructs Actions
+       selects bounded Actions
        governs Execution
+       verifies results
        records Outcomes
                     │
                     ▼
@@ -1381,6 +1956,40 @@ Noema sits at the boundary:
 
 The key architectural distinction is:
 
-The enterprise owns the state. Noema owns the journey.
+The enterprise owns the state.
+Noema owns the journey.
 
-That distinction should remain intact across every interface, integration, Action, Trust decision, and execution path.
+More precisely:
+
+ENTERPRISE
+    owns
+identity
+organization
+authorization
+resources
+policies
+data
+Business State
+enterprise capabilities
+        │
+        ▼
+      NOEMA
+    governs
+Intent
+resolution
+reconciliation
+Trust
+Action selection
+execution
+verification
+recovery
+audit
+        │
+        ▼
+ENTERPRISE
+    performs
+authoritative business-state change
+
+Noema is therefore not another enterprise system of record.
+
+It is the trusted execution infrastructure operating between Intent and consequential enterprise action, while preserving the enterprise’s authority over the business reality being acted upon.

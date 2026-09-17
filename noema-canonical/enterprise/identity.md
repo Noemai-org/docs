@@ -9,13 +9,15 @@ Canonical Path: enterprise/identity.md
 
 1. Definition
 
-Identity is the authoritative representation of the humans, agents, services, and enterprise entities participating in or affected by an Intent and its execution.
+Identity is the authoritative representation of the humans, agents, services, applications, organizations, and enterprise entities participating in or affected by an Intent and its execution.
 
 Identity answers:
 
-Who is acting, on whose behalf, and which enterprise subject, resource, or account is involved?
+Who or what is this, who is acting, on whose behalf, and which enterprise subject, resource, or account is involved?
 
-Identity is foundational because Noema cannot safely resolve Intent, evaluate Trust, or execute Actions without establishing the relevant identities.
+Identity is foundational because Noema cannot safely resolve Intent, evaluate Trust, or execute Actions without establishing the relevant identities and relationships.
+
+The enterprise remains authoritative for enterprise identity. Noema consumes and reconciles identity representations; it does not become the enterprise’s identity authority.
 
 ⸻
 
@@ -23,15 +25,16 @@ Identity is foundational because Noema cannot safely resolve Intent, evaluate Tr
 
 Noema operates in environments containing many forms of identity:
 
-Human
-Agent
-Service
-Application
-Organization
-Customer
-Employee
-Account
-Resource
+* Human
+* Agent
+* Service
+* Application
+* Organization
+* Customer
+* Employee
+* Account
+* Resource
+* External Principal
 
 These identities must not be collapsed into one generic concept.
 
@@ -40,8 +43,8 @@ For example:
 Human:
 Alice
 Agent:
-Noema
-Enterprise subject:
+Noema Support Agent
+Enterprise Principal:
 Alice's employee identity
 Resource:
 Alice's corporate account
@@ -56,9 +59,11 @@ Noema may reason about identity, but the enterprise remains authoritative for id
 
 Noema should not independently decide that:
 
-"this person is Alice"
+“This person is Alice.”
 
-when the enterprise Identity Provider or authoritative system says otherwise.
+when the enterprise Identity Provider or other authoritative system says otherwise.
+
+Model inference may produce candidate identity matches, but it cannot establish authoritative enterprise identity.
 
 ⸻
 
@@ -85,7 +90,7 @@ alice@company.com
 Actor:
 Alice acting through Noema
 
-The same identity may participate in multiple Actions.
+The same identity may participate in multiple Actions, while an Action may have multiple relevant principals in its execution chain.
 
 ⸻
 
@@ -108,21 +113,25 @@ Actor ≠ Subject
 
 unless they happen to be the same entity.
 
+A subject may be a human, organization, account, resource, transaction, or other enterprise entity.
+
 ⸻
 
 6. Identity Types
 
 Noema should conceptually support at least:
 
-Human Identity
-Agent Identity
-Service Identity
-Application Identity
-Organization Identity
-External Identity
-Enterprise Resource Identity
+* Human Identity
+* Agent Identity
+* Service Identity
+* Application Identity
+* Organization Identity
+* External Identity
+* Enterprise Resource Identity
 
 The exact enterprise taxonomy is configurable.
+
+Identity type must not be used as a substitute for authorization.
 
 ⸻
 
@@ -132,13 +141,15 @@ A Human Identity represents a person recognized by the enterprise.
 
 Examples:
 
-employee_id
-customer_id
-user_id
-email identity
-directory identity
+* employee ID
+* customer ID
+* user ID
+* email identity
+* directory identity
 
 Noema should reference the enterprise identity rather than inventing a competing identity.
+
+A human-readable name is not, by itself, sufficient to establish identity for consequential execution.
 
 ⸻
 
@@ -155,7 +166,9 @@ Support Agent
 Action:
 refund payment
 
-The audit trail must preserve both the human principal and the agent that performed the operation.
+The audit trail must preserve both the human principal and the agent that performed the operation where the agent is acting on the human’s behalf.
+
+The agent’s identity must remain distinct from the principal it represents.
 
 ⸻
 
@@ -175,6 +188,9 @@ This distinction is necessary for:
 * accountability
 * policy
 * risk
+* revocation
+
+Noema must never collapse an agent action into a human action merely because the agent was delegated authority by that human.
 
 ⸻
 
@@ -190,6 +206,8 @@ Action:
 issue_refund
 
 Noema must be able to represent service identities when they initiate or participate in execution.
+
+Service identity is distinct from the human or application that caused the service invocation.
 
 ⸻
 
@@ -210,6 +228,8 @@ change_address
 
 These identities should remain distinguishable.
 
+The application through which an Intent entered Noema is not necessarily the Actor that ultimately executes the enterprise operation.
+
 ⸻
 
 12. Delegation
@@ -227,6 +247,8 @@ performs
 Action
 
 The identity model must preserve the delegation chain.
+
+Delegation must include sufficient scope and temporal information where required by enterprise policy.
 
 ⸻
 
@@ -256,19 +278,19 @@ This allows an enterprise to answer:
 
 Who ultimately authorized this Action?
 
+It also allows the enterprise to distinguish the initiating principal from the effective execution identity.
+
 ⸻
 
 14. Authentication vs Identity
 
-Authentication establishes:
+Authentication establishes that presented credentials or authentication assertions correspond to an identity under the applicable authentication system.
 
-The presented credentials correspond to this identity.
-
-Identity represents:
-
-The enterprise subject associated with that identity.
+Identity represents the enterprise subject associated with that identity.
 
 Noema should consume authoritative authentication results rather than implement identity verification as an ad hoc inference problem.
+
+Authentication evidence may have an assurance level, lifecycle, issuer, scope, and validity period.
 
 ⸻
 
@@ -298,13 +320,15 @@ Action permission
 Example:
 
 Identity:
-alice
+Alice
 Role:
 finance_manager
 Authorization:
 may_approve_invoice
 
 The enterprise authorization system remains authoritative.
+
+Identity establishes the principal. Authorization determines whether that principal has the relevant permission within the applicable scope and policy.
 
 ⸻
 
@@ -316,6 +340,8 @@ Actor Identity
       +
 Action
       +
+Resolved Target
+      +
 Context
       +
 Policy
@@ -324,11 +350,13 @@ Authorization
       ↓
 Trust Decision
 
-An unknown or insufficiently established identity may prevent execution.
+An unknown, revoked, stale, or insufficiently established identity may prevent execution.
+
+Identity does not itself produce a Trust decision.
 
 ⸻
 
-18. Identity Confidence
+18. Identity Assurance
 
 Identity should not be treated as binary when the underlying enterprise system provides varying assurance.
 
@@ -346,9 +374,11 @@ possible Alice
 Assurance:
 LOW
 
-However, confidence or assurance must not be invented by the model.
+However, assurance must not be invented by the model.
 
-It should come from an authoritative identity or authentication mechanism.
+It should come from an authoritative identity, authentication, or verification mechanism.
+
+Assurance is also distinct from authorization and Fact Status.
 
 ⸻
 
@@ -358,7 +388,7 @@ Users may refer to identities indirectly.
 
 Example:
 
-“Send this to John.”
+"Send this to John."
 
 Noema may discover:
 
@@ -371,6 +401,8 @@ This is an identity resolution problem.
 The model may generate candidates.
 
 It must not silently select an identity when the distinction is consequential and unresolved.
+
+Resolved identity should include sufficient provenance and resolution context.
 
 ⸻
 
@@ -388,11 +420,9 @@ John Doe
 Result:
 AMBIGUOUS
 
-Noema should transition to:
+Noema should transition to a clarification-required state rather than guessing.
 
-CLARIFICATION_REQUIRED
-
-rather than guessing.
+For consequential execution, an unresolved identity must prevent the system from binding the wrong principal or target.
 
 ⸻
 
@@ -400,17 +430,19 @@ rather than guessing.
 
 Identity resolution may use:
 
-name
-email
-employee ID
-customer ID
-relationship
-organization
-conversation context
-enterprise directory
-historical context
+* name
+* email
+* employee ID
+* customer ID
+* relationship
+* organization
+* conversation context
+* enterprise directory
+* historical context
 
-The reliability of each source should be considered.
+The reliability and authority of each source should be considered.
+
+Model-generated candidate matching is evidence for resolution, not authoritative identity by itself.
 
 ⸻
 
@@ -435,6 +467,8 @@ is stronger than:
 Model inference:
 "This sounds like Alice."
 
+Evidence supporting identity should preserve source, authority, observation time, and applicable scope where relevant.
+
 ⸻
 
 23. Identity Mapping
@@ -456,6 +490,8 @@ Noema may need to understand that these identifiers refer to the same enterprise
 
 This mapping must be grounded in authoritative enterprise relationships.
 
+A mapping maintained by Noema is integration knowledge unless the enterprise explicitly establishes it as authoritative.
+
 ⸻
 
 24. Identity Federation
@@ -472,6 +508,16 @@ External Identity
 
 Noema should preserve the source and authority of the identity it receives.
 
+Federation does not eliminate the need to establish:
+
+* issuer
+* subject
+* assurance
+* scope
+* validity
+* applicable tenant
+* authorization
+
 ⸻
 
 25. Identity Provenance
@@ -486,9 +532,13 @@ Identity Provider
    ↓
 Authentication / Assertion
    ↓
+Identity Resolution
+   ↓
 Actor
 
 This is important for auditability.
+
+Provenance should preserve enough information to establish why the identity was accepted without requiring private model chain-of-thought.
 
 ⸻
 
@@ -507,6 +557,8 @@ ACTIVE → REVOKED
 
 Noema must account for lifecycle state when determining whether an identity may participate in execution.
 
+Lifecycle state is enterprise Business State and must be obtained from authoritative enterprise sources.
+
 ⸻
 
 27. Identity Freshness
@@ -524,6 +576,8 @@ privileges revoked
 
 A stale identity or authorization observation should not be treated as current when the Action is consequential.
 
+Freshness is claim- and decision-specific. Recency alone does not establish authority.
+
 ⸻
 
 28. Identity Revocation
@@ -532,11 +586,13 @@ Revocation should propagate through the enterprise’s authoritative identity an
 
 Noema should not depend solely on a cached identity state when revocation could materially affect execution.
 
+A previously valid Trust Decision may require re-evaluation if identity or authorization is revoked before execution.
+
 ⸻
 
 29. Identity and Business State
 
-Identity may itself be represented in Business State.
+Identity may itself be represented in enterprise Business State.
 
 For example:
 
@@ -550,6 +606,8 @@ Role:
 Manager
 
 Noema consumes these facts from authoritative enterprise systems.
+
+Noema may retain an observation of these values, but the retained representation does not become authoritative Business State.
 
 ⸻
 
@@ -568,6 +626,8 @@ OWNS
 
 Noema can use that relationship when determining whether an Action targets the correct resource.
 
+Ownership is an enterprise relationship and must be grounded in authoritative enterprise data.
+
 ⸻
 
 31. Identity and Ownership
@@ -585,20 +645,30 @@ Acme Corporation
 
 Alice may be authorized to operate on the account without being its owner.
 
+Therefore:
+
+Identity ≠ Ownership
+
+and:
+
+Authorization ≠ Ownership
+
 ⸻
 
 32. Identity and Organizational Relationships
 
 Enterprise identity often includes relationships such as:
 
-reports_to
-manages
-member_of
-owns
-delegated_to
-authorized_for
+* reports_to
+* manages
+* member_of
+* owns
+* delegated_to
+* authorized_for
 
 These relationships may be relevant to Trust.
+
+Relationships must remain distinguishable from identity attributes and should carry appropriate authority and temporal semantics.
 
 ⸻
 
@@ -614,6 +684,8 @@ Resource:
 Corporate Treasury Account
 
 A department may act through individual humans or services.
+
+The organizational principal and the effective human or service actor should remain distinguishable.
 
 ⸻
 
@@ -631,10 +703,13 @@ Each service should have an identifiable principal.
 
 This enables:
 
-authentication
-authorization
-audit
-accountability
+* authentication
+* authorization
+* audit
+* accountability
+* incident investigation
+
+The service identity must not erase the initiating principal when delegation exists.
 
 ⸻
 
@@ -653,6 +728,8 @@ Therefore:
 Identity + Capability + Authorization
 
 may be required before an Action can execute.
+
+Capability availability does not imply that the current Actor is authorized to use it.
 
 ⸻
 
@@ -676,6 +753,8 @@ approve invoice $25,000
 Policy:
 applicable
 
+The policy and authorization sources remain enterprise-controlled.
+
 ⸻
 
 37. Identity and Risk
@@ -684,15 +763,17 @@ Identity can influence risk.
 
 Examples:
 
-newly created identity
-privileged identity
-external identity
-service identity
-high-risk actor
+* newly created identity
+* privileged identity
+* external identity
+* service identity
+* high-risk actor
 
 Risk systems may provide relevant signals to Trust.
 
 Noema should not invent risk classifications merely from identity labels.
+
+Identity-derived risk signals must remain distinguishable from authoritative identity facts.
 
 ⸻
 
@@ -702,15 +783,17 @@ Intent frequently contains identity references.
 
 Example:
 
-“Give John access to the repository.”
+"Give John access to the repository."
 
 Noema must determine:
 
-Which John?
-Which repository?
-What level of access?
+* Which John?
+* Which repository?
+* What level of access?
 
 Identity resolution is therefore often part of Intent resolution.
+
+Unresolved identity must remain explicit rather than being silently converted into a guessed canonical identity.
 
 ⸻
 
@@ -731,6 +814,8 @@ Repository X
 
 This relationship is critical for authorization and auditability.
 
+The Action must use a resolved identity for consequential execution where the identity is material to authorization or targeting.
+
 ⸻
 
 40. Identity and Execution
@@ -750,6 +835,8 @@ These may be different identities.
 
 The distinction must not be lost.
 
+Execution provenance should preserve the relationship between the initiating principal, delegated agent, and effective enterprise execution identity.
+
 ⸻
 
 41. Impersonation
@@ -765,6 +852,8 @@ impersonates
 service / delegated identity
 
 the original principal and effective execution identity should both be represented.
+
+Impersonation must not be treated as identity substitution in the audit record.
 
 ⸻
 
@@ -782,11 +871,14 @@ Action
 
 The system should be able to determine:
 
-who delegated
-what was delegated
-to whom
-for what scope
-for how long
+* who delegated
+* what was delegated
+* to whom
+* for what scope
+* for how long
+* under which policy or authorization mechanism
+
+Delegation does not automatically expand beyond the authority granted by the delegating principal.
 
 ⸻
 
@@ -806,39 +898,57 @@ Identity alone therefore does not establish authorization.
 
 Scope must be evaluated.
 
+Scope may include:
+
+* tenant
+* organization
+* resource
+* action
+* data
+* time
+* geographic or regulatory boundary
+
+where applicable.
+
 ⸻
 
 44. Identity Context
 
 Relevant identity context may include:
 
-identity ID
-identity type
-organization
-role
-relationships
-authentication status
-authorization scope
-delegation
-assurance
-lifecycle state
+* identity ID
+* identity type
+* organization
+* role
+* relationships
+* authentication status
+* authorization scope
+* delegation
+* assurance
+* lifecycle state
+* issuer
+* tenant
 
 Only relevant information should be provided to the current operation.
+
+Identity Context is subject to the same Data Boundaries that govern other enterprise data.
 
 ⸻
 
 45. Identity Data Boundary
 
-Identity information is enterprise data and therefore follows data-boundaries.md.
+Identity information is enterprise data and therefore follows enterprise/data-boundaries.md.
 
 Noema should not expose:
 
-private identity attributes
-credentials
-secrets
-unnecessary personal information
+* private identity attributes
+* credentials
+* secrets
+* unnecessary personal information
 
 merely because they are technically available.
+
+Identity data must remain subject to purpose limitation, least privilege, tenant isolation, retention, and authorization.
 
 ⸻
 
@@ -848,13 +958,15 @@ Identity may contain sensitive personal information.
 
 Noema should follow:
 
-minimum necessary disclosure
-purpose limitation
-access control
-retention policy
-tenant isolation
+* minimum necessary disclosure
+* purpose limitation
+* access control
+* retention policy
+* tenant isolation
 
 when processing identity data.
+
+Privacy requirements do not replace authorization; both must be satisfied.
 
 ⸻
 
@@ -871,6 +983,8 @@ Sarah's candidate identities
 Not necessarily:
 Sarah's complete HR profile
 
+The model must not receive identity attributes merely because they are available.
+
 ⸻
 
 48. Model Cannot Establish Identity
@@ -884,7 +998,9 @@ Model:
 Enterprise Identity System:
 authoritative identity = sarah_123
 
-Only the latter establishes identity for consequential execution.
+Only the applicable authoritative enterprise mechanism establishes identity for consequential execution.
+
+Model confidence is not identity assurance.
 
 ⸻
 
@@ -892,10 +1008,10 @@ Only the latter establishes identity for consequential execution.
 
 Two identities may share:
 
-name
-email alias
-display name
-department
+* name
+* email alias
+* display name
+* department
 
 Therefore matching on a single human-readable attribute may be insufficient.
 
@@ -903,7 +1019,7 @@ Where identity ambiguity affects execution:
 
 AMBIGUOUS
 
-should be treated as a valid outcome.
+should remain an explicit resolution state.
 
 ⸻
 
@@ -919,6 +1035,8 @@ Bob
 Noema should not silently proceed.
 
 The mismatch should trigger appropriate validation or Trust behavior.
+
+The relevant identity version, resolution, and execution identity should remain auditable.
 
 ⸻
 
@@ -936,7 +1054,9 @@ execution still running
 
 Whether execution should continue depends on enterprise policy and Action semantics.
 
-The event should be observable and auditable.
+The identity change should be observable and auditable.
+
+For consequential operations, current identity or authorization state may require revalidation before further execution.
 
 ⸻
 
@@ -960,20 +1080,25 @@ approved = true
 
 is insufficient for high-consequence operations.
 
+The approval should preserve the principal, authorization context, timestamp, and relevant decision scope.
+
 ⸻
 
 53. Identity and Auditability
 
 Auditability must answer:
 
-Who initiated the Intent?
-Who was the intended subject?
-Who authorized the Action?
-Which agent performed it?
-Which service executed it?
-Who intervened?
+* Who initiated the Intent?
+* Who was the intended subject?
+* Who authorized the Action?
+* Which agent performed it?
+* Which service executed it?
+* Who intervened?
+* Which identity was effective at execution?
 
 Identity provides the foundation for these answers.
+
+The audit trail should preserve the principal chain without requiring private model reasoning.
 
 ⸻
 
@@ -982,6 +1107,8 @@ Identity provides the foundation for these answers.
 For high-consequence Actions, the enterprise may require strong evidence that a particular principal performed or authorized an operation.
 
 Noema should preserve relevant identity and authorization evidence without claiming stronger assurance than the underlying identity system provides.
+
+Non-repudiation is therefore a property of the applicable enterprise identity, authentication, authorization, and audit mechanisms, not something Noema can infer from a model output.
 
 ⸻
 
@@ -1000,6 +1127,8 @@ Noema identity mapping
 
 Noema should not arbitrarily override the authoritative source.
 
+Different sources may be authoritative for different identity claims, so authority must remain claim-specific where necessary.
+
 ⸻
 
 56. Identity Resolution Across Systems
@@ -1015,7 +1144,9 @@ contact_789
 Billing:
 customer_101
 
-Such mappings are integration knowledge, not necessarily authoritative identity ownership.
+Such mappings are integration knowledge unless the enterprise explicitly establishes them as authoritative identity relationships.
+
+A mapping may support resolution without becoming a new enterprise identity authority.
 
 ⸻
 
@@ -1031,11 +1162,21 @@ canonical identity person_123
 
 the mapping should have sufficient provenance to explain why the systems were considered equivalent.
 
+Relevant provenance may include:
+
+* source systems
+* source identifiers
+* mapping rule
+* evidence
+* effective time
+* mapping version
+* authority
+
 ⸻
 
 58. Identity and Tenant Isolation
 
-Identity must always be interpreted within the correct enterprise/tenant boundary.
+Identity must always be interpreted within the correct enterprise and tenant boundary.
 
 Tenant A:
 user_123
@@ -1046,6 +1187,8 @@ The identifiers may be identical while referring to different principals.
 
 Therefore identity should be scoped appropriately.
 
+Tenant identity is not implied merely by the identifier itself.
+
 ⸻
 
 59. Identity and External Actors
@@ -1054,13 +1197,15 @@ External actors may participate in enterprise workflows.
 
 Examples:
 
-partner
-vendor
-customer
-contractor
-external service
+* partner
+* vendor
+* customer
+* contractor
+* external service
 
 Their identity must remain distinguishable from internal enterprise identities.
+
+External identity must also retain its issuer, authority, scope, and relationship to the enterprise where relevant.
 
 ⸻
 
@@ -1068,11 +1213,13 @@ Their identity must remain distinguishable from internal enterprise identities.
 
 When discovering enterprise capabilities, Noema may encounter requirements such as:
 
-only administrators may invoke this capability
+Only administrators may invoke this capability.
 
 The capability describes the operation.
 
 Identity and authorization determine whether the current principal can use it.
+
+Capability discovery must not be treated as permission discovery.
 
 ⸻
 
@@ -1085,10 +1232,19 @@ UNKNOWN
 
 Noema should not guess.
 
-Possible policy-defined outcomes:
+Possible policy-defined responses include:
 
 CLARIFY
 AUTHENTICATE
+ESCALATE
+REJECT
+
+AUTHENTICATE is an identity-control action or workflow state, not a fifth Trust outcome.
+
+Where Trust must produce a canonical decision, its outcomes remain:
+
+EXECUTE
+CLARIFY
 ESCALATE
 REJECT
 
@@ -1100,13 +1256,15 @@ These are distinct.
 
 Identity ambiguity
 
-"Which John?"
+“Which John?”
 
 Multiple valid identities may match.
 
 Authentication failure
 
-"Who is making this request cannot be established."
+“Who is making this request cannot be established.”
+
+The principal itself cannot sufficiently be established.
 
 These should not collapse into the same state.
 
@@ -1124,6 +1282,8 @@ would otherwise permit Action
 The revoked identity should not be treated as merely lacking a permission.
 
 The identity lifecycle itself has changed.
+
+Revocation may require revalidation of an existing Trust Decision or execution path.
 
 ⸻
 
@@ -1148,9 +1308,35 @@ Action ─────────────┼──────────�
 
 Identity is therefore foundational but not sufficient.
 
+Trust evaluates identity together with resolved Action, target, Context, evidence, authorization, policy, and other applicable conditions.
+
 ⸻
 
-65. Canonical Identity Chain
+65. Identity and Resolved Target
+
+Identity resolution must not be separated from target resolution when the two interact.
+
+For example:
+
+"Send money to John."
+
+requires resolution of:
+
+* Actor
+* intended recipient
+* destination account
+* relevant resource
+* applicable authorization
+
+A resolved human identity does not automatically establish the correct enterprise resource.
+
+Consequential execution requires sufficiently resolved Actor, Action, Target/Resource, and scope.
+
+⸻
+
+66. Canonical Identity Chain
+
+The canonical relationship is:
 
 Human / System
       │
@@ -1170,13 +1356,141 @@ Actor
 Action
       │
       ▼
-Execution
+Execution Principal
+      │
+      ▼
+Enterprise Execution
 
 Every stage should preserve the relevant identity relationships.
 
+Where the effective execution identity differs from the initiating principal, both must remain identifiable.
+
 ⸻
 
-66. Canonical Invariants
+67. Identity and Intent Versioning
+
+Consequential identity resolution should preserve the exact Intent Object version under which the identity was resolved.
+
+For example:
+
+Intent v1
+  ↓
+"Send money to John"
+  ↓
+John = person_123
+  ↓
+Trust
+  ↓
+Execution
+
+If clarification or material change produces a new Intent:
+
+Intent v2
+supersedes v1
+
+the new identity resolution must be associated with the new Intent version.
+
+Noema must not silently mutate the historical identity binding of an admitted Intent.
+
+⸻
+
+68. Planner and Identity Boundaries
+
+The Planner may select among permitted execution paths but cannot create or expand identity authority.
+
+The Planner cannot:
+
+* invent an identity
+* invent delegation
+* invent authorization
+* change the effective principal
+* bypass identity resolution
+* select an unauthorized principal
+* treat model confidence as identity assurance
+
+Planner decisions remain bounded by the resolved identity, Enterprise Action Graph, Capability Registry, Action Contracts, Trust Decision, and applicable enterprise policies.
+
+⸻
+
+69. Identity and Data Boundaries
+
+Identity data is subject to the same hard data boundaries as other enterprise data.
+
+Identity information may be used only where:
+
+* the source is permitted
+* the Actor is authorized
+* the purpose is valid
+* the tenant is correct
+* the information is relevant
+* the sensitivity permits the use
+
+Identity cannot be used as a mechanism for discovering unrelated protected information.
+
+⸻
+
+70. Identity and State Reconciliation
+
+Identity-related state may require reconciliation when multiple enterprise observations exist.
+
+Example:
+
+Identity Provider:
+Alice = ACTIVE
+HR:
+Alice = TERMINATED
+
+Noema must not silently select one.
+
+State Reconciliation should determine the applicable claim based on:
+
+* source authority
+* temporal validity
+* scope
+* freshness
+* enterprise reconciliation rules
+
+The resulting claim should carry explicit Fact Status.
+
+Identity reconciliation does not make Noema the identity authority.
+
+⸻
+
+71. Identity and Causal Audit
+
+For consequential execution, the causal audit should be capable of representing:
+
+Intent
+  ↓
+Intent Version
+  ↓
+Identity Source
+  ↓
+Authentication / Assertion
+  ↓
+Identity Resolution
+  ↓
+Resolved Actor / Subject
+  ↓
+Authorization
+  ↓
+Trust Decision
+  ↓
+Action
+  ↓
+Execution Principal
+  ↓
+Execution
+  ↓
+Verification
+  ↓
+Outcome
+
+This provides causal traceability without requiring private model chain-of-thought.
+
+⸻
+
+72. Canonical Invariants
 
 Invariant 1
 
@@ -1184,7 +1498,7 @@ Identity answers who or what a principal is; Actor answers who or what performs 
 
 Invariant 2
 
-The enterprise remains authoritative for identity.
+The enterprise remains authoritative for enterprise identity.
 
 Invariant 3
 
@@ -1228,7 +1542,7 @@ Identity information must remain tenant-scoped.
 
 Invariant 13
 
-Identity data must respect enterprise data boundaries and privacy requirements.
+Identity data must respect enterprise Data Boundaries and privacy requirements.
 
 Invariant 14
 
@@ -1258,11 +1572,93 @@ Invariant 20
 
 The audit trail must preserve the principal chain necessary to establish who initiated, authorized, performed, and was affected by consequential execution.
 
+Invariant 21
+
+Identity and enterprise resource identity must remain distinguishable.
+
+Invariant 22
+
+Identity mappings maintained by Noema must not silently become enterprise identity authority.
+
+Invariant 23
+
+Identity assurance must come from an authoritative authentication or identity mechanism and must not be invented by the model.
+
+Invariant 24
+
+Identity resolution must preserve sufficient source, authority, temporal, and scope information for consequential operations.
+
+Invariant 25
+
+A resolved identity does not automatically resolve the correct enterprise target or resource.
+
+Invariant 26
+
+Consequential execution requires sufficiently resolved Actor, Action, Target/Resource, and scope.
+
+Invariant 27
+
+Identity lifecycle changes may invalidate previously established execution conditions and may require Trust revalidation.
+
+Invariant 28
+
+Identity-related observations from different sources must not be silently merged when their claims conflict.
+
+Invariant 29
+
+Identity claims must remain distinguishable from Evidence, Context, Business State, and Fact Status.
+
+Invariant 30
+
+The Planner cannot create, expand, or substitute identity authority.
+
+Invariant 31
+
+The model cannot create delegation, authorization, or effective execution identity through generated output.
+
+Invariant 32
+
+Identity information must cross Data Boundaries according to authorization, purpose, tenant, sensitivity, and policy.
+
+Invariant 33
+
+An admitted Intent’s historical identity binding must remain associated with its exact Intent version.
+
+Invariant 34
+
+Material changes to identity-relevant Intent must produce a new Intent version rather than silently mutating historical semantics.
+
+Invariant 35
+
+The initiating principal, delegated agent, and effective execution principal must remain distinguishable when they differ.
+
+Invariant 36
+
+Identity failure must remain distinguishable from identity ambiguity, authorization failure, and identity revocation.
+
+Invariant 37
+
+Identity used for consequential execution must be sufficiently current for the relevant claim and operation.
+
+Invariant 38
+
+Identity is a Trust input, not a Trust decision.
+
+Invariant 39
+
+Identity does not itself establish enterprise Business State ownership or authority.
+
+Invariant 40
+
+Identity provenance must support causal auditability without requiring retention of private model chain-of-thought.
+
 ⸻
 
-67. Final Definition
+73. Final Definition
 
-Identity is the authoritative representation of the principals participating in an enterprise execution journey. Noema uses identity to establish actors, subjects, delegation, authorization context, and accountability, while relying on enterprise identity systems as the authority for who those principals are.
+Identity is the authoritative representation of the principals and enterprise entities participating in an enterprise execution journey.
+
+Noema uses identity to establish Actors, Subjects, delegation, authorization context, accountability, and effective execution principals, while relying on enterprise identity systems as the authority for who those principals are.
 
 The essential relationship is:
 
@@ -1271,8 +1667,12 @@ The essential relationship is:
                Identity
                   │
                   ▼
-              CAN THEY?
-             Authorization
+            AUTHENTICATED?
+                  │
+                  ▼
+            AUTHORIZED?
+                  │
+            Authorization
                   │
                   ▼
               SHOULD IT?
@@ -1290,12 +1690,16 @@ And for agentic execution:
 
 Human Principal
       ↓
-Delegation
+Authentication
+      ↓
+Delegation / Authorization
       ↓
 AI Agent
       ↓
 Action
       ↓
+Effective Execution Principal
+      ↓
 Enterprise System
 
-Noema may act on behalf of a principal, but it must never erase the principal behind the agent.
+Noema may act on behalf of a principal, but it must never erase the principal behind the agent, confuse identity with authorization, or allow model inference to become authoritative enterprise identity.
