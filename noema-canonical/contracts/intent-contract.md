@@ -9,28 +9,40 @@ Canonical Path: contracts/intent-contract.md
 
 1. Definition
 
-An Intent Contract is the canonical contract that defines the structure, meaning, constraints, and lifecycle of an intent recognized and managed by Noema.
+An Intent Contract is the canonical contract that defines the structure, meaning, constraints, provenance, resolution state, and lifecycle of an Intent recognized and managed by Noema.
 
-It establishes what a user is trying to accomplish without prematurely defining how that goal will be executed.
+An Intent represents a desired goal expressed by a Source of Intent without prematurely defining how that goal will be executed.
 
-An Intent Contract is the boundary between human intent and the deterministic systems that resolve, contextualize, authorize, plan, and execute that intent.
+A Source of Intent may be:
+
+* a human
+* an application
+* an agent
+* an enterprise system
+* a workflow
+* an API
+* another authorized computational process
+
+The Intent Contract is the semantic boundary between an interpreted request and the deterministic systems that contextualize, resolve, evaluate, authorize, plan, and execute that request.
 
 ⸻
 
 2. Purpose
 
-The Intent Contract exists to make intent:
+The Intent Contract exists to make Intent:
 
 * structured
 * explicit
 * inspectable
 * versionable
+* attributable
 * resolvable
 * traceable
-* independent of a particular integration
-* independent of a particular execution mechanism
+* interface-independent
+* integration-independent
+* execution-independent
 
-Its purpose is to prevent natural-language interpretation from becoming an implicit and untraceable execution decision.
+Its purpose is to prevent language interpretation, application conventions, or model output from becoming implicit and untraceable execution authority.
 
 ⸻
 
@@ -38,16 +50,17 @@ Its purpose is to prevent natural-language interpretation from becoming an impli
 
 The Intent Contract answers:
 
-What is the user trying to accomplish?
+What is the Source of Intent trying to accomplish?
 
 It does not by itself answer:
 
 * which enterprise system should be called
-* whether the action is permitted
-* whether the request is sufficiently trusted
-* which API operation should execute
+* whether the request is permitted
+* whether the request satisfies Trust requirements
+* which Capability should execute
 * whether execution succeeded
-* what the enterprise business state currently is
+* what the enterprise Business State currently is
+* what the final Outcome of execution is
 
 Those concerns belong to other Noema contracts and domains.
 
@@ -55,7 +68,7 @@ Those concerns belong to other Noema contracts and domains.
 
 4. Intent Is Not an Action
 
-An Intent expresses a desired outcome.
+An Intent expresses a desired goal.
 
 An Action expresses an executable operation.
 
@@ -70,13 +83,13 @@ The Intent Contract describes the first.
 
 The Action Contract describes the second.
 
-The transformation between them must be explicit.
+The transformation between them must be explicit and auditable.
 
 ⸻
 
 5. Intent Is Not Execution
 
-Intent describes what should happen from the user’s perspective.
+Intent describes the requested goal.
 
 Execution describes what Noema actually attempted or performed.
 
@@ -84,11 +97,11 @@ Therefore:
 
 Intent ≠ Execution
 
-An intent may exist without execution.
+An Intent may exist without execution.
 
-An execution may fail without invalidating the original intent.
+An Execution may fail without invalidating the semantic existence of the original Intent.
 
-An intent may require clarification before any execution is created.
+An Intent may require clarification, rejection, or escalation before any Execution is created.
 
 ⸻
 
@@ -105,7 +118,7 @@ Current account balance
 
 The Intent Contract represents the request for the information.
 
-The enterprise system remains authoritative for the balance itself.
+The enterprise System of Record remains authoritative for the balance itself.
 
 ⸻
 
@@ -113,7 +126,7 @@ The enterprise system remains authoritative for the balance itself.
 
 Intent describes the requested goal.
 
-Context provides information necessary to understand, evaluate, or execute that goal.
+Context provides information necessary to understand, resolve, evaluate, or execute that goal.
 
 For example:
 
@@ -127,17 +140,17 @@ organization
 permissions
 channel
 locale
-session
+time
 
-Context may resolve an incomplete intent, but it must not silently redefine it.
+Context may resolve an incomplete Intent, but it must not silently redefine the requested objective.
 
 ⸻
 
 8. Intent Is Not Trust
 
-Intent describes what the user wants.
+Intent describes what the Source of Intent wants.
 
-Trust determines whether Noema may safely proceed with that intent under applicable policy and evidence.
+Trust determines whether Noema may safely proceed with the resolved Intent under applicable authority, Policy, evidence, and enterprise conditions.
 
 Therefore:
 
@@ -147,41 +160,59 @@ not:
 
 Intent = Trust
 
-A valid intent may still be rejected, escalated, or clarified.
+A valid Intent may still produce:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
+
+Trust is evaluated against a sufficiently resolved Intent; the Intent Contract itself does not grant execution authority.
 
 ⸻
 
 9. Intent Is Not Natural Language
 
-Natural language is an input representation.
+Natural language is one possible input representation.
 
-Intent is the structured semantic representation derived from that input.
+Intent is the structured semantic representation derived from an input or received directly from another authorized Source of Intent.
 
-Human Language
+Conceptually:
+
+Source of Intent
+      ↓
+Input Representation
       ↓
 Interpretation
       ↓
 Intent
 
-The original user expression should remain attributable to the resulting intent.
+The original input should remain attributable to the resulting Intent where available.
+
+Noema must not assume that every Intent originated as natural language.
 
 ⸻
 
-10. Intent Source
+10. Source of Intent
 
-Every Intent should have a source.
+Every Intent must identify its Source of Intent.
 
 Possible sources include:
 
 * user utterance
 * structured user input
-* application event
+* application request
+* agent request
 * API request
+* enterprise event
 * workflow continuation
 * system-generated request
-* human operator input
+* authorized operator input
+* another Noema component operating within defined authority
 
-The source must be distinguishable from the interpreted intent.
+The Source of Intent must remain distinguishable from the interpreted Intent.
+
+A source identifies where a request originated. It does not by itself establish authority to execute it.
 
 ⸻
 
@@ -191,13 +222,38 @@ Every persisted Intent must have a stable unique identifier.
 
 intent_id
 
-The identifier represents the identity of the intent instance throughout its lifecycle.
+The identifier represents the identity of the Intent instance throughout its lifecycle.
 
-It must not be replaced merely because the intent is clarified, enriched, replanned, or executed.
+It must not be replaced merely because the Intent is clarified, enriched, resolved, replanned, or executed.
 
 ⸻
 
-12. Intent Type
+12. Intent Version
+
+An Intent must support immutable semantic versioning.
+
+Conceptually:
+
+intent_id
+version
+
+A material semantic change creates a new Intent version.
+
+For example:
+
+Intent v1:
+"Show my transactions."
+        ↓ clarification
+Intent v2:
+"Show my transactions from August."
+
+The previous version remains historically recoverable.
+
+An Intent version that has entered a consequential downstream decision must not be silently mutated.
+
+⸻
+
+13. Intent Type
 
 An Intent should have a canonical type.
 
@@ -211,53 +267,111 @@ COMPLAINT_LOGGING
 
 Intent types provide a stable semantic vocabulary independent of natural-language phrasing.
 
+The canonical type must not be invented dynamically by a model and treated as authoritative without validation against the Intent taxonomy.
+
 ⸻
 
-13. Intent Schema
+14. Intent Schema
 
-An Intent should be structurally representable.
+An Intent must be structurally representable and schema-validatable.
 
 Conceptually:
 
 Intent
 ├── identity
+├── version
 ├── type
 ├── source
+├── original_input
+├── actor
 ├── subject
 ├── target
 ├── parameters
 ├── constraints
+├── scope
 ├── requested_outcome
-├── confidence
+├── resolution_state
 ├── ambiguity
-├── context_reference
+├── provenance
+├── context_references
 ├── status
-├── timestamps
-└── provenance
+└── timestamps
 
 The exact implementation may evolve, but the semantic structure must remain explicit.
 
+A structurally invalid Intent must not cross the hard admission boundary into Trust or Execution.
+
 ⸻
 
-14. Intent Subject
+15. Hard Schema Validation
+
+Before an Intent becomes eligible for Trust evaluation or executable planning, it must pass hard schema validation.
+
+Validation must establish that the Intent:
+
+* conforms to the supported Intent Contract version
+* contains required structural fields
+* uses recognized semantic types
+* represents parameters according to schema
+* represents scope correctly
+* represents ambiguity explicitly
+* preserves provenance
+* does not contain structurally invalid values
+
+The model may propose an Intent representation.
+
+It cannot bypass schema validation.
+
+Model / Source
+      ↓
+Candidate Intent
+      ↓
+Hard Schema Validation
+      ↓
+Admitted Intent
+
+⸻
+
+16. Intent Actor
+
+Where relevant, the Intent should identify the Actor whose goal is being represented.
+
+Actor resolution may involve:
+
+* authenticated principal
+* customer
+* delegated principal
+* organization
+* service identity
+* authorized system
+
+Actor identification is distinct from Intent interpretation.
+
+A semantically clear Intent may remain unresolved because the Actor is unknown or ambiguous.
+
+⸻
+
+17. Intent Subject
 
 The Intent Contract should identify the subject of the request where applicable.
 
 Examples:
 
-customer
-account
-statement
-transaction
-complaint
+* customer
+* account
+* statement
+* transaction
+* complaint
+* card
+* payment
 
 Subject identification must not be inferred beyond available evidence when doing so could change the requested meaning.
 
 ⸻
 
-15. Intent Target
+18. Intent Target
 
-The Intent Contract may identify the target resource or domain object involved in the request.
+The Intent Contract may identify the target Resource or domain object involved in the request.
 
 For example:
 
@@ -270,11 +384,41 @@ The target may initially be unresolved.
 
 An unresolved target is not permission to guess.
 
+For consequential execution, the target must be resolved to the degree required by the Action Contract and applicable Trust rules.
+
 ⸻
 
-16. Intent Parameters
+19. Resolved Target Binding
 
-Intent parameters represent values required to express the user’s goal.
+A target reference and a resolved execution target are not necessarily equivalent.
+
+For example:
+
+"my account"
+
+may initially represent a semantic target category while multiple enterprise accounts exist.
+
+Before consequential execution, Noema must establish the specific Resource required by the Action.
+
+Conceptually:
+
+Actor
+   ↓
+Intent
+   ↓
+Target Reference
+   ↓
+Resolution
+   ↓
+Specific Resource
+
+Material target ambiguity must remain explicit until resolved.
+
+⸻
+
+20. Intent Parameters
+
+Intent parameters represent values required to express the Source of Intent’s goal.
 
 For example:
 
@@ -292,27 +436,32 @@ Parameters should distinguish:
 * resolved values
 * unresolved values
 * conflicting values
+* inferred values
+
+The distinction must remain recoverable.
 
 ⸻
 
-17. Explicit Versus Inferred Parameters
+21. Explicit Versus Inferred Parameters
 
-Noema must distinguish between what the user explicitly stated and what the system inferred.
+Noema must distinguish between what the Source of Intent explicitly stated and what the system inferred.
 
 For example:
 
-User:
+Source:
 "Show my transactions from last month."
 Explicit:
 transaction retrieval
-Inferred:
+Resolved:
 date range = previous calendar month
 
-Inference must remain attributable and must not be presented as explicit user input.
+The resolved value may be deterministic given temporal Context, but it must not be represented as though it was explicitly provided.
+
+Inference must remain attributable.
 
 ⸻
 
-18. Missing Parameters
+22. Missing Parameters
 
 An Intent may be incomplete.
 
@@ -326,13 +475,13 @@ may not identify:
 * which date range
 * which transaction scope
 
-Missing information does not automatically invalidate the intent.
+Missing information does not automatically invalidate the Intent.
 
 It may instead create a resolution requirement.
 
 ⸻
 
-19. Ambiguity
+23. Ambiguity
 
 Ambiguity exists when multiple materially different interpretations remain possible.
 
@@ -340,17 +489,17 @@ Example:
 
 "Show my account."
 
-If the user has multiple accounts and the target cannot be deterministically resolved, the intent remains ambiguous.
+If the Source of Intent has multiple accounts and the target cannot be deterministically resolved, the Intent remains ambiguous.
 
 Noema must not select one merely because it appears statistically likely.
 
 ⸻
 
-20. Ambiguity Is State
+24. Ambiguity Is State
 
 Ambiguity is not merely a model confidence score.
 
-It is an explicit condition of the Intent lifecycle.
+It is an explicit condition of Intent resolution.
 
 Conceptually:
 
@@ -358,52 +507,65 @@ Intent
   ↓
 Ambiguity Evaluation
   ↓
-Resolved OR Clarification Required
+Resolved
+OR
+Clarification Required
 
 If ambiguity affects consequential behavior, it must become deterministic workflow state.
 
 ⸻
 
-21. Model Confidence
+25. Model Confidence
 
 The model may provide a confidence signal about its interpretation.
 
-That signal is useful evidence.
+That signal may be useful metadata about a probabilistic interpretation.
 
-It is not authorization to execute.
+It is not authorization, validation, or proof of semantic correctness.
 
-Model confidence
+Model Interpretation
         ↓
-Interpretation evidence
+Candidate Intent
         ↓
-Deterministic resolution
+Validation / Resolution
         ↓
-Trust / execution decision
+Trust / Execution Decision
 
-A high confidence score does not override enterprise policy or unresolved identity.
+A high confidence score does not override:
+
+* unresolved identity
+* unresolved target
+* enterprise Policy
+* authority
+* Context requirements
+* Contract constraints
+* conflicting evidence
 
 ⸻
 
-22. Intent Resolution
+26. Intent Resolution
 
-Intent Resolution transforms an interpreted intent into a sufficiently specified semantic representation.
+Intent Resolution transforms an interpreted or received Intent into a sufficiently specified semantic representation.
 
 Resolution may use:
 
-* conversation history
-* enterprise context
+* Context
 * identity
-* canonical data
-* evidence
+* canonical enterprise data
+* Evidence
 * user clarification
 * organizational rules
-* temporal context
+* temporal Context
+* enterprise relationships
+* prior Intent versions
 
 Resolution must remain traceable.
 
+Resolution is not execution authorization.
+
 ⸻
 
-23. Resolution Does Not Mean Execution
+27. Resolution Does Not Mean Execution
 
 Successfully resolving an Intent does not authorize an Action.
 
@@ -415,50 +577,74 @@ Resolution
   ↓
 Context
   ↓
+State Reconciliation
+  ↓
 Trust
   ↓
 Action
   ↓
 Execution
 
-Each boundary has its own contract.
+Each boundary has its own Contract.
 
 ⸻
 
-24. Intent Constraints
+28. Intent Constraints
 
-An Intent may contain constraints that define boundaries around the requested outcome.
+An Intent may contain constraints that define boundaries around the requested goal.
 
 Examples:
 
-date range
-resource scope
-amount range
-channel
-organization
-urgency
-requested format
+* date range
+* Resource scope
+* amount range
+* channel
+* organization
+* urgency
+* requested format
+* deadline
+* temporal scope
 
 Constraints must remain semantically distinct from implementation details.
 
+A constraint must not be silently relaxed merely because an Action or Capability cannot satisfy it.
+
 ⸻
 
-25. Requested Outcome
+29. Requested Outcome
 
-The Intent Contract should capture the outcome the user is seeking.
+The Intent Contract should capture the outcome the Source of Intent is seeking.
 
 For example:
 
-Requested outcome:
+Requested Outcome:
 "Understand my spending for August."
 
 This may later map to one or more executable Actions.
 
-The requested outcome should not be replaced by the implementation plan.
+The requested outcome must not be replaced by the implementation plan.
 
 ⸻
 
-26. One Intent May Produce Multiple Actions
+30. Intent and Outcome
+
+Requested Outcome and execution Outcome are distinct.
+
+The Intent represents what the Source of Intent wants.
+
+The execution Outcome represents what Noema establishes happened.
+
+Therefore:
+
+Requested Outcome
+        ≠
+Execution Outcome
+
+An Action may succeed while the requested semantic goal remains incomplete.
+
+⸻
+
+31. One Intent May Produce Multiple Actions
 
 A single Intent may require multiple Actions.
 
@@ -475,11 +661,13 @@ The Intent remains the semantic parent.
 
 The Actions remain executable units.
 
+The mapping must preserve lineage and must not expand the requested scope without explicit semantics.
+
 ⸻
 
-27. Multiple Intents May Exist in One User Message
+32. Multiple Intents May Exist in One Input
 
-A single user message may express multiple distinct goals.
+A single input may express multiple distinct goals.
 
 For example:
 
@@ -492,13 +680,13 @@ ACCOUNT_BALANCE_INQUIRY
 Intent B:
 SPENDING_SUMMARY
 
-Noema must preserve the distinction between separate intents when their resolution or execution requirements differ.
+Noema must preserve the distinction between separate Intents when their resolution, Trust, or execution requirements differ.
 
 ⸻
 
-28. Intent Composition
+33. Intent Composition
 
-Some intents may be composed of related sub-intents.
+Some Intents may be composed of related sub-Intents.
 
 Conceptually:
 
@@ -509,17 +697,18 @@ Parent Intent
 
 Composition must preserve identity and lineage.
 
-A compound intent must not obscure the individual semantic goals that require separate trust or execution treatment.
+A compound Intent must not obscure individual semantic goals that require separate Trust or execution treatment.
 
 ⸻
 
-29. Intent Status
+34. Intent Status
 
 An Intent should have an explicit lifecycle status.
 
 Conceptual states include:
 
 RECEIVED
+VALIDATING
 INTERPRETING
 RESOLVING
 CLARIFICATION_REQUIRED
@@ -528,6 +717,7 @@ TRUST_PENDING
 AUTHORIZED
 PLANNED
 EXECUTING
+VERIFYING
 COMPLETED
 FAILED
 REJECTED
@@ -540,11 +730,13 @@ The principle does not:
 
 Intent state must be explicit rather than inferred from incidental events.
 
+Intent status must not be confused with Execution State or enterprise Business State.
+
 ⸻
 
-30. Clarification
+35. Clarification
 
-Clarification is a deterministic state transition used when required intent information cannot be safely resolved.
+Clarification is a deterministic state transition used when required Intent information cannot be safely resolved.
 
 Intent
   ↓
@@ -552,92 +744,100 @@ Ambiguous
   ↓
 CLARIFICATION_REQUIRED
   ↓
-User clarification
+Clarification
   ↓
-Intent updated
+New Intent Version
   ↓
 Resolution
 
-Clarification must preserve the original intent and the reason clarification was required.
+Clarification must preserve:
+
+* the original Intent version
+* the reason clarification was required
+* the clarification source
+* the resulting Intent version
+
+Clarification must not silently overwrite history.
 
 ⸻
 
-31. Intent Mutation
+36. Intent Immutability
 
-An Intent may be refined during its lifecycle.
+Once an Intent version has been admitted for consequential downstream processing, its semantic meaning must be immutable.
 
-However, material changes must be traceable.
+Operational metadata may change, but the admitted semantic representation must not be silently rewritten.
 
-For example:
+A material change creates a new version linked through:
 
-Intent v1:
-"Show my transactions."
-Intent v2:
-"Show my transactions from August."
+supersedes
 
-The system should be able to establish how and why the second representation was derived.
+or an equivalent explicit version relationship.
+
+This ensures that a later execution cannot retroactively change the Intent that authorized its lineage.
 
 ⸻
 
-32. Intent Versioning
+37. Intent Versioning
 
-Material semantic changes should produce a new intent version or equivalent immutable revision.
+Material semantic changes should produce a new Intent version.
 
 Versioning protects:
 
 * auditability
 * reproducibility
 * debugging
-* trust evaluation
+* Trust evaluation
 * execution lineage
+* recovery
+* causal reconstruction
 
-An executed Action must be traceable to the intent representation that produced it.
+An executed Action must be traceable to the exact Intent representation from which it was derived.
 
 ⸻
 
-33. Intent Provenance
+38. Intent Provenance
 
 Every Intent should retain provenance describing how it was produced.
 
 Provenance may include:
 
-source
-original input
-interpreter/model
-model version
-timestamp
-conversation/session
-resolution events
-context references
-human clarifications
-intent version
+* Source of Intent
+* original input
+* interpreter or model
+* model version where applicable
+* timestamp
+* conversation or request identifier
+* resolution events
+* Context references
+* Evidence references
+* clarifications
+* Intent version
 
-Provenance must allow Noema to reconstruct the semantic journey of the intent.
+Provenance must allow Noema to reconstruct the semantic journey of the Intent.
 
 ⸻
 
-34. Original User Expression
+39. Original Source Representation
 
-The original user expression should be preserved where appropriate.
+The original Source representation should be preserved where appropriate.
 
 For example:
 
-Raw input:
+Input:
 "How much did I spend last month?"
-
-may produce:
-
 Intent:
 SPENDING_SUMMARY
 period = previous_calendar_month
 
-The normalized intent should not erase the original expression.
+The normalized Intent should not erase the original expression or source representation.
+
+For non-language Sources, the original structured request or source event should remain attributable in the same manner.
 
 ⸻
 
-35. Intent Normalization
+40. Intent Normalization
 
-Different natural-language expressions may resolve to the same canonical intent.
+Different source representations may resolve to the same canonical Intent.
 
 For example:
 
@@ -649,13 +849,13 @@ may all resolve to:
 
 ACCOUNT_BALANCE_INQUIRY
 
-Normalization creates semantic consistency without requiring identical language.
+Normalization creates semantic consistency without requiring identical source representations.
 
 ⸻
 
-36. Intent Equivalence
+41. Intent Equivalence
 
-Two intents are equivalent only when their semantic meaning and relevant constraints are equivalent.
+Two Intents are equivalent only when their semantic meaning and relevant constraints are equivalent.
 
 Lexical similarity is insufficient.
 
@@ -669,9 +869,11 @@ and:
 
 are not equivalent if the first leaves the period unspecified.
 
+Equivalence must be evaluated semantically, not by textual similarity.
+
 ⸻
 
-37. Intent Scope
+42. Intent Scope
 
 Every Intent must operate within a defined scope where relevant.
 
@@ -679,22 +881,23 @@ Scope may include:
 
 * tenant
 * organization
+* Actor
 * customer
 * account
-* resource
+* Resource
 * environment
 * channel
 * time period
 
-Scope prevents an otherwise valid intent from being applied to the wrong authority boundary.
+Scope prevents an otherwise valid Intent from being applied to the wrong authority boundary.
 
 ⸻
 
-38. Intent and Identity
+43. Intent and Identity
 
-An Intent may depend on resolving the identity of the requester and/or target resource.
+An Intent may depend on resolving the identity of the Actor and/or target Resource.
 
-Identity resolution is separate from intent interpretation.
+Identity resolution is separate from Intent interpretation.
 
 For example:
 
@@ -706,7 +909,7 @@ Semantic clarity does not compensate for identity ambiguity.
 
 ⸻
 
-39. Intent and Context
+44. Intent and Context
 
 Context enriches Intent.
 
@@ -718,33 +921,72 @@ Context
 =
 Resolved Intent
 
-But context must not silently alter the user’s requested objective.
+But Context must not silently alter the Source of Intent’s requested objective.
 
-Context can fill a missing value only when the applicable resolution policy permits doing so.
+Context can fill a missing value only when the applicable resolution rules permit doing so.
+
+Where Context contains uncertain or conflicting information, its status must remain explicit.
 
 ⸻
 
-40. Intent and Evidence
+45. Intent and Evidence
 
 Evidence may support the resolution of an Intent.
 
 Examples:
 
-customer profile
-account metadata
-previous conversation
-enterprise records
-explicit user clarification
+* customer profile
+* account metadata
+* previous conversation
+* enterprise records
+* explicit clarification
+* validated event
 
-Evidence should be attributable and evaluated according to its authority and validity.
+Evidence should be attributable and evaluated according to its authority, freshness, scope, and validity.
 
 Evidence does not automatically become part of the Intent itself.
 
 ⸻
 
-41. Intent and Canonical Data
+46. Intent and Fact Status
 
-Canonical enterprise data may resolve intent parameters.
+Facts used to resolve an Intent may have explicit Fact Status.
+
+Possible statuses include:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Fact Status is distinct from:
+
+Intent
+Evidence
+Context
+Enterprise State
+Execution State
+Outcome
+
+For example:
+
+Evidence:
+account metadata retrieved
+Fact:
+account belongs to Actor X
+Fact Status:
+VERIFIED
+
+if the evidence is authoritative and current enough for that claim.
+
+A model confidence score must not be treated as Fact Status.
+
+⸻
+
+47. Intent and Canonical Data
+
+Canonical enterprise data may resolve Intent parameters.
 
 For example:
 
@@ -753,15 +995,41 @@ Intent:
 Canonical data:
 customer → account relationship
 
-Noema may use that data to resolve the target account.
+Noema may use that relationship to resolve the target account.
 
-The balance itself remains enterprise business state.
+The balance itself remains enterprise Business State.
+
+Noema must not create shadow business state merely to simplify Intent resolution.
 
 ⸻
 
-42. Intent and Permissions
+48. Intent and State Reconciliation
 
-An Intent may request something the user is not permitted to access.
+Where Intent resolution depends on distributed, stale, conflicting, or uncertain enterprise information, Noema may require State Reconciliation.
+
+Conceptually:
+
+Intent
+   ↓
+Required Fact
+   ↓
+Observations
+   ↓
+State Reconciliation
+   ↓
+Resolved Context / Fact Status
+   ↓
+Intent Resolution
+
+Reconciliation establishes the state required to safely resolve or execute the Intent.
+
+It does not make Noema the System of Record.
+
+⸻
+
+49. Intent and Permissions
+
+An Intent may request something the Actor is not permitted to access.
 
 Therefore:
 
@@ -769,31 +1037,35 @@ Valid Intent
       ≠
 Permitted Intent
 
-Permissions are evaluated after intent understanding and within the applicable trust and enterprise policy boundaries.
+Permission and authorization are evaluated after Intent understanding and within the applicable Trust and enterprise authority boundaries.
+
+Intent validity must never be used as a substitute for authorization.
 
 ⸻
 
-43. Intent and Trust Boundary
+50. Intent and Trust Boundary
 
 The Intent Contract provides input to the Trust Engine.
 
-Trust evaluates whether the resolved intent may proceed.
+Trust evaluates whether the resolved Intent may proceed.
 
 Conceptually:
 
 Intent Contract
       ↓
-Context Contract
+Context / State Reconciliation
       ↓
-Trust evaluation
+Trust Evaluation
       ↓
 EXECUTE / CLARIFY / ESCALATE / REJECT
 
-The Intent Contract itself must not encode the final trust decision.
+The Intent Contract itself must not encode the final Trust decision.
+
+Trust must operate on a sufficiently resolved Actor, Action, target, scope, Context, Policy, and relevant enterprise conditions.
 
 ⸻
 
-44. Intent and Action Contract
+51. Intent and Action Contract
 
 The Action Contract defines the executable operation selected to fulfill an Intent.
 
@@ -801,17 +1073,19 @@ Conceptually:
 
 Intent
    ↓
-Action selection
+Action Selection
    ↓
 Action Contract
 
 The mapping must be explicit and auditable.
 
-Noema must be able to explain why an Action was selected for an Intent.
+Noema must be able to establish why an Action was selected for an Intent.
+
+A model may propose an Action, but it must not create an unregistered Action or Capability.
 
 ⸻
 
-45. Intent and Execution Contract
+52. Intent and Execution Contract
 
 The Execution Contract governs the execution of an Action produced from an Intent.
 
@@ -823,13 +1097,13 @@ Action
   ↓
 Execution
 
-Execution must retain lineage back to the originating Intent.
+Execution must retain lineage back to the originating Intent and exact Intent version.
 
 ⸻
 
-46. Intent and Event Contract
+53. Intent and Event Contract
 
-Events communicate lifecycle facts about an Intent.
+Events may communicate lifecycle facts relevant to an Intent.
 
 Examples:
 
@@ -841,21 +1115,27 @@ IntentRejected
 IntentEscalated
 IntentCompleted
 
-Events describe what occurred.
+Events describe occurrences.
 
-They do not independently authorize consequential actions.
+They do not independently authorize consequential Actions.
+
+An Event may provide Evidence for Intent state, but Event receipt does not automatically establish the underlying enterprise Business State.
 
 ⸻
 
-47. Intent Lineage
+54. Intent Lineage
 
-Intent lineage connects the entire execution journey:
+Intent lineage connects the semantic journey:
 
-User Input
+Source of Intent
+    ↓
+Input
     ↓
 Intent
     ↓
-Resolved Intent
+Intent Version
+    ↓
+Resolution
     ↓
 Action
     ↓
@@ -863,13 +1143,13 @@ Execution
     ↓
 Outcome
 
-Every consequential execution should be traceable to its originating intent.
+Every consequential Execution should be traceable to its originating Intent and exact semantic version.
 
 ⸻
 
-48. Intent Outcome
+55. Intent Outcome
 
-The outcome of an Intent represents whether the user’s requested goal was fulfilled.
+The outcome of an Intent represents whether the requested semantic goal was fulfilled.
 
 An Action succeeding does not necessarily mean the Intent succeeded.
 
@@ -879,16 +1159,16 @@ Action:
 Retrieve transactions
 Transport:
 SUCCESS
-Intent:
-Spending summary requested
-Outcome:
+Requested Intent:
+Spending summary
+Intent Outcome:
 INSUFFICIENT_DATA
 
-Intent outcome must be evaluated at the semantic goal level.
+Intent completion must therefore be evaluated at the semantic goal level.
 
 ⸻
 
-49. Partial Fulfillment
+56. Partial Fulfillment
 
 An Intent may be partially fulfilled.
 
@@ -901,28 +1181,29 @@ SUCCESS
 Spending summary:
 FAILED
 
-Noema must represent the partial outcome rather than collapsing the entire intent into an undifferentiated success or failure.
+Noema must represent the partial result rather than collapsing the entire Intent into an undifferentiated success or failure.
 
 ⸻
 
-50. Unknown Intent State
+57. Unknown Intent State
 
 Intent resolution may sometimes remain uncertain because required information cannot be established.
 
 Noema must preserve UNKNOWN where appropriate rather than manufacturing certainty.
 
-For example:
+Examples:
 
-UNKNOWN TARGET
-UNKNOWN SCOPE
-UNKNOWN IDENTITY
-UNKNOWN PARAMETER
+UNKNOWN_ACTOR
+UNKNOWN_TARGET
+UNKNOWN_SCOPE
+UNKNOWN_PARAMETER
+UNKNOWN_FACT
 
 Unknown is a valid system state, not an implementation error.
 
 ⸻
 
-51. Intent Failure
+58. Intent Failure
 
 Intent failure must distinguish between different causes.
 
@@ -932,7 +1213,7 @@ INVALID_INPUT
 AMBIGUOUS_INTENT
 UNRESOLVED_IDENTITY
 MISSING_CONTEXT
-INSUFFICIENT_PERMISSION
+INSUFFICIENT_AUTHORIZATION
 TRUST_REJECTION
 ACTION_UNAVAILABLE
 EXECUTION_FAILURE
@@ -940,59 +1221,70 @@ BUSINESS_OUTCOME_FAILURE
 
 Failure classification should preserve the semantic boundary at which failure occurred.
 
+A failed Action does not necessarily mean the Intent itself was invalid.
+
 ⸻
 
-52. Intent Cancellation
+59. Intent Cancellation
 
 An Intent may be cancelled before completion.
 
 Cancellation should preserve:
 
-* intent identity
+* Intent identity
+* Intent version
 * current state
 * cancellation source
 * cancellation reason
 * timestamp
-* related actions/executions
-* resulting outcome
+* related Actions and Executions
+* resulting Outcome
 
-Cancellation must not erase historical intent state.
+Cancellation must not erase historical Intent state.
+
+A cancellation request must not be confused with successful cancellation of downstream enterprise execution.
 
 ⸻
 
-53. Human Intervention
+60. Escalation and Intervention
 
-An Intent may require human intervention.
+An Intent may require escalation or intervention.
 
 Examples:
 
-ambiguous identity
-policy exception
-insufficient evidence
-high-risk request
-enterprise-specific escalation
+* ambiguous identity
+* unresolved target
+* policy exception
+* insufficient Evidence
+* high-risk request
+* enterprise-specific escalation
+* unresolved enterprise state
 
-Escalation must preserve the original intent and its resolution history.
+Escalation must preserve the original Intent and its resolution history.
 
-Human intervention is not a silent model correction.
+Intervention is an explicit system state and event, not a silent model correction.
 
 ⸻
 
-54. Determinism After Interpretation
+61. Determinism After Interpretation
 
-The interpretation of natural language may be probabilistic.
+Interpretation of source input may be probabilistic.
 
-The lifecycle after interpretation must become increasingly deterministic.
+The lifecycle after admission must become increasingly deterministic.
 
-Natural Language
+Source Input
       ↓
 Probabilistic Interpretation
       ↓
+Hard Schema Validation
+      ↓
 Deterministic Resolution
+      ↓
+State Reconciliation where required
       ↓
 Deterministic Trust
       ↓
-Deterministic Action Selection
+Bounded Action Selection
       ↓
 Deterministic Execution
 
@@ -1000,25 +1292,25 @@ The Intent Contract is therefore a critical transition boundary between probabil
 
 ⸻
 
-55. No Silent Guessing
+62. No Silent Guessing
 
-Noema must not silently choose between materially different intent interpretations.
+Noema must not silently choose between materially different Intent interpretations.
 
 For example:
 
 "Show my account."
 
-If two accounts are equally plausible and the distinction matters, Noema must clarify.
+If two accounts are materially plausible and the distinction affects the requested behavior, Noema must clarify.
 
 It must not execute against the account with the highest model probability merely because that probability is high.
 
 ⸻
 
-56. Intent Immutability and History
+63. Intent History
 
 Intent history should be append-preserving.
 
-When an intent changes:
+When an Intent changes:
 
 Intent v1
     ↓
@@ -1030,11 +1322,11 @@ Intent v2
 
 The system should retain sufficient history to reconstruct the transition.
 
-Current state may be mutable operationally, but historical meaning must remain recoverable.
+Current operational state may be represented separately, but historical semantic meaning must remain recoverable.
 
 ⸻
 
-57. Intent Persistence
+64. Intent Persistence
 
 Persisted Intent state should support:
 
@@ -1047,13 +1339,13 @@ Persisted Intent state should support:
 * analytics
 * outcome analysis
 
-Persistence must not turn Noema into the authoritative store for enterprise business state.
+Persistence must not turn Noema into the authoritative store for enterprise Business State.
 
-Noema persists the intent and execution journey, not the enterprise’s underlying business truth.
+Noema persists the Intent and execution journey, not the enterprise’s underlying business truth.
 
 ⸻
 
-58. Intent Security
+65. Intent Security
 
 Intent data may contain sensitive business or customer information.
 
@@ -1063,7 +1355,7 @@ Intent persistence and transmission must respect:
 * authorization
 * data minimization
 * access control
-* retention policies
+* retention Policies
 * audit requirements
 * applicable privacy boundaries
 
@@ -1071,56 +1363,64 @@ The Intent Contract must not become a mechanism for bypassing enterprise securit
 
 ⸻
 
-59. Intent Idempotency
+66. Intent Idempotency
 
-Repeated delivery of the same intent input must not unintentionally create duplicate consequential work.
+Repeated delivery of the same input must not unintentionally create duplicate consequential work.
 
 Intent identity and deduplication semantics should distinguish:
 
 same input
-same intent
-same action
-same execution
+same Intent
+same Action
+same Execution
 
 These are not automatically equivalent.
 
-An identical user request may represent a new intent instance.
+An identical user request may represent a new Intent instance.
+
+Intent-level deduplication must not be confused with execution-level idempotency.
 
 ⸻
 
-60. Intent Replay
+67. Intent Replay
 
-An Intent may be replayed for diagnostic or recovery purposes where policy permits.
+An Intent may be replayed for diagnostic or recovery purposes where Policy permits.
 
 Replay must preserve the distinction between:
 
 historical interpretation
+
+and:
+
 new execution attempt
 
 Replay must never implicitly create duplicate consequential execution.
 
+Historical Intent versions must remain unchanged during replay.
+
 ⸻
 
-61. Intent and Recovery
+68. Intent and Recovery
 
 When downstream execution fails or becomes uncertain, the original Intent remains the semantic source of the requested goal.
 
-Recovery should determine whether the intent:
+Recovery should determine whether the Intent:
 
 * can continue
-* requires another action
+* requires another Action
 * requires reconciliation
 * requires clarification
 * must be escalated
 * has failed
+* has been fulfilled
 
-Recovery must not rewrite the original user intent merely to make an execution path appear successful.
+Recovery must not rewrite the original Intent merely to make an execution path appear successful.
 
 ⸻
 
-62. Intent and Reconciliation
+69. Intent and Reconciliation
 
-Where execution produces an uncertain outcome, Noema may reconcile against authoritative enterprise state.
+Where execution produces an uncertain result, Noema may reconcile against authoritative enterprise state.
 
 For example:
 
@@ -1132,36 +1432,38 @@ Execution
   ↓
 UNKNOWN
   ↓
-Enterprise state reconciliation
+Enterprise State Reconciliation
   ↓
-Outcome determination
+Outcome Determination
 
 Reconciliation resolves execution uncertainty.
 
-It does not redefine the user’s original intent.
+It does not redefine the Source of Intent’s original goal.
 
 ⸻
 
-63. Intent and Temporal Semantics
+70. Intent and Temporal Semantics
 
 Intent may contain temporal meaning.
 
 Examples:
 
-today
-yesterday
-last month
-recent
-this week
-from January to March
+* today
+* yesterday
+* last month
+* recent
+* this week
+* from January to March
 
-Temporal expressions must be resolved using explicit temporal context.
+Temporal expressions must be resolved using explicit temporal Context.
 
 Relative time must not be interpreted inconsistently across execution boundaries.
 
+The resolved temporal interpretation must be attributable to the relevant time, timezone, locale, and Intent version.
+
 ⸻
 
-64. Intent and Localization
+71. Intent and Localization
 
 Intent interpretation may depend on:
 
@@ -1172,61 +1474,70 @@ Intent interpretation may depend on:
 * date formats
 * currency representation
 
-These should be represented as context or resolution inputs rather than silently embedded assumptions.
+These should be represented as Context or resolution inputs rather than silently embedded assumptions.
+
+Localization must not alter canonical Intent semantics.
 
 ⸻
 
-65. Intent and Enterprise Boundaries
+72. Intent and Enterprise Boundaries
 
 Intent may cross organizational or system boundaries.
 
 Noema must preserve the boundary between:
 
-User intent
+Source of Intent
       ↓
-Noema interpretation
+Noema Interpretation and Resolution
       ↓
-Enterprise authority
+Enterprise Authority
 
-The Intent Contract cannot grant authority that the enterprise system does not provide.
+The Intent Contract cannot grant authority that the enterprise does not provide.
+
+An Intent may request an operation across multiple enterprise systems, but each resulting Action and Capability remains subject to its own authority and execution constraints.
 
 ⸻
 
-66. Intent Contract Validation
+73. Intent Contract Validation
 
-An Intent should be validated before it becomes eligible for downstream processing.
+An Intent must be validated before becoming eligible for downstream processing.
 
 Validation should determine whether:
 
-* intent type is recognized
+* Intent type is recognized
 * required semantic structure exists
-* scope is valid
+* schema is valid
+* scope is structurally valid
 * parameters are structurally valid
 * ambiguity is represented
 * provenance exists
-* lifecycle state is valid
 * version is supported
+* lifecycle state is valid
+* unsupported or prohibited semantics are rejected
 
 Validation does not itself authorize execution.
 
 ⸻
 
-67. Intent Contract Versioning
+74. Intent Contract Versioning
 
 The Intent Contract itself must be versioned.
 
 Changes to the contract schema must distinguish:
 
-backward-compatible changes
-breaking semantic changes
+* backward-compatible structural changes
+* semantic changes
+* breaking changes
 
-Historical intents must remain interpretable according to the contract version under which they were created.
+Historical Intents must remain interpretable according to the Contract version under which they were created.
+
+A Contract version change must not silently alter the historical meaning of an existing Intent.
 
 ⸻
 
-68. Intent Contract and Integrations
+75. Intent Contract and Integrations
 
-Integrations must not receive raw natural-language intent as their authoritative execution instruction.
+Integrations must not receive raw natural-language input as their authoritative execution instruction.
 
 Instead:
 
@@ -1234,25 +1545,31 @@ Intent
   ↓
 Action Contract
   ↓
+Execution Contract
+  ↓
 Integration
 
 Integrations operate on explicit executable contracts.
 
-This prevents provider-specific behavior from becoming the semantic definition of user intent.
+This prevents provider-specific behavior from becoming the semantic definition of the Source of Intent.
 
 ⸻
 
-69. Intent Contract and AI Models
+76. Intent Contract and AI Models
 
-AI models may produce candidate intent interpretations.
+AI models may produce candidate Intent interpretations.
 
-The model should not directly mutate enterprise state.
+The model must not directly mutate enterprise state.
 
-A model output should enter Noema through the Intent Contract and subsequent deterministic controls.
+Model output must enter Noema through the Intent admission boundary and subsequent deterministic controls.
 
-LLM Output
+Conceptually:
+
+Model
     ↓
-Intent Validation
+Candidate Intent
+    ↓
+Hard Schema Validation
     ↓
 Intent Resolution
     ↓
@@ -1260,13 +1577,23 @@ Trust
     ↓
 Action
 
-The model is an interpreter, not the execution authority.
+The model is an interpreter and proposal mechanism, not the execution authority.
+
+A model cannot:
+
+* create authority
+* invent a Capability
+* bypass schema validation
+* bypass Trust
+* silently resolve material ambiguity
+* modify an admitted Intent version
+* directly invoke an enterprise system
 
 ⸻
 
-70. Intent Observability
+77. Intent Observability
 
-Noema should make the intent lifecycle observable.
+Noema should make the Intent lifecycle observable.
 
 Useful telemetry includes:
 
@@ -1281,67 +1608,76 @@ final_outcome
 failure_reason
 escalation_reason
 
-Observability should describe the intent journey without exposing unnecessary sensitive data.
+Observability should describe the Intent journey without exposing unnecessary sensitive data.
+
+Operational telemetry must remain distinct from canonical Intent state.
 
 ⸻
 
-71. Intent Auditability
+78. Intent Auditability
 
-A consequential Intent should be auditable.
+A consequential Intent should be causally auditable.
 
 An audit record should make it possible to establish:
 
-what the user asked
-what Noema interpreted
-what context was used
-what ambiguity existed
-what was clarified
-what trust decision occurred
-what Action was selected
-what Execution occurred
-what outcome resulted
+* what the Source of Intent expressed
+* what Noema interpreted
+* which Intent version was admitted
+* what Context was used
+* what ambiguity existed
+* what was clarified
+* which facts were relied upon
+* what State Reconciliation occurred
+* what Trust decision occurred
+* what Action was selected
+* what Execution occurred
+* what Outcome resulted
 
-The audit trail must distinguish user-provided facts from system-generated interpretations.
+The audit trail must distinguish Source-provided information from system-generated interpretations and enterprise-derived facts.
+
+Auditability does not require exposing private model chain-of-thought.
 
 ⸻
 
-72. Intent Metrics
+79. Intent Metrics
 
 Intent-level metrics may include:
 
 * interpretation accuracy
 * clarification rate
 * resolution latency
-* trust rejection rate
+* Trust rejection rate
 * escalation rate
-* action conversion rate
+* Action conversion rate
 * execution completion rate
-* intent completion rate
+* Intent completion rate
 * partial fulfillment rate
 * failure rate
+* unknown rate
 
-These metrics should measure the complete intent journey rather than only model performance.
+These metrics should measure the complete Intent journey rather than only model performance.
 
 ⸻
 
-73. Intent Quality
+80. Intent Quality
 
 A high-quality Intent is:
 
 * semantically explicit
+* structurally valid
 * sufficiently resolved
 * attributable
 * scoped
 * versioned
 * traceable
-* compatible with downstream contracts
+* compatible with downstream Contracts
 * free from unresolved consequential ambiguity
 
-Model confidence alone is not a measure of intent quality.
+Model confidence alone is not a measure of Intent quality.
 
 ⸻
 
-74. Intent Completion
+81. Intent Completion
 
 An Intent is complete only when its requested semantic outcome has been determined.
 
@@ -1354,41 +1690,48 @@ REJECTED
 ESCALATED
 CANCELLED
 
-A successful API response is not sufficient to declare Intent completion.
+An execution SUCCEEDED state is not sufficient by itself to declare Intent completion.
+
+The semantic relationship between the requested outcome and established execution outcomes must be evaluated.
 
 ⸻
 
-75. Reference Intent Model
+82. Reference Intent Model
 
 Conceptually:
 
-┌──────────────────────────────────────────┐
-│                  Intent                  │
-├──────────────────────────────────────────┤
-│ intent_id                                │
-│ version                                  │
-│ type                                     │
-│ source                                   │
-│ original_input                           │
-│ subject                                  │
-│ target                                   │
-│ parameters                               │
-│ constraints                              │
-│ requested_outcome                        │
-│ scope                                    │
-│ ambiguity                                │
-│ resolution_state                         │
-│ context_reference                        │
-│ provenance                               │
-│ status                                   │
-│ timestamps                               │
-└──────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│                    Intent                    │
+├──────────────────────────────────────────────┤
+│ intent_id                                    │
+│ version                                      │
+│ contract_version                             │
+│ type                                         │
+│ source                                       │
+│ original_input                               │
+│ actor                                        │
+│ subject                                      │
+│ target                                       │
+│ parameters                                   │
+│ constraints                                  │
+│ requested_outcome                            │
+│ scope                                        │
+│ ambiguity                                    │
+│ resolution_state                             │
+│ context_references                           │
+│ provenance                                   │
+│ status                                       │
+│ timestamps                                   │
+└──────────────────────────────────────────────┘
                     │
                     ▼
-             Context / Evidence
+          Context / Evidence
                     │
                     ▼
-              Trust Evaluation
+          State Reconciliation
+                    │
+                    ▼
+             Trust Evaluation
                     │
           ┌─────────┼─────────┐
           ▼         ▼         ▼
@@ -1405,21 +1748,66 @@ Conceptually:
 
 ⸻
 
-76. Canonical Intent Lifecycle
+83. Intent Relationships
+
+The canonical semantic relationships are:
+
+Source of Intent
+      │
+      ▼
+    Intent
+      │
+      ├── has → Intent Type
+      ├── has → Actor
+      ├── has → Target
+      ├── has → Parameters
+      ├── has → Constraints
+      ├── has → Requested Outcome
+      ├── has → Scope
+      ├── has → Provenance
+      ├── resolved_by → Context / Evidence
+      ├── constrained_by → Policy
+      ├── reconciled_against → Enterprise State
+      ├── evaluated_by → Trust
+      ├── maps_to → Action
+      ├── produces → Execution
+      └── seeks → Outcome
+
+These relationships must remain semantically distinct.
+
+In particular:
+
+Intent
+≠
+Action
+≠
+Execution
+≠
+Enterprise State
+≠
+Outcome
+
+⸻
+
+84. Canonical Intent Lifecycle
 
 The canonical lifecycle is:
 
-INPUT
+SOURCE
   ↓
 INTERPRET
   ↓
 CREATE INTENT
+  ↓
+HARD SCHEMA VALIDATION
   ↓
 RESOLVE
   ↓
 CLARIFY IF REQUIRED
   ↓
 CONTEXTUALIZE
+  ↓
+STATE RECONCILE IF REQUIRED
   ↓
 TRUST EVALUATE
   ↓
@@ -1429,19 +1817,28 @@ EXECUTE
   ↓
 OBSERVE
   ↓
-VERIFY OUTCOME
+VERIFY
   ↓
 COMPLETE
 
-Not every intent reaches execution.
+Not every Intent reaches execution.
 
-An intent may terminate earlier through clarification, rejection, escalation, cancellation, or failure.
+An Intent may terminate earlier through:
+
+* clarification
+* rejection
+* escalation
+* cancellation
+* unsupported intent
+* resolution failure
+
+The lifecycle must preserve the exact point and reason at which termination occurred.
 
 ⸻
 
-77. Phase 1 Intent Examples
+85. Phase 1 Intent Examples
 
-The initial commercial scope should prioritize common support and information-retrieval intents such as:
+The initial commercial scope may prioritize common support and information-retrieval Intents such as:
 
 ACCOUNT_BALANCE_INQUIRY
 STATEMENT_RETRIEVAL
@@ -1453,9 +1850,11 @@ These represent read-oriented and support-oriented workflows.
 
 Phase 1 does not require Noema to move money or perform financial state-changing operations.
 
+The Intent Contract itself remains domain-agnostic; these examples represent the initial fintech specialization.
+
 ⸻
 
-78. Intent Contract Invariants
+86. Intent Contract Invariants
 
 Invariant 1
 
@@ -1467,176 +1866,222 @@ Every Intent has an explicit semantic type.
 
 Invariant 3
 
-Intent interpretation must remain distinguishable from the original natural-language input.
+Every admitted Intent conforms to the applicable Intent Contract schema.
 
 Invariant 4
 
-Intent is not an Action.
+Intent interpretation must remain distinguishable from the original Source representation.
 
 Invariant 5
 
-Intent is not an Execution.
+Intent is not an Action.
 
 Invariant 6
 
-Intent is not enterprise business state.
+Intent is not an Execution.
 
 Invariant 7
 
-Intent does not itself authorize execution.
+Intent is not enterprise Business State.
 
 Invariant 8
 
-Material ambiguity must be represented explicitly.
+Intent does not itself authorize execution.
 
 Invariant 9
 
-Noema must not silently guess when unresolved ambiguity materially affects behavior.
+Material ambiguity must be represented explicitly.
 
 Invariant 10
 
-Model confidence must not independently authorize execution.
+Noema must not silently guess when unresolved ambiguity materially affects behavior.
 
 Invariant 11
 
-Explicit user-provided values must remain distinguishable from inferred values.
+Model confidence must not independently authorize execution.
 
 Invariant 12
 
-Intent resolution must be traceable.
+Explicit Source-provided values must remain distinguishable from inferred or resolved values.
 
 Invariant 13
 
-Intent revisions must preserve historical lineage.
+Intent resolution must be traceable.
 
 Invariant 14
 
-Context may enrich an Intent but must not silently redefine its requested goal.
+Material Intent revisions must preserve historical lineage through immutable versions.
 
 Invariant 15
 
-Evidence may support intent resolution but does not automatically become Intent.
+Context may enrich an Intent but must not silently redefine its requested goal.
 
 Invariant 16
 
-Identity resolution is distinct from intent interpretation.
+Evidence may support Intent resolution but does not automatically become Intent.
 
 Invariant 17
 
-Permissions are distinct from intent validity.
+Fact Status must remain distinct from Evidence, Context, Intent, State, and Outcome.
 
 Invariant 18
 
-Trust decisions are distinct from intent interpretation.
+Identity resolution is distinct from Intent interpretation.
 
 Invariant 19
 
-Actions must be explicitly derived from resolved intents.
+Target resolution must be sufficiently specific for consequential execution.
 
 Invariant 20
 
-Executions must retain lineage to their originating intent.
+Permissions are distinct from Intent validity.
 
 Invariant 21
 
-Events describe Intent lifecycle changes but do not independently authorize actions.
+Trust decisions are distinct from Intent interpretation.
 
 Invariant 22
 
-Intent outcomes must be evaluated against the requested semantic outcome.
+Actions must be explicitly derived from resolved Intents.
 
 Invariant 23
 
-Successful transport does not automatically mean successful Intent completion.
+Executions must retain lineage to their originating Intent and Intent version.
 
 Invariant 24
 
-Partial fulfillment must remain representable.
+Events may describe Intent lifecycle changes but do not independently authorize Actions.
 
 Invariant 25
 
-Unknown is a valid state when the required truth cannot be established.
+Intent Outcomes must be evaluated against the requested semantic outcome.
 
 Invariant 26
 
-Intent failure must preserve the boundary at which failure occurred.
+Successful transport or Action execution does not automatically mean successful Intent completion.
 
 Invariant 27
 
-Intent cancellation must preserve historical state.
+Partial fulfillment must remain representable.
 
 Invariant 28
 
-Human clarification and intervention must remain attributable.
+Unknown is a valid state when required truth cannot be established.
 
 Invariant 29
 
-Intent persistence must not create a shadow system of record for enterprise business state.
+Intent failure must preserve the semantic boundary at which failure occurred.
 
 Invariant 30
 
-Intent scope must respect tenant, organization, resource, environment, and other applicable authority boundaries.
+Intent cancellation must preserve historical state.
 
 Invariant 31
 
-Intent data must respect enterprise security and privacy boundaries.
+Clarification and intervention must remain attributable.
 
 Invariant 32
 
-Intent versions must remain interpretable over their supported lifecycle.
+Intent persistence must not create a shadow System of Record for enterprise Business State.
 
 Invariant 33
 
-Replay must not implicitly duplicate consequential execution.
+Intent scope must respect tenant, organization, Resource, environment, and other applicable authority boundaries.
 
 Invariant 34
 
-Recovery must not rewrite the original user goal merely to conceal downstream failure.
+Intent data must respect enterprise security and privacy boundaries.
 
 Invariant 35
 
-Reconciliation may resolve execution uncertainty but must not redefine the originating Intent.
+Intent versions must remain interpretable according to their applicable Contract version.
 
 Invariant 36
 
-The Intent Contract must remain independent of provider-specific integration details.
+Replay must not implicitly duplicate consequential execution.
 
 Invariant 37
 
-Natural-language interpretation may be probabilistic, but consequential state transitions after interpretation must be deterministic.
+Recovery must not rewrite the original Source of Intent merely to conceal downstream failure.
 
 Invariant 38
 
-Noema owns the lifecycle and state of the Intent within its execution domain.
+Reconciliation may resolve execution or enterprise-state uncertainty but must not redefine the originating Intent.
 
 Invariant 39
 
-Enterprise systems remain authoritative for enterprise business state.
+The Intent Contract must remain independent of provider-specific integration details.
 
 Invariant 40
 
-An Intent is complete only when its requested outcome has been semantically resolved.
+Natural-language interpretation may be probabilistic, but consequential state transitions after Intent admission must be deterministic.
+
+Invariant 41
+
+Noema owns the lifecycle and state of the Intent within its execution domain.
+
+Invariant 42
+
+Enterprise systems remain authoritative for enterprise Business State.
+
+Invariant 43
+
+A valid Intent is not necessarily an authorized Intent.
+
+Invariant 44
+
+A model-generated Intent representation must not bypass hard schema validation.
+
+Invariant 45
+
+A model must not create authority, invent Capabilities, or directly invoke enterprise systems through an Intent.
+
+Invariant 46
+
+Material changes to an admitted Intent must create a new semantic version rather than silently mutating the existing version.
+
+Invariant 47
+
+Intent resolution must preserve uncertainty when required facts cannot be established.
+
+Invariant 48
+
+The Intent Contract must not encode or imply a final Trust decision.
+
+Invariant 49
+
+The Intent Contract must preserve the distinction between the requested goal and the implementation selected to fulfill it.
+
+Invariant 50
+
+An Intent is complete only when its requested semantic outcome has been determined.
 
 ⸻
 
-79. Final Definition
+87. Final Definition
 
-The Intent Contract is Noema’s canonical representation of what a human or authorized system is trying to accomplish.
+The Intent Contract is Noema’s canonical representation of what a Source of Intent is trying to accomplish.
 
-It transforms an interpreted request into a structured, attributable, scoped, versioned, and traceable semantic object that can be resolved, evaluated for trust, mapped to executable Actions, and followed through execution to outcome.
+It transforms an interpreted or received request into a structured, schema-valid, attributable, scoped, versioned, and traceable semantic object that can be resolved, reconciled, evaluated for Trust, mapped to executable Actions, and followed through execution to Outcome.
 
 The Intent Contract deliberately separates:
 
-what the user wants
+what the Source of Intent wants
+        from
+what Context and enterprise state establish
+        from
+whether Trust permits proceeding
         from
 how Noema executes it
         from
 what the enterprise system considers true
+        from
+what Outcome Noema can establish
 
 Its governing rule is:
 
 Intent defines the desired goal; it does not authorize, execute, or redefine enterprise truth.
 
-Noema may use probabilistic models to interpret language, but once an interpretation enters the Intent Contract, ambiguity, context, trust, action selection, execution, and outcome must be governed through explicit deterministic boundaries.
+Noema may use probabilistic models to interpret source input, but once an interpretation enters the Intent Contract, structural validity, ambiguity, resolution, Context, State Reconciliation, Trust, Action selection, execution, and Outcome must be governed through explicit deterministic boundaries.
 
-The Intent Contract is therefore the canonical semantic anchor connecting human intent to trusted execution without allowing interpretation to become implicit authority.
+The Intent Contract is therefore the canonical semantic anchor connecting a Source of Intent to trusted enterprise execution without allowing interpretation to become implicit authority.

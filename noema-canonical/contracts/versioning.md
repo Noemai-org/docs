@@ -9,32 +9,34 @@ Canonical Path: contracts/versioning.md
 
 1. Definition
 
-Contract Versioning is the canonical mechanism by which Noema evolves its contracts while preserving semantic integrity, compatibility, auditability, and historical interpretability.
+Contract Versioning is the canonical mechanism by which Noema evolves its contracts while preserving semantic integrity, compatibility, auditability, reproducibility, and historical interpretability.
 
-Versioning ensures that changes to the meaning, structure, constraints, lifecycle, or behavior of a contract do not silently invalidate existing contract instances or alter the interpretation of historical execution journeys.
+Versioning ensures that changes to the meaning, structure, constraints, lifecycle, authority requirements, or behavior of a contract do not silently invalidate existing contract instances or alter the interpretation of historical execution journeys.
 
 ⸻
 
 2. Purpose
 
-Contract Versioning exists to ensure that Noema can evolve without breaking:
+Contract Versioning exists to ensure that Noema can evolve without silently changing the meaning of:
 
+* admitted Intent Objects
+* Context
+* Trust Decisions
+* Actions
 * active executions
-* stored intent state
-* trust decisions
+* events
+* outcomes
 * integrations
-* event streams
 * audit records
-* historical interpretation
-* replay
-* recovery
-* reconciliation
+* recovery paths
+* reconciliation results
+* historical state
 
 The primary goal is not merely API compatibility.
 
 The primary goal is:
 
-Preserve the meaning of the execution journey across change.
+Preserve the semantic meaning of the execution journey across change.
 
 ⸻
 
@@ -53,13 +55,13 @@ A version therefore represents a semantic contract boundary, not merely a softwa
 A contract version describes a supported semantic definition.
 
 Contract v1
-      ↓
-meaning M1
+     ↓
+Meaning M1
 Contract v2
-      ↓
-meaning M2
+     ↓
+Meaning M2
 
-If M2 changes the interpretation of an existing field, state, transition, or invariant, the change must be treated as a semantic change even if the serialized structure remains valid.
+If M2 changes the interpretation of an existing field, state, transition, invariant, authority requirement, or outcome, the change must be treated as a semantic change even if the serialized structure remains valid.
 
 ⸻
 
@@ -68,12 +70,14 @@ If M2 changes the interpretation of an existing field, state, transition, or inv
 A software deployment version and a contract version are different concepts.
 
 Application v42
-    ≠
+     ≠
 Intent Contract v2
 
 An application may deploy many times without changing its contract.
 
 A contract may change even when the underlying implementation changes only minimally.
+
+Deployment rollback therefore does not automatically constitute contract rollback.
 
 ⸻
 
@@ -81,16 +85,18 @@ A contract may change even when the underlying implementation changes only minim
 
 Database migrations describe changes to persistence structures.
 
-Contract versioning describes changes to externally meaningful semantics.
+Contract Versioning describes changes to externally meaningful semantics.
 
 Database Schema
-    ↓
+     ↓
 Persistence Structure
 Contract Version
-    ↓
+     ↓
 Semantic Agreement
 
 A database migration may support a contract migration, but it does not define the contract itself.
+
+A persistence transformation must not silently alter the semantic identity of an existing contract instance.
 
 ⸻
 
@@ -98,14 +104,24 @@ A database migration may support a contract migration, but it does not define th
 
 The foundational Noema contract families include:
 
-Intent Contract
-Context Contract
-Trust Contract
-Action Contract
-Execution Contract
-Event Contract
+* Intent Contract
+* Context Contract
+* Trust Contract
+* Action Contract
+* Execution Contract
+* Event Contract
 
-Each contract family must have independently managed versions.
+Each contract family has independently managed semantic versions.
+
+Other versioned artifacts may exist, including:
+
+* policy definitions
+* capability definitions
+* Enterprise Action Graph definitions
+* integration adapters
+* schemas
+
+These remain distinct version dimensions and must not be collapsed into a single generic contract version.
 
 ⸻
 
@@ -120,16 +136,16 @@ contract_version
 
 For example:
 
-contract_type = intent
+contract_type    = intent
 contract_version = 0.1
 
-This allows historical instances to be interpreted according to the semantics under which they were created.
+Where a consequential decision depends on multiple contracts, the relevant versions must be retained together.
 
 ⸻
 
 9. Version Immutability
 
-Once a contract version is published and used by consequential system behavior, its meaning must be immutable.
+Once a contract version is published and used by consequential system behavior, its semantic definition must be immutable.
 
 A version may be:
 
@@ -137,7 +153,7 @@ A version may be:
 * deprecated
 * retired
 
-but its historical definition must not be silently rewritten.
+but its historical meaning must not be silently rewritten.
 
 v1
 │
@@ -161,9 +177,10 @@ That would break:
 * auditability
 * reproducibility
 * debugging
-* legal defensibility
 * recovery
+* reconciliation
 * incident analysis
+* historical interpretation
 
 Therefore historical contract versions must remain stable.
 
@@ -200,7 +217,7 @@ It may be:
 * tested internally
 * incompatible with the current active version
 
-Draft versions must not govern production consequential execution unless explicitly permitted by environment policy.
+Draft versions must not govern consequential production behavior unless explicitly permitted by environment policy.
 
 ⸻
 
@@ -217,6 +234,8 @@ Validation may include:
 * state-transition analysis
 * integration compatibility
 * migration analysis
+* historical fixture validation
+* security-impact analysis
 
 Validation does not necessarily mean the version is production-active.
 
@@ -228,6 +247,8 @@ A PUBLISHED version has been formally registered as an available contract versio
 
 Publication makes the version discoverable to components that need to support it.
 
+Publication does not by itself make the version applicable to new consequential operations.
+
 ⸻
 
 15. Active
@@ -236,7 +257,9 @@ An ACTIVE version is permitted for new applicable contract instances.
 
 There may be more than one active version where controlled compatibility or migration requires it.
 
-However, the applicable version must always be deterministic.
+However, the applicable version must always be resolved deterministically.
+
+The model must not select a contract version based on probabilistic preference.
 
 ⸻
 
@@ -250,6 +273,7 @@ Deprecated versions may remain necessary for:
 * historical state
 * replay
 * recovery
+* reconciliation
 * migration
 * backward compatibility
 
@@ -262,6 +286,8 @@ A RETIRED version is no longer permitted for new usage.
 Retirement must not mean historical deletion.
 
 Historical instances must remain interpretable for as long as required by Noema’s retention and audit policies.
+
+A retired version may remain available for historical interpretation without remaining executable for new operations.
 
 ⸻
 
@@ -276,7 +302,7 @@ For example:
 v1:
 "account_id" identifies customer's primary account
 v2:
-"account_id" identifies any account accessible to the user
+"account_id" identifies any account accessible to the actor
 
 The same field exists.
 
@@ -290,11 +316,22 @@ This is therefore a semantic breaking change.
 
 Contract changes should be classified as:
 
-NON-BREAKING
-CONDITIONALLY COMPATIBLE
-BREAKING
+* NON-BREAKING
+* CONDITIONALLY COMPATIBLE
+* BREAKING
 
 The classification must consider both structure and semantics.
+
+For consequential contracts, compatibility analysis must also consider:
+
+* authorization semantics
+* evidence requirements
+* state transitions
+* identity binding
+* target semantics
+* verification requirements
+* security boundaries
+* historical interpretation
 
 ⸻
 
@@ -306,6 +343,7 @@ Examples may include:
 * adding non-consequential descriptive fields
 * adding new enumerated values where consumers are explicitly designed to tolerate them
 * clarifying documentation without changing semantics
+* adding observability metadata that does not affect contract meaning
 
 A change is non-breaking only when existing valid behavior remains valid and interpretable.
 
@@ -317,12 +355,16 @@ Some changes are compatible only when participating components satisfy additiona
 
 Examples:
 
-new optional capability
-new event type
-new policy metadata
-new context source
+* new optional capability
+* new event type
+* new policy metadata
+* new context source
+* additional optional execution metadata
+* new contract features behind explicit capability negotiation
 
 Consumers may need to explicitly declare support.
+
+Compatibility must never be assumed merely because an older consumer can deserialize the newer structure.
 
 ⸻
 
@@ -336,10 +378,15 @@ Breaking changes include:
 * changing authorization meaning
 * changing outcome semantics
 * changing identity semantics
+* changing actor or target semantics
 * changing required evidence
 * changing action parameters incompatibly
 * changing event meaning
-* changing trust decision semantics
+* changing Trust Decision semantics
+* changing verification requirements
+* changing idempotency semantics
+* changing ambiguity semantics
+* changing the interpretation of UNKNOWN
 
 Breaking changes require a new contract version.
 
@@ -364,6 +411,8 @@ New optional metadata
 Trust outcome meaning changed
 → semantic breaking
 
+The absence of structural change does not imply semantic compatibility.
+
 ⸻
 
 24. Version Scope
@@ -378,7 +427,10 @@ Versioning may apply to:
 * policy binding
 * event semantics
 * state machine
+* identity semantics
+* authorization semantics
 * integration compatibility
+* verification semantics
 
 Noema should avoid using one generic version number to hide materially different version dimensions.
 
@@ -389,7 +441,7 @@ Noema should avoid using one generic version number to hide materially different
 Contract and policy versions are separate.
 
 Contract Version
-→ defines the contract
+→ defines contract semantics
 Policy Version
 → defines applicable decision rules
 
@@ -400,6 +452,8 @@ Policy v7
 
 A Trust Decision should preserve both where applicable.
 
+A policy change does not automatically constitute a Trust Contract change, and a Trust Contract change does not automatically constitute a policy change.
+
 ⸻
 
 26. Contract Version Versus Model Version
@@ -408,12 +462,17 @@ Model versions are also separate.
 
 Model vX
     ↓
-candidate interpretation
-Intent Contract vY
+Candidate interpretation
     ↓
-canonical semantic representation
+Hard Schema Validation
+    ↓
+Canonical Intent Object vY
 
 A model upgrade must not silently redefine the semantics of an existing contract version.
+
+A model can improve interpretation while the canonical Intent Contract remains unchanged.
+
+Model confidence is not a contract-version selection mechanism.
 
 ⸻
 
@@ -431,11 +490,13 @@ These version dimensions must remain distinct.
 
 Provider API changes must not automatically redefine canonical Noema Actions.
 
+An adapter may translate between provider semantics and a stable Noema contract, subject to explicit compatibility guarantees.
+
 ⸻
 
 28. Version Pinning
 
-Consequential operations should reference the contract versions under which they were created or authorized.
+Consequential operations should reference the contract versions under which they were admitted, authorized, or executed.
 
 Conceptually:
 
@@ -448,8 +509,10 @@ Action
 → Action Contract v3
 Execution
 → Execution Contract v2
+Event
+→ Event Contract v4
 
-This prevents future contract changes from retroactively altering an active execution.
+This prevents future contract changes from retroactively altering an active execution or historical decision.
 
 ⸻
 
@@ -465,11 +528,14 @@ Resolution may depend on:
 * workflow
 * integration
 * capability
+* Enterprise Action Graph version
 * effective date
 * policy
 * explicit compatibility configuration
 
 The selected version must be recorded.
+
+If version resolution is materially ambiguous, Noema must not guess.
 
 ⸻
 
@@ -483,6 +549,8 @@ v2
 valid from T1
 
 Temporal versioning prevents ambiguity about which contract definition applies at a given time.
+
+Effective dates must not override a more specific explicit compatibility or migration rule unless the governing version-selection policy says so.
 
 ⸻
 
@@ -498,7 +566,7 @@ tenant configuration
         >
 organization configuration
         >
-environment default
+environment configuration
         >
 platform default
 
@@ -516,13 +584,19 @@ For example:
 
 Intent Contract v2
        ↓
-Action Contract v3
+Trust Contract v3
+       ↓
+Action Contract v4
        ↓
 Execution Contract v2
+       ↓
+Event Contract v3
 
-A new Intent version must be evaluated against the Action versions capable of consuming it.
+A new Intent version must be evaluated against the Trust, Context, Action, and Execution versions capable of consuming it.
 
 Likewise, Action and Execution versions must remain semantically compatible.
+
+A contract version is not compatible merely because another component can parse its serialized representation.
 
 ⸻
 
@@ -533,8 +607,8 @@ Noema should maintain a compatibility matrix for contract families.
 Conceptually:
 
                  Intent   Context   Trust   Action   Execution   Event
-Intent v1          ✓         ✓
-Intent v2          ✓         ✓
+Intent v1          ✓         ✓        ✓
+Intent v2          ✓         ✓        ✓
 Context v1                    ✓        ✓
 Context v2                    ✓        ✓
 Trust v1                              ✓        ✓
@@ -542,7 +616,7 @@ Trust v2                              ✓        ✓
 Action v1                                      ✓        ✓
 Action v2                                      ✓        ✓
 
-The matrix identifies supported combinations.
+The matrix identifies supported semantic combinations.
 
 Unsupported combinations must fail deterministically.
 
@@ -565,6 +639,8 @@ v2
 
 The selected version must be recorded where it affects semantics.
 
+Negotiation must not silently produce a semantically incompatible fallback.
+
 ⸻
 
 35. Consumer-Driven Compatibility
@@ -580,6 +656,8 @@ offers v2, v3
 
 The system must select an explicitly compatible version.
 
+Where no compatible version exists, the incompatibility must be surfaced deterministically.
+
 ⸻
 
 36. Version Migration
@@ -594,9 +672,9 @@ Migration / Translation
  ↓
 v2
 
-Migration must preserve semantic meaning.
+Migration must preserve semantic meaning where it claims compatibility.
 
-A migration that changes meaning is not a transparent migration; it is a semantic transformation and must be treated accordingly.
+A migration that changes meaning is not a transparent migration; it is a semantic transformation and must explicitly represent the transformation.
 
 ⸻
 
@@ -612,17 +690,20 @@ Translator
     ↓
 Intent v2
 
-The translation must preserve:
+The translation must preserve, where applicable:
 
 * intent
 * scope
 * constraints
 * provenance
 * uncertainty
-* relevant identity
-* semantic outcome
+* identity
+* target specificity
+* semantic outcome requirements
 
 It must not silently manufacture missing information.
+
+If translation introduces unresolved information, the resulting state must remain unresolved and may require CLARIFY, ESCALATE, or deterministic rejection rather than guessing.
 
 ⸻
 
@@ -641,6 +722,8 @@ generic account target
 
 The migration cannot silently discard the specific target and claim semantic equivalence.
 
+Consequential information loss must either be preserved, explicitly represented, or cause the migration to fail.
+
 ⸻
 
 39. Historical Interpretation
@@ -658,6 +741,8 @@ Historical Intent
 Current Intent Contract v4
 
 unless an explicit migration has occurred and its effects are recorded.
+
+Historical interpretation must not depend on whichever contract version happens to be currently active.
 
 ⸻
 
@@ -691,6 +776,8 @@ v2 becomes active
         ↓
 Execution continues under v1
 
+If migration is required, Noema must establish compatibility and record the migration before applying the new semantics.
+
 ⸻
 
 42. Event Versioning
@@ -703,6 +790,8 @@ event_type
 event_version
 
 Historical events must remain interpretable after producers and consumers evolve.
+
+Event versioning must distinguish transport/schema compatibility from semantic compatibility.
 
 ⸻
 
@@ -721,23 +810,30 @@ These are materially different meanings.
 
 They should not share an indistinguishable semantic version.
 
+An event describing transport completion must not be silently reinterpreted as a verified business outcome.
+
 ⸻
 
 44. Trust Versioning
 
-Trust contracts require especially strict versioning because they govern consequential authorization.
+Trust Contracts require especially strict versioning because they govern whether a resolved execution path may proceed.
 
 A Trust Contract change may affect:
 
 * required evidence
-* permissions
-* risk thresholds
+* Fact Status requirements
+* authority requirements
+* permission evaluation
+* risk constraints
 * ambiguity rules
 * escalation requirements
 * confirmation requirements
 * decision precedence
+* treatment of unknown state
 
 Such changes must be explicitly versioned and attributable.
+
+A Trust Contract version does not itself grant enterprise authorization. It defines the deterministic conditions under which Noema evaluates whether a resolved path may proceed.
 
 ⸻
 
@@ -748,11 +844,14 @@ Action Contracts must preserve the exact executable semantics used by an executi
 A change to:
 
 * parameters
-* target semantics
+* actor or target semantics
 * preconditions
+* authorization requirements
 * idempotency behavior
 * expected outcomes
 * side-effect semantics
+* verification requirements
+* compensation semantics
 
 may require a new Action Contract version.
 
@@ -769,6 +868,8 @@ Execution Contract versions govern execution semantics such as:
 * recovery
 * cancellation
 * reconciliation
+* compensation
+* unknown-state handling
 
 Changing these semantics can affect active operations and therefore requires controlled rollout.
 
@@ -782,13 +883,25 @@ Changes to:
 
 * intent types
 * parameter meaning
+* actor binding
 * target resolution
 * ambiguity rules
-* outcome semantics
+* constraint semantics
+* requested outcome semantics
 
 may require a new Intent Contract version.
 
-Historical intents must remain interpretable under their original semantics.
+An admitted Intent Object is immutable with respect to its canonical meaning.
+
+If clarification or correction materially changes the Intent, the system creates a new Intent version with explicit lineage, such as:
+
+Intent v1
+   ↓
+superseded_by
+   ↓
+Intent v2
+
+Historical Intent v1 remains interpretable under its original contract semantics.
 
 ⸻
 
@@ -804,8 +917,12 @@ Changes may include:
 * evidence references
 * context precedence
 * required contextual fields
+* freshness requirements
+* permitted information sources
 
-A context version must not silently reinterpret historical trust decisions.
+A Context Contract version must not silently reinterpret the Context used by a historical Trust Decision.
+
+Context versioning does not make Context inherently authoritative. Authority and Fact Status remain claim-specific.
 
 ⸻
 
@@ -813,12 +930,14 @@ A context version must not silently reinterpret historical trust decisions.
 
 Every consequential contract instance should preserve provenance sufficient to establish:
 
-which version was used
-who or what selected it
-when it was selected
-which configuration applied
-which predecessor version existed
-whether migration occurred
+* which version was used
+* who or what selected it
+* when it was selected
+* which configuration applied
+* which predecessor version existed
+* whether migration occurred
+* which successor version, if any, was selected
+* which compatibility decision permitted the combination
 
 Version metadata is part of execution provenance.
 
@@ -832,13 +951,19 @@ Which exact contract semantics governed this decision?
 
 For example:
 
-Intent Contract: 2
-Context Contract: 1
-Trust Contract: 3
-Policy: 7
-Action Contract: 2
+Intent Contract:    2
+Context Contract:   1
+Trust Contract:     3
+Policy:             7
+Action Contract:    2
 Execution Contract: 1
-Event Contract: 4
+Event Contract:     4
+
+Where applicable, the record should also identify:
+
+EAG Version
+Capability Version
+Integration Adapter Version
 
 This should be reconstructable from persisted state.
 
@@ -848,23 +973,26 @@ This should be reconstructable from persisted state.
 
 Given:
 
-historical input
-contract versions
-policy versions
-relevant context
-evidence
+* historical Intent
+* contract versions
+* policy versions
+* relevant Context
+* Evidence
+* Fact Status
+* State Reconciliation results
+* applicable graph/capability versions
 
 Noema should be able to reconstruct the decision path to the extent required by its audit and operational guarantees.
 
 Reproducibility does not necessarily mean re-executing the operation.
 
-It means being able to understand how the original decision was produced.
+It means being able to understand how the original decision was produced under the applicable semantic definitions.
 
 ⸻
 
 52. Contract Version and Replay
 
-Replay must use the appropriate historical contract versions unless the replay is explicitly intended as a migration or simulation.
+Replay must use the appropriate historical contract versions unless the replay is explicitly intended as a migration, simulation, or compatibility test.
 
 Historical Event
       ↓
@@ -873,6 +1001,8 @@ Historical Contract Version
 Replay
 
 Current contract versions must not silently reinterpret historical events during replay.
+
+A replay must also distinguish historical reconstruction from a new consequential execution.
 
 ⸻
 
@@ -892,6 +1022,8 @@ New Contract Version
 
 The migration must be recorded.
 
+Recovery must not use a newer contract merely because it is currently active.
+
 ⸻
 
 54. Contract Version and Reconciliation
@@ -901,6 +1033,8 @@ Reconciliation may occur after a contract version has changed.
 The reconciliation process must still understand the original Action and Execution semantics.
 
 A newer contract version must not cause historical execution to be interpreted incorrectly.
+
+Where reconciliation produces a new Fact Status or execution state, that change must remain distinguishable from the historical contract semantics under which the original operation occurred.
 
 ⸻
 
@@ -915,6 +1049,7 @@ A deprecated version should specify:
 * migration guidance
 * remaining supported use
 * retirement conditions
+* historical interpretation requirements
 
 Deprecation must not invalidate active historical state.
 
@@ -926,11 +1061,12 @@ Retirement removes a version from normal new-instance creation.
 
 Before retirement, Noema should establish that:
 
-* active executions no longer depend on it
+* active executions no longer depend on it, or an explicit continued-support policy exists
 * required migrations are complete
 * historical interpretation remains possible
 * required archives remain available
 * compatibility obligations are satisfied
+* recovery and reconciliation requirements remain supported
 
 Retirement is therefore an operational state, not destruction of semantic history.
 
@@ -951,7 +1087,16 @@ predecessor_version
 schema_reference
 semantic_definition
 
+Where relevant, the registry should also retain:
+
+migration_reference
+supported_consumers
+supported_predecessors
+security_impact
+
 The registry is the authoritative source for contract version metadata.
+
+It is not itself the source of enterprise business truth.
 
 ⸻
 
@@ -969,7 +1114,9 @@ A change should document:
 * rollout strategy
 * rollback strategy
 * affected integrations
+* security implications
 * historical implications
+* active-execution implications
 
 The more consequential the contract, the stronger the governance requirement.
 
@@ -1003,6 +1150,8 @@ RETIRE WHEN SAFE
 
 No breaking version should be introduced without understanding its impact on active state.
 
+For Trust, Action, and Execution contracts, consequential rollout must additionally account for active executions and safety boundaries.
+
 ⸻
 
 60. Rollout Strategy
@@ -1014,9 +1163,12 @@ Contract versions may be introduced through:
 * environment rollout
 * workflow rollout
 * integration rollout
+* capability rollout
 * feature-gated rollout
 
 The selected strategy must preserve deterministic version selection.
+
+Rollout configuration must itself be versioned and auditable where it affects consequential semantics.
 
 ⸻
 
@@ -1034,6 +1186,8 @@ A deployment can be rolled back without automatically reverting persisted contra
 
 Previously created instances must retain their original semantic version.
 
+If a contract version itself is withdrawn from new use, that withdrawal must not rewrite historical instances.
+
 ⸻
 
 62. Contract Version and Tenancy
@@ -1047,7 +1201,9 @@ Tenant B → v1
 
 This is valid only when explicitly supported.
 
-The tenant-specific selection must be deterministic and recorded.
+Tenant-specific selection must be deterministic and recorded.
+
+Tenant configuration must not override a platform safety restriction that prohibits use of a particular contract version.
 
 ⸻
 
@@ -1063,6 +1219,8 @@ This may be useful during controlled rollout.
 
 Production behavior must never accidentally inherit an unreleased contract version.
 
+Environment boundaries must remain explicit.
+
 ⸻
 
 64. Contract Version and Integrations
@@ -1076,7 +1234,9 @@ Integration A
 Integration B
 → Action Contract v2
 
-Noema must not send a contract version to an integration that cannot correctly interpret it.
+Noema must not send a contract version or semantic payload to an integration that cannot correctly interpret it.
+
+Provider-specific versions remain distinct from canonical Noema contract versions.
 
 ⸻
 
@@ -1097,6 +1257,8 @@ The model can improve interpretation while the canonical Intent Contract remains
 
 Conversely, changing the Intent Contract should not require a model change unless the semantic requirements actually demand it.
 
+Model-generated candidates remain subject to the same hard schema validation and deterministic admission boundary regardless of model version.
+
 ⸻
 
 66. Versioning and Determinism
@@ -1105,11 +1267,13 @@ Version selection is itself a deterministic operation.
 
 The system must never allow the model to decide:
 
-"Which contract version should I use?"
+Which contract version should I use?
 
 based on probabilistic preference.
 
-Contract selection must follow explicit configuration and policy.
+Contract selection must follow explicit configuration, compatibility rules, effective dates, and applicable policy.
+
+Given the same version-selection inputs and version registry, the selected version must be deterministic.
 
 ⸻
 
@@ -1125,6 +1289,8 @@ STOP / CLARIFY / ESCALATE
 
 The system must not execute under an arbitrary version.
 
+Unknown version state is not equivalent to an incompatible version.
+
 ⸻
 
 68. Versioning and Compatibility Failure
@@ -1138,6 +1304,8 @@ No compatible version
 FAIL DETERMINISTICALLY
 
 Silent semantic downgrade is prohibited.
+
+An explicitly defined translation may be used where it preserves or explicitly represents the required semantics.
 
 ⸻
 
@@ -1155,6 +1323,8 @@ Both must be explicitly planned when both are required.
 
 Persistence transformations must preserve the semantics of the contract instance.
 
+A data migration must not be treated as a semantic migration merely because it changes serialized representation.
+
 ⸻
 
 70. Versioning and Backward Interpretation
@@ -1169,6 +1339,7 @@ This may require:
 * compatibility libraries
 * event upcasters
 * historical policy references
+* historical graph or capability definitions where required
 
 The implementation may change.
 
@@ -1188,6 +1359,8 @@ Examples include:
 
 Forward compatibility must never come at the cost of semantic ambiguity.
 
+A consumer must not treat an unknown consequential field or semantic value as safely ignorable merely because the underlying schema permits it.
+
 ⸻
 
 72. Versioning and Observability
@@ -1197,12 +1370,17 @@ Version identifiers should appear in operational telemetry where relevant.
 For example:
 
 intent_id
+intent_version
 intent_contract_version
+context_contract_version
 trust_contract_version
 policy_version
 action_contract_version
 execution_contract_version
 event_contract_version
+eag_version
+capability_version
+integration_version
 
 This makes version-related failures diagnosable.
 
@@ -1221,9 +1399,15 @@ Every new contract version should be tested against:
 * integrations
 * event consumers
 * recovery paths
+* reconciliation paths
 * replay behavior
+* negative cases
+* security boundaries
+* unknown-state behavior
 
 Contract tests must include negative cases.
+
+A contract version that passes structural validation but changes consequential semantics must not be classified as compatible merely because serialization succeeds.
 
 ⸻
 
@@ -1233,10 +1417,12 @@ A contract version change can alter security semantics.
 
 Examples:
 
-new permission requirement
-new identity semantics
-new tenant boundary
-new evidence requirement
+* new permission requirement
+* new identity semantics
+* new tenant boundary
+* new evidence requirement
+* changed target-resolution requirements
+* changed credential or capability constraints
 
 Security-impacting contract changes must receive explicit review.
 
@@ -1253,11 +1439,16 @@ Therefore any Trust version change must identify:
 * affected policies
 * affected actions
 * changed evidence requirements
+* changed Fact Status requirements
 * changed permission requirements
 * changed ambiguity handling
 * changed escalation rules
+* changed confirmation requirements
 * affected tenants
 * affected active executions
+* affected compatibility combinations
+
+A Trust version change must not silently alter the interpretation of an already-recorded Trust Decision.
 
 ⸻
 
@@ -1269,60 +1460,142 @@ An active execution should not be migrated merely because a newer version exists
 
 Migration requires explicit compatibility and safety analysis.
 
+Where a contract change affects the safety of continuing an execution, Noema must evaluate that change explicitly rather than silently applying either the old or new semantics.
+
 ⸻
 
-77. Reference Versioning Model
+77. Versioning and Intent Lineage
+
+Intent versioning requires a distinction between:
+
+Contract Version
+
+and:
+
+Intent Version
+
+The Intent Contract defines the semantics of an Intent Object.
+
+The Intent Object version identifies a particular semantic state of that intent.
+
+For example:
+
+Intent Contract v2
+Intent v1
+    ↓
+supersedes
+    ↓
+Intent v2
+
+Clarification, correction, or material change must create a new Intent version rather than mutating the previously admitted Intent.
+
+Every Trust Decision and consequential execution must reference the exact Intent version on which it depends.
+
+⸻
+
+78. Versioning and Trust Decision Identity
+
+A Trust Decision must preserve the versions necessary to reconstruct the decision boundary.
 
 Conceptually:
 
-                    CONTRACT REGISTRY
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-          Intent v1     Intent v2    Intent v3
-              │            │            │
-              └────────────┼────────────┘
-                           │
-                     Compatibility
-                           │
-                           ▼
-                     Action Versions
-                           │
-                           ▼
-                   Execution Versions
-                           │
-                           ▼
-                     Event Versions
+decision_id
+intent_id
+intent_version
+intent_contract_version
+trust_contract_version
+policy_version
+action_contract_version
+eag_version
+capability_version
+decision_context_id
+decision_time
+
+Not every field is required for every decision, but every version materially affecting the decision must be retained.
+
+A future contract version must not be used to reinterpret a historical Trust Decision.
+
+⸻
+
+79. Versioning and State Reconciliation
+
+State Reconciliation is a first-class dependency of consequential decision-making.
+
+A Trust Decision may depend on a reconciled view of current enterprise state.
+
+Therefore version provenance may include:
+
+* reconciliation model/version
+* source system versions
+* relevant event versions
+* reconciliation timestamp
+* state snapshot identity
+* conflict status
+* Fact Status
+
+A newer contract must not retroactively change what a historical reconciliation result meant.
+
+If reconciliation is repeated under new semantics, the new result must be identifiable as a new observation or reconciliation result.
+
+⸻
+
+80. Reference Versioning Model
+
+Conceptually:
+
+                       CONTRACT REGISTRY
+                              │
+             ┌────────────────┼────────────────┐
+             ▼                ▼                ▼
+         Intent v1         Intent v2        Intent v3
+             │                │                │
+             └────────────────┼────────────────┘
+                              │
+                       Compatibility
+                              │
+                              ▼
+                         Trust Versions
+                              │
+                              ▼
+                         Action Versions
+                              │
+                              ▼
+                       Execution Versions
+                              │
+                              ▼
+                         Event Versions
 
 The registry defines which combinations are supported.
 
+Version selection remains deterministic.
+
 ⸻
 
-78. Historical Version Model
+81. Historical Version Model
 
 Conceptually:
 
-                 CURRENT
-                   │
-              Contract v3
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-   New Instances        Existing Instances
-                              │
-                              ▼
-                         Contract v1
-                              │
-                              ▼
-                       Historical Meaning
+                         CURRENT
+                           │
+                      Contract v3
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+        New Instances            Existing Instances
+                                        │
+                                        ▼
+                                   Contract v1
+                                        │
+                                        ▼
+                                Historical Meaning
 
-Current versions govern new state.
+Current versions govern applicable new state.
 
 Historical versions preserve old meaning.
 
 ⸻
 
-79. Contract Version Invariants
+82. Contract Version Invariants
 
 Invariant 1
 
@@ -1402,23 +1675,23 @@ Event versions must preserve historical event meaning.
 
 Invariant 20
 
-Trust contract changes must be explicitly versioned.
+Trust Contract changes must be explicitly versioned.
 
 Invariant 21
 
-Action contract changes affecting executable semantics must be explicitly versioned.
+Action Contract changes affecting executable semantics must be explicitly versioned.
 
 Invariant 22
 
-Execution contract changes affecting lifecycle semantics must be explicitly versioned.
+Execution Contract changes affecting lifecycle semantics must be explicitly versioned.
 
 Invariant 23
 
-Intent contract changes affecting interpretation semantics must be explicitly versioned.
+Intent Contract changes affecting interpretation semantics must be explicitly versioned.
 
 Invariant 24
 
-Context contract changes affecting resolution or trust semantics must be explicitly versioned.
+Context Contract changes affecting resolution or Trust semantics must be explicitly versioned.
 
 Invariant 25
 
@@ -1454,7 +1727,7 @@ Contract version changes must account for active executions.
 
 Invariant 33
 
-Contract version changes must account for recovery and replay.
+Contract version changes must account for recovery, reconciliation, and replay.
 
 Invariant 34
 
@@ -1484,11 +1757,63 @@ Invariant 40
 
 Versioning must preserve the historical meaning of the Noema execution journey.
 
+Invariant 41
+
+An admitted Intent Object must not be silently mutated across contract versions.
+
+Invariant 42
+
+A material Intent change must create an explicitly versioned Intent lineage.
+
+Invariant 43
+
+Every consequential Trust Decision must retain the exact Intent version on which it depends.
+
+Invariant 44
+
+Trust Contract versioning must preserve the distinction between Trust semantics and enterprise authorization authority.
+
+Invariant 45
+
+Contract versioning must preserve the distinction between Evidence, Fact Status, Context, State, and Outcome.
+
+Invariant 46
+
+A contract version must not silently change the interpretation of UNKNOWN into success, failure, authorization, or certainty.
+
+Invariant 47
+
+Contract versioning must account for State Reconciliation semantics where reconciled enterprise state affects consequential decisions.
+
+Invariant 48
+
+Model-generated interpretation cannot bypass contract-version validation or hard schema admission.
+
+Invariant 49
+
+Contract version selection must never create authority, capabilities, or permissions that are absent from the applicable enterprise or Noema configuration.
+
+Invariant 50
+
+A contract version must not silently expand the set of executable capabilities available to a consequential operation.
+
+Invariant 51
+
+Historical Trust Decisions must remain interpretable using the contract, policy, evidence, and relevant state semantics under which they were made.
+
+Invariant 52
+
+Version migration must be distinguishable from ordinary execution and must be recorded as part of provenance.
+
+Invariant 53
+
+A contract version may change future behavior, but must never silently rewrite the semantic history of a completed or active execution.
+
 ⸻
 
-80. Final Definition
+83. Final Definition
 
-Contract Versioning is the controlled evolution of Noema’s semantic agreements without silently changing the meaning of existing state, decisions, executions, or events.
+Contract Versioning is the controlled evolution of Noema’s semantic agreements without silently changing the meaning of existing Intent, Context, Trust Decisions, Actions, Executions, Events, Outcomes, or historical state.
 
 A contract version establishes a stable semantic boundary for:
 
@@ -1497,7 +1822,7 @@ semantics
 constraints
 invariants
 lifecycle
-authority
+authority requirements
 compatibility
 
 The canonical model is:
@@ -1514,7 +1839,43 @@ Deterministic Selection
    ↓
 Contract Instance
    ↓
+Execution / Decision
+   ↓
 Historical Preservation
+
+For Intent specifically:
+
+Source of Intent
+   ↓
+Candidate Interpretation
+   ↓
+Hard Schema Validation
+   ↓
+Admitted Intent Object
+   ↓
+Intent Version
+   ↓
+Trust / Execution Lineage
+
+A material change to an admitted Intent creates a new Intent version rather than silently mutating the existing one.
+
+For consequential execution:
+
+Intent Version
+   +
+Contract Versions
+   +
+Policy Versions
+   +
+Relevant Context / Evidence
+   +
+State Reconciliation
+   ↓
+Deterministic Trust
+   ↓
+Action / Execution
+   ↓
+Verified Outcome
 
 New versions may change the system.
 
@@ -1524,4 +1885,4 @@ The governing principle is:
 
 A contract version may evolve Noema’s future behavior, but it must never silently change the meaning of its past.
 
-Contract versioning therefore protects the integrity of the entire Noema execution journey—from Intent through Context, Trust, Action, Execution, Events, and Outcome—by ensuring that every consequential state remains tied to the semantic rules under which it was created.
+Contract Versioning therefore protects the integrity of the entire Noema execution journey—from Source of Intent through Intent, Context, State Reconciliation, Trust, Action, Execution, Events, Verification, and Outcome—by ensuring that every consequential state and decision remains tied to the semantic rules under which it was created.

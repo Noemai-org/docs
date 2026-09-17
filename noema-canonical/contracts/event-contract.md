@@ -40,23 +40,24 @@ The purpose of the Event Contract is to establish deterministic semantics around
 
 An Event Contract defines:
 
-identity
-event type
-schema
-producer
-source
-subject
-scope
-timestamp semantics
-ordering
-delivery semantics
-duplication semantics
-version
-causation
-correlation
-provenance
-security
-retention
+* identity
+* event type
+* schema
+* producer
+* source
+* authority
+* subject
+* scope
+* timestamp semantics
+* ordering
+* delivery semantics
+* duplication semantics
+* version
+* causation
+* correlation
+* provenance
+* security
+* retention
 
 This prevents Noema from treating an arbitrary message as authoritative evidence of enterprise state.
 
@@ -78,7 +79,7 @@ balance = $5,000
 may establish:
 
 At time T:
-an event reporting a balance change occurred.
+an authorized system reported a balance change.
 
 It does not necessarily establish:
 
@@ -89,6 +90,8 @@ Current authoritative state may still require verification against the System of
 Therefore:
 
 Event ≠ Canonical State
+
+An Event is an observation of an occurrence, not a universal replacement for current enterprise state.
 
 ⸻
 
@@ -103,11 +106,11 @@ evt_01J...
 
 The Event ID supports:
 
-deduplication
-auditability
-traceability
-reconciliation
-causation analysis
+* deduplication
+* auditability
+* traceability
+* reconciliation
+* causation analysis
 
 An Event ID should remain stable across delivery retries.
 
@@ -207,6 +210,10 @@ Therefore:
 
 Source ≠ Authority
 
+Authority is claim-specific.
+
+A producer may be authoritative for one fact while another system remains authoritative for a different fact concerning the same Resource.
+
 ⸻
 
 10. Event Subject
@@ -222,11 +229,14 @@ transaction_id = TX-123
 
 The Subject allows Noema to connect the Event to:
 
-Intent
-Context
-Evidence
-Action
-Outcome
+* Intent
+* Context
+* Evidence
+* Action
+* Execution
+* Outcome
+
+A Subject identifier must be appropriately resolved within its enterprise authority boundary before being used for consequential decisions.
 
 ⸻
 
@@ -236,12 +246,12 @@ The Contract should define the scope of an Event.
 
 Possible dimensions include:
 
-tenant
-organization
-legal entity
-environment
-Resource
-domain
+* tenant
+* organization
+* legal entity
+* environment
+* Resource
+* domain
 
 Example:
 
@@ -283,6 +293,7 @@ Event Envelope
 ├── event_version
 ├── producer
 ├── source
+├── authority
 ├── occurred_at
 ├── published_at
 ├── correlation_id
@@ -305,10 +316,10 @@ Events may require multiple timestamps.
 
 Common timestamps include:
 
-occurred_at
-published_at
-received_at
-processed_at
+* occurred_at
+* published_at
+* received_at
+* processed_at
 
 These are not interchangeable.
 
@@ -333,11 +344,12 @@ This is distinct from when Noema received the message.
 
 Event time is important for:
 
-ordering
-historical reconstruction
-temporal Context
-auditability
-workflow correlation
+* ordering
+* historical reconstruction
+* temporal Context
+* auditability
+* workflow correlation
+* reconciliation
 
 ⸻
 
@@ -366,11 +378,11 @@ transaction.completed:v2
 
 Version changes may include:
 
-schema changes
-semantic changes
-new required fields
-removed fields
-changed field meaning
+* schema changes
+* semantic changes
+* new required fields
+* removed fields
+* changed field meaning
 
 Historical Events must remain interpretable under the version in which they were emitted.
 
@@ -416,17 +428,20 @@ Breaking semantic changes should result in a new Event version.
 
 Before an Event becomes usable by Noema, the system should validate:
 
-event_id
-event_type
-version
-schema
-producer
-source
-scope
-timestamps
-payload
+* event_id
+* event_type
+* version
+* schema
+* producer
+* source
+* authority metadata where applicable
+* scope
+* timestamps
+* payload
 
 Invalid Events should not silently become trusted Context or Evidence.
+
+Validation is a hard admission boundary for Event processing.
 
 ⸻
 
@@ -436,13 +451,13 @@ Noema must establish that an Event originated from an authorized producer.
 
 Possible mechanisms include:
 
-mTLS
-signed messages
-authenticated event channels
-service credentials
-platform-level identity
+* mTLS
+* signed messages
+* authenticated event channels
+* service credentials
+* platform-level identity
 
-An unauthenticated message must not be treated as trusted enterprise evidence.
+An unauthenticated message must not be treated as trusted enterprise Evidence.
 
 ⸻
 
@@ -464,6 +479,12 @@ Trusted Event
 
 Event authenticity and payload correctness are related but distinct.
 
+Authentication establishes who sent the Event.
+
+Integrity establishes that the Event was not altered outside the permitted mechanism.
+
+Neither alone establishes that every payload field is authoritative.
+
 ⸻
 
 23. Event Ordering
@@ -472,11 +493,11 @@ The Contract should define ordering guarantees where ordering matters.
 
 Possible semantics include:
 
-strict ordering
-partition ordering
-per-resource ordering
-best effort
-unordered
+* strict ordering
+* partition ordering
+* per-resource ordering
+* best effort
+* unordered
 
 Example:
 
@@ -541,7 +562,7 @@ Deduplication
    ↓
 Processing
 
-Processing the same Event multiple times must not create unintended duplicate Noema state.
+Processing the same Event multiple times must not create unintended duplicate Noema state or trigger unintended consequential Actions.
 
 ⸻
 
@@ -551,9 +572,9 @@ The Contract should define delivery guarantees.
 
 Examples:
 
-at-most-once
-at-least-once
-effectively-once
+* at-most-once
+* at-least-once
+* effectively-once
 
 At-least-once delivery means duplicates are possible.
 
@@ -573,6 +594,8 @@ Event Did Not Occur
 
 This is particularly important in distributed systems.
 
+Where Event completeness is not guaranteed, absence may produce an UNKNOWN condition requiring reconciliation rather than a negative conclusion.
+
 ⸻
 
 29. Event Replay
@@ -581,11 +604,11 @@ Events may be replayed.
 
 Replay may be required for:
 
-recovery
-reconstruction
-projection rebuilding
-debugging
-historical analysis
+* recovery
+* reconstruction
+* projection rebuilding
+* debugging
+* historical analysis
 
 Replay semantics must distinguish:
 
@@ -605,11 +628,11 @@ The Contract may define Event retention requirements.
 
 Retention may depend on:
 
-audit requirements
-reconciliation requirements
-legal requirements
-operational requirements
-privacy policy
+* audit requirements
+* reconciliation requirements
+* legal requirements
+* operational requirements
+* privacy Policy
 
 Not every Event must be retained indefinitely.
 
@@ -635,6 +658,8 @@ Execution
 Event
 
 to be connected.
+
+Correlation identifies related activity; it does not by itself establish causation.
 
 ⸻
 
@@ -676,7 +701,7 @@ customer_request_123
 causation_id:
 action_execution_456
 
-This distinction supports audit and reconstruction.
+This distinction supports causal audit and reconstruction.
 
 ⸻
 
@@ -692,13 +717,16 @@ Context Update
 
 The resulting Context should preserve:
 
-event_id
-event_type
-source
-occurred_at
-version
+* event_id
+* event_type
+* source
+* authority
+* occurred_at
+* version
 
 where relevant.
+
+An Event-derived Context item must remain distinguishable from directly retrieved canonical data.
 
 ⸻
 
@@ -721,6 +749,8 @@ Evidence
    ↓
 Trust
 
+The Event itself and the proposition it supports remain distinct semantic objects.
+
 ⸻
 
 36. Event and Canonical Data
@@ -736,10 +766,19 @@ If the producer is authoritative, the Event may provide strong Evidence of the s
 
 However, current canonical state may still require direct verification depending on:
 
-risk
-freshness
-consistency guarantees
-event semantics
+* risk
+* freshness
+* consistency guarantees
+* event semantics
+* resource version
+
+Therefore:
+
+Event
+   ≠
+Current Canonical State
+
+even when the Event is authoritative evidence of a historical state transition.
 
 ⸻
 
@@ -747,17 +786,21 @@ event semantics
 
 Trust should evaluate Events based on:
 
-source
-authority
-authenticity
-integrity
-schema validity
-temporal validity
-ordering
-delivery guarantees
-correlation
+* source
+* authority
+* authenticity
+* integrity
+* schema validity
+* temporal validity
+* ordering
+* delivery guarantees
+* scope
+* correlation
+* causation
 
 An Event should not become trusted merely because it arrived successfully.
+
+Trust determines whether an Event provides sufficient support for the specific decision or Action.
 
 ⸻
 
@@ -793,7 +836,7 @@ complaint.created
 
 The Event may establish that the enterprise system reported creation.
 
-The required verification strength depends on the Action and Policy.
+The required verification strength depends on the Action, risk, and Policy.
 
 ⸻
 
@@ -809,15 +852,19 @@ Execution
    ↓
 enterprise.operation.completed
    ↓
+Verification
+   ↓
 Execution Outcome
 
-An Event can therefore close an asynchronous execution path.
+An Event can therefore contribute to closing an asynchronous execution path.
+
+An Event indicating completion does not automatically make the execution successful; the required verification semantics remain defined by the Action Contract and Policy.
 
 ⸻
 
 41. Asynchronous Actions
 
-Some Actions may not return their final outcome synchronously.
+Some Actions may not return their final Outcome synchronously.
 
 Example:
 
@@ -829,10 +876,12 @@ PENDING
 Event:
 operation.completed
       ↓
+Verification
+      ↓
 Execution:
 COMPLETED
 
-The Action Contract and Event Contract must define how the Event transitions execution state.
+The Action Contract and Event Contract must define how the Event participates in execution-state transitions.
 
 ⸻
 
@@ -876,6 +925,8 @@ The Event is a trigger.
 
 It is not itself an authorization decision.
 
+A trigger may initiate evaluation; only the deterministic Trust path can establish whether execution is permitted.
+
 ⸻
 
 44. Event and Policy
@@ -885,7 +936,9 @@ Policy may define how Events affect execution.
 Example:
 
 Policy:
-A transaction.completed event may satisfy the transaction-completed precondition only when emitted by the canonical Payment System.
+A transaction.completed Event may satisfy the
+transaction-completed precondition only when emitted
+by the canonical Payment System.
 
 Thus:
 
@@ -894,6 +947,8 @@ Event
 Policy
    ↓
 Trust Evaluation
+
+Policy may also define freshness, ordering, version, reconciliation, and verification requirements.
 
 ⸻
 
@@ -936,6 +991,8 @@ development
 
 A staging Event must never satisfy a production execution requirement.
 
+Environment is part of Event scope.
+
 ⸻
 
 48. Event Security Classification
@@ -951,11 +1008,11 @@ RESTRICTED
 
 The classification controls:
 
-access
-retention
-logging
-redaction
-propagation
+* access
+* retention
+* logging
+* redaction
+* propagation
 
 ⸻
 
@@ -989,10 +1046,11 @@ Event payloads may contain sensitive enterprise information.
 
 The Contract should define:
 
-who may consume
-what fields may be exposed
-how long data may persist
-whether payloads may be logged
+* who may consume
+* what fields may be exposed
+* how long data may persist
+* whether payloads may be logged
+* which downstream systems may receive the Event
 
 Event availability does not imply unrestricted access.
 
@@ -1012,6 +1070,7 @@ Event {
     source
     authority
     subject
+    scope
     occurred_at
     published_at
     received_at
@@ -1022,7 +1081,7 @@ Event {
 
 This allows Noema to answer:
 
-“Where did this Event come from, what did it claim, and when did it occur?”
+“Where did this Event come from, what did it claim, under what authority, and when did it occur?”
 
 ⸻
 
@@ -1036,7 +1095,7 @@ Business State Change
       ↓
 Event
       ↓
-Event Bus
+Event Transport
       ↓
 Noema
       ↓
@@ -1045,6 +1104,8 @@ Evidence
 Trust
 
 Noema should preserve the lineage where consequential decisions depend upon it.
+
+Where Noema itself caused the originating enterprise Action, the lineage should connect the Event back to the relevant execution attempt.
 
 ⸻
 
@@ -1061,11 +1122,11 @@ status = SUSPENDED
 
 Noema should use:
 
-event ordering
-effective timestamps
-source authority
-resource version
-policy
+* event ordering
+* effective timestamps
+* source authority
+* resource version
+* Policy
 
 to determine whether the Events represent sequential state changes or an actual conflict.
 
@@ -1085,6 +1146,8 @@ Event B:
 account.version = 42
 
 If Event B arrives first, Noema can identify that Event A is older even without relying solely on arrival order.
+
+Version information may also reveal gaps requiring reconciliation.
 
 ⸻
 
@@ -1106,6 +1169,8 @@ The Event may be valid while a secondary read model remains stale.
 
 Noema must understand the consistency model before using projection data to verify the Event.
 
+A stale projection must not automatically invalidate authoritative Event evidence.
+
 ⸻
 
 56. Event and Reconciliation
@@ -1121,7 +1186,9 @@ transaction.completed
 Canonical System:
 transaction.status = COMPLETED
 
-Together these can establish the final Outcome.
+Together, these may establish the final Outcome.
+
+If the Event and current enterprise state disagree, Noema must preserve the conflict or perform deterministic reconciliation according to authority, temporal semantics, versions, and Policy.
 
 ⸻
 
@@ -1144,7 +1211,9 @@ Enterprise Event
       ↓
 Event Contract
       ↓
-Evidence / Outcome
+Evidence / Verification / Outcome
+
+An Event Contract does not grant permission to execute an Action.
 
 ⸻
 
@@ -1188,21 +1257,23 @@ Transport mechanics must not redefine Event semantics.
 
 For consequential Events, audit records should preserve:
 
-event_id
-event_type
-version
-producer
-source
-authority
-subject
-timestamps
-correlation_id
-causation_id
-payload reference
-validation result
-consuming execution
+* event_id
+* event_type
+* version
+* producer
+* source
+* authority
+* subject
+* scope
+* timestamps
+* correlation_id
+* causation_id
+* payload reference
+* validation result
+* consuming execution
+* resulting Context or Evidence references where applicable
 
-This enables historical reconstruction.
+This enables historical reconstruction and causal audit.
 
 ⸻
 
@@ -1218,7 +1289,9 @@ Noema restarts.
 Event:
 operation.completed
 
-Noema can reconstruct the execution transition if the Event Contract guarantees sufficient identity and correlation.
+Noema can reconstruct the execution transition if the Event Contract guarantees sufficient identity, provenance, ordering, and correlation.
+
+Where the Event is insufficient to establish the final state, Noema must reconcile against the appropriate enterprise source rather than infer completion.
 
 ⸻
 
@@ -1235,6 +1308,8 @@ Already Processed?
     └── No  → Process
 
 The deduplication strategy should be explicit.
+
+Deduplication prevents duplicate processing of the same Event; it does not prove that an Event represents the only occurrence of the underlying business event.
 
 ⸻
 
@@ -1253,6 +1328,8 @@ Noema
 Processing Retry
 
 The Contract should define appropriate behavior for both where relevant.
+
+Retries must respect ordering, deduplication, delivery guarantees, and downstream side-effect semantics.
 
 ⸻
 
@@ -1276,6 +1353,8 @@ Dead Letter
 
 Dead-lettered Events should remain discoverable for operational recovery and audit where required.
 
+A dead-letter state must not silently become evidence that the underlying enterprise occurrence did not happen.
+
 ⸻
 
 65. Event Contract and Backpressure
@@ -1284,13 +1363,16 @@ High Event volume may exceed Noema’s processing capacity.
 
 The system should define:
 
-queue behavior
-consumer limits
-backpressure
-retry behavior
-ordering guarantees
+* queue behavior
+* consumer limits
+* backpressure
+* retry behavior
+* ordering guarantees
+* retention behavior
 
 Operational pressure must not cause Noema to silently drop consequential Events.
+
+Where Event loss is possible, the system must expose that uncertainty to downstream Trust and reconciliation.
 
 ⸻
 
@@ -1348,6 +1430,8 @@ The Event establishes that a conflict was reported.
 
 The resulting intervention remains a Noema execution decision.
 
+The Event does not itself determine that escalation is the correct response.
+
 ⸻
 
 69. Event Contract and Noema Events
@@ -1364,7 +1448,7 @@ execution.intervention.required
 
 These Events are canonical within Noema’s execution domain.
 
-They do not become enterprise Business State.
+They do not become enterprise Business State merely because enterprise systems consume them.
 
 ⸻
 
@@ -1380,6 +1464,8 @@ Noema Event
 Noema Execution State
 
 Neither should silently redefine the authority of the other.
+
+A Noema Event describing an execution result is evidence of Noema’s recorded execution state; it is not automatically evidence that the enterprise’s corresponding Business State changed successfully.
 
 ⸻
 
@@ -1425,6 +1511,8 @@ Event
    ├── indicates → State Change
    └── may_trigger → Action Evaluation
 
+An Event may indicate a state transition without becoming the authoritative representation of current State.
+
 ⸻
 
 73. Event Lifecycle
@@ -1451,6 +1539,8 @@ INVALID
 REJECTED
 DUPLICATE
 DEAD_LETTERED
+
+A consumed Event should retain sufficient processing status for audit and recovery.
 
 ⸻
 
@@ -1554,7 +1644,7 @@ An Event may provide Evidence without becoming Canonical Data.
 
 Invariant 20
 
-Event authority must be evaluated according to the relevant enterprise domain.
+Event authority must be evaluated according to the relevant enterprise domain and claim.
 
 Invariant 21
 
@@ -1566,7 +1656,7 @@ The model must not resolve Event conflicts through probabilistic preference when
 
 Invariant 23
 
-Events must respect tenant, organizational, legal, and environment boundaries.
+Events must respect tenant, organizational, legal, resource, and environment boundaries.
 
 Invariant 24
 
@@ -1586,7 +1676,7 @@ Events may trigger Trust evaluation but do not replace Trust.
 
 Invariant 28
 
-Asynchronous Action outcomes may be established through Events where the Event Contract provides sufficient guarantees.
+Asynchronous Action Outcomes may be established through Events where the Event Contract provides sufficient guarantees.
 
 Invariant 29
 
@@ -1596,32 +1686,64 @@ Invariant 30
 
 An Event Contract defines the semantics and guarantees of an Event; it does not transfer ownership of enterprise Business State to Noema.
 
+Invariant 31
+
+An Event that cannot establish the required fact with sufficient authority, freshness, or integrity must not be promoted into definitive Evidence.
+
+Invariant 32
+
+Event-derived Context must remain distinguishable from the underlying enterprise state it describes.
+
+Invariant 33
+
+Event absence must produce an explicit unknown condition when Event completeness is required but not guaranteed.
+
+Invariant 34
+
+An Event indicating execution completion must not be treated as verified Outcome unless the applicable verification requirements are satisfied.
+
+Invariant 35
+
+Event replay must preserve historical occurrence semantics and must not bypass Action Contracts, Trust, or execution controls.
+
+Invariant 36
+
+An Event cannot create authority, capability, permission, or Policy that does not already exist within the applicable enterprise or Noema boundary.
+
 ⸻
 
 76. Final Definition
 
-An Event Contract is the authoritative specification of an Event’s meaning, structure, provenance, scope, and operational guarantees.
+An Event Contract is the authoritative specification of an Event’s meaning, structure, provenance, scope, authority, and operational guarantees.
 
 It establishes:
 
 WHAT
 happened
+
 WHO
 reported it
+
 WHERE
 it originated
+
 WHICH
 Resource it concerns
+
 WHEN
 it occurred
+
 WHICH
 version and schema apply
+
 HOW
 it may be delivered and consumed
+
 WHAT
 authority it carries
+
 HOW
-it may contribute to Context and Evidence
+it may contribute to Context, Evidence, Verification, and Outcome determination
 
 The fundamental relationship is:
 
@@ -1639,6 +1761,7 @@ EVENT CONTRACT
        ├── SOURCE
        ├── AUTHORITY
        ├── SUBJECT
+       ├── SCOPE
        ├── TIMING
        ├── ORDERING
        ├── DELIVERY
@@ -1659,7 +1782,13 @@ EVENT CONTRACT
               │
               ▼
           EXECUTION
+              │
+              ▼
+       VERIFICATION / RECOVERY
+              │
+              ▼
+            OUTCOME
 
 And the architectural rule is:
 
-Noema may use Events as structured evidence of enterprise occurrences, but an Event must never be treated as current truth merely because it was received. Its authority, provenance, temporal semantics, and Contract guarantees determine what Noema is permitted to conclude from it.
+Noema may use Events as structured evidence of enterprise occurrences, but an Event must never be treated as current truth merely because it was received. Its authority, provenance, temporal semantics, integrity, scope, and Contract guarantees determine what Noema is permitted to conclude from it.

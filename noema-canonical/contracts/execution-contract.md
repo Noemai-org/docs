@@ -9,11 +9,11 @@ Canonical Path: contracts/execution-contract.md
 
 1. Definition
 
-An Execution Contract is the explicit contract governing how a Noema Action is executed, observed, transitioned, recovered, and ultimately resolved.
+An Execution Contract is the explicit contract governing how an authorized Noema Action is executed, observed, transitioned, verified, recovered, and ultimately resolved.
 
 An Execution Contract answers:
 
-“Under what deterministic rules does Noema execute an Action, track its progress, handle uncertainty or failure, and establish the final Outcome?”
+“Under what deterministic rules does Noema execute an Action, track its progress, handle uncertainty or failure, and establish the resulting Outcome?”
 
 The Execution Contract sits between the Action Contract and the enterprise execution boundary.
 
@@ -36,7 +36,7 @@ Enterprise State
 
 The Execution Contract governs the execution journey.
 
-It does not define the enterprise Business State itself.
+It does not define enterprise Business State itself.
 
 ⸻
 
@@ -46,23 +46,29 @@ The purpose of the Execution Contract is to establish deterministic execution se
 
 It defines:
 
-execution identity
-action binding
-execution state
-state transitions
-attempts
-timeouts
-retries
-idempotency
-preconditions
-postconditions
-events
-outcomes
-failure handling
-recovery
-compensation
-intervention
-auditability
+* execution identity
+* Action binding
+* authorization binding
+* execution state
+* state transitions
+* attempts
+* preconditions
+* timeouts
+* retries
+* idempotency
+* verification
+* postconditions
+* Events
+* Evidence
+* Outcomes
+* failure handling
+* recovery
+* reconciliation
+* compensation
+* intervention
+* deadlines
+* concurrency
+* auditability
 
 This prevents execution behavior from being implicitly determined by model output, application-specific conventions, or transport behavior.
 
@@ -70,7 +76,7 @@ This prevents execution behavior from being implicitly determined by model outpu
 
 3. Core Principle
 
-An Execution is a controlled state transition process.
+An Execution is a controlled state-transition process.
 
 It is not simply:
 
@@ -89,6 +95,8 @@ Attempt
 Enterprise Interaction
    ↓
 Observation
+   ↓
+Verification / Reconciliation
    ↓
 Postconditions
    ↓
@@ -109,14 +117,17 @@ exec_01J...
 
 The identifier allows Noema to correlate:
 
-Intent
-Action
-Execution
-Attempts
-Events
-Evidence
-Outcome
-Interventions
+* Intent
+* Intent version
+* Action
+* Action Contract version
+* Execution
+* Attempts
+* Events
+* Evidence
+* State Reconciliation
+* Outcome
+* Interventions
 
 An Execution ID must remain stable throughout the Execution lifecycle.
 
@@ -142,27 +153,61 @@ Execution Contract
       ↓
 Execution Semantics
 
+The Execution Contract must not redefine the semantic meaning, allowed effects, or required inputs of the Action.
+
 ⸻
 
 6. Execution and Intent
 
-An Execution originates from an Intent resolution.
+An Execution originates from an admitted and resolved Intent where the execution path is derived from Intent.
 
-User Intent
-     ↓
-Resolved Intent
-     ↓
-Trust Decision
-     ↓
+Conceptually:
+
+Source of Intent
+      ↓
+Intent Object
+      ↓
+Resolution
+      ↓
+Trust
+      ↓
 Action
-     ↓
+      ↓
 Execution
 
-Execution must preserve the relationship to the originating Intent where required for auditability and reconstruction.
+The Execution must preserve the relationship to the originating Intent and its immutable version where required for auditability, reconstruction, and causal traceability.
+
+If the Intent changes materially, the resulting execution semantics must not silently mutate. A new Intent version or new execution path must be created according to the relevant Contract rules.
 
 ⸻
 
-7. Execution Authorization
+7. Execution Admission
+
+Execution is not admitted merely because a model proposed an Action.
+
+Before consequential execution, Noema must establish at least:
+
+Intent
+   ↓
+Hard Schema Validation
+   ↓
+Context
+   ↓
+State Reconciliation
+   ↓
+Trust
+   ↓
+Action Contract
+   ↓
+Execution Contract
+
+The model may assist with interpretation and proposal.
+
+It must not directly create execution authority, modify an Action Contract, invent a Capability, or bypass validation and Trust.
+
+⸻
+
+8. Execution Authorization
 
 An Execution must not begin merely because an Action was identified.
 
@@ -182,9 +227,11 @@ Trust
 
 Execution therefore represents an authorized attempt to perform an Action, not merely a model-generated proposal.
 
+Authorization must be bound to the resolved actor, Action, target Resource, applicable scope, relevant Policy, and execution conditions.
+
 ⸻
 
-8. Execution State
+9. Execution State
 
 Execution State describes where an Execution currently stands.
 
@@ -197,6 +244,8 @@ READY
 RUNNING
 WAITING
 VERIFYING
+RECONCILING
+RETRYING
 SUCCEEDED
 FAILED
 UNKNOWN
@@ -205,11 +254,13 @@ ESCALATED
 
 Not every Action requires every state.
 
-The permitted states and transitions should be defined by the Execution Contract.
+The permitted states and transitions must be defined by the Execution Contract.
+
+Execution State is Noema execution-domain state. It is not enterprise Business State.
 
 ⸻
 
-9. State Machine
+10. State Machine
 
 Conceptually:
 
@@ -238,11 +289,28 @@ EVENT RECEIVED
    ↓
 VERIFYING
 
+Uncertain execution may introduce:
+
+UNKNOWN
+   ↓
+RECONCILING
+   ├── SUCCEEDED
+   ├── FAILED
+   └── ESCALATED
+
+Retry may introduce:
+
+FAILED
+   ↓
+RETRYING
+   ↓
+RUNNING
+
 The state machine must not permit arbitrary transitions.
 
 ⸻
 
-10. Deterministic State Transitions
+11. Deterministic State Transitions
 
 Execution State transitions must be deterministic.
 
@@ -250,7 +318,7 @@ For example:
 
 RUNNING → SUCCEEDED
 
-should occur only when the Contract’s success conditions have been satisfied.
+should occur only when the Contract’s success and verification conditions have been satisfied.
 
 The model must not decide:
 
@@ -260,30 +328,36 @@ Instead:
 
 Observation
     ↓
+Evidence / State Reconciliation
+    ↓
 Contract Rules
     ↓
 State Transition
 
+Consequential state transitions must be derived from defined semantics, not model confidence.
+
 ⸻
 
-11. Terminal States
+12. Terminal and Non-Terminal States
 
-Terminal states represent the end of an Execution.
+Terminal states represent an Execution for which no further execution transition is expected under the current lifecycle.
 
 Typical terminal states include:
 
 SUCCEEDED
 FAILED
 CANCELLED
-REJECTED
+ESCALATED
 
-UNKNOWN should generally not be treated as an ordinary successful or failed terminal state.
+UNKNOWN requires special treatment.
 
-It represents unresolved execution truth.
+UNKNOWN means the truth of the execution has not been established. It may persist while reconciliation is possible, or terminate through an explicit escalation or other Contract-defined resolution.
+
+UNKNOWN must never be silently interpreted as success or failure.
 
 ⸻
 
-12. UNKNOWN State
+13. UNKNOWN State
 
 UNKNOWN is a first-class execution state.
 
@@ -305,7 +379,7 @@ or:
 
 UNKNOWN → SUCCEEDED
 
-without sufficient Evidence.
+without sufficient Evidence or authoritative State Reconciliation.
 
 Instead:
 
@@ -316,9 +390,11 @@ Reconcile
    ├── FAILED
    └── ESCALATE
 
+UNKNOWN preserves epistemic uncertainty rather than manufacturing certainty.
+
 ⸻
 
-13. Execution Attempt
+14. Execution Attempt
 
 An Execution may contain one or more Attempts.
 
@@ -327,13 +403,13 @@ Execution
    ├── Attempt 2
    └── Attempt 3
 
-An Attempt represents a concrete interaction with an enterprise capability.
+An Attempt represents a concrete effort to invoke an enterprise Capability or perform a defined execution step.
 
 Each Attempt should have its own identity and timestamps.
 
 ⸻
 
-14. Attempt Identity
+15. Attempt Identity
 
 Conceptually:
 
@@ -342,6 +418,7 @@ execution_id
 attempt_number
 started_at
 completed_at
+request_identity
 result
 failure
 
@@ -355,33 +432,59 @@ An Attempt describes one concrete effort.
 
 ⸻
 
-15. Preconditions
+16. Preconditions
 
-Execution must validate required Preconditions before invoking the enterprise capability.
+Execution must validate required Preconditions before invoking the enterprise Capability.
 
 Execution
    ↓
 Preconditions
    ├── satisfied → continue
-   └── unsatisfied → stop
+   └── unsatisfied → stop / re-evaluate
 
-Preconditions should be evaluated against appropriate authoritative enterprise information.
+Preconditions should be evaluated against appropriate authoritative enterprise information and the relevant Context.
 
 Examples:
 
-account exists
-customer identity resolved
-resource is eligible
-required permission exists
-required state is current
+* account exists
+* customer identity is resolved
+* target Resource is resolved
+* Resource is eligible
+* required technical authorization exists
+* required Policy conditions are satisfied
+* required enterprise state is current
 
 ⸻
 
-16. Preconditions and Timing
+17. Preconditions and Resolved Target
+
+Consequential execution must have a resolved execution target.
+
+A target such as:
+
+“Tunde’s account”
+
+is not sufficient where multiple Resources could match.
+
+Before execution:
+
+Actor
+   ↓
+Action
+   ↓
+Target Resource
+   ↓
+Scope
+
+must be resolved to the degree required by the Action Contract.
+
+Material target ambiguity must prevent execution and produce the appropriate CLARIFY, ESCALATE, or REJECT path rather than allowing execution against the most likely Resource.
+
+⸻
+
+18. Preconditions and Timing
 
 A Precondition may be true when planning begins and false when execution begins.
-
-Therefore:
 
 Planning Time
      ↓
@@ -390,11 +493,13 @@ Execution Time
      ↓
 Precondition = FALSE
 
-Consequential Preconditions should be evaluated at the appropriate point defined by the Execution Contract.
+Consequential Preconditions should therefore be evaluated at the appropriate point defined by the Execution Contract.
+
+Planning-time validation does not automatically satisfy execution-time validation.
 
 ⸻
 
-17. Preconditions and Freshness
+19. Preconditions and Freshness
 
 Preconditions may require freshness guarantees.
 
@@ -406,54 +511,65 @@ A stale value may be insufficient for a consequential Action.
 
 The Execution Contract should identify when fresh authoritative data is required.
 
+Freshness is claim- and action-specific. There is no universal freshness threshold applicable to every execution.
+
 ⸻
 
-18. Execution Start
+20. Execution Start
 
-Execution begins only after:
+Execution begins only after the required admission conditions are satisfied:
 
 Intent resolved
+      ↓
+Hard schema validation passed
+      ↓
+Actor / Action / Target resolved
+      ↓
+Required Context available
+      ↓
+State reconciled where required
+      ↓
 Trust decision permits execution
-Action validated
-required Context available
+      ↓
+Action Contract validated
+      ↓
 Preconditions satisfied
-
-Conceptually:
-
-Intent
- ↓
-Trust
- ↓
-Action Contract
- ↓
-Preconditions
- ↓
+      ↓
 Execution
+
+Execution must not skip an earlier gate merely because a later component believes execution is safe.
 
 ⸻
 
-19. Invocation
+21. Invocation
 
-An Execution invokes an enterprise capability through an Integration boundary.
+An Execution invokes an enterprise Capability through an Integration boundary.
 
 Noema
   ↓
-Integration
+Action Contract
   ↓
 Enterprise Capability
+  ↓
+Integration / Adapter
+  ↓
+Enterprise System
 
 The Execution Contract should not depend on a specific transport unless transport behavior affects execution semantics.
 
+Adapters translate canonical execution semantics into provider-specific protocols. They do not decide whether an Action should execute.
+
 ⸻
 
-20. Request Identity
+22. Request Identity
 
 Consequential enterprise requests should carry sufficient identity to support:
 
-idempotency
-correlation
-audit
-reconciliation
+* idempotency
+* correlation
+* audit
+* reconciliation
+* duplicate detection
 
 Example:
 
@@ -461,11 +577,11 @@ execution_id
 attempt_id
 idempotency_key
 
-The exact fields depend on the enterprise Integration Contract.
+The exact fields depend on the relevant Integration and enterprise guarantees.
 
 ⸻
 
-21. Idempotency
+23. Idempotency
 
 Idempotency is critical when retrying consequential operations.
 
@@ -481,11 +597,13 @@ Timeout
 
 Noema cannot safely assume the enterprise system did not process the request.
 
-A retry must therefore use an appropriate idempotency mechanism where supported.
+A retry must therefore use an appropriate idempotency mechanism where supported, or perform reconciliation before repeating an operation whose duplicate effect would be unsafe.
+
+Idempotency semantics belong to the Action, Capability, Integration, and Execution Contract as applicable. They must not be assumed universally.
 
 ⸻
 
-22. Timeout
+24. Timeout
 
 A timeout means Noema did not receive the expected response within the defined period.
 
@@ -511,47 +629,57 @@ rather than:
 
 FAILED
 
+Timeout classification must preserve the possibility that the enterprise operation completed.
+
 ⸻
 
-23. Retry
+25. Retry
 
 Retries are governed by explicit Policy and Contract rules.
 
 A retry may depend on:
 
-failure class
-Action semantics
-idempotency
-attempt count
-backoff
-time budget
-enterprise guarantees
+* failure class
+* Action semantics
+* idempotency
+* attempt count
+* backoff
+* time budget
+* enterprise guarantees
+* current enterprise state
+* verification results
 
 Noema must not blindly retry every failure.
 
 ⸻
 
-24. Retry Safety
+26. Retry Safety
 
 A retry is safe only when the Contract establishes that repeating the operation cannot create an unintended duplicate effect.
 
 For example:
 
-GET account
+retrieve_account_balance
 
 may generally be safely retried.
 
 A consequential mutation may require:
 
 idempotency key
++
 enterprise deduplication
+
+or:
+
 reconciliation
++
+verification
 
 before retry.
 
 ⸻
 
-25. Retryable Failures
+27. Retryable Failures
 
 Failures may be classified as:
 
@@ -562,11 +690,13 @@ POLICY_BLOCKED
 VALIDATION_FAILURE
 AUTHORIZATION_FAILURE
 
-Only explicitly retryable failures should automatically trigger another Attempt.
+Only explicitly retryable conditions should automatically trigger another Attempt.
+
+UNKNOWN should generally require verification or reconciliation before another consequential attempt.
 
 ⸻
 
-26. Backoff
+28. Backoff
 
 Retries should follow defined timing semantics.
 
@@ -584,28 +714,31 @@ Attempt 3
 
 Backoff prevents Noema from amplifying enterprise instability.
 
+Backoff does not by itself establish retry safety.
+
 ⸻
 
-27. Retry Budget
+29. Retry Budget
 
 Execution should have bounded retry behavior.
 
 A Retry Budget may define:
 
-maximum attempts
-maximum elapsed time
-maximum retry delay
+* maximum attempts
+* maximum elapsed time
+* maximum retry delay
+* maximum reconciliation window
 
 Example:
 
 max_attempts = 3
 max_execution_time = 30s
 
-Once the budget is exhausted, the Execution transitions according to Policy.
+Once the budget is exhausted, the Execution transitions according to deterministic Policy.
 
 ⸻
 
-28. Failure Classification
+30. Failure Classification
 
 Failures should be classified rather than treated as a single generic error.
 
@@ -614,28 +747,28 @@ Examples:
 NETWORK_FAILURE
 TIMEOUT
 VALIDATION_FAILURE
+AUTHENTICATION_FAILURE
 AUTHORIZATION_FAILURE
 NOT_FOUND
 CONFLICT
 RATE_LIMITED
 DEPENDENCY_FAILURE
+PROVIDER_REJECTION
 UNKNOWN_OUTCOME
 
 Classification determines recovery behavior.
 
+A transport failure classification must not automatically imply a business failure classification.
+
 ⸻
 
-29. Failure vs Unknown
+31. Failure vs Unknown
 
 These states must remain distinct.
 
-FAILED
+FAILED means sufficient Evidence establishes that the Action did not succeed.
 
-means sufficient Evidence establishes that the Action did not succeed.
-
-UNKNOWN
-
-means Noema cannot yet establish whether the Action succeeded.
+UNKNOWN means Noema cannot yet establish whether the Action succeeded.
 
 Therefore:
 
@@ -643,11 +776,13 @@ No Response
       ≠
 Confirmed Failure
 
+This distinction is required for safe retry and recovery.
+
 ⸻
 
-30. Postconditions
+32. Postconditions
 
-Postconditions establish whether the intended outcome actually occurred.
+Postconditions establish whether the expected effect or result of an Action has actually been established.
 
 Action
    ↓
@@ -662,11 +797,11 @@ complaint exists
 Observed:
 complaint_id = C-123
 
-The Execution may transition to SUCCEEDED.
+The Execution may transition to SUCCEEDED when the required verification conditions are satisfied.
 
 ⸻
 
-31. Postcondition Verification
+33. Postcondition Verification
 
 A successful transport response is not necessarily a successful business outcome.
 
@@ -674,40 +809,64 @@ HTTP 200
    ≠
 Business Success
 
-Where required, Noema must verify the relevant enterprise state or Event.
+Where required, Noema must verify the relevant enterprise State, Event, or other authoritative Evidence.
+
+Verification requirements are defined by the Action and Execution Contracts.
 
 ⸻
 
-32. Execution Outcome
+34. Outcome
 
-Outcome describes the final result of an Execution.
+Outcome describes what has been established about the Execution.
 
-Examples:
+Examples may include:
 
 SUCCEEDED
 FAILED
-CANCELLED
 UNKNOWN
+CANCELLED
+ESCALATED
 
-The Outcome must be derived from defined Evidence and Contract rules.
+Outcome is not simply the latest Execution State.
+
+The Outcome must be derived from defined Evidence, verification rules, authoritative enterprise State where applicable, and Contract semantics.
 
 It must not be generated from model interpretation alone.
 
 ⸻
 
-33. Outcome vs Response
+35. Outcome vs Enterprise State
 
-A Response is a transport-level observation.
+An Execution Outcome and enterprise Business State represent different domains.
+
+Noema Execution Outcome
+          ≠
+Enterprise Business State
+
+For example:
+
+Outcome:
+complaint_created
+Enterprise State:
+complaint.status = OPEN
+
+Noema may establish an execution Outcome based on evidence that an enterprise state changed. It does not thereby become the owner of that enterprise state.
+
+⸻
+
+36. Outcome vs Response
+
+A Response is a transport- or provider-level observation.
 
 An Outcome is an execution-level conclusion.
 
 Response
    ↓
-Interpretation
+Normalization
    ↓
 Evidence
    ↓
-Postcondition
+Verification / Reconciliation
    ↓
 Outcome
 
@@ -715,9 +874,11 @@ Therefore:
 
 Response ≠ Outcome
 
+The model must not collapse these layers.
+
 ⸻
 
-34. Events
+37. Events
 
 An Execution may consume or produce Events.
 
@@ -729,15 +890,19 @@ Execution
    ↓
 Enterprise Event
    ↓
+Evidence
+   ↓
 Verification
 
 The Event Contract governs Event semantics.
 
-The Execution Contract governs how that Event affects Execution State.
+The Execution Contract governs how a valid Event may affect Execution State.
+
+An Event does not automatically establish current enterprise State or authorize another Action.
 
 ⸻
 
-35. Asynchronous Execution
+38. Asynchronous Execution
 
 An Execution may remain active while waiting for an Event.
 
@@ -751,28 +916,34 @@ VERIFYING
    ↓
 SUCCEEDED
 
-The Event must contain sufficient identity and correlation information to safely associate it with the Execution.
+The Event must contain sufficient identity, correlation, scope, timing, and semantic guarantees to safely associate it with the Execution.
+
+If the Event is insufficient to establish the required fact, Noema must reconcile against an authoritative source.
 
 ⸻
 
-36. Execution Context
+39. Execution Context
 
 Execution may require Context containing:
 
-principal
-tenant
-resource
-enterprise identifiers
-relevant canonical data
-permissions
-policy
-previous observations
+* principal
+* tenant
+* organization
+* Resource identifiers
+* enterprise identifiers
+* relevant canonical data
+* permissions
+* Policy
+* previous observations
+* deadlines
+* environment
+* execution-specific constraints
 
-Only the Context necessary for the Action should be available to the Execution.
+Only Context permitted and required by the relevant Contracts should be available to the Execution.
 
 ⸻
 
-37. Execution Context Is Not Business State
+40. Execution Context Is Not Business State
 
 Noema may maintain execution state such as:
 
@@ -791,27 +962,41 @@ The enterprise remains authoritative for its Business State.
 
 ⸻
 
-38. Enterprise State
+41. Enterprise State and State Reconciliation
 
-Execution may cause changes to enterprise Business State.
+State Reconciliation is a first-class execution mechanism.
 
-Noema Execution
-      ↓
-Enterprise Capability
-      ↓
-Enterprise Business State
+Execution may require Noema to reconcile observations from:
 
-Noema records the Execution journey.
+* enterprise Systems of Record
+* Events
+* provider responses
+* multiple enterprise systems
+* prior execution attempts
 
-It does not silently become the owner of the resulting Business State.
+Conceptually:
+
+Observations
+     ↓
+State Reconciliation
+     ↓
+Current Enterprise State
+     ↓
+Verification
+     ↓
+Execution Decision / Outcome
+
+Reconciliation does not create a shadow System of Record.
+
+Its purpose is to establish the best supported current state required for safe execution and verification.
 
 ⸻
 
-39. Execution and System of Record
+42. Execution and System of Record
 
-The System of Record remains authoritative for enterprise Business State.
+The enterprise System of Record remains authoritative for enterprise Business State.
 
-Noema may be authoritative for:
+Noema may be authoritative for its execution-domain state, including:
 
 execution.status
 execution.outcome
@@ -829,7 +1014,7 @@ This boundary must remain explicit.
 
 ⸻
 
-40. Execution and Trust
+43. Execution and Trust
 
 Trust determines whether execution is permitted.
 
@@ -841,39 +1026,73 @@ EXECUTE
   ↓
 Execution
 
-Execution must not reinterpret a rejected Trust decision as authorization.
+Execution must not reinterpret a rejected, clarification-required, or escalated Trust decision as authorization.
 
 ⸻
 
-41. Trust During Execution
+44. Trust During Execution
 
-Trust may need to be reevaluated if execution conditions materially change.
+Trust conditions may need to be reevaluated if execution conditions materially change.
 
 Examples:
 
-permissions changed
-resource state changed
-risk increased
-required Context became stale
-Policy changed
+* permissions changed
+* Resource state changed
+* risk increased
+* required Context became stale
+* Policy version changed
+* target resolution changed
+* execution deadline changed
 
 The Execution Contract should define when re-evaluation is required.
 
+A Trust decision must not be treated as permanently valid if the conditions on which it depended have materially changed.
+
 ⸻
 
-42. Intervention
+45. Technical, Policy, and Business Authorization
 
-Some Executions require human intervention.
+Execution must preserve the distinction between different forms of authorization.
+
+Technical authorization
+
+Whether Noema or the Integration has the technical credential or permission required to invoke an operation.
+
+Policy authorization
+
+Whether Noema’s applicable Policy permits the execution.
+
+Business authorization
+
+Whether the enterprise’s business rules and current authoritative state permit the requested operation.
+
+These are related but not interchangeable.
+
+Technical Authorization
+        +
+Policy Authorization
+        +
+Business Authorization
+        ↓
+Execution Eligibility
+
+Noema must not treat successful API authentication as proof that an Action is business-authorized.
+
+⸻
+
+46. Intervention
+
+Some Executions require intervention.
 
 Example:
 
 Execution
    ↓
-Ambiguous enterprise state
+Ambiguous or unresolved enterprise state
    ↓
 ESCALATED
    ↓
-Human decision
+Authorized intervention
    ↓
 Resume / Cancel / Reject
 
@@ -881,9 +1100,11 @@ Intervention must be an explicit state transition.
 
 It must not be represented as an implicit model decision.
 
+Where an intervention changes the Intent, target, authority, or execution conditions materially, the resulting change must be captured explicitly rather than silently mutating the existing execution semantics.
+
 ⸻
 
-43. Cancellation
+47. Cancellation
 
 An Execution may be cancellable.
 
@@ -897,9 +1118,11 @@ unknown
 
 A cancellation request does not necessarily mean the enterprise operation was successfully cancelled.
 
+If cancellation itself is an enterprise operation, it must pass through an authorized Capability and its own Action/Execution semantics.
+
 ⸻
 
-44. Compensation
+48. Compensation
 
 Compensation is different from cancellation.
 
@@ -913,13 +1136,15 @@ Completed
    ↓
 Compensation Action
 
-Compensation must use authorized enterprise capabilities.
+Compensation must use authorized enterprise Capabilities.
 
-Noema must not directly mutate enterprise state to compensate for an Action.
+Noema must not directly mutate enterprise Business State to compensate for an Action.
+
+Compensation must not be assumed to restore the exact prior state unless the enterprise semantics explicitly guarantee that property.
 
 ⸻
 
-45. Partial Execution
+49. Partial Execution
 
 Compound workflows may partially execute.
 
@@ -938,11 +1163,11 @@ into:
 
 success
 
-without explicit semantics.
+without explicit aggregation semantics.
 
 ⸻
 
-46. Compound Execution
+50. Compound Execution
 
 A compound Intent may create multiple Executions.
 
@@ -955,17 +1180,18 @@ Intent
 
 Each Execution retains its own:
 
-identity
-state
-attempts
-Evidence
-Outcome
+* identity
+* Intent version relationship
+* state
+* attempts
+* Evidence
+* Outcome
 
-The parent workflow may aggregate these without destroying their individual semantics.
+The parent Workflow or Task may aggregate these without destroying their individual semantics.
 
 ⸻
 
-47. Dependency Between Executions
+51. Dependency Between Executions
 
 Execution B may depend on Execution A.
 
@@ -979,11 +1205,13 @@ Execution B
 
 Execution B must not start unless its dependency conditions are satisfied.
 
+An Outcome may establish only the conditions explicitly supported by its Evidence. It must not be treated as broader proof than its Contract defines.
+
 ⸻
 
-48. Execution Ordering
+52. Execution Ordering
 
-Execution ordering should be explicit where business semantics require it.
+Execution ordering should be explicit where semantics require it.
 
 A → B → C
 
@@ -997,27 +1225,31 @@ The Execution Contract should define dependency and ordering constraints.
 
 ⸻
 
-49. Execution Deadlines
+53. Execution Deadlines and SLA Constraints
 
-An Execution may have a deadline.
+An Execution may have a deadline or service-level constraint.
 
 Example:
 
 deadline:
 2026-09-01T20:00:00
 
-The deadline may govern:
+Timing constraints may govern:
 
-retry
-waiting
-reconciliation
-intervention
+* execution start
+* retries
+* waiting
+* reconciliation
+* intervention
+* completion
 
-After the deadline, the Execution should transition according to deterministic Policy.
+After a deadline is reached, the Execution transitions according to deterministic Policy.
+
+A deadline does not by itself establish that an enterprise operation failed.
 
 ⸻
 
-50. Execution Lease
+54. Execution Lease
 
 Long-running Executions may require a lease or ownership mechanism.
 
@@ -1033,24 +1265,29 @@ Worker
 
 Lease expiry must produce deterministic recovery behavior.
 
+A lease is an execution coordination mechanism. It does not change the semantic authority of the Execution or enterprise state.
+
 ⸻
 
-51. Concurrency
+55. Concurrency
 
-The same Execution must not be processed concurrently in a way that creates conflicting state transitions.
+The same Execution must not be processed concurrently in a way that creates conflicting state transitions or duplicate consequential effects.
 
 Noema should enforce appropriate concurrency control.
 
 Examples:
 
-optimistic locking
-execution version
-state transition guards
-leases
+* optimistic locking
+* execution version
+* state transition guards
+* leases
+* idempotency
+
+Concurrency control must apply to both execution-state mutation and consequential enterprise invocation where necessary.
 
 ⸻
 
-52. Execution Version
+56. Execution Version
 
 An Execution may carry a version.
 
@@ -1064,9 +1301,18 @@ current_version = expected_version
 
 This prevents stale workers from overwriting newer Execution State.
 
+Execution versioning is distinct from:
+
+* Intent version
+* Action Contract version
+* Execution Contract version
+* Enterprise State version
+
+The relevant versions must be retained when necessary to reconstruct execution semantics.
+
 ⸻
 
-53. Recovery
+57. Recovery
 
 If Noema crashes during execution:
 
@@ -1078,17 +1324,20 @@ the system must reconstruct the Execution from durable state.
 
 Recovery should determine:
 
-last known state
-active attempt
-request identity
-known Events
-Evidence
-retry eligibility
-reconciliation requirement
+* last known state
+* active Attempt
+* request identity
+* known Events
+* available Evidence
+* relevant Context
+* applicable Contract versions
+* Trust decision
+* retry eligibility
+* reconciliation requirement
 
 ⸻
 
-54. Recovery Must Not Guess
+58. Recovery Must Not Guess
 
 After a crash, Noema may not know whether the enterprise operation completed.
 
@@ -1108,9 +1357,9 @@ or:
 
 SUCCEEDED
 
-without Evidence.
+without sufficient Evidence.
 
-It should enter:
+It should preserve or enter:
 
 UNKNOWN
 
@@ -1118,118 +1367,180 @@ and reconcile where necessary.
 
 ⸻
 
-55. Reconciliation
+59. Reconciliation
 
-Reconciliation determines the actual enterprise outcome after an uncertain execution.
+Reconciliation determines the actual enterprise condition relevant to an uncertain execution.
 
 UNKNOWN
    ↓
-Query System of Record
+Query authoritative System of Record
    ↓
 Observe Canonical State
    ↓
 Verify Postcondition
    ↓
-Resolve Outcome
+Resolve Execution State / Outcome
 
-Reconciliation is therefore a first-class execution mechanism.
+Reconciliation may require multiple observations when the enterprise state is distributed across systems.
+
+Conflicting observations must remain explicit rather than being resolved through majority vote or model preference.
 
 ⸻
 
-56. Execution Evidence
+60. Execution Evidence
 
 An Execution should retain Evidence relevant to its state transitions.
 
 Examples:
 
-API response
-Event
-canonical resource state
-permission result
-precondition evaluation
-postcondition evaluation
-human intervention
+* API response
+* Event
+* canonical Resource state
+* permission result
+* Precondition evaluation
+* Postcondition evaluation
+* State Reconciliation result
+* human intervention
+* provider acknowledgement
 
-Each consequential transition should be explainable through its Evidence.
+Each consequential transition should be explainable through its Evidence and the Contract rules that interpreted that Evidence.
+
+Evidence is not identical to enterprise State or Outcome.
 
 ⸻
 
-57. Execution Provenance
+61. Fact Status
+
+Execution may depend on facts whose status must be explicit.
+
+A fact may be:
+
+VERIFIED
+UNVERIFIED
+STALE
+CONFLICTED
+UNKNOWN
+
+Fact Status is distinct from:
+
+Evidence
+Context
+Enterprise State
+Execution State
+Outcome
+
+For example:
+
+Evidence:
+provider response received
+Fact:
+transaction completed
+Fact Status:
+UNVERIFIED
+
+until authoritative State Reconciliation or another sufficient verification mechanism establishes the fact.
+
+Execution must not treat Evidence presence alone as proof that every derived fact is verified.
+
+⸻
+
+62. Execution Provenance
 
 Execution provenance should allow Noema to reconstruct:
 
-who initiated the Intent
+what Source of Intent initiated the Intent
+what Intent version was admitted
 what Action was selected
+which Action Contract version applied
 which Trust decision authorized it
+which actor and target were resolved
 which Context was used
+which enterprise state was reconciled
 which Attempt occurred
-which enterprise capability was invoked
+which Capability was invoked
 which Events were received
 which Evidence was observed
+which verification rules were applied
 why the Outcome was established
+
+This forms part of Noema’s causal audit trail.
 
 ⸻
 
-58. Auditability
+63. Auditability
 
 For consequential Executions, Noema should preserve:
 
-execution_id
-intent_id
-action_id
-trust_decision
-preconditions
-attempts
-requests
-responses
-events
-evidence
-state_transitions
-failures
-retries
-interventions
-postconditions
-outcome
-timestamps
+* execution_id
+* Intent ID and version
+* Action ID and Contract version
+* Execution Contract version
+* Trust decision
+* resolved actor and target
+* relevant Context reference
+* Preconditions
+* Attempts
+* request identities
+* responses
+* Events
+* Evidence
+* Fact Status where relevant
+* State Reconciliation
+* state transitions
+* failures
+* retries
+* interventions
+* postconditions
+* Outcome
+* timestamps
 
-This provides an execution-level audit trail.
+Auditability means reconstructing the causal basis of consequential execution.
+
+It does not require exposing private model chain-of-thought.
 
 ⸻
 
-59. Execution Observability
+64. Execution Observability
 
 Operational telemetry may include:
 
-latency
-attempt count
-failure rate
-retry count
-queue delay
-verification latency
-unknown rate
+* latency
+* attempt count
+* failure rate
+* retry count
+* queue delay
+* verification latency
+* reconciliation latency
+* unknown rate
+* escalation rate
 
 Observability data should remain distinct from authoritative execution state.
 
 Metrics ≠ Execution State
 
+Telemetry may describe execution behavior without establishing business truth.
+
 ⸻
 
-60. Execution Logging
+65. Execution Logging
 
 Logs should support operational diagnosis without unnecessarily duplicating sensitive enterprise data.
 
 The Contract should respect:
 
-data minimization
-privacy
-security classification
-retention policy
+* data minimization
+* privacy
+* security classification
+* retention Policy
+* tenant isolation
 
 Sensitive payloads should not automatically be written into logs.
 
+Logs are not a substitute for structured causal audit records.
+
 ⸻
 
-61. Execution and Data Boundaries
+66. Execution and Data Boundaries
 
 Execution should access only the data required to perform and verify the Action.
 
@@ -1245,13 +1556,39 @@ account.balance
 
 It should not automatically access unrelated enterprise data.
 
+Data access must be bounded by purpose, scope, Capability, Context Contract, Policy, and applicable enterprise authorization.
+
 ⸻
 
-62. Execution and Permissions
+67. Credential Isolation
 
-Permission checks should occur against the appropriate enterprise authority.
+The model must not receive credentials required to execute enterprise Actions.
 
-A user being authenticated does not imply:
+The execution boundary should be:
+
+Model
+   ↓
+Intent / Proposal
+   ↓
+Noema Trust + Contracts
+   ↓
+Execution Controller
+   ↓
+Credentialed Integration
+   ↓
+Enterprise System
+
+Credentials, connection secrets, signing material, and privileged provider access remain outside model control.
+
+A model-generated request must never become an executable enterprise operation merely because it contains plausible parameters.
+
+⸻
+
+68. Execution and Permissions
+
+Permission checks should occur against the appropriate authority.
+
+A principal being authenticated does not imply:
 
 authorized_for_action
 
@@ -1259,14 +1596,17 @@ Execution must respect:
 
 principal
 tenant
-role
+organization
 resource
 operation
 policy
+environment
+
+Technical authorization, Policy authorization, and business authorization must not be conflated.
 
 ⸻
 
-63. Execution and Organizational Boundaries
+69. Execution and Organizational Boundaries
 
 An Execution must preserve organizational boundaries.
 
@@ -1284,23 +1624,27 @@ Account B
 
 even if identifiers or names appear similar.
 
+Resolved Resource identity and scope must therefore be part of consequential execution binding.
+
 ⸻
 
-64. Execution and Environment
+70. Execution and Environment
 
 Executions must be bound to an environment.
+
+Examples:
 
 production
 staging
 development
 
-A production Execution must never accidentally invoke a staging capability.
+A production Execution must never accidentally invoke a staging Capability.
 
 Environment must therefore be part of the execution boundary where relevant.
 
 ⸻
 
-65. Execution Contract Model
+71. Execution Contract Model
 
 Conceptually:
 
@@ -1314,10 +1658,13 @@ ExecutionContract {
     retry_policy
     idempotency_policy
     verification_policy
+    reconciliation_policy
     recovery_policy
     intervention_policy
     cancellation_policy
     compensation_policy
+    deadline_policy
+    concurrency_policy
     event_bindings
     audit_requirements
 }
@@ -1326,18 +1673,23 @@ This is a semantic model, not necessarily a literal database schema.
 
 ⸻
 
-66. Execution Model
+72. Execution Model
 
 Conceptually:
 
 Execution {
     execution_id
     intent_id
+    intent_version
     action_id
+    action_contract_version
+    execution_contract_version
     state
     version
     principal
     tenant
+    organization
+    target_resource
     environment
     created_at
     started_at
@@ -1347,24 +1699,27 @@ Execution {
     precondition_results
     postcondition_results
     evidence
+    reconciliation_results
     failures
     outcome
 }
 
 ⸻
 
-67. Execution Relationships
+73. Execution Relationships
 
 Execution
    │
    ├── instantiates → Action
    ├── originated_from → Intent
    ├── authorized_by → Trust Decision
+   ├── binds_to → Resolved Actor / Target
    ├── uses → Context
-   ├── validates → Preconditions
+   ├── evaluates → Preconditions
    ├── contains → Attempts
    ├── receives → Events
    ├── records → Evidence
+   ├── reconciles → Enterprise State
    ├── verifies → Postconditions
    ├── produces → Outcome
    ├── may_require → Intervention
@@ -1372,7 +1727,7 @@ Execution
 
 ⸻
 
-68. Execution Lifecycle
+74. Execution Lifecycle
 
 A canonical lifecycle may be:
 
@@ -1411,40 +1766,53 @@ RECONCILING
    ↓
 SUCCEEDED / FAILED / ESCALATED
 
+All transitions remain Contract- and Policy-governed.
+
 ⸻
 
-69. Execution Contract and Action Contract
+75. Execution Contract and Action Contract
 
 The distinction is fundamental.
 
 Action Contract
-    ↓
+
 Defines:
-what the Action means
-what inputs it accepts
-what capability it represents
-what effects are expected
+
+* what the Action means
+* what inputs it accepts
+* what Capability it invokes or represents
+* what effects are permitted
+* what Preconditions and Postconditions are semantically relevant
+* what verification requirements apply
+
 Execution Contract
-    ↓
+
 Defines:
-how the Action is performed
-how attempts are managed
-how state transitions occur
-how outcomes are established
+
+* how the Action is performed
+* how Attempts are managed
+* how Execution State transitions occur
+* how timeouts are handled
+* how retries are governed
+* how uncertainty is reconciled
+* how Outcomes are established
+* how recovery occurs
 
 The Execution Contract must not redefine the meaning of the Action.
 
 ⸻
 
-70. Execution Contract and Event Contract
+76. Execution Contract and Event Contract
 
 The Event Contract defines Event semantics.
 
-The Execution Contract defines how Events affect an Execution.
+The Execution Contract defines how Events may affect an Execution.
 
 Event Contract
       ↓
 Event meaning
+      ↓
+Evidence / Reconciliation
       ↓
 Execution Contract
       ↓
@@ -1452,9 +1820,11 @@ Execution transition
 
 An Event does not bypass Execution rules.
 
+Event receipt does not automatically establish an Outcome or authorize subsequent execution.
+
 ⸻
 
-71. Execution Contract and Context Contract
+77. Execution Contract and Context Contract
 
 The Context Contract defines what Context may be supplied to an Execution.
 
@@ -1468,9 +1838,13 @@ Execution
 
 Execution must not implicitly acquire arbitrary enterprise data.
 
+Context availability does not automatically mean that every Context item is authoritative for a consequential claim.
+
+Where required, the Execution Contract must rely on Fact Status, Evidence, and State Reconciliation to establish whether Context is sufficient for execution.
+
 ⸻
 
-72. Execution Contract and Trust Contract
+78. Execution Contract and Trust Contract
 
 Trust determines whether execution is permitted.
 
@@ -1478,7 +1852,7 @@ Execution Contract determines how permitted execution proceeds.
 
 Trust
    ↓
-Authorization
+Authorization / EXECUTE
    ↓
 Execution Contract
    ↓
@@ -1486,9 +1860,11 @@ Execution
 
 A valid Execution Contract cannot override a Trust rejection.
 
+If the conditions underlying the Trust decision materially change, execution must follow the defined re-evaluation rules rather than continuing under stale authority.
+
 ⸻
 
-73. Execution Contract and Enterprise Business State
+79. Execution Contract and Enterprise Business State
 
 The Execution Contract governs Noema’s execution lifecycle.
 
@@ -1509,31 +1885,19 @@ These represent different domains of truth.
 
 ⸻
 
-74. Execution Contract and System of Record
-
-Noema may record:
-
-Execution:
-SUCCEEDED
-
-while the enterprise System of Record remains authoritative for:
-
-Business Resource:
-ACTIVE
-
-Noema should not reinterpret its Execution State as ownership of the underlying enterprise state.
-
-⸻
-
-75. Execution Contract and Determinism
+80. Execution Contract and Determinism
 
 Execution is where Noema’s deterministic architecture becomes operational.
 
-The model may help determine:
+The probabilistic layer may help determine:
 
-what the user means
+what the Source of Intent means
 
-but once execution begins:
+and may propose:
+
+which Action may satisfy it
+
+But after the hard validation and Trust boundary:
 
 Contract
    +
@@ -1541,37 +1905,41 @@ Policy
    +
 Evidence
    +
-Canonical Data
+Fact Status
+   +
+State Reconciliation
+   +
+authoritative enterprise State
 
-should determine the execution path.
+must determine the execution path.
 
 The system must not rely on:
 
-model intuition
-probability
-best guess
+* model intuition
+* model probability
+* best guess
 
 to transition consequential Execution State.
 
 ⸻
 
-76. Execution Contract and Ambiguity
+81. Execution Contract and Ambiguity
 
 If required execution information remains ambiguous:
 
 Execution
    ↓
-Required fact ambiguous
+Required actor / action / target / fact ambiguous
    ↓
-CLARIFY / ESCALATE
+CLARIFY / ESCALATE / REJECT
 
 Noema must not proceed simply because the model has selected the most likely interpretation.
 
-Ambiguity remains an execution constraint.
+Ambiguity remains an execution constraint until deterministically resolved.
 
 ⸻
 
-77. Execution Contract and Human Confirmation
+82. Execution Contract and Human Confirmation
 
 Policy may require explicit confirmation before certain Executions.
 
@@ -1583,40 +1951,120 @@ Trust
    ↓
 Confirmation required
    ↓
-User confirms
+Authorized confirmation
    ↓
 Execution
 
-Confirmation must be recorded as part of the Execution Evidence where consequential.
+Confirmation is distinct from authorization.
+
+Where confirmation is consequential, it must be recorded as Execution Evidence and bound to the relevant Intent, actor, Action, target, and execution conditions.
+
+Confirmation must not be used to bypass Policy, authorization, or capability restrictions.
 
 ⸻
 
-78. Execution Contract and Commercial Scope
+83. Execution Contract and Bounded Planning
+
+A Planner may determine an execution sequence within the bounds established by Trust, Action Contracts, Capabilities, Policies, and execution constraints.
+
+The Planner must not:
+
+* create authority
+* invent Capabilities
+* create arbitrary Actions
+* modify Action Contracts
+* bypass Trust
+* bypass schema validation
+* bypass Preconditions
+* expand target scope
+* access arbitrary enterprise data
+* redefine Outcomes
+
+Trust
+   ↓
+Allowed Action / Capability Space
+   ↓
+Planner
+   ↓
+Execution Contract
+   ↓
+Execution
+
+Planning is therefore bounded by the canonical execution model.
+
+⸻
+
+84. Execution Contract and Structural Safety
+
+Execution safety must not depend on the model behaving correctly.
+
+The architecture must structurally prevent:
+
+Model
+   ↓
+Arbitrary Enterprise Operation
+
+Instead:
+
+Model
+   ↓
+Intent / Candidate Action
+   ↓
+Hard Schema Validation
+   ↓
+Trust
+   ↓
+Registered Capability
+   ↓
+Action Contract
+   ↓
+Execution Contract
+   ↓
+Credentialed Integration
+   ↓
+Enterprise System
+
+Only explicitly registered and governed Capabilities may cross the execution boundary.
+
+Prohibited Capabilities must be unavailable to the execution path rather than merely discouraged through prompting.
+
+⸻
+
+85. Execution Contract and Commercial Scope
 
 The Execution Contract is independent of the commercial wedge.
 
 For read-oriented operations:
 
-account inquiry
-statement retrieval
-transaction search
-spending summary
-complaint logging
+* account inquiry
+* statement retrieval
+* transaction search
+* spending summary
+* complaint logging
 
 the same execution principles apply:
 
 authorize
+   ↓
 validate
+   ↓
+reconcile where required
+   ↓
 invoke
+   ↓
 observe
+   ↓
 verify
+   ↓
 record
 
-The Contract therefore supports Phase 1 without requiring Noema to begin with high-risk financial mutations.
+The Contract therefore supports the Phase 1 POC without requiring Noema to begin with high-risk financial mutations.
+
+Deep read-only investigation may still be consequential because it can expose protected information or establish facts on which later actions depend. Read-only therefore does not mean semantically shallow or risk-free.
 
 ⸻
 
-79. Execution Contract Invariants
+86. Execution Contract Invariants
 
 Invariant 1
 
@@ -1632,137 +2080,173 @@ Execution must only begin after the required Trust decision permits it.
 
 Invariant 4
 
-Execution State transitions must be deterministic.
+Consequential execution must follow the required hard validation and admission gates.
 
 Invariant 5
 
-Only defined state transitions are permitted.
+Execution State transitions must be deterministic.
 
 Invariant 6
 
-Preconditions must be evaluated before consequential invocation.
+Only defined state transitions are permitted.
 
 Invariant 7
 
-Precondition validity must satisfy the freshness requirements of the Action.
+Preconditions must be evaluated before consequential invocation.
 
 Invariant 8
 
-An Attempt is distinct from the overall Execution.
+Precondition validity must satisfy the freshness requirements of the Action.
 
 Invariant 9
 
-Retries must be governed by explicit Policy and Contract rules.
+Consequential execution must bind to a sufficiently resolved actor, Action, target Resource, and scope.
 
 Invariant 10
 
-A retry must not create unintended duplicate effects.
+An Attempt is distinct from the overall Execution.
 
 Invariant 11
 
-Timeout does not automatically mean failure.
+Retries must be governed by explicit Policy and Contract rules.
 
 Invariant 12
 
-Unknown execution outcomes must remain explicitly represented as UNKNOWN.
+A retry must not create unintended duplicate effects.
 
 Invariant 13
 
-Noema must not convert UNKNOWN into success or failure without sufficient Evidence.
+Timeout does not automatically mean failure.
 
 Invariant 14
 
-Successful transport responses do not automatically establish successful business outcomes.
+Unknown execution conditions must remain explicitly represented as UNKNOWN.
 
 Invariant 15
 
-Consequential Postconditions must be verified according to the required verification policy.
+Noema must not convert UNKNOWN into success or failure without sufficient Evidence or State Reconciliation.
 
 Invariant 16
 
-Events may update Execution State only according to defined Event and Execution Contract semantics.
+Successful transport responses do not automatically establish successful business outcomes.
 
 Invariant 17
 
-Event receipt does not automatically authorize subsequent execution.
+Consequential Postconditions must be verified according to the required verification Policy.
 
 Invariant 18
 
-Execution State must remain distinct from enterprise Business State.
+Events may affect Execution State only according to defined Event and Execution Contract semantics.
 
 Invariant 19
 
-Noema must not create shadow canonical Business State to simplify execution.
+Event receipt does not automatically authorize subsequent execution.
 
 Invariant 20
 
-Recovery after process failure must preserve uncertainty where enterprise outcome cannot be established.
+Execution State must remain distinct from enterprise Business State.
 
 Invariant 21
 
-Reconciliation must be available where execution outcome can become uncertain.
+Noema must not create shadow canonical Business State to simplify execution.
 
 Invariant 22
 
-Compound Executions must preserve the individual state and outcome of each Action.
+Recovery after process failure must preserve uncertainty where enterprise outcome cannot be established.
 
 Invariant 23
 
-Partial success must not be silently represented as total success.
+Reconciliation must be available where execution outcome can become uncertain.
 
 Invariant 24
 
-Human intervention must be represented as an explicit execution state or transition.
+Fact Status must remain distinct from Evidence, Context, State, and Outcome.
 
 Invariant 25
 
-Cancellation does not automatically establish that the enterprise operation was cancelled.
+Compound Executions must preserve the individual state and Outcome of each Action.
 
 Invariant 26
 
-Compensation must use authorized enterprise capabilities.
+Partial success must not be silently represented as total success.
 
 Invariant 27
 
-Execution must respect tenant, organizational, legal, permission, and environment boundaries.
+Intervention must be represented as an explicit execution transition.
 
 Invariant 28
 
-Execution must access only the data necessary for its defined purpose.
+Cancellation does not automatically establish that the enterprise operation was cancelled.
 
 Invariant 29
 
-Execution provenance must be sufficient to reconstruct consequential execution decisions.
+Compensation must use authorized enterprise Capabilities.
 
 Invariant 30
 
-The model must not independently determine consequential Execution State transitions.
+Execution must respect tenant, organizational, legal, permission, and environment boundaries.
 
 Invariant 31
 
-Execution deadlines and retry budgets must be bounded where applicable.
+Execution must access only the data necessary for its defined purpose.
 
 Invariant 32
 
-Concurrent workers must not create conflicting state transitions for the same Execution.
+Execution provenance must be sufficient to reconstruct consequential execution decisions.
 
 Invariant 33
 
-An Execution Contract must not redefine the semantic meaning of the Action it executes.
+The model must not independently determine consequential Execution State transitions.
 
 Invariant 34
 
-Noema’s Execution State is authoritative within Noema’s execution domain, while enterprise Business State remains authoritative within the enterprise domain.
+Execution deadlines and retry budgets must be bounded where applicable.
 
 Invariant 35
 
+Concurrent workers must not create conflicting state transitions or unintended duplicate consequential effects for the same Execution.
+
+Invariant 36
+
+An Execution Contract must not redefine the semantic meaning of the Action it executes.
+
+Invariant 37
+
+Noema’s Execution State and Outcome are authoritative within Noema’s execution domain, while enterprise Business State remains authoritative within the enterprise domain.
+
+Invariant 38
+
 When execution truth cannot be established, Noema must preserve uncertainty rather than manufacture certainty.
+
+Invariant 39
+
+Technical authorization, Policy authorization, and business authorization must not be treated as interchangeable.
+
+Invariant 40
+
+A Planner must not create authority, invent Capabilities, modify Contracts, or bypass Trust and execution constraints.
+
+Invariant 41
+
+Model-generated proposals must not directly cross the enterprise execution boundary.
+
+Invariant 42
+
+Credentials and privileged enterprise access must remain outside model control.
+
+Invariant 43
+
+A material change to execution conditions must invalidate or trigger reevaluation of affected Trust, Preconditions, or execution decisions according to Contract rules.
+
+Invariant 44
+
+A deadline or timeout must not itself manufacture a business Outcome.
 
 ⸻
 
-79. Final Definition
+87. Final Definition
 
-An Execution Contract is the authoritative specification governing the lifecycle of an authorized Noema Action from initiation through final Outcome.
+An Execution Contract is the authoritative specification governing the lifecycle of an authorized Noema Action from initiation through verified resolution.
 
 It defines:
 
@@ -1770,24 +2254,38 @@ WHAT
 is being executed
 UNDER WHICH
 Action Contract
+FOR WHICH
+resolved actor, target, and scope
 WITH WHICH
 authorization
 AGAINST WHICH
 Preconditions
 THROUGH WHICH
-enterprise capability
+enterprise Capability
 WITH WHICH
-attempt and retry semantics
+Attempt and retry semantics
 USING WHICH
-verification rules
+verification and reconciliation rules
 UNDER WHICH
-failure and recovery rules
+failure, recovery, and compensation rules
 UNTIL WHICH
-Outcome is established
+Execution State and Outcome are established
 
 The fundamental relationship is:
 
-INTENT
+SOURCE OF INTENT
+   │
+   ▼
+INTENT OBJECT
+   │
+   ▼
+HARD SCHEMA VALIDATION
+   │
+   ▼
+CONTEXT
+   │
+   ▼
+STATE RECONCILIATION
    │
    ▼
 TRUST
@@ -1816,11 +2314,14 @@ ENTERPRISE CAPABILITY
 OBSERVATION ◄────────┘
    │
    ▼
+VERIFICATION / RECONCILIATION
+   │
+   ▼
 POSTCONDITIONS
    │
    ▼
-OUTCOME
+EXECUTION STATE / OUTCOME
 
 And the architectural rule is:
 
-Noema must treat Execution as a deterministic state machine. An Action may be proposed probabilistically, but once execution is authorized, every consequential transition must be governed by Contract, Policy, Evidence, and authoritative enterprise state—not by model intuition or probability.
+Noema must treat Execution as a deterministic, Contract-governed state machine. The probabilistic layer may interpret Intent and propose Actions, but once execution crosses the admission and Trust boundary, every consequential transition must be governed by Contract, Policy, Evidence, Fact Status, State Reconciliation, and authoritative enterprise state—not by model intuition or probability.
