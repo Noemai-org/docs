@@ -27,9 +27,10 @@ It is the boundary around the semantic core.
                     │ Intent API              │
                     │ Action API              │
                     │ Context API             │
-                    │ Execution API            │
-                    │ Event Model              │
-                    │ Integration Model        │
+                    │ Trust API               │
+                    │ Execution API           │
+                    │ Event Model             │
+                    │ Integration Model       │
                     └────────────┬────────────┘
                                  │
                                  ▼
@@ -67,10 +68,10 @@ Interfaces expose Noema’s canonical model; they do not define it.
 
 The canonical semantics live in:
 
-01-ontology
-02-intent
-03-trust
-04-execution
+ontology
+intent
+trust
+execution
 
 The Interfaces layer exposes those semantics through stable boundaries.
 
@@ -114,15 +115,16 @@ The Interfaces layer gives each interaction an explicit boundary.
 
 The current structure is:
 
-05-interfaces/
+interfaces/
 │
 ├── overview.md
+├── intent-api.md
 ├── action-api.md
+├── trust-api.md
 ├── context-api.md
-├── event-model.md
 ├── execution-api.md
-├── integration-model.md
-└── intent-api.md
+├── event-model.md
+└── integration-model.md
 
 Each file represents a distinct boundary.
 
@@ -131,21 +133,22 @@ Each file represents a distinct boundary.
 6. Interface Domains
 
 Interface	Primary Responsibility
-intent-api.md	Receive and manage Intent
+intent-api.md	Receive and manage Intent from any source
 action-api.md	Represent and expose executable Actions
-context-api.md	Provide contextual information
-event-model.md	Represent changes and observations over time
-execution-api.md	Control and observe execution
-integration-model.md	Connect Noema to external systems
-overview.md	Define the relationship between all interfaces
+trust-api.md	Expose the deterministic Trust evaluation boundary
+context-api.md	Provide contextual information to Intent and Execution
+event-model.md	Represent observable state changes and occurrences
+execution-api.md	Coordinate and observe execution
+integration-model.md	Connect Noema to external enterprise systems
+overview.md	Define the relationship and boundaries across all interfaces
 
 ⸻
 
 7. Intent API
 
-The Intent API is the entry point for desired outcomes.
+The Intent API is the entry point for desired outcomes. It accepts intent from human, agent, system, or application sources and converts probabilistic or structured inputs into canonical Intent objects.
 
-User / Agent
+User / Agent / System
      │
      ▼
  Intent API
@@ -155,15 +158,17 @@ User / Agent
 
 It handles:
 
-* intent submission
-* interpretation
-* resolution
-* ambiguity
-* clarification
-* executable intent
-* intent lifecycle
+* intent submission from any source
+* interpretation and schema validation
+* resolution of ambiguous or underspecified intent
+* clarification lifecycle
+* executable intent production
+* intent versioning and immutability
+* intent lifecycle state
 
 It does not authorize or execute the resulting Action.
+
+The probabilistic-to-canonical translation is an internal implementation detail. The interface contract operates on canonical Intent objects.
 
 ⸻
 
@@ -309,7 +314,7 @@ Integrations must not redefine Noema’s canonical semantics.
 
 The interfaces form a connected system:
 
-                         USER / AGENT
+                         USER / AGENT / SYSTEM
                               │
                               ▼
                         ┌───────────┐
@@ -331,15 +336,19 @@ The interfaces form a connected system:
                             Action
                               │
                               ▼
-                           Trust
+                        ┌───────────┐
+                        │ Trust API │
+                        └─────┬─────┘
                               │
+                    EXECUTE / CLARIFY / ESCALATE / REJECT
+                              │ (EXECUTE)
                               ▼
                       ┌────────────────┐
                       │ Execution API  │
                       └───────┬────────┘
                               │
                               ▼
-                         Integration
+                       Integration Model
                               │
                               ▼
                      Enterprise System
@@ -355,7 +364,7 @@ Event Model ◄───────────────► All lifecycle bo
 
 The distinction between the layers is important.
 
-05-interfaces
+interfaces
 
 does not define:
 
@@ -763,6 +772,8 @@ Canonical Intent
 
 This allows Noema to support structured clients without forcing them through conversational interpretation.
 
+The conversion from probabilistic natural-language input to a canonical Intent object is an internal concern of the Intent API. External consumers interact with canonical Intent state, not with intermediate model outputs.
+
 ⸻
 
 38. Structured Clients
@@ -861,9 +872,11 @@ Interfaces may participate in a single lifecycle:
 
 Intent API
     ↓
-Context API
+Context API (during resolution)
     ↓
 Action API
+    ↓
+Trust API
     ↓
 Execution API
     ↓
@@ -877,7 +890,7 @@ The interfaces therefore form a system rather than independent APIs.
 
 44. Canonical Lifecycle Through Interfaces
 
-                 USER / AGENT
+                 USER / AGENT / SYSTEM
                       │
                       ▼
                 ┌────────────┐
@@ -897,11 +910,17 @@ The interfaces therefore form a system rather than independent APIs.
                RESOLVED INTENT
                       │
                       ▼
+              EXECUTABLE INTENT
+                      │
+                      ▼
                 ACTION API
                       │
                       ▼
-                    TRUST
+                 TRUST API
                       │
+              EXECUTE / CLARIFY
+              ESCALATE / REJECT
+                      │ (EXECUTE)
                       ▼
                EXECUTION API
                       │
@@ -923,11 +942,12 @@ The interfaces therefore form a system rather than independent APIs.
 
 Concern	Primary Owner
 Intent semantics	Intent domain
-Intent submission	Intent API
-Context semantics	Ontology / Context domain
+Intent submission and lifecycle	Intent API
+Context semantics (Grounding)	Ontology / Context domain
 Context retrieval	Context API
 Action semantics	Ontology / Action domain
 Action representation	Action API
+Trust evaluation	Trust API
 Authorization	Trust
 Policy evaluation	Trust
 Execution semantics	Execution domain
@@ -1044,9 +1064,12 @@ The interface is a boundary of translation and enforcement, not a place where se
         ├──────────────────┼──────────────────┤
         │                  │                  │
         ▼                  ▼                  ▼
-   Execution API       Event Model      Integration Model
+   Trust API       Execution API     Event Model
         │                  │                  │
         └──────────────────┼──────────────────┘
+                           │
+                           ▼
+                  Integration Model
                            │
                            ▼
                   Enterprise Systems
@@ -1061,7 +1084,7 @@ With it, Noema becomes consumable as infrastructure.
 
 It allows:
 
-Application
+Application / Agent / Enterprise System
      ↓
 Intent API
      ↓
@@ -1084,7 +1107,7 @@ That is a major part of Noema’s infrastructure proposition.
 
 50. Final Definition
 
-The Interfaces layer is the boundary through which Noema’s canonical semantic system communicates with humans, agents, applications, enterprise systems, and external providers. It exposes Intent, Context, Action, Execution, Event, and Integration semantics while preserving the separation between interpretation, trust, authorization, execution, and external system behavior.
+The Interfaces layer is the boundary through which Noema’s canonical semantic system communicates with humans, agents, applications, enterprise systems, and external providers. It exposes Intent, Context, Action, Trust, Execution, Event, and Integration semantics while preserving the separation between probabilistic interpretation, deterministic trust evaluation, authorization, execution, and external system behavior.
 
 The central architectural rule is:
 
@@ -1115,3 +1138,43 @@ And the complete boundary can be summarized as:
              ENTERPRISE WORLD
 
 The Interfaces layer is therefore the membrane of Noema: it lets intent, evidence, commands, events, and execution cross the boundary without allowing the semantics of either side to silently corrupt the other.
+
+⸻
+
+51. Deployment Modes
+
+Noema interfaces support two architectural deployment modes.
+
+Mode 1 — Full Stack
+
+Noema operates the complete semantic pipeline from intent ingestion through execution. All canonical interfaces are active.
+
+Intent API
+    ↓
+Intent → Resolution → Executable Intent
+    ↓
+Trust API
+    ↓
+Execution API
+    ↓
+Integration Model
+    ↓
+Enterprise Systems
+
+Mode 2 — Independent Trust and Execution Boundary
+
+An external agent or orchestrator manages user interaction and intent resolution. Noema serves as an independent trust and execution layer that evaluates proposed Actions before they reach enterprise systems.
+
+External Agent / Orchestrator
+    ↓
+Action API  (submits resolved, executable Actions)
+    ↓
+Trust API
+    ↓
+Execution API
+    ↓
+Enterprise Systems
+
+In Mode 2, the external system is responsible for intent resolution. Noema remains the authoritative Trust and Execution boundary. The Trust API and Action API are the critical entry points.
+
+The interface layer must support both modes without assuming that Noema always owns the conversational or agent layer. No interface may silently bypass Trust merely because intent resolution occurred outside Noema.

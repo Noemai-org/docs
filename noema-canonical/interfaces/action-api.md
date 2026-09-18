@@ -231,8 +231,6 @@ ACCEPTED
     ↓
 VALIDATING
     ↓
-AUTHORIZED
-    ↓
 READY
     ↓
 EXECUTING
@@ -249,7 +247,9 @@ UNKNOWN
 RECONCILIATING
 CANCELLED
 
-The exact canonical state machine should remain aligned with 04-execution/execution-model.md.
+The state AUTHORIZED is not a canonical Action lifecycle state. Authorization is an outcome of Trust evaluation; an Action that receives a Trust outcome of EXECUTE transitions to READY and proceeds to execution. An Action that receives REJECT transitions to REJECTED. CLARIFY and ESCALATE produce their respective lifecycle states.
+
+The exact canonical state machine should remain aligned with execution/execution-model.md.
 
 ⸻
 
@@ -1155,7 +1155,7 @@ Policy determines whether an Action is permissible.
 
 The API exposes the result:
 
-ALLOWED
+EXECUTE
 BLOCKED
 REQUIRES_APPROVAL
 
@@ -1689,19 +1689,19 @@ The API should expose workflow semantics without coupling consumers to internal 
 
 87. Canonical Relationship to Other Domains
 
-02-intent
+intent
     ↓
 Executable Intent
     ↓
-03-trust
+trust
     ↓
 Authorization / Risk / Policy
     ↓
-04-execution
+execution
     ↓
 Action Contract / Preconditions / Execution
     ↓
-05-interfaces
+interfaces
     ↓
 Action API
     ↓

@@ -680,7 +680,7 @@ Context
   ↓
 Evidence
   ↓
-Trust Evaluation
+Deterministic Trust Engine
 
 rather than:
 
@@ -1409,14 +1409,14 @@ This distinction should remain explicit.
 
 The Context API should align with:
 
-01-ontology/context.md
-02-intent/intent-model.md
-03-trust/evidence.md
-03-trust/determinism.md
-04-execution/preconditions.md
-04-execution/postconditions.md
-04-execution/retries.md
-05-interfaces/action-api.md
+ontology/context.md
+intent/intent-model.md
+trust/evidence.md
+trust/determinism.md
+execution/preconditions.md
+execution/postconditions.md
+execution/retries.md
+interfaces/action-api.md
 
 It should not redefine those concepts independently.
 
@@ -1598,7 +1598,7 @@ Context resolution must not silently create facts unsupported by evidence.
 
 Invariant 18
 
-Context semantics must remain consistent across Intent, Trust, and Execution.
+Context semantics (Grounding) must remain consistent across Intent, Trust, and Execution.
 
 ⸻
 

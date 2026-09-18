@@ -11,7 +11,7 @@ Canonical Path: interfaces/intent-api.md
 
 The Intent API is the interface through which Noema receives, represents, resolves, clarifies, and exposes executable human intent.
 
-It is the primary boundary between a user or upstream system and Noema’s Intent Engine.
+It is the primary boundary between a user, agent, or upstream system and Noema's Intent Compiler / Intent Engine.
 
 User / System
       │
@@ -75,7 +75,7 @@ Trust
         ↓
 Action
 
-The API does not treat the user’s initial utterance as sufficient authority to execute.
+The API does not treat the user's initial utterance as sufficient authority to execute.
 
 ⸻
 
@@ -165,7 +165,7 @@ The identity remains stable throughout the Intent lifecycle.
 
 9. Intent Lifecycle
 
-The canonical lifecycle is defined by 02-intent/intent-lifecycle.md.
+The canonical lifecycle is defined by intent/intent-lifecycle.md.
 
 Conceptually:
 
@@ -180,8 +180,10 @@ CLARIFICATION_REQUIRED
 RESOLVED
    ↓
 EXECUTABLE
-   ↓
-TRUST_EVALUATION
+
+After reaching EXECUTABLE, the Intent transitions to the Trust domain for evaluation.
+
+Trust outcomes (EXECUTE, CLARIFY, ESCALATE, REJECT) belong to the Trust Engine, not the Intent lifecycle.
 
 Not every Intent traverses every state.
 
@@ -271,9 +273,15 @@ User:
 
 "John from accounting."
 
-Noema then updates the existing Intent state.
+For immaterial disambiguation (narrowing an ambiguous reference without changing the semantic goal), Noema updates the existing Intent state.
 
-It should not create an unrelated Intent unless the interaction explicitly represents a new request.
+For material semantic changes (different goal, contradictory constraint, or new direction), clarification produces a new Intent version with a supersedes relationship:
+
+intent_id@2 supersedes intent_id@1
+
+An admitted Intent version is immutable. Material clarifications must produce a new version rather than mutating an existing admitted version.
+
+The API must not create an unrelated Intent unless the interaction explicitly represents a genuinely new request.
 
 ⸻
 
@@ -336,9 +344,9 @@ Evidence
         ↓
 Deterministic Resolution Policy
         ↓
-Resolved / Clarify / Reject
+Resolved / CLARIFY / REJECT
 
-The Intent API exposes the resulting Intent state.
+The Intent API exposes the resulting Intent state. Resolution outcomes are deterministic given the applicable evidence and policy, even when the upstream model is probabilistic.
 
 ⸻
 
@@ -653,7 +661,7 @@ User Constraint
         +
 Enterprise Policy
         ↓
-Trust Evaluation
+Deterministic Trust Engine
 
 ⸻
 
@@ -1137,13 +1145,28 @@ After the user responds:
 
 Noema should merge the clarification into the existing Intent context.
 
+If the clarification is immaterial (resolving a reference ambiguity without changing the semantic goal):
+
 Intent
   +
 Clarification
   ↓
-Updated Intent
+Updated Intent (same version, narrowed resolution)
   ↓
 Resolution
+
+If the clarification is material (introduces a substantively different goal, parameter, or constraint):
+
+Intent@1
+  +
+Material Clarification
+  ↓
+New Intent Version
+  Intent@2 supersedes Intent@1
+  ↓
+Resolution
+
+Admitted Intent versions are immutable. A material clarification must not silently mutate an admitted version.
 
 ⸻
 
@@ -1215,23 +1238,36 @@ $300
 
 68. Intent Version
 
-An Intent may therefore have semantic versions:
+An admitted Intent version is immutable from the point of admission.
 
-intent_123@1
-intent_123@2
-intent_123@3
+Material semantic changes produce a new version:
 
-The exact representation is implementation-specific, but historical resolution should remain reconstructable.
+intent_123@1   (admitted)
+intent_123@2   (supersedes @1)
+intent_123@3   (supersedes @2)
+
+The supersedes relationship must be explicit. Historical resolution must remain reconstructable from any version in the chain.
+
+The exact representation is implementation-specific, but the invariant is:
+
+No admitted Intent version may be silently mutated.
+Material change → new version + supersedes.
 
 ⸻
 
 69. Intent Immutability
 
-Past Intent states should generally be append-only from an audit perspective.
+Admitted Intent versions must be append-only from an audit perspective.
 
-The current Intent may change.
+An admitted Intent version:
 
-The historical record should not be rewritten.
+* must not be retroactively edited
+* must not have its semantic meaning silently changed
+* must not be replaced without producing an explicit supersession
+
+The current Intent may advance through lifecycle states.
+
+The historical record of admitted versions must not be rewritten.
 
 ⸻
 
@@ -1523,7 +1559,7 @@ Historical Intent states must not be silently rewritten.
 
 81. Final Definition
 
-The Intent API is Noema’s boundary for receiving and managing human or system intent. It preserves the distinction between raw input, interpreted intent, ambiguity, clarification, resolved intent, and executable intent while preventing probabilistic interpretation from becoming implicit authorization or execution.
+The Intent API is Noema's boundary for receiving and managing human or system intent. It preserves the distinction between raw input, interpreted intent, ambiguity, clarification, resolved intent, and executable intent while preventing probabilistic interpretation from becoming implicit authorization or execution.
 
 The key architectural rule is:
 

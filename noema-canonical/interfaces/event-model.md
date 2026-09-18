@@ -183,12 +183,17 @@ action.failed
 execution.started
 execution.succeeded
 execution.failed
-trust.approved
-trust.blocked
+trust.evaluated
+trust.decision.execute
+trust.decision.clarify
+trust.decision.escalate
+trust.decision.reject
 clarification.requested
 clarification.resolved
 outcome.established
 outcome.rejected
+
+The event names trust.approved and trust.blocked are not canonical. Trust decisions produce EXECUTE, CLARIFY, ESCALATE, or REJECT. Events should reflect these canonical outcomes rather than informal synonyms.
 
 Event types should describe what happened, not what another system should do.
 
@@ -905,13 +910,15 @@ Reconciliation may generate Events:
 execution.reconciliation_started
 execution.reconciled
 
-The resulting evidence can establish:
+The resulting evidence can establish a canonical execution outcome:
 
-SUCCESS
+SUCCEEDED
 FAILED
 UNKNOWN
 
-or another canonical state.
+or another canonical execution state defined in the Execution domain.
+
+Reconciliation Event names must not use informal synonyms for canonical states.
 
 ⸻
 

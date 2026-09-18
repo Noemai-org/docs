@@ -141,17 +141,21 @@ may this Action execute?
 
 Execution determines:
 
-how is the authorized Action carried out?
+how is the Action with a Trust outcome of EXECUTE carried out?
 
 Therefore:
 
 Trust
   ↓
-Approved Action
+EXECUTE decision
+  ↓
+Action READY
   ↓
 Execution API
 
 The Execution API must not become a policy bypass.
+
+An Action that has not received a Trust outcome of EXECUTE must not enter execution.
 
 ⸻
 
@@ -224,7 +228,7 @@ Without attempt identity, the execution history becomes ambiguous.
 
 12. Execution Lifecycle
 
-The canonical lifecycle should align with 04-execution/execution-model.md.
+The canonical lifecycle should align with execution/execution-model.md.
 
 Conceptually:
 
@@ -262,7 +266,7 @@ Conceptually:
 
 POST /executions
 
-creates or begins an execution for an already-approved Action.
+creates or begins an execution for an Action that has received a Trust outcome of EXECUTE.
 
 Example:
 
@@ -551,7 +555,7 @@ CONFLICT
 PROVIDER_FAILURE
 INTERNAL_FAILURE
 
-The exact taxonomy should remain aligned with 04-execution/failure.md.
+The exact taxonomy should remain aligned with execution/failure.md.
 
 ⸻
 

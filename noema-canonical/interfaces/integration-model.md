@@ -733,7 +733,7 @@ from:
 
 provider response unknown
 
-This feeds directly into the Execution Model’s UNKNOWN state.
+This feeds directly into the Execution domain's UNKNOWN state.
 
 ⸻
 
@@ -1320,23 +1320,25 @@ Integration capabilities must not automatically become executable capabilities m
 
 The Integration Model sits at the edge of the system:
 
-00-thesis
+thesis
     ↓
-01-ontology
+ontology
     ↓
-02-intent
+intent
     ↓
-03-trust
+trust
     ↓
-04-execution
+execution
     ↓
-05-interfaces
+interfaces
     ↓
 Enterprise Systems
 
-Within 05-interfaces:
+Within interfaces:
 
+Intent API
 Action API
+Trust API
 Context API
 Event Model
 Execution API

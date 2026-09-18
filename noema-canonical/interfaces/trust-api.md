@@ -25,7 +25,7 @@ Action
 │  Trust API   │
 └──────┬───────┘
        ↓
-Trust Evaluation
+Deterministic Trust Engine
        ↓
 EXECUTE / CLARIFY / ESCALATE / REJECT
        ↓
@@ -102,18 +102,19 @@ Conceptually:
               ┌────────────────┐
               │   TRUST API    │
               └───────┬────────┘
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-     AUTHORIZATION   POLICY      RISK
-          │           │           │
-          └───────────┼───────────┘
-                      ▼
-                   DECISION
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-       EXECUTE     ESCALATE    REJECT
+                       │
+           ┌───────────┬───────────┐
+           │           │           │
+           ▼           ▼           ▼
+      AUTHORIZATION   POLICY      RISK
+           │           │           │
+           └───────────┼───────────┘
+                       ▼
+                    DECISION
+                       │
+       ┌────────┬─────┬───────┬───────┐
+       ▼        ▼       ▼       ▼       ▼
+   EXECUTE   CLARIFY ESCALATE  REJECT
 
 ⸻
 
@@ -171,7 +172,7 @@ CLARIFY
 ESCALATE
 REJECT
 
-The exact decision taxonomy is governed by 03-trust/trust-engine.md and 03-trust/trust-model.md.
+The exact decision taxonomy is governed by trust/trust-engine.md and trust/trust-model.md.
 
 The critical invariant is:
 
@@ -252,7 +253,7 @@ risk threshold exceeded
 
 ⸻
 
-12. Trust Evaluation Request
+12. Deterministic Trust Engine Request
 
 Conceptually:
 
@@ -272,7 +273,7 @@ The request identifies what is being evaluated.
 
 ⸻
 
-13. Trust Evaluation Identity
+13. Deterministic Trust Engine Identity
 
 Every evaluation should have a stable identity.
 
@@ -286,7 +287,7 @@ This allows the decision and its supporting evidence to be independently referen
 
 ⸻
 
-14. Trust Evaluation Inputs
+14. Deterministic Trust Engine Inputs
 
 A Trust evaluation may depend on:
 
@@ -425,7 +426,7 @@ provider confirmation
 previous execution
 human approval
 
-The Evidence model is defined under 03-trust/evidence.md.
+The Evidence model is defined under trust/evidence.md.
 
 ⸻
 
@@ -584,7 +585,7 @@ CLARIFY
 ESCALATE
 REJECT
 
-The canonical Trust State Machine remains defined in 03-trust/trust-state-machine.md.
+The canonical Trust State Machine remains defined in trust/trust-state-machine.md.
 
 ⸻
 
@@ -647,7 +648,7 @@ Evaluation 2
 
 ⸻
 
-33. Trust Evaluation Version
+33. Deterministic Trust Engine Version
 
 A decision should identify the relevant evaluation configuration.
 
@@ -1230,7 +1231,7 @@ may internally introduce additional risk models without requiring consumers to u
 
 ⸻
 
-67. Trust Evaluation Example
+67. Deterministic Trust Engine Example
 
 Consider:
 
@@ -1413,11 +1414,11 @@ Clients cannot directly mutate Trust decisions.
                  │   TRUST API  │
                  └──────┬───────┘
                         │
-        ┌───────────────┼────────────────┐
-        ▼               ▼                ▼
-  Authorization      Policy             Risk
-        │               │                │
-        └───────────────┼────────────────┘
+        ┌─────────────┬──────────────┐
+        ▼             ▼              ▼
+  Authorization      Policy          Risk
+        │             │              │
+        └───────────┬──────────────┘
                         ▼
                      Evidence
                         │
@@ -1427,16 +1428,13 @@ Clients cannot directly mutate Trust decisions.
                         ▼
                Deterministic Evaluation
                         │
-             ┌──────────┼──────────┐
-             ▼          ▼          ▼
-          EXECUTE    CLARIFY    ESCALATE
-                        │          │
-                        │          │
-                        ▼          ▼
-                  Intent Flow   Human Flow
-             │
-             ▼
-          Execution
+       ┌───────┬───────┬───────┬───────┐
+       ▼       ▼       ▼       ▼       ▼
+    EXECUTE  CLARIFY ESCALATE  REJECT
+       │       │       │       │
+       ▼       ▼       ▼       ▼
+   Execution  Intent  Human   End
+              Flow    Flow
 
 ⸻
 
@@ -1444,7 +1442,7 @@ Clients cannot directly mutate Trust decisions.
 
 The Interfaces layer exposes the Trust domain; it does not redefine it.
 
-03-trust/
+trust/
 │
 ├── ambiguity.md
 ├── authorization.md
@@ -1457,11 +1455,11 @@ The Interfaces layer exposes the Trust domain; it does not redefine it.
 ├── trust-state-machine.md
 └── validation.md
 
-05-interfaces/trust-api.md answers:
+interfaces/trust-api.md answers:
 
 How do systems interact with the Trust Engine?
 
-The 03-trust documents answer:
+The trust documents answer:
 
 What does Trust mean and how does it work?
 
@@ -1482,15 +1480,16 @@ Action API
 │    TRUST API    │
 └────────┬────────┘
          │
-    ┌────┴─────┐
+    ┌────┴────┐
     │          │
     ▼          ▼
  Context    Policy
     │          │
-    └────┬─────┘
+    └────┬────┘
          ▼
       Decision
-         │
+      (EXECUTE / CLARIFY / ESCALATE / REJECT)
+         │ (EXECUTE)
          ▼
  Execution API
          │
