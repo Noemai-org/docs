@@ -1,7 +1,7 @@
 Intent
 
-Status: Foundational Draft
-Version: 0.1
+Status: Foundational
+Version: 1.0
 Domain: Ontology
 Canonical Path: ontology/intent.md
 
@@ -9,266 +9,637 @@ Canonical Path: ontology/intent.md
 
 1. Definition
 
-An Intent is a structured representation of an Actor’s desired objective, including the target, relevant parameters, constraints, and Context necessary to determine what the Actor is trying to accomplish.
+An Intent is the canonical semantic representation of an Actor’s desired objective: what the Actor is trying to accomplish, concerning which targets, with which parameters, under which Actor-expressed constraints, and with which temporal requirements.
 
 Intent answers:
 
 What does the Actor want to accomplish?
 
-An Intent represents a desired outcome, not an implementation.
+Intent is a semantic object, not an implementation instruction, authorization, action, plan, or outcome.
+
+Actor
+  │
+  │ expresses
+  ▼
+Intent Expression
+  │
+  │ resolved
+  ▼
+Canonical Intent
 
 Example:
 
 Actor:
-Customer
+  Customer
 Intent:
-Renew Card
+  Renew Card
 Target:
-card_1234
+  card_1234
 
-The Actor may express this as:
+The expression:
 
 “Please renew my card.”
 
-The natural-language expression is not itself the canonical Intent.
+is an Intent Expression. It becomes a Canonical Intent only after Noema has established the relevant semantics with sufficient resolution.
 
 ⸻
 
-2. Intent Is the Core Semantic Object
+2. Semantic Role in Noema
 
-Noema exists to transform ambiguous human interaction into a representation that can be evaluated deterministically.
+Intent occupies the boundary between an Actor’s expressed objective and Noema’s governed progression toward execution.
 
-Conceptually:
-
-Human Expression
-      │
-      ▼
+Actor / Principal
+       │
+       ▼
+Intent Expression
+       │
+       ▼
 Interpretation
-      │
-      ▼
+       │
+       ▼
 Candidate Intent
-      │
-      ▼
-Context + Evidence
-      │
-      ▼
+       │
+       ├── Context
+       ├── Evidence
+       ├── Entity Resolution
+       ├── Parameter Resolution
+       └── Constraint Identification
+       │
+       ▼
 Canonical Intent
-      │
-      ▼
-Trust Evaluation
-      │
-      ▼
-Action
+       │
+       ▼
+Validation
+       │
+       ▼
+State / Context Resolution
+       │
+       ▼
+Trust Decision
+       │
+       ▼
+Action Planning
+       │
+       ▼
+Action Contract
+       │
+       ▼
+Bounded Capability
+       │
+       ▼
+Execution
+       │
+       ▼
+Verification
+       │
+       ▼
+Outcome
 
-The Intent is therefore the principal semantic boundary between:
+The central semantic boundary is:
 
-what the Actor means
+Intent establishes what the Actor wants. It does not establish what Noema may do.
 
-and:
-
-what the system may actually do
+The Noema POC therefore separates probabilistic interpretation from deterministic governance and execution. The Intent Engine may propose a draft Intent, but that proposal must cross the canonical schema and resolution boundaries before downstream governance can rely upon it.
 
 ⸻
 
-3. Intent Is Not Natural Language
+3. Intent Expression
 
-Natural language is an expression of Intent.
+An Intent Expression is a representation through which an Actor communicates an objective.
 
 It may be:
 
-* incomplete
-* ambiguous
-* contextual
-* colloquial
-* indirect
-* contradictory
-* underspecified
+* natural language;
+* text;
+* voice or transcribed speech;
+* an API request;
+* an event;
+* an instruction originating from another system;
+* an Agent-produced representation.
 
-For example:
+Examples:
 
-“Can you sort out my card?”
+"Renew my card."
+"Why did this transfer fail?"
+"Show me what I spent last month."
+"Should I send it again?"
+"Move ₦500 to savings."
 
-Possible Intent candidates:
+An Intent Expression may be:
+
+* incomplete;
+* ambiguous;
+* indirect;
+* contextual;
+* colloquial;
+* code-switched;
+* contradictory;
+* underspecified.
+
+Therefore:
+
+Intent Expression ≠ Canonical Intent
+
+The expression is an input to Intent Resolution.
+
+⸻
+
+4. Intent Is Not Natural Language
+
+Natural language can communicate an objective without uniquely determining its semantics.
+
+Example:
+
+“Fix my card.”
+
+Possible interpretations include:
 
 RenewCard
 ReplaceCard
 UnblockCard
 CancelCard
 
-The sentence itself does not establish which Intent is correct.
+The expression alone does not establish which objective the Actor intended.
 
-Noema must resolve this using Context, Evidence, and other available information.
+Noema may use permitted Context, Evidence, Entity relationships, prior clarification, explicit constraints, and authoritative enterprise information to resolve the expression.
+
+Where material ambiguity remains, Noema must preserve that ambiguity rather than manufacture certainty.
+
+Ambiguity is a system state, not permission to guess.
 
 ⸻
 
-4. Intent Is Not Model Output
+5. Intent Is Not Model Output
 
-A Model may propose an Intent representation.
+The Intent Engine is where probabilistic interpretation may occur.
 
-That proposal is not automatically canonical.
+Its output is a proposal until it passes Noema’s canonical validation and resolution boundaries.
 
-User Expression
-      │
-      ▼
-Model
-      │
-      ▼
-Intent Proposal
-      │
-      ▼
-Noema Validation
-      │
-      ▼
+Actor Expression
+       │
+       ▼
+Intent Engine / Model
+       │
+       ▼
+Draft / Candidate Intent
+       │
+       ▼
+Schema Validation
+       │
+       ▼
+Context + Evidence + Entity Resolution
+       │
+       ▼
 Canonical Intent
-
-The Model is therefore an Intent interpreter, not the final authority over Intent state.
-
-⸻
-
-5. Intent Is Not Action
-
-This distinction is fundamental.
-
-Intent:
-Renew my card.
-Action:
-RenewCard(card_1234)
-
-The Intent expresses the objective.
-
-The Action is the operation selected to achieve that objective.
-
-One Intent may map to:
-
-one Action
-
-or:
-
-multiple Actions
-
-depending on the domain.
-
-⸻
-
-6. Intent Is Not Capability
-
-Capability represents what a system can do.
-
-Intent represents what the Actor wants.
-
-Intent:
-Renew my card.
-Capability:
-card.renew
-
-A Capability may satisfy an Intent, but the existence of a Capability does not establish that it should be used.
-
-⸻
-
-7. Intent Is Not Authority
-
-An Actor can express an Intent without being authorized to fulfill it.
-
-Actor:
-Employee
-Intent:
-Delete customer account.
-Authority:
-Insufficient
-
-The Intent remains valid as an expression of what the Actor wants.
-
-The Trust system determines whether the requested operation may proceed.
-
-⸻
-
-8. Intent Is Not Constraint
-
-Constraints limit an Intent or its execution.
-
-Intent:
-Transfer $10,000.
-Constraint:
-Transfers above $5,000 require approval.
-
-The Constraint does not become part of the objective.
-
-It constrains how the objective may be fulfilled.
-
-⸻
-
-9. Intent Is Not Outcome
-
-Intent describes what the Actor wants.
-
-Outcome describes what actually happened.
-
-Intent:
-Refund payment.
-Outcome:
-Refund rejected because payment already settled.
 
 Therefore:
 
-Intent ≠ Outcome
+Model Proposal     ≠ Canonical Intent
+Model Confidence   ≠ Intent Resolution
+Model Probability  ≠ Semantic Truth
 
-An Intent may remain valid even when execution fails.
+A model selecting one interpretation with the highest probability does not by itself establish canonical meaning where material ambiguity remains.
+
+The model has no direct authority to execute an Intent.
 
 ⸻
 
-10. Intent Structure
+6. Intent Is Not Action
 
-A canonical Intent conceptually contains:
+An Intent represents the desired objective.
+
+An Action is a concrete operation selected to achieve that objective.
+
+Intent:
+  Renew Card
+Action:
+  RenewCard(card_1234)
+
+One Intent may result in one or multiple Actions.
 
 Intent
-├── Actor
-├── Objective
-├── Target
-├── Parameters
-├── Constraints
-├── Context
-├── Priority
-└── Temporal Requirements
+  │
+  ├── Action A
+  ├── Action B
+  └── Action C
 
-Not every Intent requires every field.
+Therefore:
 
-The canonical structure is semantic rather than a fixed storage schema.
+Intent ≠ Action
 
 ⸻
 
-11. Actor
+7. Intent Is Not Action Plan
 
-Every Intent has an initiating Actor.
+Intent establishes what the Actor wants.
+
+An Action Plan establishes how Noema proposes to achieve it.
+
+Example:
+
+Intent:
+  Onboard Employee
+Action Plan:
+  1. Create Employee
+  2. Provision Account
+  3. Assign Permissions
+  4. Send Welcome Message
+
+The plan may change while the underlying Intent remains stable.
+
+Intent ≠ Action Plan
+
+⸻
+
+8. Intent Is Not Capability
+
+A Capability is a registered, bounded ability to perform an Action.
+
+Example:
+
+Intent:
+  Renew Card
+Capability:
+  card.renew
+
+Capability matching answers:
+
+What registered ability could potentially satisfy this objective?
+
+It does not establish:
+
+* that the capability should be selected;
+* that it is currently available;
+* that the Actor is authorized;
+* that the target is correct;
+* that Policy permits execution;
+* that current business state satisfies the Action Contract;
+* that Trust permits progression.
+
+Therefore:
+
+Intent ≠ Capability
+Capability ≠ Authority
+
+Noema’s execution boundary is registry-based. Arbitrary HTTP, SQL, or free-form tool instructions are not capabilities.
+
+⸻
+
+9. Intent Is Not Authority
+
+An Actor may express an Intent without possessing the Authority necessary to cause the corresponding Action.
 
 Example:
 
 Actor:
-customer_123
+  Employee
 Intent:
-RenewCard
+  Approve ₦100,000 payment
+Authority:
+  Maximum approval = ₦50,000
 
-The Actor may be:
+The Intent remains a representation of what the Actor requested.
 
-* human
-* organization
-* service
-* autonomous agent
-* system process
+Authority determines whether the relevant Action may proceed.
 
-The Actor is distinct from the Intent.
+Therefore:
+
+Intent ≠ Authority
+Intent ≠ Permission
+
+Authorization must attach to the fully resolved business Action rather than merely to general capability invocation.
 
 ⸻
 
-12. Objective
+10. Intent Is Not Trust
 
-The Objective describes the desired result.
+A resolved Intent does not automatically become trusted.
+
+Trust concerns whether progression from a resolved Intent toward a specific consequential Action is permissible under the relevant circumstances.
+
+Conceptually:
+
+Canonical Intent
+      +
+Resolved Target
+      +
+Current Enterprise State
+      +
+Evidence
+      +
+Authority
+      +
+Policy
+      +
+Constraints
+      +
+Action Contract
+      +
+Risk
+      │
+      ▼
+Trust Decision
+
+The POC Trust Engine is deterministic and performs no model inference.
+
+Trust is therefore a decision boundary, not permanent semantic meaning attached to an Intent.
+
+Resolved Intent ≠ Trusted Execution
+
+⸻
+
+11. Intent Is Not Context
+
+Context is information used to interpret, validate, or execute an Intent.
 
 Example:
 
-Objective:
-Renew Card
+Previous:
+  "Let's talk about my Pro subscription."
+Current:
+  "Cancel it."
 
-The Objective should describe the semantic goal rather than the implementation mechanism.
+Conversation Context may establish that “it” refers to the Pro subscription.
+
+But:
+
+Context ≠ Intent
+
+Enterprise Context is likewise not permanently embedded into Intent meaning.
+
+Intent Identity    ≠ Context Snapshot
+Intent Persistence ≠ Context Freshness
+
+An Intent may remain unchanged while the enterprise state surrounding its execution changes.
+
+⸻
+
+12. Intent Is Not Evidence
+
+Evidence supports a proposition concerning an Intent or relevant enterprise state.
+
+Examples include:
+
+* Actor statements;
+* timestamped enterprise API responses;
+* policy rules;
+* user confirmations;
+* execution results;
+* explicitly marked inferences.
+
+Evidence supports resolution, validation, or Trust. It is not the Intent itself.
+
+Evidence → supports resolution / validation / trust
+Evidence ≠ Intent
+
+A model assertion alone is not sufficient provenance for a material Trust Decision.
+
+⸻
+
+13. Intent Is Not Entity
+
+An Intent may reference one or more Entities, but the semantic objective and referenced Entity are distinct.
+
+Intent:
+  Renew Card
+Target:
+  card_1234
+
+Therefore:
+
+Intent ≠ Entity
+
+A target reference may initially be unresolved:
+
+"my card"
+"the account we discussed"
+"it"
+"that subscription"
+
+Noema distinguishes:
+
+Target Reference
+      ↓
+Candidate Entities
+      ↓
+Entity Resolution
+      ↓
+Resolved Target
+
+Material target ambiguity must not be silently collapsed into one Entity.
+
+⸻
+
+14. Canonical Intent Object
+
+For the Noema POC, the Intent Object is a strictly typed and versioned object.
+
+The canonical POC shape is:
+
+{
+  "intent_id": "int_9f3a2e1c",
+  "schema_version": "1.0",
+  "created_at": "2026-08-20T09:47:03Z",
+  "principal": {
+    "user_id": "usr_88213",
+    "auth_method": "session_token",
+    "session_id": "sess_7a1b",
+    "verified": true
+  },
+  "raw_expression": {
+    "modality": "text",
+    "language_detected": "en-pidgin-mixed",
+    "text": "I sent 20k to Tunde this morning, e never enter."
+  },
+  "intent_class": "TRANSACTION_EXCEPTION",
+  "operation": "INVESTIGATE_AND_RESOLVE",
+  "entities": {
+    "amount": {
+      "value": 20000,
+      "currency": "NGN",
+      "confidence": 0.97
+    },
+    "recipient_raw": {
+      "value": "Tunde",
+      "confidence": 0.99
+    },
+    "time_reference": {
+      "value": "this_morning",
+      "resolved_window": [
+        "2026-08-20T06:00:00Z",
+        "2026-08-20T09:00:00Z"
+      ]
+    },
+    "transaction_reference": null
+  },
+  "ambiguity_flags": [
+    "RECIPIENT_MULTIPLE_MATCH"
+  ],
+  "desired_outcome": "EXPLAIN_STATUS_AND_RESOLVE",
+  "evidence": [
+    {
+      "type": "user_statement",
+      "ref": "raw_expression"
+    }
+  ],
+  "constraints": {
+    "action_classes_permitted": [
+      "READ",
+      "RECOMMEND",
+      "CONFIRM",
+      "ESCALATE"
+    ]
+  },
+  "policy_requirements": {
+    "requires_confirmation_if": [
+      "multiple_transaction_candidates",
+      "amount_above_confirmation_threshold"
+    ]
+  },
+  "provenance": {
+    "produced_by": "intent-engine-v1",
+    "model_reference": "intent-model-2026-08"
+  },
+  "correlation_id": "corr_4c21f9",
+  "supersedes": null,
+  "status": "DRAFT"
+}
+
+The implementation schema is authoritative for serialization.
+
+This ontology defines the semantic meaning and boundaries of the fields.
+
+⸻
+
+15. Intent Object Immutability
+
+Once an Intent Object has crossed a consequential governance boundary, it must not be mutated in place.
+
+A material change creates a new Intent version:
+
+Intent 123
+   │
+   ├── v1
+   │
+   ├── v2 supersedes v1
+   │
+   └── v3 supersedes v2
+
+Amendments are explicit, auditable events.
+
+Never silently overwrite a material Intent.
+
+This preserves:
+
+* provenance;
+* lineage;
+* decision reproducibility;
+* historical reconstruction;
+* auditability.
+
+⸻
+
+16. Core Intent Fields
+
+Conceptually:
+
+Intent
+├── identity
+├── originating principal / actor
+├── objective
+├── targets / references
+├── parameters
+├── intent constraints
+├── temporal requirements
+├── priority
+├── provenance
+├── schema version
+└── lifecycle state
+
+The Noema POC additionally carries machine-relevant fields such as:
+
+* raw expression;
+* intent class;
+* operation;
+* ambiguity flags;
+* desired outcome;
+* correlation ID;
+* supersession reference;
+* resolution provenance.
+
+The following remain related but distinct concepts:
+
+Context
+Evidence
+Policy
+Authority
+Capability
+Trust
+Action Contract
+Action
+Outcome
+
+They are not absorbed into the semantic definition of Intent merely because they participate in its lifecycle.
+
+⸻
+
+17. Principal and Originating Actor
+
+The Principal is the Actor whose objective the Intent represents.
+
+The Actor may be:
+
+* a human;
+* an organization;
+* a service;
+* a system process;
+* an Agent acting under explicit delegation.
+
+Authentication establishes identity. It does not by itself establish business Authority for every Action.
+
+Principal
+   │
+   ▼
+Intent
+
+The Principal is not the Intent.
+
+⸻
+
+18. Acting Agent and Delegation
+
+Where an Agent acts on behalf of a Principal, Noema must preserve both identities.
+
+Principal
+    │
+    │ delegates
+    ▼
+Acting Agent
+    │
+    │ expresses
+    ▼
+Intent
+
+Delegation should preserve, where applicable:
+
+* Principal identity;
+* Agent identity;
+* delegation scope;
+* duration;
+* permitted Actions;
+* permitted Resources;
+* applicable constraints.
+
+The fact that an Agent produced an Intent does not grant the Agent unrestricted Authority.
+
+Agent Capability ≠ Agent Authority
+Agent Reasoning  ≠ Principal Authorization
+
+⸻
+
+19. Objective
+
+The Objective is the semantic result the Actor seeks.
 
 Prefer:
 
@@ -278,204 +649,183 @@ over:
 
 POST /cards/123/renew
 
-The latter is an Action or implementation detail.
+The former represents domain semantics.
+
+The latter represents implementation.
+
+An Objective should be specific enough for deterministic downstream processing without collapsing into an API invocation.
 
 ⸻
 
-13. Target
+20. Targets and Target Resolution
 
-The Target identifies the Entity or Entities to which the Intent applies.
+A Target identifies the Entity or Entities to which the Intent applies.
 
 Example:
 
 Intent:
-Renew Card
+  Renew Card
 Target:
-card_1234
+  card_1234
 
-Target resolution may require Context.
+Resolution may proceed through:
 
-If the target cannot be determined sufficiently:
+Reference
+   ↓
+Candidate Entities
+   ↓
+Context + Evidence
+   ↓
+Entity Resolution
+   ↓
+Resolved Target
 
-Intent:
-"Renew my card."
-Available Cards:
-3
-Result:
-Clarification Required
+If material ambiguity remains:
 
-Noema must not silently select one.
+Target = AMBIGUOUS / UNRESOLVED
+
+Noema must not select an Entity merely because a model assigns it the highest probability.
+
+The POC requires ambiguous candidates to be surfaced using distinguishing, user-verifiable information rather than internal identifiers.
 
 ⸻
 
-14. Parameters
+21. Parameters
 
-Parameters provide information required to fully specify the objective.
+Parameters provide information necessary to express or fulfill the Objective.
 
 Example:
 
 Intent:
-BookFlight
+  Book Flight
 Parameters:
-origin = Lagos
-destination = London
-date = 2026-09-12
-passengers = 1
+  origin      = Lagos
+  destination = London
+  date        = 2026-09-12
+  passengers  = 1
+
+Each parameter has its own semantic and epistemic status.
 
 Parameters may be:
 
-* explicit
-* inferred
-* retrieved
-* defaulted
-* unresolved
+EXPLICIT
+INFERRED
+RETRIEVED
+DEFAULTED
+UNRESOLVED
+UNKNOWN
 
-Their epistemic status must remain distinguishable.
-
-⸻
-
-15. Explicit Parameters
-
-A parameter explicitly supplied by the Actor.
-
-User:
-"Book me a flight to London on September 12."
-Parameters:
-destination = London
-date = September 12
-
-These generally have stronger evidentiary status than model inference, although explicit user input may still be ambiguous.
+One resolved parameter does not imply that all parameters are resolved.
 
 ⸻
 
-16. Inferred Parameters
+22. Parameter Provenance and Uncertainty
 
-A parameter inferred from Context or language.
+Noema must preserve the source and epistemic status of material parameters.
 
 Example:
 
-User:
-"Book me the cheapest flight."
-Possible inference:
-currency = user's default currency
+amount:
+  source = actor_expression
+  status = explicit
+destination:
+  source = conversation_context
+  status = inferred
+account:
+  source = enterprise_lookup
+  status = resolved
+recipient:
+  status = ambiguous
 
-Inference must remain distinguishable from explicit input.
+Unknown must remain distinguishable from inferred.
 
-Material inferred parameters may require confirmation.
+Prefer:
+
+destination = UNKNOWN
+
+to:
+
+destination = probably_account_123
+
+where the distinction is consequential.
+
+Model confidence may support candidate generation but is not itself canonical semantic certainty.
 
 ⸻
 
-17. Default Parameters
+23. Intent Constraints
 
-A parameter supplied by an explicit domain or system default.
+An Intent Constraint is a condition expressed by the Actor as part of the requested objective.
 
 Example:
 
-User:
-"Show my transactions."
-Default:
-sort = newest_first
+“Book the cheapest direct flight under ₦800,000.”
 
-Defaults must come from defined semantics rather than arbitrary model behavior.
+Objective:
+  Book Flight
+Intent Constraints:
+  direct = true
+  price <= ₦800,000
 
-⸻
+Intent Constraints must remain distinct from constraints introduced by:
 
-18. Unresolved Parameters
+* Policy;
+* Authority;
+* Action Contracts;
+* enterprise rules;
+* system requirements.
 
-A parameter required to complete an Intent but not yet established.
-
-Example:
-
-Intent:
-TransferMoney
-Missing:
-destination_account
-
-The Intent may therefore exist in a partially resolved state.
-
-Intent
-   ↓
-Incomplete
-   ↓
-Clarification Required
+A Policy must not be represented as though it were an Actor preference.
 
 ⸻
 
-19. Constraints
+24. Constraint Composition
 
-An Intent may contain or reference Constraints.
+Downstream execution may depend on several constraint sources:
 
-Example:
+Intent Constraints
+        +
+Policy Constraints
+        +
+Authority Constraints
+        +
+Action Contract Constraints
+        +
+System Constraints
+        ↓
+Executable Conditions
 
-Intent:
-BookFlight
-Constraint:
-Budget <= $800
-
-Constraints do not necessarily originate from the Actor.
-
-They may originate from:
-
-* policy
-* authority
-* system requirements
-* business rules
-* explicit user requirements
+The provenance of each material constraint must remain identifiable.
 
 ⸻
 
-20. Context
+25. Temporal Requirements
 
-Intent interpretation depends on Context.
+An Intent may contain temporal semantics including:
 
-Example:
-
-User:
-"Renew it."
-Context:
-Current conversation concerns card_1234.
-
-The Context allows the reference “it” to be resolved.
-
-Context may also determine:
-
-* target
-* parameters
-* applicable policies
-* authority
-* available capabilities
-* constraints
-
-See context.md.
-
-⸻
-
-21. Temporal Requirements
-
-Some Intents contain temporal requirements.
+* start time;
+* deadline;
+* scheduled time;
+* recurrence;
+* duration;
+* expiration;
+* effective time.
 
 Examples:
 
 "Send this tomorrow."
 "Cancel my subscription at the end of the month."
-"Transfer $500 every Friday."
+"Transfer ₦500 every Friday."
 
-Temporal semantics may include:
+Material temporal ambiguity must be resolved before consequential execution.
 
-start time
-deadline
-scheduled time
-recurrence
-duration
-expiration
-
-Time must be resolved explicitly when material.
+Temporal validity of an Intent is distinct from freshness of Context.
 
 ⸻
 
-22. Priority
+26. Priority
 
-An Intent may contain a priority when the Actor explicitly communicates one or the domain defines one.
+Priority may be represented when explicitly expressed by the Actor or established by domain semantics.
 
 Examples:
 
@@ -484,143 +834,318 @@ high
 normal
 low
 
-Priority must not automatically override Constraints, Authority, or Trust.
+Priority does not override:
 
-For example:
-
-User:
-"This is urgent, transfer the money now."
-Constraint:
-Transfer requires approval.
-
-Urgency does not eliminate the Constraint.
-
-⸻
-
-23. Intent References
-
-Actors frequently express Intent indirectly.
-
-Examples:
-
-“Can you take care of this?”
-
-“Fix my account.”
-
-“I need that cancelled.”
-
-“Make it work again.”
-
-These expressions may contain an Intent but require Context to resolve:
-
-Reference
-   +
-Context
-   ↓
-Candidate Intent
-
-⸻
-
-24. Intent Ambiguity
-
-An Intent is ambiguous when multiple materially different interpretations remain possible.
+* Authority;
+* Policy;
+* Action Contract;
+* Trust;
+* safety conditions.
 
 Example:
 
-User:
-"Cancel my account."
-Possible targets:
-Account A
-Account B
-Account C
+Actor:
+  "This is urgent. Transfer it now."
+Policy:
+  Approval required.
 
-Or:
-
-User:
-"Fix my card."
-Possible objectives:
-Renew
-Replace
-Unblock
-
-If the ambiguity can change the resulting Action or Outcome, Noema must not silently choose.
+Urgency does not remove the approval requirement.
 
 ⸻
 
-25. Intent Completeness
+27. Intent Classes
 
-An Intent is complete when all information required for the relevant downstream decision has been sufficiently established.
+For the POC, intent_class is a fixed semantic enum and is not an arbitrary model-generated free-form value.
 
-Completeness is contextual.
+Canonical POC values:
 
-For example:
+TRANSACTION_EXCEPTION
+POLICY_INQUIRY
+OUT_OF_SCOPE
+
+Additional domain-specific classes may be introduced only through versioned schema and ontology governance.
+
+The Intent Engine may classify an expression, but downstream systems consume the fixed canonical vocabulary.
+
+⸻
+
+28. Operation and Desired Outcome
+
+The POC separates broad Intent classification from the operation and desired outcome.
+
+Example:
+
+intent_class:
+  TRANSACTION_EXCEPTION
+operation:
+  INVESTIGATE_AND_RESOLVE
+desired_outcome:
+  EXPLAIN_STATUS_AND_RESOLVE
+
+This allows one class of customer problem to cover manifestations such as:
+
+* locate;
+* explain;
+* resolve;
+* route;
+* reconstruct.
+
+These represent manifestations of the transaction-exception resolution problem rather than necessarily independent products or intent systems.
+
+⸻
+
+29. Intent Resolution
+
+Intent Resolution transforms an Intent Expression and permitted supporting information into a Canonical Intent.
+
+Intent Expression
+       │
+       ▼
+Candidate Intent Set
+       │
+       ├── Context
+       ├── Evidence
+       ├── Entity Candidates
+       ├── Parameter Candidates
+       └── Constraints
+       │
+       ▼
+Resolution
+       │
+  ┌────┴────┐
+  ▼         ▼
+Canonical   Ambiguous /
+Intent      Incomplete
+              │
+              ▼
+          Clarification
+
+Intent Resolution establishes what the Actor means.
+
+It does not authorize execution.
+
+⸻
+
+30. Candidate Intent
+
+A Candidate Intent is a possible semantic interpretation generated during resolution.
+
+Example:
+
+Expression:
+  "Fix my card."
+Candidates:
+  RenewCard
+  ReplaceCard
+  UnblockCard
+  CancelCard
+
+Candidate generation may be probabilistic.
+
+Resolution determines whether a candidate can be accepted as canonical under the available evidence and rules.
+
+Candidate ≠ Canonical Intent
+
+⸻
+
+31. Ambiguity Resolution
+
+Ambiguity is a first-class system state.
+
+The POC resolution flow is:
+
+Candidate Generation
+       ↓
+Candidate Ranking
+       ↓
+Threshold Check
+       ↓
+Clarification / Resolution
+       ↓
+Clarification Response Binding
+       ↓
+Contradiction Handling
+       ↓
+New Intent Version
+
+Candidate ranking may consider:
+
+* recency;
+* amount match;
+* recipient-name match;
+* prior interaction frequency.
+
+Exact ranking thresholds are implementation/configuration decisions, not ontology semantics.
+
+The POC safety rule is:
+
+An unresolved material ambiguity must not yield an ALLOW decision.
+
+Where material ambiguity remains, Noema must:
+
+CLARIFY
+or
+ESCALATE
+
+Clarification must use distinguishing, user-verifiable information and must not expose internal identifiers or unauthorized information.
+
+⸻
+
+32. Minimal Clarification
+
+Clarification should request the minimum information necessary to resolve material uncertainty.
+
+Poor:
+
+“Please provide your complete account information, address, identity information, and transaction history.”
+
+Better:
+
+“Which account should receive the ₦500?”
+
+The objective is:
+
+Minimum Information
+       ↓
+Sufficient Resolution
+
+Clarification itself remains subject to Authority and information-disclosure boundaries.
+
+⸻
+
+33. Completeness
+
+An Intent is complete when the information required for its current semantic and downstream purpose has been sufficiently established.
+
+Grammatical completeness is not the criterion.
+
+Example:
 
 "Show my account."
 
-may be complete if the Actor has exactly one account.
+may be complete if exactly one relevant account exists.
 
 But:
 
 "Transfer money."
 
-is incomplete if the destination and amount are required.
+may be incomplete because material parameters are absent.
 
 Therefore:
 
-Intent completeness is determined by the requirements of the intended operation, not by the grammatical completeness of the sentence.
+Intent Completeness
+=
+Requirements of the Relevant Downstream Operation
+
+An Intent may be semantically valid while remaining non-executable.
 
 ⸻
 
-26. Intent Resolution
+34. Resolution, Context, and Evidence
 
-Intent Resolution transforms a raw expression into a canonical representation.
+Context and Evidence may contribute to resolution without becoming semantic components of the objective.
 
-Expression
-    │
-    ▼
-Candidate Interpretations
-    │
-    ├── Context
-    ├── Entity Resolution
-    ├── Constraints
-    └── Evidence
-          │
-          ▼
-    Resolved Intent
-
-Resolution must establish enough semantic information for deterministic downstream evaluation.
-
-⸻
-
-27. Intent Resolution Is Not Execution
-
-Noema may successfully resolve an Intent without executing anything.
+Example:
 
 User:
-"Cancel my subscription."
-Result:
-Intent resolved.
-No execution yet.
+  "Show my transactions."
+Noema:
+  "Which account?"
+User:
+  "My current account."
 
-This distinction allows Noema to evaluate:
+The second expression depends on conversation Context.
 
-* authority
-* policy
-* constraints
-* capability
-* trust
+But:
 
-before consequential behavior occurs.
+Conversation Context ≠ Enterprise Truth
+
+Likewise:
+
+User:
+  "My card ending in 1234 is expired. Renew it."
+
+The statement is an Actor expression and may constitute Evidence for interpretation. It does not automatically become authoritative enterprise state.
+
+Authoritative enterprise systems remain the source of truth for enterprise facts.
 
 ⸻
 
-28. Intent Lifecycle
+35. Multi-Source Grounding
 
-An Intent may progress through states such as:
+For consequential interpretation, Intent Resolution should be grounded against permitted sources rather than relying solely on the expression or model inference.
+
+Conceptually:
+
+Expression
+    +
+Conversation Context
+    +
+Enterprise Context
+    +
+Evidence
+    +
+Entity Relationships
+    +
+Resolved Parameters
+    +
+Constraints
+        ↓
+Candidate Intents
+        ↓
+Canonical Intent
+
+The purpose of grounding is not to place every retrieved fact into the Intent.
+
+Its purpose is to establish the minimum semantic information required to resolve the Actor’s objective correctly while preserving provenance for material decisions.
+
+External systems and retrieved content remain untrusted inputs.
+
+Retrieved Information
+       ↓
+Evidence to Evaluate
+       ≠
+Instruction to Execute
+
+⸻
+
+36. Intent Determinism
+
+Once the relevant canonical inputs have been established, material Intent resolution should become deterministic.
+
+Established Expression
++
+Established Context
++
+Established Entity Resolution
++
+Established Parameters
++
+Established Constraints
+        ↓
+Canonical Intent
+
+Probabilistic models may participate in:
+
+* interpretation;
+* candidate generation;
+* candidate ranking.
+
+They must not silently become the final authority where material ambiguity remains.
+
+⸻
+
+37. Intent Lifecycle
+
+Intent has both semantic identity and lifecycle state.
+
+A conceptual lifecycle is:
 
 RECEIVED
    ↓
 INTERPRETING
+   ↓
+DRAFT / CANDIDATE
    ↓
 PARTIALLY_RESOLVED
    ↓
@@ -630,1120 +1155,1487 @@ RESOLVED
    ↓
 VALIDATED
    ↓
-TRUSTED
+READY_FOR_PLANNING
+   ↓
+PLANNED
+   ↓
+TRUST_EVALUATION
+   ↓
+ACTION_AUTHORIZED
    ↓
 EXECUTING
    ↓
 COMPLETED
 
-Alternative terminal states may include:
+Possible terminal or exceptional states include:
 
 REJECTED
 FAILED
 CANCELLED
+SUPERSEDED
+EXPIRED
 ESCALATED
 
-The exact state machine belongs in the Intent lifecycle specification.
+The authoritative lifecycle state machine belongs to the lifecycle specification.
 
 ⸻
 
-29. Intent State vs Intent
+38. Intent State Is Not Intent
 
 Intent and Intent State are distinct.
 
 Intent:
-Renew card_1234
+  Renew card_1234
 State:
-RESOLVED
+  RESOLVED
 
-The Intent represents the semantic object.
+The Intent represents the semantic objective.
 
-The State describes where that Intent currently is in Noema’s lifecycle.
+The State represents the Intent’s position in the Noema lifecycle.
 
-⸻
-
-30. Intent Revision
-
-An Intent may change as new information becomes available.
-
-Example:
-
-Initial:
-"Book me a flight to London."
-Later:
-"Actually, make it Manchester."
-
-This may represent:
-
-Intent Revision
-
-rather than a completely unrelated Intent.
-
-Noema should preserve the relationship between revisions where auditability matters.
+Intent ≠ Intent State
 
 ⸻
 
-31. Intent Supersession
+39. Resolved Intent
 
-A newer Intent may supersede an earlier one.
+A Resolved Intent is an Intent for which the material semantic interpretation has been established sufficiently for deterministic downstream processing.
 
-Example:
+Resolution may establish:
 
-Intent A:
-Transfer $500.
-Intent B:
-Actually, transfer $700 instead.
+* objective;
+* target;
+* required parameters;
+* material constraints;
+* temporal requirements.
 
-Intent B may supersede Intent A.
+A Resolved Intent is not necessarily:
 
-The system should not execute both merely because both were previously resolved.
-
-⸻
-
-32. Intent Cancellation
-
-An Actor may explicitly cancel an Intent.
-
-Intent:
-Send payment.
-Actor:
-"Never mind, cancel that."
-
-Noema must distinguish:
-
-Intent Cancellation
-
-from:
-
-Action Cancellation
-
-An Intent may be cancelled before any Action occurs.
+* validated;
+* authorized;
+* trusted;
+* executable.
 
 ⸻
 
-33. Compound Intents
+40. Validated Intent
 
-An Actor may express multiple objectives in one interaction.
+A Validated Intent has passed applicable structural and semantic validation.
 
-Example:
+Validation may establish:
 
-“Cancel my old subscription and move me to the Pro plan.”
+* valid canonical objective;
+* valid schema;
+* resolved required references;
+* required parameters;
+* semantically valid values;
+* internally consistent constraints;
+* valid temporal requirements.
 
-This may resolve into:
-
-Intent A:
-Cancel Subscription
-Intent B:
-Create / Upgrade Subscription
-
-These may have dependencies.
-
-Intent A
-   ↓
-Outcome
-   ↓
-Intent B
-
-The exact decomposition belongs in the Intent Resolution specification.
+Validation does not establish Authority or Trust.
 
 ⸻
 
-34. Dependent Intents
+41. Execution-Ready Intent
 
-One Intent may depend on another.
+An Intent is execution-ready only when the requirements necessary to construct a valid downstream Action have been established.
 
-Example:
+Conceptually:
 
-Intent A:
-Create Account
-Intent B:
-Fund Account
-
-Intent B cannot execute successfully until Intent A produces the required Entity and state.
-
-⸻
-
-35. Intent Composition
-
-Multiple Intent components may form a larger objective.
-
-Example:
-
-"Move me from Basic to Pro and cancel my old billing plan."
-
-Canonical representation may contain:
-
-Composite Intent
-├── Upgrade Subscription
-└── Cancel Billing Plan
-
-Composition must preserve dependencies and ordering where material.
-
-⸻
-
-36. Intent Decomposition
-
-A single high-level Intent may require multiple Actions.
-
-Example:
-
-Intent:
-"Onboard this employee."
-Actions:
-1. Create employee record
-2. Create email account
-3. Assign permissions
-4. Send welcome email
-
-The Actor expressed one objective.
-
-Noema may derive multiple Actions to fulfill it.
-
-Intent
-   ↓
-Action Plan
-   ├── Action 1
-   ├── Action 2
-   ├── Action 3
-   └── Action 4
-
-Action planning must remain subordinate to the Intent.
-
-⸻
-
-37. Intent vs Action Plan
-
-An Intent describes what should be achieved.
-
-An Action Plan describes how the system proposes to achieve it.
-
-Intent:
-Onboard employee.
-Action Plan:
-Create employee
-→ provision email
-→ assign permissions
-→ notify employee
-
-The Action Plan may change without changing the underlying Intent.
-
-⸻
-
-38. Intent and Capability Matching
-
-Once an Intent is resolved, Noema may determine which Capabilities could satisfy it.
-
-Intent
-   ↓
-Required Ability
-   ↓
-Capability Matching
-   ↓
-Candidate Capabilities
-
-Example:
-
-Intent:
-Renew Card
-Capabilities:
-bank.card.renew
-thirdparty.card.replace
-
-Capability selection must consider Context, Constraints, Authority, and Trust.
-
-⸻
-
-39. Intent and Authority
-
-Intent does not imply permission.
-
-Actor:
-Employee
-Intent:
-Approve $100,000 payment.
-Authority:
-Maximum approval = $50,000
-
-The Intent remains semantically valid.
-
-Trust evaluation rejects or escalates execution.
-
-⸻
-
-40. Intent and Policy
-
-Policies may constrain how an Intent can be fulfilled.
-
-Intent:
-Refund customer.
-Policy:
-Refunds above $10,000 require manager approval.
-
-The Policy does not alter the Actor’s desired objective.
-
-It changes the conditions under which the Intent may be fulfilled.
-
-⸻
-
-41. Intent and Constraints
-
-Constraints may originate directly from the Intent.
-
-Example:
-
-“Book me the cheapest direct flight under $800.”
-
-Canonical Intent:
-
-Objective:
-Book Flight
-Constraints:
-direct = true
-price <= $800
-
-The constraints become part of the semantic representation because they affect fulfillment.
-
-⸻
-
-42. Intent and Entity Resolution
-
-An Intent may reference an Entity indirectly.
-
-"Renew my main card."
-
-Noema must resolve:
-
-"main card"
+Resolved Intent
+      +
+Resolved Target
+      +
+Required Parameters
+      +
+Relevant Context
+      +
+Applicable Constraints
+      +
+Required Capability
+      +
+Action Contract Requirements
       ↓
-Candidate Entities
-      ↓
-Context
-      ↓
-Resolved Entity
+Execution-Ready
 
-Entity resolution is therefore often a prerequisite for complete Intent resolution.
+Execution readiness is not equivalent to authorization.
 
 ⸻
 
-43. Intent and Context Resolution
+42. Trust Decision Outcomes
 
-Context can disambiguate the Intent.
+Trust is represented separately from Intent.
 
-Example:
+The POC defines a fixed TrustDecision vocabulary:
 
-Previous:
-"Let's talk about my Pro subscription."
-Current:
-"Cancel it."
+ALLOW
+CLARIFY
+CONFIRM
+WAIT
+ESCALATE
+REJECT
+UNKNOWN
 
-Context:
+These are decision outcomes, not Intent states.
 
-Current subject = Pro subscription
+Examples:
 
-Intent:
+Material ambiguity
+  → CLARIFY
+Insufficient authority
+  → REJECT
+External state not yet settled
+  → WAIT
+Material uncertainty that cannot safely be resolved
+  → UNKNOWN / ESCALATE
 
-CancelSubscription
-Target = Pro subscription
-
-Context must remain traceable as the basis for resolution.
+An unresolved material ambiguity must not be represented as ALLOW.
 
 ⸻
 
-44. Intent and Evidence
+43. Authorization Boundary
 
-Evidence can support Intent interpretation.
+Noema distinguishes three authorization layers:
 
-Example:
+Layer	Question
+Technical authorization	Can this Principal invoke this Capability at all?
+Policy authorization	Does this parameterization satisfy a static Policy rule?
+Business authorization	Given the fully resolved business object and current state, should this specific outcome be permitted now?
 
-User:
-"My card is expired. Renew it."
-Evidence:
-Banking System confirms expiry.
+The critical Noema boundary is:
 
-The Evidence strengthens the interpretation.
+Authorization must attach to:
+Actor
++
+Action
++
+Resolved Target
++
+Relevant State
+
+It must not attach merely to:
+
+Actor + Tool
+
+A technically authorized call against the wrong resolved Entity constitutes a confused-deputy risk.
+
+⸻
+
+44. Intent and Bounded Autonomy
+
+Noema distinguishes:
+
+Principal Objective
+        ≠
+Agent-Selected Means
+
+An Agent may select intermediate Actions or Derived Intents within an explicit delegation boundary.
 
 However:
 
-Evidence supports Intent resolution; it does not itself constitute Intent.
+Agent Reasoning   ≠ Principal Authorization
+Agent Capability  ≠ Agent Authority
+
+The Agent must not expand delegated scope through its own reasoning.
 
 ⸻
 
-45. Intent and Trust
+45. Derived Intent
 
-Intent is one of the principal inputs to Trust evaluation.
-
-Conceptually:
-
-Intent
-   +
-Context
-   +
-Entity
-   +
-Constraints
-   +
-Authority
-   +
-Evidence
-   +
-Capability
-        │
-        ▼
-    Trust Decision
-
-A resolved Intent is therefore not automatically trusted.
-
-⸻
-
-46. Intent and Execution
-
-Only after the relevant Trust conditions are satisfied should Noema authorize execution.
-
-Intent
-  ↓
-Resolve
-  ↓
-Validate
-  ↓
-Trust
-  ↓
-Action
-  ↓
-Execute
-
-The distinction is fundamental:
-
-An Intent expresses what should happen; execution determines whether anything actually happens.
-
-⸻
-
-47. Intent and Outcome
-
-The Outcome must be compared against the original Intent.
-
-Example:
-
-Intent:
-Transfer $500.
-Observed Outcome:
-Transfer $500 completed.
-
-Success.
-
-But:
-
-Intent:
-Transfer $500.
-Observed Outcome:
-Transfer $450 completed.
-
-The system must not treat this as equivalent merely because an Action executed successfully.
-
-Outcome verification must evaluate whether the observed result satisfies the Intent.
-
-⸻
-
-48. Intent Satisfaction
-
-An Intent is satisfied when the resulting Outcome fulfills the semantic objective.
-
-Conceptually:
-
-Intent
-   +
-Observed Outcome
-      │
-      ▼
-Satisfaction Evaluation
-      │
-   ┌──┴──┐
-   ▼     ▼
-Satisfied Unsatisfied
-
-Technical execution success does not necessarily imply Intent satisfaction.
-
-⸻
-
-49. Intent Failure
-
-An Intent may fail at multiple layers.
-
-Interpretation Failure
-
-No sufficiently reliable Intent can be resolved.
-
-Validation Failure
-
-Required conditions are not satisfied.
-
-Trust Failure
-
-Noema refuses to authorize execution.
-
-Execution Failure
-
-The Action cannot be successfully performed.
-
-Outcome Failure
-
-Execution succeeds technically but does not satisfy the Intent.
-
-These must remain distinguishable.
-
-⸻
-
-50. Intent Uncertainty
-
-Noema should represent uncertainty explicitly.
-
-Examples:
-
-Unknown target
-Ambiguous objective
-Missing parameter
-Conflicting Context
-Insufficient authority information
-Uncertain capability
-
-Noema must not silently convert uncertainty into certainty merely to continue execution.
-
-⸻
-
-51. Intent Clarification
-
-Clarification is required when unresolved information is material.
-
-Example:
-
-User:
-"Transfer $500."
-Missing:
-Destination account.
-
-Noema should ask:
-
-"Which account should I transfer the $500 to?"
-
-rather than inventing a destination.
-
-⸻
-
-52. Minimal Clarification
-
-Clarification should request the minimum information necessary to resolve the Intent.
-
-Bad:
-
-Please provide your full account details, address,
-identity information, and transaction history.
-
-Better:
-
-Which account should receive the $500?
-
-The objective is to minimize friction while preserving deterministic resolution.
-
-⸻
-
-53. Intent Normalization
-
-Normalization converts semantically equivalent expressions into a canonical representation.
-
-Examples:
-
-"Cancel my subscription."
-"Please cancel my plan."
-"Get me off this subscription."
-
-may normalize to:
-
-Objective:
-Cancel Subscription
-
-Normalization must preserve materially meaningful differences.
-
-⸻
-
-54. Intent Equivalence
-
-Two expressions may represent equivalent Intent even when their wording differs.
-
-"Cancel my plan."
-"Terminate my subscription."
-
-Potentially equivalent:
-
-CancelSubscription
-
-But:
-
-"Pause my subscription."
-
-is materially different.
-
-Semantic equivalence must therefore be determined by the ontology, not surface wording alone.
-
-⸻
-
-55. Intent Specificity
-
-Intent representations may exist at different levels of specificity.
-
-Example:
-
-High-level:
-Manage my account.
-More specific:
-Update my account.
-Canonical:
-UpdateAccountEmail
-
-Noema should resolve to the level of specificity required for deterministic execution.
-
-A vague Intent may be valid without being executable.
-
-⸻
-
-56. Intent Granularity
-
-Noema should avoid both:
-
-Overly broad Intent
-
-and:
-
-Implementation-level Intent
-
-For example:
-
-"Fix my banking situation."
-
-is too broad to execute.
-
-But:
-
-POST /v1/accounts/123/cards/456/renew
-
-is not an Intent.
-
-The appropriate semantic level is:
-
-RenewCard
-Target = card_456
-
-⸻
-
-57. Intent Canonical Form
-
-A conceptual canonical Intent representation:
-
-Intent
-├── id
-├── actor
-├── objective
-├── target
-├── parameters
-├── constraints
-├── context
-├── temporal_requirements
-├── priority
-├── provenance
-└── state
-
-The actual serialization belongs to the schema and implementation specifications.
-
-⸻
-
-58. Intent Resolution Pipeline
-
-The canonical resolution pipeline is:
-
-User Expression
-      │
-      ▼
-Language Interpretation
-      │
-      ▼
-Candidate Intent(s)
-      │
-      ▼
-Entity Resolution
-      │
-      ▼
-Context Assembly
-      │
-      ▼
-Parameter Resolution
-      │
-      ▼
-Constraint Identification
-      │
-      ▼
-Completeness Check
-      │
-      ▼
-Canonical Intent
-
-If a material ambiguity remains:
-
-                 ┌──► Clarification
-                 │
-Candidate Intent ┤
-                 │
-                 └──► Canonical Intent
-
-⸻
-
-59. Intent Validation
-
-Before an Intent becomes eligible for Trust evaluation, Noema should validate:
-
-* Actor
-* Objective
-* Target
-* required parameters
-* relevant Context
-* applicable Constraints
-* temporal requirements
-* Entity resolution
-* semantic consistency
-
-Validation must be deterministic where the relevant information permits it.
-
-⸻
-
-60. Intent Trust Boundary
-
-A resolved Intent may still be untrusted.
-
-Candidate Intent
-      ↓
-Canonical Intent
-      ↓
-Validation
-      ↓
-Trust Evaluation
-      ↓
-Trusted Intent
-
-The Trusted Intent is the semantic representation that Noema is willing to use as the basis for consequential Action.
-
-⸻
-
-61. Trusted Intent
-
-A Trusted Intent is an Intent that has satisfied the applicable Noema requirements for proceeding toward Action.
-
-Trust may depend on:
-
-Intent validity
-Entity resolution
-Context sufficiency
-Authority
-Constraints
-Policy
-Capability
-Evidence
-Risk
-
-Trust is therefore contextual.
-
-⸻
-
-62. Intent Immutability After Trust
-
-Once an Intent crosses a consequential Trust Boundary, material modifications should not silently mutate the trusted Intent.
-
-If the Actor changes:
-
-amount
-target
-destination
-scope
-
-Noema should generally produce a new or revised Intent requiring appropriate revalidation.
-
-Trusted Intent A
-      │
-      │ material change
-      ▼
-Intent Revision B
-      │
-      ▼
-Revalidation
-
-⸻
-
-63. Intent Identity
-
-An Intent should have its own identity independent of the natural-language expression that produced it.
-
-For example:
-
-Intent ID:
-intent_123
-
-The same conversational interaction may produce multiple Intent objects.
-
-⸻
-
-64. Intent Provenance
-
-Intent provenance should capture how the Intent was established.
-
-Conceptually:
-
-Intent
-├── originating expression
-├── Actor
-├── Context used
-├── Entity resolution
-├── Model proposal
-├── validation
-└── resolution timestamp
-
-This supports auditability without requiring preservation of hidden model chain-of-thought.
-
-⸻
-
-65. Intent Versioning
-
-An Intent may have revisions.
-
-intent_123
-   │
-   ├── v1: Transfer $500
-   │
-   ├── v2: Transfer $700
-   │
-   └── v3: Transfer $700 to Account B
-
-Material revisions should preserve lineage.
-
-⸻
-
-66. Intent Cancellation and Supersession
-
-An Intent may be:
-
-CANCELLED
-SUPERSEDED
-EXPIRED
-COMPLETED
-FAILED
-
-These states must be distinguished.
-
-For example:
-
-SUPERSEDED
-
-means another Intent replaced it.
-
-CANCELLED
-
-means the Intent was explicitly withdrawn.
-
-⸻
-
-67. Recurring Intents
-
-Some Intent expressions represent recurring objectives.
-
-Example:
-
-“Transfer $500 to my savings account every Friday.”
-
-Canonical representation may include:
-
-Objective:
-Transfer Money
-Parameters:
-amount = $500
-destination = savings_account
-Temporal Requirement:
-recurrence = weekly
-day = Friday
-
-Recurring Intent semantics require additional lifecycle rules.
-
-⸻
-
-68. Conditional Intents
-
-Some Intents depend on conditions.
-
-Example:
-
-“If my balance drops below $1,000, transfer $500.”
-
-Canonical representation:
-
-Trigger:
-balance < $1,000
-Objective:
-Transfer $500
-
-The condition must remain distinguishable from the objective.
-
-⸻
-
-69. Delegated Intents
-
-An Actor may express an Intent on behalf of another Actor.
-
-Actor:
-Assistant
-Principal:
-Customer
-Intent:
-Book flight
-
-The delegation relationship must be explicit.
-
-The fact that an Agent issued the request does not automatically establish that it has Authority.
-
-⸻
-
-70. Agentic Intent
-
-An AI Agent may generate an Intent autonomously based on a prior objective.
+A Derived Intent is a new semantic objective generated while attempting to satisfy an originating Intent.
 
 Example:
 
 Principal Intent:
-"Keep my inventory above 100 units."
-Agent-derived Intent:
-"Order 50 units from Supplier A."
+  Keep inventory above 100 units.
+Agent reasoning:
+  ↓
+Derived Intent:
+  Order 50 units from Supplier A.
 
-The derived Intent must remain distinguishable from the Principal’s original Intent.
+The Derived Intent is not identical to the Principal Intent.
 
 Principal Intent
-      ↓
-Agent Reasoning
-      ↓
+       ↓
+Reasoning / Planning
+       ↓
 Derived Intent
 
-Derived Intent must be evaluated under the applicable Authority and Trust rules.
+The Derived Intent remains subject to:
+
+* delegation;
+* Authority;
+* Policy;
+* Capability;
+* Constraints;
+* Action Contract;
+* Trust.
+
+A Derived Intent must not silently redefine the Principal’s objective.
 
 ⸻
 
-71. Intent Delegation Boundary
+46. Compound and Composite Intent
 
-An Agent acting on behalf of an Actor does not inherit unlimited authority.
+One expression may contain multiple objectives.
+
+Example:
+
+“Cancel my old subscription and move me to Pro.”
+
+This may resolve into:
+
+Composite Intent
+├── Cancel Subscription
+└── Upgrade Subscription
+
+Each component retains:
+
+* identity;
+* objective;
+* targets;
+* dependencies;
+* constraints;
+* provenance;
+* originating Principal.
+
+Where ordering or dependency matters, it must be explicit.
+
+⸻
+
+47. Intent Decomposition
+
+One high-level Intent may produce multiple Actions.
+
+Example:
+
+Intent:
+  Onboard Employee
+Action Plan:
+  Create Employee
+      ↓
+  Create Account
+      ↓
+  Assign Permissions
+      ↓
+  Send Welcome Message
+
+The Actor expressed one objective.
+
+Noema may decompose it into multiple consequential operations.
+
+Each Action retains lineage to the originating Intent and is governed by its own Action Contract and Trust requirements.
+
+⸻
+
+48. Intent Revision
+
+A material change creates a new Intent version.
+
+Example:
+
+v1:
+  Transfer ₦500
+v2:
+  Transfer ₦700
+v3:
+  Transfer ₦700 to Account B
+
+Material revisions require:
+
+* lineage;
+* explicit amendment;
+* revalidation;
+* re-evaluation of downstream decisions where required.
+
+An Intent must never be silently mutated after crossing a consequential decision boundary.
+
+⸻
+
+49. Supersession
+
+A newer Intent may supersede an earlier Intent.
+
+Example:
+
+Intent A:
+  Transfer ₦500.
+Intent B:
+  Actually, transfer ₦700 instead.
+
+Intent B may supersede Intent A.
+
+Noema must not execute both merely because both were previously resolved.
+
+SUPERSEDED ≠ CANCELLED
+
+⸻
+
+50. Cancellation
+
+Intent cancellation is the withdrawal of an Intent before or independently of Action cancellation.
+
+Example:
+
+“Never mind. Cancel that.”
+
+This is distinct from cancelling an Action that is already executing.
+
+Intent Cancellation ≠ Action Cancellation
+
+The semantics of Action cancellation depend on the relevant Action Contract and external system.
+
+⸻
+
+51. Expiration and Temporal Validity
+
+An Intent may become temporally invalid.
+
+Examples:
+
+"Book the flight for tomorrow."
+
+after the relevant booking window has passed.
+
+or:
+
+"Cancel this offer before Friday."
+
+after the deadline.
+
+Expiration is distinct from:
+
+* cancellation;
+* supersession.
+
+Intent temporal validity must not be confused with Context freshness.
+
+⸻
+
+52. Recurring Intent
+
+A Recurring Intent expresses a repeated objective.
+
+Example:
+
+"Transfer ₦500 to my savings account every Friday."
+
+Conceptually:
+
+Objective:
+  Transfer Money
+Parameters:
+  amount = ₦500
+  destination = savings account
+Temporal Requirement:
+  recurrence = weekly
+  day = Friday
+
+Recurring Intent requires explicit semantics for:
+
+* recurrence;
+* expiration;
+* modification;
+* cancellation;
+* each resulting execution;
+* per-execution Trust and Action requirements.
+
+A recurring Intent is not unlimited Authority.
+
+⸻
+
+53. Conditional Intent
+
+A Conditional Intent specifies a condition under which an objective should be pursued.
+
+Example:
+
+"If my balance drops below ₦1,000, transfer ₦500."
+
+Conceptually:
+
+Trigger Condition:
+  balance < ₦1,000
+Objective:
+  Transfer ₦500
+
+The condition and objective are distinct:
+
+Condition ≠ Objective
+
+The condition does not itself authorize execution.
+
+⸻
+
+54. Intent and Transaction-Exception Resolution
+
+The initial Noema commercial and POC wedge is transaction exception resolution:
+
+Failed, delayed, ambiguous, stuck, or disputed financial transactions where the enterprise already possesses the underlying information across multiple systems, but no single system converts that information into a trustworthy answer without human cross-referencing.
+
+The canonical customer question is:
+
+“Where is my money?”
+
+Representative expressions include:
+
+"I sent ₦20,000 yesterday and they haven't received it."
+"Wetin happen to the 20k wey I send this morning?"
+"I sent ₦50k to Tunde but he hasn't received it."
+"The money left my account but the person hasn't gotten it."
+"Why did this transfer fail?"
+"Should I try again?"
+"Has the money been reversed?"
+
+These are not merely conversational queries. They require Noema to reconstruct enterprise state and establish a trustworthy resolution.
+
+The five manifestations are:
+
+Moment	Customer problem	Capability demonstrated
+LOCATE	“I don’t know where my money is.”	State reconstruction across conflicting systems
+EXPLAIN	“I don’t know why this failed.”	Correct diagnosis
+RESOLVE	“I don’t know how to fix this.”	Governed next-action recommendation
+ROUTE	“I don’t know who needs to act.”	Correct case ownership
+RECONSTRUCT	“I don’t know what happened.”	Evidence-backed timeline reconstruction
+
+These are manifestations of one resolution problem, not necessarily five separate products.
+
+⸻
+
+55. Intent in the POC Scope
+
+The POC is deliberately read/diagnosis-first.
+
+Allowed writes are governed, non-monetary operations such as:
+
+* structured internal escalation tickets;
+* compliant complaint-reference logging;
+* routing to the correct internal owner or queue;
+* non-monetary case-state updates;
+* investigation evidence recording.
+
+The POC prohibits:
+
+* transfers;
+* refunds;
+* reversals;
+* balance adjustments;
+* payment instructions;
+* financial movement of any kind.
+
+This is an architectural capability boundary, not merely a prompt instruction.
+
+Therefore an Intent such as:
+
+"Send ₦20,000 to Tunde."
+
+may be semantically representable as an Actor request, but the POC does not thereby acquire the Capability or Authority to execute it.
+
+⸻
+
+56. Worked Intent Fixtures
+
+These fixtures define important semantic and safety behavior.
+
+A — Unique, unambiguous status request
+
+"Check my transfer of ₦15,000 to my landlord yesterday."
+
+One matching transaction exists.
+
+Resolution:
+
+LOCATE → EXPLAIN
+
+The corresponding Trust outcome may be:
+
+ALLOW
+
+because the material transaction reference is unambiguous and the operation is within the POC’s governed read/diagnostic scope.
+
+⸻
+
+B — Ambiguous recipient
+
+"The ₦20k I sent to Tunde."
+
+Two candidate transactions involve different Tundes, with the same amount and close timestamps.
+
+Resolution:
+
+CLARIFY
+
+Candidates must be distinguished using user-verifiable information such as time or account tail, never internal identifiers.
+
+⸻
+
+C — Missing reference
+
+"That money I sent yesterday didn't enter."
+
+No amount, recipient, or transaction reference is provided.
+
+Candidate generation may return prior-day transactions.
+
+If the candidate set remains above the configured threshold, Noema escalates rather than force an unreliable guess.
+
+⸻
+
+D — Dangerous retry follow-up
+
+"Should I send it again?"
+
+Noema must resolve current transaction state before answering.
+
+A prior failure-like signal does not establish that a duplicate transaction is safe.
+
+⸻
+
+E — Authorization boundary
+
+A user requests investigation into an account for which they are not a verified party.
+
+The appropriate result is rejection at the identity/Authority boundary before Entity matching can expose protected transaction information.
+
+⸻
+
+57. Code-Switched and Local-Language Expressions
+
+Intent Resolution must preserve semantic meaning across the language and register in which the Actor naturally communicates.
+
+The POC includes Nigerian code-switched and local-language expressions as testable inputs.
+
+Examples:
+
+"E never enter"
+  → desired outcome / credit-not-confirmed hypothesis
+"Sharp-sharp"
+  → urgency modifier, not a financial instruction
+"Abeg check am"
+  → investigate / resolve imperative
+"Ó ti jáde ní ẹgbẹrún méjìlélógún"
+  → amount extraction
+"Kudin ya fita amma bai isa ba"
+  → money-left-but-not-arrived state hypothesis
+
+System codes must likewise be mapped semantically rather than interpreted as natural-language instructions.
+
+Example:
+
+09 — Pending
+  → SETTLEMENT_PENDING
+96 — System Malfunction
+  → EXECUTION_OUTCOME_UNKNOWN
+  → verify before retry
+
+For the POC, deterministic lexicon/configuration provides a testable coverage layer around the Intent Engine.
+
+A specialist intent model is a later capability, not a prerequisite for the semantic boundary.
+
+⸻
+
+58. Intent and Enterprise State
+
+Intent establishes what the Actor wants.
+
+Enterprise State establishes what is true in authoritative systems.
+
+They are coupled during resolution and execution but remain distinct objects.
+
+Intent:
+  Transfer ₦500
+Context at T1:
+  balance = ₦1,000
+Context at T2:
+  balance = ₦400
+
+The Intent may remain unchanged while enterprise state changes.
+
+Noema therefore distinguishes:
+
+Intent
+State Snapshot
+Context Freshness
+
+Enterprise systems remain authoritative for enterprise state.
+
+Noema reconstructs state; it does not create a shadow source of truth through inference.
+
+⸻
+
+59. Intent and State Reconstruction
+
+For the transaction-exception wedge, Intent Resolution identifies the business object to investigate.
+
+State Reconstruction then gathers evidence from relevant enterprise systems.
+
+Conceptually:
+
+Canonical Intent
+       ↓
+Resolve User
+       ↓
+Identify Account
+       ↓
+Generate Transaction Candidates
+       ↓
+Resolve Ambiguity
+       ↓
+Query Relevant Systems
+       ↓
+Reconcile State
+       ↓
+Trust Decision
+
+Every reconstructed fact should retain an explicit epistemic state such as:
+
+KNOWN
+INFERRED
+AMBIGUOUS
+UNAVAILABLE
+STALE
+CONTRADICTORY
+UNKNOWN
+UNAUTHORIZED
+
+A weak or conflicting enterprise signal must not be silently converted into false certainty.
+
+⸻
+
+60. Intent and Unknown
+
+Unknown is a valid first-class state.
+
+Examples:
+
+target = UNKNOWN
+amount = UNKNOWN
+destination = UNRESOLVED
+transaction_state = UNKNOWN
+
+Noema should not convert uncertainty into an optimistic guess merely to produce a smoother user experience.
+
+Depending on its source and nature, material uncertainty may result in:
+
+CLARIFY
+WAIT
+ESCALATE
+REJECT
+UNKNOWN
+
+⸻
+
+61. Intent and Policy
+
+Policy governs the conditions under which an Intent may be fulfilled.
+
+Example:
+
+Intent:
+  Refund Customer
+Policy:
+  Refunds above ₦10,000,000 require manager approval.
+
+Policy does not alter the Actor’s objective.
+
+It changes the conditions under which the objective may proceed.
+
+For the POC, Policy evaluation is deterministic and versioned.
+
+A Trust Decision records the Policy version governing the decision.
+
+⸻
+
+62. Intent and Action Contracts
+
+An Action Contract specifies the requirements and guarantees of a concrete Action.
+
+Intent
+   ↓
+Action Selection
+   ↓
+Action Contract
+   ├── Inputs
+   ├── Preconditions
+   ├── Constraints
+   ├── Authorization
+   ├── Side Effects
+   ├── Failure Conditions
+   └── Expected Outcome
+
+Intent must not be treated as an implementation-level Action Contract.
+
+The Action Contract becomes relevant when Noema moves from semantic objective toward a specific operation.
+
+⸻
+
+63. Intent and Outcome
+
+Intent represents the desired objective.
+
+Outcome represents what actually happened.
+
+Intent:
+  Refund Payment
+Observed Outcome:
+  Refund rejected because payment was already settled.
+
+Therefore:
+
+Intent ≠ Outcome
+
+Technical API success is not equivalent to semantic Intent satisfaction.
+
+Example:
+
+Intent:
+  Transfer ₦500 to Account B.
+API:
+  HTTP 200.
+Observed Outcome:
+  ₦500 went to Account C.
+
+The Intent was not satisfied.
+
+⸻
+
+64. Intent Satisfaction
+
+Intent Satisfaction evaluates whether observed reality fulfills the semantic objective.
+
+Intent
+   ↓
+Action
+   ↓
+Execution
+   ↓
+Observed Outcome
+   ↓
+Verification
+   ↓
+Satisfaction Evaluation
+   ├── SATISFIED
+   └── UNSATISFIED
+
+For compound Intents, satisfaction may be partial.
+
+Example:
+
+Intent:
+  Cancel old subscription and create Pro subscription.
+Outcome:
+  Cancel succeeded.
+  Pro creation failed.
+
+This is not a simple overall SUCCESS.
+
+Component outcomes and dependencies must remain visible.
+
+⸻
+
+65. Intent and Execution Failure
+
+Failure must remain classified by layer.
+
+Interpretation Failure
+  → No sufficiently reliable Intent
+Resolution Failure
+  → Material ambiguity cannot be resolved
+Validation Failure
+  → Semantic/schema requirements invalid
+Trust Failure
+  → Noema does not permit progression
+Execution Failure
+  → Action cannot be completed
+Outcome Failure
+  → Action occurred but did not satisfy Intent
+
+These failure classes are not interchangeable.
+
+⸻
+
+66. Intent and Recovery
+
+An execution failure does not necessarily mean that the Intent permanently failed.
+
+Example:
+
+Intent:
+  Transfer ₦500
+Execution:
+  Timeout
+
+A timeout does not establish whether the external system accepted the Action.
+
+Noema must distinguish:
+
+EXECUTION_OUTCOME_UNKNOWN
+
+from:
+
+FAILED
+
+Recovery may require:
+
+Fresh State Verification
+       ↓
+Reconciliation
+       ↓
+Determine Outcome
+       ↓
+Continue / Retry / Escalate
+
+Retries must never be blind.
+
+⸻
+
+67. Intent Identity and Idempotency Lineage
+
+Intent identity contributes to causal lineage but does not replace Action or Execution identity.
+
+intent_id
+    ↓
+action_id
+    ↓
+execution_attempt_id
+    ↓
+audit_event_id
+
+A single Intent may result in multiple execution attempts.
+
+Idempotency belongs primarily to Action and Execution semantics.
+
+Intent provides higher-level causal lineage.
+
+⸻
+
+68. Intent and Audit / Provenance
+
+Intent provenance must allow Noema to reconstruct how the Canonical Intent was established.
+
+Material provenance may include:
+
+* originating Actor;
+* raw expression;
+* modality;
+* detected language/register;
+* model proposal;
+* Context references;
+* Entity Resolution;
+* parameter sources;
+* Evidence references;
+* clarification responses;
+* validation result;
+* schema version;
+* timestamp;
+* Intent revision;
+* supersession lineage.
+
+Noema does not require hidden model chain-of-thought for semantic auditability.
+
+The relevant questions are:
+
+What was intended?
+
+What was ambiguous?
+
+How was the ambiguity resolved?
+
+What evidence supported the resolution?
+
+What downstream decision depended upon it?
+
+⸻
+
+69. Historical Intent Reconstruction
+
+Historical Intent must remain distinguishable from Current Intent.
+
+Likewise:
+
+Historical Context ≠ Current Context
+Historical Evidence ≠ Current Evidence
+
+A historical reconstruction should use the information available at the relevant time.
+
+Historical Expression
+       +
+Historical Context References
+       +
+Historical Evidence
+       +
+Historical Resolution
+       ↓
+Historical Canonical Intent
+
+Present state must not silently rewrite historical semantic meaning.
+
+⸻
+
+70. Intent Security
+
+Intent representations may contain sensitive information.
+
+Noema should minimize unnecessary exposure of:
+
+* financial information;
+* personal information;
+* credentials;
+* private relationships;
+* sensitive targets;
+* unnecessary parameters.
+
+Intent Objects remain subject to:
+
+* principal-scoped access;
+* tenant isolation;
+* data minimization;
+* redaction;
+* appropriate retention;
+* enterprise security policy.
+
+Credentials do not belong in model context.
+
+User-provided, model-generated, and retrieved content must be treated as untrusted inputs.
+
+⸻
+
+71. Intent and Prompt Injection
+
+Enterprise text and retrieved content may contain instructions that are malicious, irrelevant, or unrelated to the Actor’s objective.
+
+Therefore:
+
+Retrieved Content
+    ≠
+Instruction
+
+Tool responses are evidence, not commands.
+
+The Intent Engine must not allow retrieved content to silently redefine the Actor’s Intent.
+
+The consequence boundary must hold even when model interpretation is manipulated.
+
+⸻
+
+72. Intent Reuse
+
+An Intent should not automatically be reused for a new consequential execution when material conditions have changed.
+
+Relevant changes include:
+
+* target;
+* amount;
+* Authority;
+* Policy;
+* Capability;
+* enterprise state;
+* risk;
+* freshness;
+* temporal validity;
+* material constraints.
+
+A material change requires appropriate re-evaluation and, where applicable, a new Intent version.
+
+⸻
+
+73. Intent and Multiple Actions / Outcomes
+
+One Intent may result in multiple Actions:
+
+Intent
+ ├── Action A
+ ├── Action B
+ └── Action C
+
+and multiple Outcomes:
+
+Action A → Outcome A
+Action B → Outcome B
+Action C → Outcome C
+
+Each Action must retain lineage to the originating Intent.
+
+Composite satisfaction must evaluate the relevant collection of Outcomes rather than merely whether an API returned success.
+
+⸻
+
+74. Intent and Minimal Visibility
+
+Noema should know enough to resolve and govern the requested objective, but no more than necessary.
+
+This supports:
+
+* privacy;
+* least privilege;
+* reduced attack surface;
+* controlled data access.
+
+Intent Resolution should distinguish between:
+
+Information necessary for resolution
+
+and:
+
+Information merely available
+
+Availability of enterprise data is not itself justification for exposing or persisting it.
+
+⸻
+
+75. Intent and Operational Memory
+
+Operational Memory is not the Intent itself.
+
+For the POC, Operational Memory is a minimal structured record of cases, evidence, decisions, and outcomes sufficient to answer:
+
+* what happened;
+* why;
+* what was known at the time;
+* what was authorized;
+* what happened after execution;
+* what should happen next.
+
+It is not a general-purpose AI memory system and does not replace Intent provenance.
+
+⸻
+
+76. Canonical Intent-to-Execution Model
+
+ACTOR / PRINCIPAL
+       │
+       ▼
+INTENT EXPRESSION
+       │
+       ▼
+MODEL / INTERPRETATION
+       │
+       ▼
+CANDIDATE INTENT
+       │
+       ├── Context
+       ├── Evidence
+       ├── Entity Candidates
+       ├── Parameter Candidates
+       └── Constraints
+       │
+       ▼
+SCHEMA VALIDATION GATE
+       │
+       ▼
+INTENT RESOLUTION
+       │
+       ├── Canonical Intent
+       └── Clarification / Escalation
+       │
+       ▼
+STATE / CONTEXT RECONSTRUCTION
+       │
+       ▼
+VALIDATION
+       │
+       ▼
+TRUST DECISION
+       │
+   ┌───┼────────────────┐
+   ▼   ▼                ▼
+CLARIFY WAIT/UNKNOWN   PROCEED
+                         │
+                         ▼
+                  ACTION PLANNING
+                         │
+                         ▼
+                   ACTION CONTRACT
+                         │
+                         ▼
+                     CAPABILITY
+                         │
+                         ▼
+                     EXECUTION
+                         │
+                         ▼
+                    VERIFICATION
+                         │
+                         ▼
+                      OUTCOME
+                         │
+                         ▼
+                   SATISFACTION
+
+⸻
+
+77. Agentic Intent Model
+
+For bounded autonomy:
+
+PRINCIPAL INTENT
+       │
+       ▼
+AGENT REASONING
+       │
+       ▼
+DERIVED INTENT / ACTION PLAN
+       │
+       ├── Delegation
+       ├── Authority
+       ├── Policy
+       ├── Capability
+       ├── Constraints
+       └── Action Contract
+              │
+              ▼
+         TRUST DECISION
+              │
+              ▼
+           EXECUTION
+
+The Principal Intent remains the semantic anchor.
+
+The Agent may select means only within the delegated boundary.
+
+The Agent cannot promote its own inference into unrestricted Principal authorization.
+
+⸻
+
+78. Intent and Noema Architecture
+
+The POC establishes a hard process boundary:
+
+INPUT
+  ↓
+INTENT ENGINE
+  ↓
+SCHEMA VALIDATION GATE
+  ↓
+CONTEXT / ENTITY RESOLUTION
+  ↓
+STATE RECONSTRUCTION
+  ↓
+DETERMINISTIC TRUST ENGINE
+  ↓
+ACTION GRAPH / PLANNER
+  ↓
+EXECUTION CONTROLLER
+  ↓
+VERIFICATION
+  ↓
+EXPLANATION
+  ↓
+AUDIT / PROVENANCE
+
+Every consequential boundary is serialized, logged, and versioned.
+
+The model cannot:
+
+* directly execute an Intent;
+* authorize itself;
+* select an open-ended tool;
+* construct an arbitrary call;
+* judge its own Trust.
+
+⸻
+
+79. Intent and Read Operations
+
+Read operations still require semantic resolution.
+
+Example:
+
+"Show my transactions from August."
+
+Potential requirements include:
 
 Principal
-   │
-   └── delegates ──► Agent
-                         │
-                         └── Intent
+Account
+Date Range
+Transaction Scope
+Authorization
 
-The delegation must define its applicable scope.
+Read-only does not mean semantically trivial.
 
-⸻
+For the POC, read-only diagnostic depth may include:
 
-72. Intent and Noema’s Core Philosophy
-
-Noema is not fundamentally a system for converting text into tool calls.
-
-The semantic pipeline is:
-
-Human Intent
-      ↓
-Canonical Intent
-      ↓
-Deterministic Evaluation
-      ↓
-Authorized Action
-
-The Action is downstream.
-
-The Intent is the durable semantic object.
+* cross-system investigation;
+* state reconciliation;
+* Policy evaluation;
+* SLA computation;
+* Evidence collection;
+* explanation.
 
 ⸻
 
-73. Core Invariants
+80. Intent and Higher-Risk Operations
 
-Invariant 1
+A future write such as:
 
-An Intent represents an Actor’s desired objective.
+"Transfer ₦9,000 to John."
 
-Invariant 2
+may require resolution of:
 
-Natural language is an expression of Intent, not necessarily the canonical Intent itself.
+Principal
+Source Account
+Recipient
+Destination
+Amount
+Currency
+Temporal Requirements
+Actor Constraints
 
-Invariant 3
+Downstream Trust may additionally require:
 
-Model output is a proposal and must not automatically become canonical Intent.
+Authority
+Fresh Business State
+Policy
+Risk
+Confirmation
+Capability
+Action Contract
+Execution Preconditions
+Outcome Verification
 
-Invariant 4
-
-Intent and Action are distinct concepts.
-
-Invariant 5
-
-Intent and Capability are distinct concepts.
-
-Invariant 6
-
-Intent does not imply Authority.
-
-Invariant 7
-
-Intent does not imply Trust.
-
-Invariant 8
-
-Intent does not imply execution.
-
-Invariant 9
-
-Intent does not imply Outcome.
-
-Invariant 10
-
-A material Intent ambiguity must not be silently resolved through unsupported guessing.
-
-Invariant 11
-
-A material unresolved parameter must prevent the Intent from becoming execution-ready.
-
-Invariant 12
-
-Entity resolution must be sufficiently established before a material target is acted upon.
-
-Invariant 13
-
-Context used to resolve an Intent must remain distinguishable from the Intent itself.
-
-Invariant 14
-
-Constraints affecting fulfillment must remain explicitly represented.
-
-Invariant 15
-
-A material Intent modification after Trust requires appropriate revalidation.
-
-Invariant 16
-
-Expected Outcome and observed Outcome must remain distinct.
-
-Invariant 17
-
-Technical execution success does not automatically mean Intent satisfaction.
-
-Invariant 18
-
-Noema must prefer explicit clarification over unsupported assumptions when material uncertainty remains.
-
-Invariant 19
-
-Derived or delegated Intents must remain distinguishable from the originating Actor’s Intent.
-
-Invariant 20
-
-Intent provenance must be sufficient to reconstruct how the canonical Intent was established.
+These execution-specific requirements must not be embedded into the semantic definition of the Intent primitive.
 
 ⸻
 
-74. Relationship to Other Ontology Documents
+81. Intent Invariants
 
-intent.md sits at the center of the ontology:
+The following are canonical Noema invariants.
 
-01-ontology/
-│
-├── concepts.md
-├── entities.md
-├── actor.md
-├── intent.md
-├── action.md
-├── capability.md
-├── context.md
-├── constraint.md
-├── policy.md
-├── authority.md
-├── resource.md
-├── state.md
-├── evidence.md
-├── provenance.md
-└── outcome.md
+Semantic invariants
 
-The major semantic relationships are:
+1. An Intent represents an Actor’s desired objective.
+2. Intent Expression is not necessarily Canonical Intent.
+3. Model output is a proposal, not automatic canonical meaning.
+4. Intent and Action are distinct.
+5. Intent and Action Plan are distinct.
+6. Intent and Capability are distinct.
+7. Intent does not imply Authority.
+8. Intent does not imply Trust.
+9. Intent does not imply execution.
+10. Intent does not imply Outcome.
+11. Intent is semantic, not an API call or implementation command.
+12. Intent may be semantically valid without being executable.
 
-Actor
-   │
-   │ expresses
-   ▼
+Resolution invariants
+
+13. Material ambiguity must never be silently guessed.
+14. Material unresolved parameters prevent execution readiness.
+15. Material target references must be sufficiently resolved before consequential execution.
+16. Context used for resolution remains distinguishable from Intent.
+17. Evidence supporting resolution remains distinguishable from Intent.
+18. Actor-provided information does not automatically become authoritative enterprise state.
+19. Conversation history may support resolution but cannot override authoritative enterprise state.
+20. Model probability cannot silently establish material canonical meaning.
+21. Once canonical inputs are established, material semantic resolution should be deterministic.
+22. Unknown must remain explicitly unknown until established.
+23. Clarification should request the minimum information necessary.
+
+Governance invariants
+
+24. Intent Constraints remain distinct from Policy, Authority, and Action Contract constraints.
+25. A resolved Intent is not necessarily validated.
+26. A validated Intent is not necessarily authorized.
+27. Execution readiness does not itself establish Trust.
+28. Trust is a decision about progression, not permanent semantic meaning.
+29. Authority is specific to Actor, Action, Target, and relevant state.
+30. Capability is not permission.
+31. Agent Capability does not establish Agent Authority.
+32. Agent reasoning does not expand delegated Authority.
+33. Derived Intent must remain bounded by delegation and downstream governance.
+
+Lifecycle invariants
+
+34. Intent State is distinct from Intent.
+35. Material Intent changes create new versions after consequential admission.
+36. Intent revision preserves lineage.
+37. Supersession is distinct from cancellation.
+38. Intent cancellation is distinct from Action cancellation.
+39. Material revisions require appropriate revalidation.
+40. Superseded Intents must not execute as though still current.
+41. Historical Intent must remain distinguishable from Current Intent.
+42. Intent identity remains distinct from Actor, Entity, Action, and Execution identity.
+
+Execution and outcome invariants
+
+43. Technical execution success does not establish Intent satisfaction.
+44. Expected Outcome is distinct from Observed Outcome.
+45. Intent may produce multiple Actions and multiple Outcomes.
+46. Compound Intent dependencies must remain explicit.
+47. A timeout does not establish execution failure; fresh verification is required.
+48. Recovery must not blindly resend a potentially successful consequential operation.
+49. Each consequential Action remains governed by its own Action Contract.
+50. Intent lineage must survive decomposition into Actions and execution attempts.
+
+Security and audit invariants
+
+51. External systems and model outputs are untrusted inputs.
+52. Retrieved enterprise content is Evidence, not instruction.
+53. Credentials do not belong in model context.
+54. Arbitrary HTTP and arbitrary SQL are not Capabilities.
+55. Enterprise systems remain authoritative for enterprise state.
+56. Material Intent Resolution must be reconstructable from explicit provenance.
+57. Hidden model chain-of-thought is not required for auditability.
+58. Sensitive Intent data is subject to least-privilege access and data minimization.
+59. Every consequential Outcome must be causally reconstructable.
+60. Every failure relevant to a material decision must be reproducible.
+
+⸻
+
+82. Canonical Semantic Distinctions
+
+Noema must preserve the following distinctions:
+
+Intent Expression
+        ≠
 Intent
-   │
-   ├── targets ──────► Entity
-   │
-   ├── interpreted by ► Context
-   │
-   ├── constrained by ► Constraint
-   │
-   └── governed by ──► Policy
-                          │
-                          ▼
-                      Authority
-                          │
-                          ▼
-                       Trust
-                          │
-                          ▼
-                        Action
-                          │
-                          ▼
-                     Capability
-                          │
-                          ▼
-                      Execution
-                          │
-                          ▼
-                       Outcome
+Model Proposal
+        ≠
+Canonical Intent
+Intent
+        ≠
+Action
+Intent
+        ≠
+Action Plan
+Intent
+        ≠
+Capability
+Intent
+        ≠
+Authority
+Intent
+        ≠
+Trust
+Intent
+        ≠
+Outcome
+Intent
+        ≠
+Context
+Intent
+        ≠
+Evidence
+Intent
+        ≠
+Entity
+Intent
+        ≠
+Policy
+Intent
+        ≠
+Constraint
+Principal Intent
+        ≠
+Derived Intent
+Intent State
+        ≠
+Intent
+Intent Cancellation
+        ≠
+Action Cancellation
+Intent Supersession
+        ≠
+Intent Cancellation
+Intent Identity
+        ≠
+Actor Identity
+        ≠
+Entity Identity
+        ≠
+Action Identity
+        ≠
+Execution Identity
 
 ⸻
 
-75. Canonical Summary
+83. Canonical Semantic Summary
 
-An Intent is a structured representation of an Actor’s desired objective, including the target, parameters, constraints, and relevant Context necessary to determine what the Actor wants to accomplish.
+An Intent is a structured semantic representation of an Actor’s desired objective.
 
-The canonical Noema flow is:
+It establishes:
 
-               HUMAN EXPRESSION
-                      │
-                      ▼
-              MODEL INTERPRETATION
-                      │
-                      ▼
-               CANDIDATE INTENT
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-       Context     Entities    Parameters
-          │           │           │
-          └───────────┼───────────┘
-                      ▼
-               INTENT RESOLUTION
-                      │
-                      ▼
-              CANONICAL INTENT
-                      │
-                      ▼
-                 VALIDATION
-                      │
-                      ▼
-                TRUST DECISION
-                      │
-                      ▼
-                    ACTION
-                      │
-                      ▼
-                 EXECUTION
-                      │
-                      ▼
-                   OUTCOME
+WHO
+  ↓
+Principal / Actor
+WANTS WHAT
+  ↓
+Objective
+CONCERNING WHAT
+  ↓
+Targets / Entity References
+WITH WHICH PARAMETERS
+  ↓
+Parameters
+UNDER WHICH ACTOR-EXPRESSED CONDITIONS
+  ↓
+Intent Constraints
+WHEN
+  ↓
+Temporal Requirements
 
-And the most important Noema principle is:
+Intent Resolution may use:
 
-The model may interpret what the Actor probably means; Noema must establish what the Actor means before allowing consequential behavior to proceed.
+Context
+Evidence
+Entity Resolution
+Parameter Resolution
+Conversation
+Relationships
+Enterprise State
+
+to establish the Canonical Intent.
+
+Those supporting sources do not thereby become the Intent.
+
+The resulting architectural boundary is:
+
+Actor Expression
+       ↓
+What does the Actor mean?
+       ↓
+Canonical Intent
+       ↓
+What is true now?
+       ↓
+Context / State / Evidence
+       ↓
+What may Noema do?
+       ↓
+Authority / Policy / Trust
+       ↓
+How should it be done?
+       ↓
+Action Plan / Action Contract / Capability
+       ↓
+What actually happened?
+       ↓
+Execution / Verification / Outcome
+       ↓
+Was the objective satisfied?
+       ↓
+Intent Satisfaction
+
+For bounded agentic execution:
+
+Principal Intent
+       ↓
+Agent Reasoning
+       ↓
+Derived Intent / Action Plan
+       ↓
+Delegation + Authority + Policy
+       + Capability + Action Contract
+       ↓
+Trust
+       ↓
+Execution
+
+The Principal Intent remains the semantic anchor. Agent reasoning may determine means within the delegated boundary but cannot expand the Principal’s authorization.
+
+The governing principle is:
+
+Intent establishes what the Actor wants. It does not establish what Noema may do.
+
+The critical architectural boundary is:
+
+The model may propose what the Actor probably means; Noema must establish the Canonical Intent before consequential behavior can be governed or authorized.

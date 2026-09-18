@@ -1,7 +1,7 @@
 Outcome
 
-Status: Foundational Draft
-Version: 0.1
+Status: Foundational
+Version: 0.2
 Domain: Ontology
 Canonical Path: ontology/outcome.md
 
@@ -9,19 +9,21 @@ Canonical Path: ontology/outcome.md
 
 1. Definition
 
-An Outcome is the observable result produced by an Action, Execution, or domain process, evaluated in relation to the Intent that initiated it.
+An Outcome is the canonical semantic representation of what actually resulted from an Action, Execution, or domain process, as established through observation and Evidence.
 
 Outcome answers:
 
-What actually happened, and did it satisfy what was intended?
+What happened as a result of the Action, and what can Noema establish about that result?
 
-An Outcome is therefore distinct from:
+Outcome is therefore distinct from:
 
 * Intent
 * Action
 * Execution
 * Execution Result
-* System State
+* Evidence
+* Entity State
+* Intent Satisfaction
 
 The fundamental relationship is:
 
@@ -31,17 +33,28 @@ Action
    ↓
 Execution
    ↓
-Observed Outcome
+Observation / Evidence
+   ↓
+Outcome
    ↓
 Outcome Evaluation
    ↓
-Intent Satisfied / Unsatisfied
+Intent Satisfaction
+
+The distinction is foundational:
+
+Intent       = what was desired
+Action       = what operation was selected
+Execution    = what was attempted/performed
+Exec Result  = what the execution mechanism returned
+Outcome      = what actually resulted
+Satisfaction = whether the Outcome fulfilled the Intent
 
 ⸻
 
-2. Outcome Is the End of the Semantic Loop
+2. Outcome and the Semantic Loop
 
-Noema should not treat execution as the end of the workflow.
+Execution is not the end of a Noema workflow.
 
 The complete semantic lifecycle is:
 
@@ -57,30 +70,46 @@ Action
   ↓
 Execution
   ↓
+Observation
+  ↓
+Evidence
+  ↓
 Outcome
   ↓
 Verification
   ↓
 Intent Satisfaction
 
-This distinction is foundational.
+Noema must therefore distinguish between performing an operation and establishing what resulted from that operation.
 
-Noema does not merely determine what should happen. It must be capable of determining what actually happened.
+This closes the semantic loop:
+
+Desired
+   ↓
+Performed
+   ↓
+Observed
+   ↓
+Established
+   ↓
+Evaluated
 
 ⸻
 
 3. Outcome Is Not Intent
 
-Intent describes the desired objective.
+Intent represents the Actor’s desired objective.
 
-Outcome describes the observed result.
+Outcome represents the resulting condition or effect established after an Action or process.
+
+Example:
 
 Intent:
 Transfer $500 to Alice.
 Outcome:
-$500 transferred to Alice.
+$500 was transferred to Alice.
 
-The two may correspond, but they are not the same object.
+The two may correspond, but they are different ontology objects.
 
 Intent ≠ Outcome
 
@@ -88,31 +117,69 @@ Intent ≠ Outcome
 
 4. Outcome Is Not Action
 
-An Action describes an operation.
+An Action represents an operation.
+
+Example:
 
 Action:
 TransferFunds
 
-An Outcome describes the result:
+An Outcome represents what resulted from that operation.
 
-Outcome:
+Examples:
+
 Transfer completed.
-Transaction ID = tx_123
+Transfer rejected.
+Transfer failed.
+Transfer status unknown.
 
-The same Action may produce different Outcomes.
+The same Action may therefore produce different Outcomes:
 
 TransferFunds
-   ├── Success
-   ├── InsufficientFunds
-   ├── AuthorizationDenied
-   ├── Timeout
-   └── ExternalSystemFailure
+   ├── SUCCEEDED
+   ├── REJECTED
+   ├── FAILED
+   ├── UNKNOWN
+   └── PENDING
 
 ⸻
 
-5. Outcome Is Not Execution Result
+5. Outcome Is Not Execution
 
-A technical Execution Result describes what the invoked system returned.
+An Execution represents an attempt to perform an Action.
+
+Outcome represents what resulted from that attempt.
+
+Action
+   ↓
+Execution
+   ↓
+Outcome
+
+Multiple Execution attempts may contribute to one business Outcome.
+
+Example:
+
+Execution Attempt 1
+      ↓
+   Timeout
+      ↓
+Execution Attempt 2
+      ↓
+   Success
+      ↓
+Business Outcome:
+Transfer Completed
+
+Therefore:
+
+Execution ≠ Outcome
+
+⸻
+
+6. Outcome Is Not Execution Result
+
+An Execution Result represents what the execution mechanism returned.
 
 Example:
 
@@ -121,11 +188,15 @@ HTTP 200
   "transaction_id": "tx_123"
 }
 
-That is not necessarily the complete business Outcome.
+This establishes that the invoked interface returned a particular response.
 
-The business Outcome may require further verification:
+It does not necessarily establish the complete domain Outcome.
+
+For example:
 
 Execution Result
+      ↓
+Request Accepted
       ↓
 Transaction Created
       ↓
@@ -137,68 +208,78 @@ Therefore:
 
 Execution Result ≠ Outcome
 
+An execution result may constitute Evidence for an Outcome, but its semantic meaning must be determined from the relevant contract and Evidence.
+
 ⸻
 
-6. Outcome Is Not System State
+7. Outcome Is Not Entity State
 
-System State describes a condition.
+Entity State describes the condition of an Entity.
 
 Outcome describes what resulted from an Action or process.
 
 Example:
 
 State:
-Card = active
+Card.status = active
 Outcome:
-Card renewal completed successfully.
+Card renewal completed.
 
-The resulting State may be evidence for the Outcome, but they are not equivalent.
+A State change may provide Evidence for an Outcome, but State and Outcome remain distinct concepts.
+
+State ≠ Outcome
 
 ⸻
 
-7. Outcome Structure
+8. Outcome Structure
 
-A canonical Outcome conceptually contains:
+Conceptually, an Outcome contains:
 
 Outcome
 ├── id
-├── action
 ├── intent
+├── action
+├── execution
 ├── status
 ├── result
-├── affected entities
-├── state changes
+├── affected_entities
+├── state_changes
 ├── evidence
 ├── provenance
 ├── timestamps
+├── verification
 └── satisfaction
 
-The actual serialization belongs to the schema layer.
+The canonical serialization of these properties belongs to the schema layer.
 
 ⸻
 
-8. Outcome Identity
+9. Outcome Identity
 
-Every material Outcome should have an identity.
+Every material Outcome should have an independent identity.
 
 Example:
 
 outcome_123
 
-This allows Noema to reference the Outcome independently of:
+Outcome identity allows Noema to reference the Outcome independently of:
 
 * the Intent
 * the Action
 * the Execution
+* the Execution Result
 * the external system
+* the current Entity State
+
+This is necessary for traceability, auditability, correlation, and historical preservation.
 
 ⸻
 
-9. Outcome Status
+10. Outcome Status
 
-An Outcome should have an explicit status.
+Outcome status describes the operational state of the Outcome.
 
-A foundational status model is:
+A foundational vocabulary is:
 
 PENDING
 SUCCEEDED
@@ -208,28 +289,32 @@ REJECTED
 CANCELLED
 UNKNOWN
 
-Additional domain-specific statuses may exist.
+The vocabulary may be extended by domain-specific schemas without changing the semantics of the foundational states.
 
-The status vocabulary must remain extensible without changing the meaning of the core states.
+Outcome status must not be conflated with Intent Satisfaction.
 
 ⸻
 
-10. SUCCEEDED
+11. SUCCEEDED
 
-SUCCEEDED means the Action produced the expected operational result and the relevant Outcome has been sufficiently established.
+SUCCEEDED means that the relevant operational result has been established as successfully occurring.
 
 Example:
 
 Action:
 RenewCard
 Outcome:
-Card renewed successfully.
+Card renewal completed successfully.
+Status:
+SUCCEEDED
+
+SUCCEEDED does not, by itself, imply that the originating Intent was satisfied.
 
 ⸻
 
-11. PARTIALLY_SUCCEEDED
+12. PARTIALLY_SUCCEEDED
 
-PARTIALLY_SUCCEEDED means some intended effects occurred while one or more intended effects did not.
+PARTIALLY_SUCCEEDED means that some intended operational effects occurred while one or more expected effects did not.
 
 Example:
 
@@ -240,26 +325,35 @@ Outcomes:
 ✓ Email provisioned
 ✗ Permissions failed
 
-The overall Outcome should not be represented as fully successful.
+The aggregate operational Outcome is:
+
+PARTIALLY_SUCCEEDED
+
+It must not be represented as full operational success.
 
 ⸻
 
-12. FAILED
+13. FAILED
 
-FAILED means the intended Action did not successfully produce its expected operational result.
+FAILED means that there is sufficient Evidence that the intended operation did not successfully produce its expected operational result.
 
-Examples:
+Examples include:
 
-Insufficient funds
-External service unavailable
-Validation failure
-Execution timeout
+* insufficient funds
+* external service failure
+* validation failure
+* execution timeout where failure is established
+* authoritative rejection after execution
+
+A timeout alone does not necessarily establish FAILED.
+
+Where the final domain result cannot be established, UNKNOWN may be correct.
 
 ⸻
 
-13. REJECTED
+14. REJECTED
 
-REJECTED means the Action was explicitly prevented from proceeding.
+REJECTED means that the Action was explicitly prevented from proceeding.
 
 Example:
 
@@ -268,13 +362,15 @@ Refund $50,000
 Outcome:
 Rejected because Actor lacks required authority.
 
-This differs from an execution failure because the Action may never have been attempted.
+Rejection is distinct from execution failure because the Action may never have been performed.
+
+REJECTED ≠ FAILED
 
 ⸻
 
-14. CANCELLED
+15. CANCELLED
 
-CANCELLED means execution or an ongoing process was intentionally stopped.
+CANCELLED means that an ongoing execution or process was intentionally stopped.
 
 Example:
 
@@ -283,11 +379,13 @@ Generate report
 Outcome:
 Cancelled by Actor before completion.
 
+Cancellation should remain distinguishable from failure.
+
 ⸻
 
-15. UNKNOWN
+16. UNKNOWN
 
-UNKNOWN means Noema cannot establish the actual Outcome with sufficient confidence.
+UNKNOWN means that Noema cannot establish the actual operational Outcome with sufficient Evidence.
 
 Example:
 
@@ -295,82 +393,95 @@ Action:
 Transfer $5,000
 Execution:
 Timeout
-Bank state:
+External State:
 Unknown
 
-Noema must not convert this into:
+The correct representation may be:
 
-FAILED
+Outcome:
+UNKNOWN
 
-or:
-
-SUCCEEDED
-
-without evidence.
-
-This is particularly important for distributed systems.
+Noema must not convert uncertainty into either success or failure without sufficient Evidence.
 
 ⸻
 
-16. Pending Outcome
+17. Pending Outcome
 
-An Action may have been initiated without its final Outcome being available.
+An Action may have been initiated while its final Outcome remains unresolved.
+
+Example:
 
 Action:
 TransferFunds
 Outcome:
 PENDING
 
-This may occur with:
+This may occur because of:
 
 * asynchronous processing
 * eventual consistency
 * external approval
-* long-running jobs
-* queued Actions
+* long-running operations
+* queued execution
+* delayed external events
 
-The Outcome can later transition to a terminal state.
+A Pending Outcome may subsequently transition to a terminal Outcome.
 
 ⸻
 
-17. Expected Outcome
+18. Expected Outcome
 
-An Expected Outcome describes what should happen if the Intent is successfully fulfilled.
+An Expected Outcome describes the result that should occur if an Intent is successfully fulfilled.
 
 Example:
 
 Intent:
 Renew Card
 Expected Outcome:
-Card status becomes active with a new expiry date.
+Card status becomes active
+with a new expiry date.
 
-Expected Outcome is part of the semantic contract.
+Expected Outcome forms part of the semantic contract against which an Observed Outcome may be evaluated.
+
+Expected Outcome
+       ↓
+   Evaluation
+       ↑
+Observed Outcome
+
+Expected Outcome must remain distinct from Observed Outcome.
 
 ⸻
 
-18. Observed Outcome
+19. Observed Outcome
 
-An Observed Outcome describes what Noema or an authoritative source actually observes.
+An Observed Outcome describes what Noema has established from observations or Evidence.
 
 Example:
 
 Observed Outcome:
 Card status = active
-expiry = 2030-08
+Expiry = 2030-08
 
-The distinction is:
+Observation may originate from:
 
-Expected Outcome
-        ↓
-     Compare
-        ↑
-Observed Outcome
+* an authoritative system
+* an event
+* an API response
+* a database
+* an external provider
+* human confirmation
+* another trusted source
+
+Observation is not automatically equivalent to verification.
 
 ⸻
 
-19. Outcome Verification
+20. Outcome Verification
 
-Outcome Verification determines whether the observed result corresponds to the expected result.
+Outcome Verification determines whether sufficient Evidence establishes the claimed Outcome.
+
+Conceptually:
 
 Expected Outcome
        +
@@ -378,7 +489,7 @@ Observed Evidence
        ↓
 Outcome Verification
        ↓
-Satisfied / Unsatisfied / Unknown
+Verified / Unverified / Conflicting / Unknown
 
 Verification may be:
 
@@ -387,14 +498,15 @@ Verification may be:
 * event-driven
 * polling-based
 * source-confirmed
+* reconciliation-based
+
+Verification semantics should remain distinct from Outcome status.
 
 ⸻
 
-20. Intent Satisfaction
+21. Intent Satisfaction
 
-Intent satisfaction answers:
-
-Did the Outcome actually fulfill the Actor’s Intent?
+Intent Satisfaction determines whether the established Outcome fulfills the originating Intent.
 
 Example:
 
@@ -402,7 +514,7 @@ Intent:
 Transfer $500 to Alice.
 Observed Outcome:
 $500 transferred to Alice.
-Result:
+Satisfaction:
 SATISFIED
 
 But:
@@ -411,18 +523,20 @@ Intent:
 Transfer $500 to Alice.
 Observed Outcome:
 $500 transferred to Bob.
-Result:
+Satisfaction:
 UNSATISFIED
 
-Even though the underlying transfer Action succeeded technically.
+The underlying Action may have technically succeeded while the Intent remains unsatisfied.
 
 ⸻
 
-21. Execution Success vs Intent Satisfaction
+22. Execution Success vs Intent Satisfaction
 
-This is one of Noema’s critical distinctions.
+This distinction is foundational to Noema.
 
 Execution Success
+        ≠
+Outcome Success
         ≠
 Intent Satisfaction
 
@@ -430,25 +544,23 @@ Example:
 
 Action:
 POST /transfer
-HTTP Response:
-200 OK
+Execution Result:
+HTTP 200 OK
 
-The execution succeeded technically.
+This may establish technical execution success.
 
-But if the wrong account received the funds:
+If the wrong account receives the funds:
 
-Intent:
+Operational Outcome:
+SUCCEEDED
+Intent Satisfaction:
 UNSATISFIED
 
-Therefore Noema should evaluate both:
-
-Technical Success
-        +
-Semantic Satisfaction
+Noema must therefore evaluate both the operational result and the semantic relationship between that result and the originating Intent.
 
 ⸻
 
-22. Satisfaction Status
+23. Satisfaction Status
 
 A foundational satisfaction vocabulary is:
 
@@ -457,11 +569,17 @@ PARTIALLY_SATISFIED
 UNSATISFIED
 UNKNOWN
 
+Satisfaction is a semantic evaluation of the Outcome against the Intent.
+
+It is not an alternative Outcome status.
+
 ⸻
 
-23. SATISFIED
+24. SATISFIED
 
-The observed Outcome sufficiently fulfills the Intent.
+SATISFIED means the established Outcome sufficiently fulfills the originating Intent.
+
+Example:
 
 Intent:
 Renew Card
@@ -472,25 +590,25 @@ SATISFIED
 
 ⸻
 
-24. PARTIALLY_SATISFIED
+25. PARTIALLY_SATISFIED
 
-Only part of the Intent was fulfilled.
+PARTIALLY_SATISFIED means that only part of the Intent was fulfilled.
 
 Example:
 
 Intent:
 Book flights for two people.
 Outcome:
-One passenger successfully booked.
-Second booking failed.
+Passenger A booked.
+Passenger B not booked.
 Satisfaction:
 PARTIALLY_SATISFIED
 
 ⸻
 
-25. UNSATISFIED
+26. UNSATISFIED
 
-The Outcome does not fulfill the Intent.
+UNSATISFIED means that the established Outcome does not fulfill the originating Intent.
 
 Example:
 
@@ -503,9 +621,9 @@ UNSATISFIED
 
 ⸻
 
-26. UNKNOWN Satisfaction
+27. UNKNOWN Satisfaction
 
-Noema cannot establish whether the Intent was satisfied.
+UNKNOWN means Noema cannot establish whether the Intent was satisfied.
 
 Example:
 
@@ -513,18 +631,18 @@ Intent:
 Transfer $5,000.
 Execution:
 Timeout.
-Bank:
+External State:
 No confirmation available.
 Satisfaction:
 UNKNOWN
 
-Noema must preserve the uncertainty.
+Noema must preserve this uncertainty rather than converting it into a definitive semantic judgment.
 
 ⸻
 
-27. Outcome Evidence
+28. Outcome Evidence
 
-An Outcome should be supported by Evidence where material.
+Material Outcomes should be supported by Evidence.
 
 Example:
 
@@ -533,26 +651,29 @@ Payment refunded.
 Evidence:
 Payment provider transaction record.
 
-Evidence may come from:
+Evidence may include:
 
-* external APIs
-* databases
-* events
+* external API responses
+* database records
+* authoritative events
 * receipts
 * signed responses
-* system state
+* resulting Entity State
 * human confirmation
+* system observations
+
+Evidence establishes the basis upon which an Outcome is represented or verified.
 
 ⸻
 
-28. Outcome Provenance
+29. Outcome Provenance
 
-Outcome Provenance describes where the Outcome information came from.
+Outcome Provenance identifies the origin of the information supporting an Outcome.
 
 Example:
 
 Outcome:
-Payment completed
+Payment completed.
 Source:
 Payment Provider
 Observed At:
@@ -560,13 +681,19 @@ Observed At:
 Source Reference:
 txn_123
 
-Provenance is essential for auditability.
+Provenance is necessary for:
+
+* auditability
+* traceability
+* reconciliation
+* authority evaluation
+* evidence inspection
 
 ⸻
 
-29. Outcome Timestamp
+30. Outcome Timestamps
 
-An Outcome may contain multiple relevant timestamps.
+An Outcome may contain multiple semantically distinct timestamps:
 
 requested_at
 started_at
@@ -574,17 +701,23 @@ completed_at
 observed_at
 verified_at
 
-These timestamps must not be collapsed when their semantics differ.
+These timestamps must not be collapsed when their meanings differ.
+
+For example:
+
+completed_at ≠ observed_at ≠ verified_at
 
 ⸻
 
-30. Outcome Duration
+31. Outcome Duration
 
-Where relevant, Noema may record the duration between:
+Where relevant, Noema may record duration between lifecycle events.
 
-Action Started
-        ↓
-Action Completed
+Example:
+
+started_at
+     ↓
+completed_at
 
 This supports:
 
@@ -593,13 +726,13 @@ This supports:
 * workflow monitoring
 * operational diagnostics
 
-Duration is metadata about the Outcome, not the Outcome itself.
+Duration is metadata about the Outcome and must not be confused with the Outcome itself.
 
 ⸻
 
-31. State Changes
+32. State Changes
 
-An Outcome may produce State changes.
+An Outcome may result in Entity State changes.
 
 Example:
 
@@ -610,7 +743,7 @@ RenewCard
 After:
 Card.status = active
 
-The Outcome may include:
+The Outcome may record:
 
 State Changes:
 status: expired → active
@@ -618,28 +751,32 @@ expiry: 2026-08 → 2030-08
 
 However:
 
-State Change and Outcome must remain distinct concepts.
+State Change ≠ Outcome
+
+The State Change may instead serve as Evidence supporting the Outcome.
 
 ⸻
 
-32. Affected Entities
+33. Affected Entities
 
-An Outcome should identify the Entities affected by the Action where possible.
+An Outcome should identify affected Entities where possible.
 
 Example:
 
 Outcome:
-Payment refunded
+Payment refunded.
 Affected Entities:
 Payment: payment_123
 Customer: customer_456
 Account: account_789
 
+Affected Entity references allow Noema to connect Outcomes to the domain objects whose state or relationships were affected.
+
 ⸻
 
-33. External Outcomes
+34. External Outcomes
 
-External systems may produce outcomes that Noema consumes.
+An external system may produce information representing an Outcome that Noema consumes.
 
 Example:
 
@@ -647,26 +784,29 @@ Noema
   ↓
 Payment Provider
   ↓
-Payment Outcome
+Provider Outcome
   ↓
 Noema
 
-Noema should distinguish:
+Noema must distinguish:
 
 External System Outcome
 
 from:
 
-Noema's interpretation of that Outcome
+Noema Canonical Outcome
+
+The canonical Outcome may preserve the external representation as Evidence and Provenance.
 
 ⸻
 
-34. Outcome Normalization
+35. Outcome Normalization
 
-Different systems may express equivalent outcomes differently.
+Different systems may represent equivalent operational results differently.
 
 Example:
 
+Provider A:
 HTTP 200
 status = "success"
 Provider B:
@@ -678,13 +818,21 @@ Noema may normalize these into:
 
 SUCCEEDED
 
-while retaining the original source representation and provenance.
+while preserving:
+
+* original source representation
+* source identity
+* provenance
+* Evidence
+* relevant external identifiers
+
+Normalization must not destroy source semantics.
 
 ⸻
 
-35. Outcome Conflicts
+36. Outcome Conflicts
 
-Multiple sources may disagree.
+Multiple sources may provide conflicting information.
 
 Example:
 
@@ -693,22 +841,24 @@ Payment = completed
 Internal Database:
 Payment = pending
 
-Noema must not silently select one.
+Noema must not silently select one representation.
 
-The conflict should be represented:
+The conflict should remain represented in the Evidence and reconciliation layer.
+
+Where the conflict prevents establishing the actual Outcome:
 
 Outcome:
 UNKNOWN
 Evidence:
 CONFLICTING
 
-until the conflict can be resolved.
+until the conflict is resolved.
 
 ⸻
 
-36. Outcome Freshness
+37. Outcome Freshness
 
-An Outcome may become stale.
+An Outcome is historical information and may become stale relative to current Entity State.
 
 Example:
 
@@ -717,17 +867,17 @@ Account status = active
 10:30
 Account status = suspended
 
-A previous Outcome remains historically valid but may no longer represent current State.
+A prior Outcome remains historically valid if it accurately represented what happened at the earlier time.
 
 Therefore:
 
-Historical Outcome
-        ≠
-Current State
+Historical Outcome ≠ Current State
+
+Current State must not retroactively rewrite historical Outcomes.
 
 ⸻
 
-37. Outcome Finality
+38. Outcome Finality
 
 Not every Outcome is immediately final.
 
@@ -740,17 +890,17 @@ PROCESSING
 Approval:
 AWAITING_REVIEW
 
-Noema must distinguish:
+Noema must distinguish interim observations from final established Outcomes.
 
 Interim Outcome
-
-from:
-
+       ↓
 Final Outcome
+
+Finality is distinct from the existence of an Outcome.
 
 ⸻
 
-38. Outcome Lifecycle
+39. Outcome Lifecycle
 
 A conceptual lifecycle is:
 
@@ -762,7 +912,7 @@ VERIFIED
    ↓
 FINAL
 
-Failure paths may include:
+Alternative paths may include:
 
 PENDING
    ↓
@@ -774,20 +924,20 @@ PENDING
    ↓
 UNKNOWN
 
-The exact lifecycle should be defined separately from the ontology.
+The precise lifecycle mechanics belong to the execution and lifecycle specifications rather than the core ontology.
 
 ⸻
 
-39. Outcome Correlation
+40. Outcome Correlation
 
-An Outcome must be traceable to the Action that produced it.
+An Outcome must be traceable to the Action and Execution associated with it.
 
 Intent
-   │
-   ▼
+  │
+  ▼
 Action
-   │
-   └── action_id
+  │
+  └── action_id
           │
           ▼
        Execution
@@ -799,13 +949,15 @@ Action
                  │
                  └── outcome_id
 
-This enables end-to-end traceability.
+This supports end-to-end traceability.
 
 ⸻
 
-40. Outcome and Intent Correlation
+41. Outcome and Intent Correlation
 
-The Outcome should also remain associated with the originating Intent.
+An Outcome must remain associated with its originating Intent where applicable.
+
+Example:
 
 Intent ID:
 intent_123
@@ -821,12 +973,12 @@ Intent
 Actions
   ↓
 Outcomes
-
-and allows Noema to determine whether the original objective was satisfied.
+  ↓
+Satisfaction
 
 ⸻
 
-41. Multiple Outcomes
+42. Multiple Outcomes
 
 A single Intent may produce multiple Outcomes.
 
@@ -840,17 +992,13 @@ Outcomes:
 3. Permissions assigned
 4. Welcome email sent
 
-Noema may therefore evaluate:
-
-Composite Intent Satisfaction
-
-from multiple Outcomes.
+Noema may evaluate these collectively to determine Composite Intent Satisfaction.
 
 ⸻
 
-42. Composite Outcome
+43. Composite Outcome
 
-Multiple Actions may collectively produce a Composite Outcome.
+Multiple Actions may collectively contribute to a Composite Outcome.
 
 Intent
    ↓
@@ -863,13 +1011,13 @@ Action C ──► Outcome C
               ▼
        Composite Outcome
 
-The Composite Outcome describes the aggregate result.
+A Composite Outcome describes an aggregate operational result derived from multiple related Outcomes.
 
 ⸻
 
-43. Partial Failure
+44. Partial Failure
 
-Composite operations require explicit partial failure semantics.
+Composite operations require explicit partial-failure semantics.
 
 Example:
 
@@ -878,48 +1026,56 @@ Action B ✓
 Action C ✗
 Action D not attempted
 
-Overall:
+The aggregate operational result may be:
 
-Outcome:
 PARTIALLY_SUCCEEDED
 
-Noema must not represent this as full success.
+It must not be represented as full success.
 
 ⸻
 
-44. Outcome Dependencies
+45. Outcome Dependencies
 
-Some Outcomes depend on previous Outcomes.
+Some Outcomes depend on preceding Outcomes.
 
 Example:
 
 Create Account
       ↓
-Outcome: Account Created
+Outcome:
+Account Created
       ↓
 Fund Account
       ↓
-Outcome: Funding Completed
+Outcome:
+Funding Completed
 
-If the first Outcome fails, the second Action may never execute.
+If the first Outcome fails, the dependent Action may never execute.
+
+Outcome dependency therefore provides important causal and workflow context without collapsing distinct Outcomes into one record.
 
 ⸻
 
-45. Outcome Compensation
+46. Outcome Compensation
 
-A failed multi-step process may require compensating Actions.
+A failed multi-step process may trigger a compensating Action.
 
 Example:
 
-Create Resource ✓
-Charge Customer ✓
-Provision Service ✗
-
-A compensation Action may be:
-
+Create Resource
+      ↓
+Outcome: Created
+Charge Customer
+      ↓
+Outcome: Charged
+Provision Service
+      ↓
+Outcome: Failed
 Refund Customer
+      ↓
+Outcome: Refunded
 
-The compensation Outcome must remain separate from the original Outcome.
+The compensation Outcome is distinct from the original Outcomes.
 
 Original Outcome
       ↓
@@ -929,47 +1085,50 @@ Compensation Action
       ↓
 Compensation Outcome
 
+Compensation does not erase history.
+
 ⸻
 
-46. Outcome Does Not Rewrite History
+47. Outcome Does Not Rewrite History
 
-Once an Outcome has been established, later state changes must not erase it.
+Once an Outcome has been established, later State changes must not erase it.
 
 Example:
 
 10:00
-Payment completed.
-12:00
-Payment reversed.
-
-The historical Outcomes are:
-
 Outcome A:
 Payment completed.
+12:00
 Outcome B:
 Payment reversed.
 
-The system must preserve the temporal sequence.
+Both Outcomes remain part of the historical record.
+
+The later Outcome changes the current interpretation or state of the domain, but does not erase the earlier event.
 
 ⸻
 
-47. Outcome Correction
+48. Outcome Correction
 
-If an Outcome was incorrectly recorded, the correction should create an explicit correction or superseding record rather than silently rewriting history.
+If an Outcome was incorrectly recorded, correction must preserve its lineage.
+
+Conceptually:
 
 Original Outcome
       ↓
-Correction
+Correction / Supersession
       ↓
 Corrected Interpretation
 
-Auditability requires preserving lineage.
+The original record remains auditable.
+
+Noema must not silently mutate historical semantic facts in a manner that destroys provenance.
 
 ⸻
 
-48. Outcome and Idempotency
+49. Outcome and Idempotency
 
-Repeated execution attempts may produce duplicate or equivalent Outcomes.
+Repeated execution attempts may produce duplicate or equivalent observations of the same underlying business Outcome.
 
 Example:
 
@@ -980,50 +1139,58 @@ Retry after timeout
 
 Both may refer to the same underlying transaction.
 
-Noema should use correlation and idempotency semantics to avoid incorrectly interpreting retries as independent business Outcomes.
+Noema must use correlation and idempotency semantics to distinguish:
+
+Multiple Execution Attempts
+
+from:
+
+Multiple Business Outcomes
 
 ⸻
 
-49. Outcome Uncertainty
+50. Outcome Uncertainty
 
-Outcome uncertainty is expected in distributed systems.
+Uncertainty is intrinsic to distributed and asynchronous systems.
 
-Examples:
+Examples include:
 
-Network timeout
-External service unavailable
-Event not received
-Eventual consistency
-Conflicting sources
-Unknown transaction state
+* network timeout
+* external service unavailability
+* missing event
+* eventual consistency
+* conflicting sources
+* unknown transaction state
 
-Noema must represent:
+Noema must represent unresolved uncertainty explicitly.
 
 UNKNOWN
 
-where the actual Outcome cannot be established.
+is therefore a semantic state, not an implementation error.
 
 ⸻
 
-50. Unknown Is Not Failure
+51. Unknown Is Not Failure
 
 This distinction is mandatory.
 
 FAILED
 
-means there is evidence that the Action failed.
+means there is sufficient Evidence that the Action failed.
 
 UNKNOWN
 
-means Noema does not know whether it succeeded or failed.
+means Noema cannot establish whether the Action succeeded or failed.
 
 Example:
 
-Request → Payment Provider
-       ↓
+Request
+   ↓
+Payment Provider
+   ↓
 Network Timeout
 
-Correct:
+Correct when no authoritative result exists:
 
 Outcome = UNKNOWN
 
@@ -1031,15 +1198,15 @@ Not:
 
 Outcome = FAILED
 
-unless authoritative evidence establishes failure.
+unless Evidence establishes failure.
 
 ⸻
 
-51. Outcome Verification Sources
+52. Outcome Verification Sources
 
-Outcome verification should prefer authoritative sources.
+Outcome verification should consider source authority and Evidence quality.
 
-A conceptual hierarchy may be:
+A conceptual ordering is:
 
 Authoritative System of Record
         ↓
@@ -1053,19 +1220,21 @@ Unverified Observation
         ↓
 Model Inference
 
-Model inference should not normally establish a consequential Outcome by itself.
+The ordering is a conceptual verification hierarchy, not a universal rule for every domain.
+
+Where consequential Outcomes require authoritative verification, model inference alone should not establish the Outcome.
 
 ⸻
 
-52. Model-Generated Outcome
+53. Model-Generated Outcome
 
-A Model may infer a likely Outcome:
+A model may infer a likely result:
 
 "Looks like the payment probably succeeded."
 
-This is not equivalent to an authoritative Outcome.
+This is not equivalent to an established Outcome.
 
-It should be represented as:
+It should remain represented as a model inference or observation:
 
 Model Inference:
 payment likely succeeded
@@ -1075,13 +1244,13 @@ rather than:
 Outcome:
 SUCCEEDED
 
-until established by sufficient evidence.
+until sufficient Evidence establishes the Outcome.
 
 ⸻
 
-53. Human-Confirmed Outcome
+54. Human-Confirmed Outcome
 
-In some workflows, a human may confirm an Outcome.
+A human may provide Evidence establishing or contributing to an Outcome.
 
 Example:
 
@@ -1090,17 +1259,22 @@ Unable to verify shipment.
 Human:
 "The package was delivered."
 
-This becomes Evidence with a particular provenance and trust level.
+The human statement becomes Evidence with identifiable provenance.
 
-It should remain distinguishable from machine-observed evidence.
+It must remain distinguishable from:
+
+* system-generated Evidence
+* authoritative system state
+* external events
+* model inference
 
 ⸻
 
-54. Outcome Authority
+55. Outcome Authority
 
 The source establishing an Outcome matters.
 
-For example:
+Examples:
 
 Payment State
 → Payment Provider
@@ -1109,11 +1283,11 @@ Employee Record
 Account Balance
 → Banking System
 
-Noema should identify the authoritative source where one exists.
+Where an authoritative source exists, Noema should identify it as part of Outcome Provenance and Evidence.
 
 ⸻
 
-55. Outcome Reconciliation
+56. Outcome Reconciliation
 
 When multiple systems contain representations of the same Outcome, Noema may reconcile them.
 
@@ -1127,11 +1301,20 @@ Reconciliation
       ↓
 Canonical Outcome
 
-Reconciliation must preserve the underlying evidence and provenance.
+Reconciliation must preserve:
+
+* underlying Evidence
+* source identity
+* provenance
+* timestamps
+* conflicts
+* resolution basis
+
+A canonical representation must not erase the source representations from which it was derived.
 
 ⸻
 
-56. Outcome Semantics for External APIs
+57. Outcome Semantics for External APIs
 
 An API response must not automatically be interpreted as the business Outcome.
 
@@ -1139,7 +1322,7 @@ Example:
 
 HTTP 202 Accepted
 
-means:
+may mean:
 
 Request accepted for processing.
 
@@ -1149,15 +1332,13 @@ Business operation completed.
 
 Therefore:
 
-HTTP Response
-      ≠
-Business Outcome
+HTTP Response ≠ Business Outcome
 
-unless the API contract explicitly establishes that equivalence.
+unless the relevant API contract explicitly establishes that equivalence.
 
 ⸻
 
-57. Outcome Semantics for Asynchronous Systems
+58. Outcome Semantics for Asynchronous Systems
 
 For asynchronous operations:
 
@@ -1171,7 +1352,7 @@ Completed
   ↓
 Verified
 
-The initial response may only establish:
+The initial response may establish only:
 
 Execution Accepted
 
@@ -1183,11 +1364,13 @@ The final Outcome may arrive later through:
 * callback
 * system-of-record query
 
+Noema must not prematurely treat acceptance as completion.
+
 ⸻
 
-58. Outcome and Events
+59. Outcome and Events
 
-An event may be evidence of an Outcome.
+An Event may provide Evidence of an Outcome.
 
 Example:
 
@@ -1200,15 +1383,15 @@ But:
 
 Event ≠ Outcome
 
-The event is an observable representation originating from a system.
+An Event is an observable representation emitted by a system.
 
-Noema interprets it into canonical Outcome semantics.
+Noema may interpret that Event as Evidence supporting a canonical Outcome.
 
 ⸻
 
-59. Outcome and State Reconciliation
+60. Outcome and State Reconciliation
 
-Sometimes the best evidence of an Outcome is the resulting State.
+Resulting Entity State may provide Evidence for an Outcome.
 
 Example:
 
@@ -1219,48 +1402,59 @@ CancelSubscription
 After:
 subscription.status = cancelled
 
-The State change supports the Outcome:
+This may support:
 
 Outcome:
 Subscription cancellation completed.
 
-But State remains independently modeled.
+However:
+
+State ≠ Outcome
+
+The State remains independently modeled.
 
 ⸻
 
-60. Outcome Expiration
+61. Outcome Expiration
 
-Some Outcomes have temporal validity.
+Some Outcomes have temporal validity or applicability.
 
 Example:
 
 Authorization granted for 30 minutes.
 
-The Outcome may remain historically valid while no longer being operationally applicable.
+The historical Outcome remains valid as a record of what occurred.
 
-Historical validity and current applicability are distinct.
+Its current operational applicability may later expire.
+
+Therefore:
+
+Historical Validity
+        ≠
+Current Applicability
 
 ⸻
 
-61. Outcome Auditability
+62. Outcome Auditability
 
 Material Outcomes should be auditable.
 
-At minimum, the system should be able to establish:
+At minimum, Noema should be able to establish:
 
 What happened?
 When did it happen?
-Which Intent caused it?
+Which Intent was involved?
 Which Action produced it?
 Which Execution attempted it?
-Which Entity was affected?
-What evidence supports it?
-Where did the evidence originate?
+Which Entities were affected?
+What Evidence supports it?
+Where did the Evidence originate?
 Was the Outcome verified?
+What is its current satisfaction status?
 
 ⸻
 
-62. Outcome Provenance Chain
+63. Outcome Provenance Chain
 
 A canonical provenance chain is:
 
@@ -1284,15 +1478,15 @@ Outcome
   ↓
 Satisfaction Evaluation
 
-This allows Noema to reconstruct the complete semantic lifecycle.
+This allows Noema to reconstruct the semantic lifecycle from desired objective through observed result.
 
 ⸻
 
-63. Outcome Integrity
+64. Outcome Integrity
 
-An Outcome should not be materially modified without preserving its history.
+An Outcome must not be materially modified in a way that destroys its historical lineage.
 
-Where corrections are required:
+Where correction is required:
 
 Original Outcome
       ↓
@@ -1304,26 +1498,30 @@ The original record remains part of the audit trail.
 
 ⸻
 
-64. Outcome and Trust
+65. Outcome and Trust
 
-Trust determines whether Noema may allow an Action.
+Trust determines whether Noema may permit an Action.
 
-Outcome determines what happened after that decision.
+Outcome determines what resulted from that Action.
 
 Therefore:
 
 Trust
   ↓
-Authorization to act
-Outcome
+Authorization / Permission to Act
+Action
   ↓
-Result of acting
+Execution
+  ↓
+Outcome
 
 Outcome does not retroactively establish that an Action was authorized.
 
+Authorization and result are distinct semantic dimensions.
+
 ⸻
 
-65. Outcome and Failure Recovery
+66. Outcome and Failure Recovery
 
 An Outcome may trigger recovery logic.
 
@@ -1331,14 +1529,14 @@ Example:
 
 Outcome:
 Payment Failed
-Recovery:
-Retry
-Retry Outcome:
+Recovery Action:
+Retry Payment
+Outcome:
 Payment Succeeded
 
-Each is a distinct Outcome.
+Each Outcome remains distinct.
 
-The overall Intent may ultimately become:
+The originating Intent may ultimately become:
 
 SATISFIED
 
@@ -1346,9 +1544,11 @@ despite an earlier failed execution.
 
 ⸻
 
-66. Outcome and Retries
+67. Outcome and Retries
 
 Retries must not automatically create multiple business Outcomes.
+
+Example:
 
 Execution Attempt 1
       ↓
@@ -1359,20 +1559,18 @@ Success
 
 Potentially:
 
-One business Outcome:
+One Business Outcome:
 Transfer Completed
-
-with:
-
-Two execution attempts
+Execution Attempts:
+2
 
 The ontology must distinguish Execution Attempts from business Outcomes.
 
 ⸻
 
-67. Outcome and Compensation
+68. Outcome and Compensation
 
-A compensation Action does not erase the original Outcome.
+A compensating Action does not erase the original Outcome.
 
 Example:
 
@@ -1386,48 +1584,56 @@ Refund Customer
       ↓
 Outcome: Refunded
 
-The final business state may be corrected, but the historical Outcomes remain.
+The final domain condition may be corrected, but the historical Outcomes remain independently represented.
 
 ⸻
 
-68. Outcome Classification
+69. Outcome Classification
 
-Outcomes may be classified along multiple dimensions.
+Outcome semantics should be represented along separate dimensions.
 
-Operational
+Operational Status
 
-SUCCESS
-FAILURE
+SUCCEEDED
+PARTIALLY_SUCCEEDED
+FAILED
+REJECTED
+CANCELLED
 PENDING
 UNKNOWN
 
-Semantic
+Intent Satisfaction
 
 SATISFIED
-PARTIAL
+PARTIALLY_SATISFIED
 UNSATISFIED
 UNKNOWN
 
-These dimensions should not be collapsed.
+These dimensions must not be collapsed.
 
 For example:
 
-Operational:
-SUCCESS
-Semantic:
+Operational Status:
+SUCCEEDED
+Intent Satisfaction:
 UNSATISFIED
 
-is possible.
+is valid.
 
 Example:
 
-Wrong account successfully received the transfer.
+Intent:
+Transfer $500 to Alice.
+Outcome:
+$500 successfully transferred to Bob.
+
+The transfer operation succeeded, but the originating Intent was not satisfied.
 
 ⸻
 
-69. Dual Outcome Model
+70. Dual Evaluation Model
 
-Noema should conceptually distinguish:
+Noema should conceptually separate:
 
 Operational Outcome
 
@@ -1435,28 +1641,29 @@ from:
 
 Intent Satisfaction
 
-For example:
+Conceptually:
 
 ┌────────────────────────────┐
-│ Operational Outcome        │
+│ Operational Evaluation     │
 │                            │
-│ Action executed: SUCCESS   │
+│ Action Result: SUCCEEDED   │
 └──────────────┬─────────────┘
                │
                ▼
 ┌────────────────────────────┐
 │ Semantic Evaluation        │
 │                            │
-│ Intent satisfied: NO       │
+│ Intent Satisfaction:       │
+│ UNSATISFIED                │
 └────────────────────────────┘
 
-This distinction is one of the most important parts of the Outcome ontology.
+This prevents technical execution success from being mistaken for semantic success.
 
 ⸻
 
-70. Canonical Outcome Model
+71. Canonical Outcome Model
 
-A conceptual representation:
+Conceptually:
 
 Outcome
 ├── id
@@ -1477,50 +1684,66 @@ Where:
 
 status
 
-describes operational result.
+describes the operational result.
 
 And:
 
 satisfaction
 
-describes whether the Intent was fulfilled.
+describes the semantic relationship between that result and the originating Intent.
+
+These are independent dimensions.
 
 ⸻
 
-71. Canonical Outcome Flow
+72. Canonical Outcome Flow
 
-                 INTENT
-                    │
-                    ▼
-                 ACTION
-                    │
-                    ▼
-                EXECUTION
-                    │
-          ┌─────────┴─────────┐
-          ▼                   ▼
-     Execution Result     External State
-          │                   │
-          └─────────┬─────────┘
-                    ▼
-               EVIDENCE
-                    │
-                    ▼
-             OBSERVED OUTCOME
-                    │
-                    ▼
-            OUTCOME VERIFICATION
-                    │
-                    ▼
-          INTENT SATISFACTION
+                         INTENT
+                            │
+                            ▼
+                         ACTION
+                            │
+                            ▼
+                        EXECUTION
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+          Execution Result       External State
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                         EVIDENCE
+                            │
+                            ▼
+                    OBSERVED OUTCOME
+                            │
+                            ▼
+                   OUTCOME VERIFICATION
+                            │
+                            ▼
+                  OPERATIONAL EVALUATION
+                            │
+                            ▼
+                 INTENT SATISFACTION
+
+The flow explicitly separates:
+
+1. what was requested,
+2. what Action was selected,
+3. what was executed,
+4. what the execution mechanism returned,
+5. what was observed,
+6. what Evidence supports,
+7. what Outcome was established,
+8. and whether the originating Intent was satisfied.
 
 ⸻
 
-72. Core Invariants
+73. Core Invariants
 
 Invariant 1
 
-An Outcome represents what actually happened.
+An Outcome represents an established result of an Action, Execution, or domain process.
 
 Invariant 2
 
@@ -1536,73 +1759,93 @@ Outcome must remain distinct from Execution.
 
 Invariant 5
 
-Execution success does not automatically imply Intent satisfaction.
+Outcome must remain distinct from Execution Result.
 
 Invariant 6
 
-An HTTP success response does not automatically constitute a business Outcome.
+Outcome must remain distinct from Entity State.
 
 Invariant 7
 
-An unknown Outcome must not be represented as a failure without evidence.
+Execution success does not automatically imply Intent Satisfaction.
 
 Invariant 8
 
-An unknown Outcome must not be represented as success without evidence.
+An HTTP success response does not automatically constitute a business Outcome.
 
 Invariant 9
 
-Expected Outcome and Observed Outcome must remain distinct.
+An unknown Outcome must not be represented as failure without sufficient Evidence.
 
 Invariant 10
 
-Outcome verification must use appropriate Evidence.
+An unknown Outcome must not be represented as success without sufficient Evidence.
 
 Invariant 11
 
-Material Outcomes must have traceable Provenance.
+Expected Outcome and Observed Outcome must remain distinct.
 
 Invariant 12
 
-Historical Outcomes must not be silently overwritten by later State changes.
+Outcome verification must be grounded in appropriate Evidence.
 
 Invariant 13
 
-Retries must remain distinguishable from independent business Outcomes.
+Material Outcomes must have traceable Provenance.
 
 Invariant 14
 
-Compensating Actions must not erase the original Outcome.
+Historical Outcomes must not be silently overwritten by later Entity State.
 
 Invariant 15
 
-Partial success must remain explicitly represented.
+Retries must remain distinguishable from independent business Outcomes.
 
 Invariant 16
 
-Conflicting Evidence must remain visible until reconciled.
+Compensating Actions must not erase original Outcomes.
 
 Invariant 17
 
-Model inference alone must not establish a consequential Outcome when authoritative verification is required.
+Partial operational success must remain explicitly represented.
 
 Invariant 18
 
-An Outcome must remain correlated with the Intent and Action that produced it.
+Conflicting Evidence must remain visible until reconciled.
 
 Invariant 19
 
-Outcome State and business Entity State must remain conceptually distinct.
+Model inference alone must not establish a consequential Outcome where authoritative verification is required.
 
 Invariant 20
 
-Outcome evaluation must ultimately determine whether the original Intent was satisfied, partially satisfied, unsatisfied, or remains unknown.
+An Outcome should remain correlated with the relevant Intent, Action, and Execution.
+
+Invariant 21
+
+Outcome status and Intent Satisfaction must remain separate semantic dimensions.
+
+Invariant 22
+
+Outcome and Entity State must remain independently modeled even when State provides Evidence for an Outcome.
+
+Invariant 23
+
+Outcome correction must preserve historical lineage.
+
+Invariant 24
+
+Outcome finality must remain distinguishable from interim observation.
+
+Invariant 25
+
+Outcome evaluation must determine whether the originating Intent is satisfied, partially satisfied, unsatisfied, or remains unknown.
 
 ⸻
 
-73. Relationship to the Noema Ontology
+74. Relationship to the Noema Ontology
 
-outcome.md completes the relationship established across the ontology:
+outcome.md completes the execution side of the Noema ontology:
 
 Actor
   │
@@ -1642,13 +1885,17 @@ Capability
   ▼
 Execution
   │
-  │ produces
+  │ produces / enables observation of
   ▼
 Outcome
   │
-  │ verified through
+  │ supported by
   ▼
 Evidence
+  │
+  │ verified through
+  ▼
+Verification
   │
   │ evaluated against
   ▼
@@ -1661,11 +1908,11 @@ This gives Noema a closed semantic loop rather than a one-way agent/tool pipelin
 
 ⸻
 
-74. Canonical Principle
+75. Canonical Principle
 
-The central principle of this document is:
+The central principle of the Outcome ontology is:
 
-Noema must distinguish between what was requested, what was authorized, what was attempted, what technically happened, what actually happened in the domain, and whether the original Intent was satisfied.
+Noema must distinguish between what was requested, what was authorized, what was attempted, what technically occurred, what actually resulted in the domain, what Evidence establishes that result, and whether the original Intent was satisfied.
 
 Therefore:
 
@@ -1681,4 +1928,34 @@ Outcome
    ≠
 Intent Satisfaction
 
-That separation is what allows Noema to remain deterministic and auditable even when the systems it orchestrates are probabilistic, asynchronous, distributed, or partially observable.
+The resulting semantic loop is:
+
+        DESIRED
+           │
+           ▼
+         INTENT
+           │
+           ▼
+         ACTION
+           │
+           ▼
+       EXECUTION
+           │
+           ▼
+       OBSERVATION
+           │
+           ▼
+        EVIDENCE
+           │
+           ▼
+        OUTCOME
+           │
+           ▼
+      VERIFICATION
+           │
+           ▼
+     SATISFACTION
+           │
+           └──────────────► INTENT
+
+This separation allows Noema to preserve deterministic, auditable semantics across systems that are probabilistic, asynchronous, distributed, externally controlled, eventually consistent, or partially observable.

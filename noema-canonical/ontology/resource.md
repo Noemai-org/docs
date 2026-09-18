@@ -1,7 +1,7 @@
 Resource
 
-Status: Foundational Draft
-Version: 0.1
+Status: Foundational
+Version: 0.2
 Domain: Ontology
 Canonical Path: ontology/resource.md
 
@@ -9,82 +9,78 @@ Canonical Path: ontology/resource.md
 
 1. Definition
 
-A Resource is an Entity, asset, capability-bearing object, information object, service, or finite capacity that can be accessed, consumed, allocated, modified, transferred, reserved, or otherwise acted upon by an Intent or Action.
+A Resource is an Entity, asset, information object, service, or finite capacity that can be accessed, used, allocated, reserved, consumed, modified, transferred, created, destroyed, or otherwise acted upon by an Intent or Action.
 
 A Resource answers:
 
-What thing, asset, information, service, or capacity is available to be used or affected?
+What thing, asset, information, service, or capacity is available to be acted upon?
 
 Examples include:
 
-Account
-Payment Card
-Customer Record
-Database Connection
-Cloud Storage
-Compute Capacity
-Inventory
-Money
-API Quota
-Employee Time
-Document
-Subscription
-Vehicle
-Physical Asset
+* Account
+* Payment Card
+* Customer Record
+* Document
+* Database
+* Cloud Storage
+* Compute Capacity
+* Inventory
+* Money
+* API Quota
+* Employee Time
+* Subscription
+* Vehicle
+* Physical Asset
+
+A Resource is therefore an operational role in the ontology, not merely a category of things.
 
 ⸻
 
-2. Resource Is a Semantic Role
+2. Resource as a Semantic Role
 
 Not every Entity is inherently a Resource.
 
-An Entity becomes relevant as a Resource when it participates in an operational relationship involving use, allocation, access, consumption, modification, or transfer.
+An Entity becomes relevant as a Resource when it participates in an operational relationship involving access, use, allocation, reservation, consumption, modification, transfer, or another consequential operation.
 
 For example:
 
+Entity:
 Customer
 
-is an Entity.
+may become operationally relevant as:
 
-But:
-
+Resource:
 Customer Record
 
-may be a Resource when an Action accesses or modifies that record.
+when an Action reads or modifies that record.
 
-Therefore:
+Conceptually:
 
 Resource ⊂ Entity
 
-is a useful conceptual model, but Resource should not necessarily be implemented as a subclass in every storage model.
+may be useful, but Resource should not be assumed to require inheritance or subclassing in an implementation.
+
+The distinction is semantic:
+
+Entity
+  = a distinguishable thing in the domain
+Resource
+  = an Entity or operational object/capacity against which an operation has consequence
 
 ⸻
 
-3. Resource vs Entity
+3. Resource and Entity
 
-This distinction is foundational.
+Entity establishes what exists or is distinguishable in the domain.
 
-Entity
-
-A distinguishable thing that exists in Noema’s domain.
-
-Resource
-
-A thing that can be operationally used, accessed, consumed, allocated, modified, or otherwise acted upon.
+Resource establishes what can be operationally acted upon, used, allocated, consumed, accessed, modified, or governed.
 
 Example:
 
 Entity:
-Customer #123
-Resource:
-Customer's account balance
-
-Another:
-
-Entity:
 Warehouse
 Resource:
-Warehouse inventory
+Inventory held by the Warehouse
 
 Another:
 
@@ -93,17 +89,74 @@ Cloud Platform
 Resource:
 Available compute capacity
 
+The same Entity may participate in different semantic roles depending on the relationship in which it is involved.
+
 ⸻
 
-4. Resource vs Capability
+4. Resource and Intent
 
-A Capability represents:
+An Intent expresses what an Actor wants to accomplish.
 
-What can be done.
+A Resource identifies what the Intent concerns or targets operationally.
 
-A Resource represents:
+Intent ──targets──► Resource
 
-What can be acted upon or used.
+Example:
+
+Intent:
+Delete my account
+        │
+        ▼
+Account #123
+
+targets should be used when the Resource is the direct operational object of the requested operation.
+
+concerns is broader and may apply when the relationship does not establish the Resource as the direct target.
+
+The distinction is:
+
+Intent
+  = desired objective
+Resource
+  = operational object or capacity relevant to that objective
+
+⸻
+
+5. Resource and Action
+
+An Action describes what Noema proposes or performs in order to fulfill an Intent.
+
+A Resource describes what that Action operates upon.
+
+An Action may:
+
+* access a Resource
+* read a Resource
+* write a Resource
+* modify a Resource
+* create a Resource
+* destroy a Resource
+* consume a Resource
+* allocate a Resource
+* reserve a Resource
+* release a Resource
+* transfer a Resource
+* transform a Resource
+
+The relevant relationship should be represented explicitly where the distinction matters.
+
+⸻
+
+6. Resource and Capability
+
+A Capability describes what can be done.
+
+A Resource describes what can be acted upon.
+
+Capability
+     │
+     ▼
+  Action ──────► Resource
 
 Example:
 
@@ -112,91 +165,1335 @@ transfer_funds
 Resource:
 Account #123
 
-The Capability enables the Action.
+The existence of a Capability does not establish that a particular Resource can currently be operated upon.
 
-The Resource is what the Action operates on.
+Therefore:
+
+Capability ≠ Resource
+
+and:
 
 Capability
-     │
-     ▼
-Action ──────► Resource
+  = operational possibility
+Resource
+  = operational object or capacity
 
 ⸻
 
-5. Resource vs Context
+7. Resource and Context
 
-Context describes the circumstances surrounding an Intent or Action.
+Context describes the circumstances within which an Intent or Action is interpreted or evaluated.
 
-Resource is something that may be acted upon within that Context.
+A Resource is an object or capacity relevant within that Context.
 
 Example:
 
 Context:
 Authenticated customer session
 Resource:
-Customer account
+Customer Account
 
-The session is Context.
-
-The account is the Resource.
+Context does not become a Resource merely because it references one.
 
 ⸻
 
-6. Resource vs Constraint
+8. Resource and Constraint
 
-A Constraint limits how a Resource may be used.
+A Constraint limits how a Resource may be used or operated upon.
 
 Example:
 
 Resource:
-Account balance
+Account Balance
 Constraint:
 Withdrawal <= available balance
 
 Another:
 
 Resource:
-API quota
+API Quota
 Constraint:
 Maximum 1,000 requests per hour
 
+A Constraint may apply directly to a Resource, an Intent, an Action, or a combination of these.
+
 ⸻
 
-7. Resource vs Policy
+9. Resource and Policy
 
-A Policy governs how a Resource may be used.
+A Policy establishes governing rules relevant to a Resource or operations involving that Resource.
+
+Example:
 
 Resource:
-Customer data
+Customer Data
 Policy:
-Customer data may only be exported for legitimate business purposes.
+Customer data may only be exported under specified conditions.
 
-Policy defines the governing rule.
+A Policy may therefore govern:
 
-Resource is what the rule governs.
+Resource
+Action
+Intent
+
+These are distinct relationships and should not be collapsed.
 
 ⸻
 
-8. Resource vs Authority
+10. Resource and Authority
 
-Authority determines whether an Actor is permitted to perform operations involving a Resource.
+Authority may be scoped to a Resource.
+
+For example:
+
+Authority
+  └── scoped_to ──► Account #123
+
+This establishes the resource scope relevant to an Authority.
+
+Resource ownership, access, and Authority are distinct concepts.
+
+Ownership ≠ Access ≠ Authority
+
+An Actor may own a Resource without possessing unlimited Authority over every operation involving it.
+
+⸻
+
+11. Resource Categories
+
+Foundational Resource categories include:
+
+* Physical Resource
+* Financial Resource
+* Information Resource
+* Digital Resource
+* Compute Resource
+* Network Resource
+* Human Resource
+* Time Resource
+* Capacity Resource
+* Service Resource
+* Credential Resource
+* Access Resource
+
+These categories are extensible.
+
+They describe useful semantic classes and do not require a fixed implementation hierarchy.
+
+⸻
+
+12. Physical Resources
+
+Physical objects that can be used, allocated, transferred, reserved, modified, or operated upon.
+
+Examples:
+
+* Vehicle
+* Warehouse
+* Machine
+* Device
+* Inventory Item
+* Office Space
+* Equipment
+
+Example:
+
+Intent:
+Book delivery vehicle
+Resource:
+Vehicle #42
+
+⸻
+
+13. Financial Resources
+
+Resources representing monetary value or financial capacity.
+
+Examples:
+
+* Cash
+* Account Balance
+* Credit
+* Payment Limit
+* Budget
+* Wallet
+* Funds
+
+Example:
+
+Intent:
+Transfer $5,000
+Resource:
+Account balance
+
+⸻
+
+14. Information Resources
+
+Information that can be accessed, read, modified, exported, retained, or deleted.
+
+Examples:
+
+* Customer Record
+* Medical Record
+* Financial Record
+* Document
+* Report
+* Database Record
+* Transaction History
+
+Information Resources may require particularly strong Policy, Authority, Context, and Evidence relationships.
+
+⸻
+
+15. Digital Resources
+
+Software-defined objects that can be operated upon.
+
+Examples:
+
+* File
+* Repository
+* API Key
+* Cloud Object
+* Database
+* Container
+* Deployment
+* DNS Record
+
+⸻
+
+16. Compute Resources
+
+Computational resources or capacity that can be allocated or consumed.
+
+Examples:
+
+* CPU
+* Memory
+* GPU
+* VM
+* Container
+* Worker
+* Compute Instance
+
+Example:
+
+Intent:
+Run ML training job
+Resource:
+GPU capacity
+
+⸻
+
+17. Network Resources
+
+Resources representing connectivity, network infrastructure, or network capacity.
+
+Examples:
+
+* Bandwidth
+* IP Address
+* Network
+* Port
+* VPN
+* Connection
+
+⸻
+
+18. Human Resources
+
+A human is an Entity.
+
+The person’s time, availability, attention, or labor may participate as a Resource when it is explicitly allocated or consumed.
+
+Example:
+
+Entity:
+Engineer
+Resource:
+Engineer availability
+
+This distinction prevents treating a person as merely an operational asset.
+
+⸻
+
+19. Time Resources
+
+Time can be modeled as a Resource when a specific interval or allocation is operationally relevant.
+
+Example:
+
+Resource:
+30-minute appointment slot
+Intent:
+Book appointment
+Action:
+ReserveSlot
+
+The Resource is the available time allocation, not merely the timestamp at which an event occurs.
+
+⸻
+
+20. Capacity Resources
+
+Capacity is an important Resource form.
+
+Examples:
+
+* API quota
+* Storage capacity
+* Inventory capacity
+* Credit limit
+* CPU capacity
+* Queue capacity
+* Appointment capacity
+
+Capacity Resources may be consumable, allocatable, reservable, or shared.
+
+⸻
+
+21. Consumable Resources
+
+A consumable Resource decreases in available quantity when consumed.
+
+Examples:
+
+* Inventory
+* Money
+* API quota
+* Storage
+* Credit
+* Fuel
+* Compute credits
+
+Conceptually:
+
+Resource
+   │
+   ▼
+Consumption
+   │
+   ▼
+Reduced availability
+
+Consumption does not necessarily destroy the Resource itself.
+
+⸻
+
+22. Non-Consumable Resources
+
+A Resource may be used without being permanently depleted.
+
+Examples:
+
+* Vehicle
+* Machine
+* Employee availability
+* Database
+* API service
+* Physical room
+
+Use may temporarily alter availability without destroying the Resource.
+
+⸻
+
+23. Allocatable Resources
+
+An allocatable Resource can be reserved, assigned, or allocated for use.
+
+Examples:
+
+* Meeting Room
+* GPU
+* Employee Time
+* Vehicle
+* Inventory
+* IP Address
+
+Example:
+
+Intent:
+Reserve meeting room
+Resource:
+Room A
+
+⸻
+
+24. Exclusive and Shared Resources
+
+Some Resources are exclusive:
+
+Operating Room #3
+
+and cannot support multiple incompatible allocations simultaneously.
+
+Others are shared:
+
+Database
+Network
+API
+Cloud Storage
+
+and may support multiple simultaneous consumers subject to capacity and other Constraints.
+
+Exclusivity and sharing are semantic properties relevant to Resource availability and allocation; they should not be assumed for every Resource.
+
+⸻
+
+25. Resource Availability
+
+Resource availability is contextual and potentially temporal.
+
+Conceptually:
+
+Resource
+    +
+Context
+    +
+Time
+    ↓
+Availability
+
+Example:
+
+Vehicle #42
+Available:
+09:00–12:00
+Unavailable:
+12:00–15:00
+
+The existence of a Resource does not imply that it is currently available.
+
+Availability may depend on:
+
+* current state
+* allocation
+* reservation
+* quantity
+* capacity
+* time
+* Context
+* Policy
+* other Resource dependencies
+
+⸻
+
+26. Resource State
+
+A Resource may have state relevant to whether an operation can occur.
+
+Examples:
+
+Account:
+ACTIVE
+Card:
+BLOCKED
+Vehicle:
+MAINTENANCE
+API:
+RATE_LIMITED
+
+Resource state may therefore become an input to Constraint evaluation and Trust evaluation.
+
+Resource state is not itself an Action or Outcome.
+
+⸻
+
+27. Resource Identity
+
+An individually addressable Resource should have a stable canonical identity.
+
+Examples:
+
+account:123
+document:invoice:456
+
+Resource identity should be distinct from:
+
+* display name
+* natural-language reference
+* temporary model-generated identifier
+
+Where an operation is consequential, a candidate Resource identified from natural language must be resolved against authoritative Resource or Entity data.
+
+⸻
+
+28. Resource Ownership
+
+A Resource may participate in an ownership relationship.
+
+Actor ──owns──► Resource
+
+Example:
+
+Customer
+  └── owns ──► Account #123
+
+Ownership does not imply unlimited operational Authority.
+
+Ownership is a domain relationship; the permissions associated with ownership depend on the relevant Policy, Authority, Context, and Constraints.
+
+⸻
+
+29. Resource Custody
+
+Custody is distinct from ownership.
+
+Actor ──has_custody_of──► Resource
+
+Example:
+
+Bank
+  └── has_custody_of ──► Customer Funds
+
+Custody does not establish ownership of the underlying Resource.
+
+⸻
+
+30. Resource Access
+
+An Actor may have access to a Resource.
+
+Actor ──has_access_to──► Resource
+
+Access may be differentiated by mode, including:
+
+* READ
+* WRITE
+* EXECUTE
+* ADMINISTER
+* ALLOCATE
+* TRANSFER
+* DELETE
+
+Access does not automatically establish Authority for every operation.
 
 Example:
 
 Actor:
-Finance Manager
-Authority:
-May approve payments for Account A
+Support Agent
 Resource:
-Account A
-
-Authority can therefore be scoped to Resources.
+Customer Record
+Access:
+READ
+Authority:
+May read
+Authority:
+May not delete
 
 ⸻
 
-9. Resource Lifecycle
+31. Resource Allocation
 
-Resources may have a lifecycle.
+A Resource may be allocated to an Actor, Intent, Action, or other appropriate allocation target.
+
+Conceptually:
+
+Resource ──allocated_to──► Actor
+
+or:
+
+Resource ──allocated_to──► Intent
+
+Example:
+
+GPU #4
+  └── allocated_to ──► MLTrainingIntent
+
+Allocation represents an assignment for use.
+
+⸻
+
+32. Resource Reservation
+
+A reservation establishes a temporal or conditional claim over a Resource.
+
+Conceptually:
+
+Reservation
+├── resource
+├── claimant
+├── quantity
+├── valid_from
+└── valid_until
+
+Example:
+
+Room A
+Reserved:
+10:00–11:00
+
+A reservation does not necessarily constitute consumption or active use.
+
+⸻
+
+33. Allocation vs Reservation
+
+These concepts remain distinct.
+
+Reservation
+
+A future or conditional claim over a Resource.
+
+Allocation
+
+The Resource has been assigned for use.
+
+A domain may model a progression such as:
+
+Reservation
+     ↓
+Approval
+     ↓
+Allocation
+     ↓
+Use
+
+but not every Resource requires every stage.
+
+⸻
+
+34. Resource Consumption
+
+An Action may consume a Resource.
+
+Action ──consumes──► Resource
+
+Examples:
+
+TransferFunds
+  └── consumes ──► Account Balance
+SendMessage
+  └── consumes ──► API Quota
+
+Consumption should preserve the relevant quantity and unit where the Resource is quantifiable.
+
+⸻
+
+35. Resource Modification
+
+An Action may modify a Resource.
+
+Action ──modifies──► Resource
+
+Example:
+
+UpdateCustomer
+  └── modifies ──► Customer Record
+
+The resulting state change should be represented through the relevant Outcome rather than treated as an unobservable side effect.
+
+⸻
+
+36. Resource Creation
+
+An Action may create a Resource.
+
+Action ──creates──► Resource
+
+Example:
+
+CreateAccount
+  └── creates ──► Account
+
+The newly created Resource becomes part of canonical domain state once creation is established by the resulting Outcome and authoritative state.
+
+⸻
+
+37. Resource Destruction
+
+An Action may destroy, delete, or permanently retire a Resource.
+
+Action ──destroys──► Resource
+
+Example:
+
+DeleteFile
+  └── destroys ──► File
+
+Destructive operations may require stronger Policy, Authority, Constraint, Evidence, and Trust evaluation.
+
+Destruction of a Resource does not imply destruction of its historical references.
+
+⸻
+
+38. Resource Transfer
+
+An Action may transfer a Resource or a quantity of a Resource between parties, accounts, locations, or other destinations.
+
+Action ──transfers──► Resource
+
+Where applicable, the transfer semantics should preserve:
+
+* source
+* destination
+* quantity
+* unit
+* time
+* relevant Authority
+* relevant provenance
+
+Example:
+
+TransferFunds
+  └── transfers ──► Money
+
+⸻
+
+39. Resource Transformation
+
+An Action may transform a Resource into another Resource or state.
+
+Action ──transforms──► Resource
+
+Example:
+
+ConvertCurrency
+  └── transforms ──► USD → NGN
+
+Transformation does not necessarily imply destruction of the original Resource.
+
+⸻
+
+40. Resource Dependencies
+
+Resources may depend on other Resources.
+
+Resource ──depends_on──► Resource
+
+Examples:
+
+Application
+  └── depends_on ──► Database
+API Service
+  └── depends_on ──► Network
+
+Dependencies may become relevant to availability and execution resolution.
+
+⸻
+
+41. Resource Composition
+
+A Resource may contain or be composed of other Resources.
+
+Resource ──contains──► Resource
+
+Examples:
+
+Warehouse
+  └── contains ──► Inventory Item
+Cloud Account
+  └── contains ──► Compute Instance
+
+Containment is distinct from ownership and dependency.
+
+⸻
+
+42. Resource Hierarchy
+
+Resources may participate in structural relationships.
+
+Resource ──part_of──► Resource
+
+Example:
+
+GPU
+  └── part_of ──► Compute Instance
+
+part_of expresses structural composition rather than ownership.
+
+⸻
+
+43. Resource Scope
+
+A Resource may have an explicit operational scope.
+
+Possible scopes include:
+
+* Actor
+* Organization
+* Department
+* Project
+* Environment
+* Region
+* Account
+* Tenant
+* System
+
+Example:
+
+Resource:
+API Quota
+Scope:
+Organization = Acme
+
+Scope must not be inferred merely from naming.
+
+⸻
+
+44. Resource Governance
+
+A Resource may be governed by one or more Policies.
+
+Resource ──governed_by──► Policy
+
+Example:
+
+CustomerData
+  └── governed_by ──► DataExportPolicy
+
+This is complementary to an Action being governed by Policy.
+
+A Policy may govern:
+
+the Resource
+the Intent
+the Action
+
+depending on its semantic scope.
+
+⸻
+
+45. Resource Constraints
+
+A Resource may participate in Constraint relationships.
+
+Resource ──constrained_by──► Constraint
+
+Example:
+
+Account
+  └── constrained_by ──► DailyWithdrawalLimit
+
+A Constraint may represent an inherent, configured, contextual, or policy-derived limitation.
+
+⸻
+
+46. Resource Authority Scope
+
+Authority may be scoped to a Resource.
+
+Authority ──scoped_to──► Resource
+
+Example:
+
+AccountManagerAuthority
+  └── scoped_to ──► Account #123
+
+This allows Noema to distinguish between:
+
+Authority:
+May approve refunds
+
+and:
+
+Authority:
+May approve refunds for Account #123
+
+The semantics of Authority itself belong to the Authority ontology. Resource defines the resource-scoping relationship.
+
+⸻
+
+47. Resource Capability Scope
+
+A Capability may specify the Resource on which it operates.
+
+Capability ──operates_on──► Resource
+
+Example:
+
+Capability:
+delete.customer
+  └── operates_on ──► Customer Record
+
+The distinction is:
+
+Capability
+  = what operation is possible
+Resource
+  = what the operation operates upon
+
+⸻
+
+48. Resource and Outcome
+
+An Outcome may affect a Resource.
+
+Outcome ──affects──► Resource
+
+Example:
+
+Outcome:
+PaymentCompleted
+  └── affects ──► Account Balance
+
+This relationship connects execution results to canonical domain state.
+
+Resource state changes should not be hidden from the semantic model when they are consequential.
+
+⸻
+
+49. Resource Provenance
+
+A Resource may have provenance establishing where it came from or how it entered the canonical domain.
+
+Example:
+
+Resource:
+Customer Account
+Provenance:
+Created by AccountCreationAction
+
+A creation relationship may therefore establish lineage:
+
+Action
+  │
+  └── creates ──► Resource
+
+Provenance may identify the authoritative source, creating Action, observation, or other origin information relevant to the Resource.
+
+⸻
+
+50. Resource Lineage
+
+A Resource may have historical lineage.
+
+Resource B
+  └── derived_from ──► Resource A
+
+Example:
+
+ReplacementCard
+  └── derived_from ──► OriginalCard
+
+Lineage is important for auditability and historical reconstruction.
+
+⸻
+
+51. Resource Versioning
+
+Information and digital Resources may be versioned.
+
+Example:
+
+Document v1
+Document v2
+Document v3
+
+Resource identity and Resource version should remain distinguishable.
+
+Where necessary, historical Actions should identify the Resource version actually affected.
+
+⸻
+
+52. Resource Quantity
+
+Some Resources are quantifiable.
+
+Examples:
+
+* Money
+* Inventory
+* Storage
+* Bandwidth
+* CPU
+* Fuel
+* Credit
+
+A quantity consists conceptually of:
+
+value
+unit
+
+Examples:
+
+500 USD
+20 GB
+
+Quantity semantics must not be confused with availability.
+
+⸻
+
+53. Quantity vs Availability
+
+Total Resource quantity and currently available quantity are distinct.
+
+Example:
+
+Resource Quantity:
+100 units
+Available Quantity:
+40 units
+
+The remaining quantity may be:
+
+* allocated
+* reserved
+* consumed
+* unavailable
+* otherwise constrained
+
+Therefore:
+
+total quantity ≠ available quantity
+
+⸻
+
+54. Resource Availability as a Trust Input
+
+Resource availability may be relevant to Trust evaluation.
+
+Example:
+
+Intent:
+Book Room A
+Resource:
+Room A
+Availability:
+UNAVAILABLE
+
+The existence of a Capability:
+
+book.room
+
+does not establish that the requested operation can currently succeed.
+
+Conceptually:
+
+Capability
+  = possibility of performing an operation
+Resource state / availability
+  = whether the target can currently support it
+
+⸻
+
+55. Resource Conflict
+
+Multiple Intents may compete for the same Resource.
+
+Example:
+
+Intent A ──► Resource X
+Intent B ──► Resource X
+Intent C ──► Resource X
+
+Noema must represent the conflict rather than silently selecting a winner.
+
+Resolution may depend on relevant:
+
+* Policy
+* Constraint
+* Context
+* Authority
+* priority
+* reservation
+* allocation state
+
+The Resource ontology establishes the conflict as a semantic condition; arbitration semantics belong to the applicable governance and resolution mechanisms.
+
+⸻
+
+56. Resource Contention
+
+Resource contention occurs when multiple requests require the same constrained Resource.
+
+Example:
+
+Intent A ──► GPU #1
+Intent B ──► GPU #1
+
+Contention may arise from:
+
+* exclusive allocation
+* limited capacity
+* conflicting reservations
+* competing claims
+* insufficient quantity
+
+Noema must make the relevant Resource state and competing relationships explicit before consequential execution.
+
+⸻
+
+57. Resource Priority
+
+Priority is not inherently a property of every Resource.
+
+Where allocation or contention requires priority, it should be represented explicitly through the applicable Context, Policy, Intent, Constraint, or allocation model.
+
+Example:
+
+Emergency request
+    >
+Normal request
+
+The Resource itself does not acquire a universal priority merely because it participates in such a rule.
+
+⸻
+
+58. Resource Resolution
+
+Natural language may identify a candidate Resource.
+
+Example:
+
+"Transfer $500 from my savings account."
+
+The Model may produce:
+
+Candidate Resource:
+Savings Account
+
+Noema must then resolve that candidate against canonical Resource or Entity data.
+
+The semantic flow is:
+
+Natural Language
+      ↓
+Candidate Resource
+      ↓
+Resource Resolution
+      ↓
+Canonical Resource
+
+A model-generated candidate must not automatically become an authoritative Resource.
+
+⸻
+
+59. Ambiguous Resource Resolution
+
+Natural-language Resource references may be ambiguous.
+
+Examples:
+
+"my card"
+"my account"
+"the server"
+"that document"
+"the Lagos office"
+
+If multiple canonical Resources satisfy the reference:
+
+Resource Resolution
+      ↓
+Multiple candidates
+      ↓
+Ambiguity
+      ↓
+Clarification
+
+Noema must not silently select an arbitrary Resource.
+
+Where a consequential Resource cannot be resolved sufficiently:
+
+UNKNOWN
+
+is preferable to an invented identity.
+
+⸻
+
+60. Resource Resolution and Trust
+
+Resource resolution is part of the semantic grounding required before consequential execution.
+
+A Capability may establish that an operation is possible.
+
+It does not establish:
+
+* which Resource is intended
+* that the Resource exists
+* that the Resource is available
+* that the Actor may operate upon it
+* that Policy permits the operation
+* that Constraints are satisfied
+
+Therefore:
+
+Intent
+   ↓
+Resource Resolution
+   ↓
+Relationship Resolution
+   ↓
+Trust Evaluation
+   ↓
+Action
+
+The Model may assist with candidate identification, but authoritative Resource resolution must remain grounded in canonical data.
+
+⸻
+
+61. Resource Ownership Does Not Imply Unlimited Authority
+
+This is a foundational invariant.
+
+Owner
+  ≠
+Unlimited Authority
+
+Example:
+
+Customer
+  └── owns ──► Account
+
+does not establish that the Customer can perform every possible operation against that Account.
+
+For example:
+
+Policy:
+Account cannot be closed while legal proceedings are active.
+
+Ownership establishes a relationship.
+
+Policy, Authority, Constraint, Context, Evidence, and Trust determine whether a particular operation may proceed.
+
+⸻
+
+62. Resource Access Does Not Imply Modification Authority
+
+Likewise:
+
+READ access
+  ≠
+WRITE authority
+
+Example:
+
+Support Agent
+  └── has_access_to ──► Customer Record
+Access:
+READ
+
+does not establish:
+
+Authority:
+MODIFY
+
+Operations must be evaluated according to their actual semantic scope.
+
+⸻
+
+63. Resource Security Boundary
+
+Resources may represent important security and governance boundaries.
+
+Examples:
+
+* Database
+* Account
+* API Key
+* Customer Record
+* Cloud Environment
+* Repository
+
+Consequential operations involving such Resources may require resolution of:
+
+Actor
++
+Intent
++
+Resource
++
+Authority
++
+Policy
++
+Constraint
++
+Context
++
+Evidence
+
+before Trust permits execution.
+
+⸻
+
+64. Resource and Multi-Tenancy
+
+A Resource may be scoped to a Tenant.
+
+Resource ──scoped_to──► Tenant
+
+An Actor’s authority over a Resource in one Tenant must not implicitly extend to a Resource in another Tenant.
+
+Tenant scope is therefore relevant to Resource identity, resolution, access, Authority, and Trust evaluation.
+
+⸻
+
+65. Resource Ownership Transfer
+
+Ownership of a Resource may change.
+
+Example:
+
+Account
+   │
+   ├── Owner A
+   │
+   ▼
+TransferOwnership
+   │
+   ▼
+Owner B
+
+The resulting ownership state should be represented through the appropriate Outcome and canonical relationship.
+
+Historical ownership must remain reconstructable.
+
+⸻
+
+66. Resource Deletion and History
+
+Deleting or retiring a Resource does not necessarily remove historical references to it.
+
+Example:
+
+Account #123
+    ↓
+Deleted
+
+Historical records may continue to reference:
+
+Account #123
+
+for:
+
+* audit
+* reconciliation
+* legal obligations
+* Outcome history
+* provenance
+* historical relationships
+
+Therefore:
+
+Resource deletion
+  ≠
+historical relationship deletion
+
+⸻
+
+67. Resource Auditability
+
+For consequential Resources, Noema should be able to establish, where applicable:
+
+Who accessed it?
+Why?
+Under which Intent?
+Which Action?
+Under which Authority?
+Under which Policy?
+Under which Context?
+What happened?
+What Evidence supports the result?
+
+Resource relationships therefore participate directly in Noema’s auditability model.
+
+⸻
+
+68. Resource Lifecycle
+
+Resources may participate in lifecycle states.
 
 A generic lifecycle is:
 
@@ -214,891 +1511,23 @@ RETIRED
 
 Not every Resource requires every state.
 
-A financial account, for example, may instead use:
+Another domain may use:
 
 PENDING
+   ↓
 ACTIVE
+   ↓
 SUSPENDED
+   ↓
 CLOSED
 
-Resource lifecycle semantics belong to the Resource’s domain.
+Lifecycle semantics belong to the Resource’s domain.
+
+Noema should not impose one universal Resource lifecycle where the domain does not require it.
 
 ⸻
 
-10. Resource Identity
-
-A Resource should have a stable identity where it is individually addressable.
-
-Example:
-
-resource:
-account:123
-
-or:
-
-resource:
-document:invoice:456
-
-Resource identity should be distinct from display names.
-
-⸻
-
-11. Resource Types
-
-Foundational Resource categories include:
-
-Physical Resource
-Financial Resource
-Information Resource
-Digital Resource
-Compute Resource
-Network Resource
-Human Resource
-Time Resource
-Capacity Resource
-Service Resource
-Credential Resource
-Access Resource
-
-These categories are extensible.
-
-⸻
-
-12. Physical Resources
-
-Physical objects that can be used, allocated, transferred, or operated.
-
-Examples:
-
-Vehicle
-Warehouse
-Machine
-Device
-Inventory Item
-Office Space
-Equipment
-
-Example:
-
-Intent:
-Book delivery vehicle.
-Resource:
-Vehicle #42.
-
-⸻
-
-13. Financial Resources
-
-Resources representing monetary value or financial capacity.
-
-Examples:
-
-Cash
-Account Balance
-Credit
-Payment Limit
-Budget
-Wallet
-Funds
-
-Example:
-
-Intent:
-Transfer $5,000.
-Resource:
-Account balance.
-
-⸻
-
-14. Information Resources
-
-Information that can be accessed, modified, exported, retained, or deleted.
-
-Examples:
-
-Customer Record
-Medical Record
-Financial Record
-Document
-Report
-Database Record
-Transaction History
-
-Information Resources require especially strong Policy and Authority semantics.
-
-⸻
-
-15. Digital Resources
-
-Software-defined objects that can be operated on.
-
-Examples:
-
-File
-Repository
-API Key
-Cloud Object
-Database
-Container
-Deployment
-DNS Record
-
-⸻
-
-16. Compute Resources
-
-Computational capacity that can be allocated or consumed.
-
-Examples:
-
-CPU
-Memory
-GPU
-VM
-Container
-Worker
-Compute Instance
-
-Example:
-
-Intent:
-Run ML training job.
-Resource:
-GPU capacity.
-
-⸻
-
-17. Network Resources
-
-Resources representing connectivity or network capacity.
-
-Examples:
-
-Bandwidth
-IP Address
-Network
-Port
-VPN
-Connection
-
-⸻
-
-18. Human Resources
-
-Humans may be modeled as Entities that participate as Resources when their time, attention, or labor is being allocated.
-
-Example:
-
-Entity:
-Engineer
-Resource:
-Engineer availability
-
-This distinction prevents treating a person as merely an operational asset.
-
-⸻
-
-19. Time as a Resource
-
-Time can be modeled as a Resource where it is explicitly allocated or consumed.
-
-Example:
-
-Resource:
-30-minute appointment slot
-Intent:
-Book appointment
-Action:
-ReserveSlot
-
-The Resource is the available time allocation, not simply the timestamp.
-
-⸻
-
-20. Capacity as a Resource
-
-Capacity is a particularly important Resource type.
-
-Examples:
-
-API quota
-Storage capacity
-Inventory capacity
-Credit limit
-CPU capacity
-Queue capacity
-Appointment capacity
-
-Capacity Resources are often consumable.
-
-⸻
-
-21. Consumable Resources
-
-A consumable Resource decreases when used.
-
-Examples:
-
-Inventory
-Money
-API quota
-Storage
-Credit
-Fuel
-Compute credits
-
-Conceptually:
-
-Resource
-   ↓
-Consumption
-   ↓
-Reduced availability
-
-⸻
-
-22. Non-Consumable Resources
-
-Some Resources can be used without being permanently depleted.
-
-Examples:
-
-Vehicle
-Machine
-Employee
-Database
-API service
-Physical room
-
-Use may temporarily change availability without destroying the Resource.
-
-⸻
-
-23. Allocatable Resources
-
-An allocatable Resource can be reserved or assigned.
-
-Examples:
-
-Meeting Room
-GPU
-Employee Time
-Vehicle
-Inventory
-IP Address
-
-Example:
-
-Intent:
-Reserve meeting room.
-Resource:
-Room A.
-
-⸻
-
-24. Exclusive Resources
-
-Some Resources cannot be simultaneously allocated to multiple consumers.
-
-Example:
-
-Resource:
-Operating Room #3
-
-Constraint:
-
-Only one active allocation at a time.
-
-The exclusivity itself may be represented as a Constraint.
-
-⸻
-
-25. Shared Resources
-
-Some Resources may support multiple simultaneous consumers.
-
-Examples:
-
-Network
-Database
-API
-Cloud Storage
-
-The Resource may have capacity constraints rather than exclusive ownership.
-
-⸻
-
-26. Resource Availability
-
-Resource availability is contextual and temporal.
-
-Conceptually:
-
-Resource
-   +
-Context
-   +
-Time
-   ↓
-Availability
-
-Example:
-
-Vehicle #42
-Available:
-09:00–12:00
-Unavailable:
-12:00–15:00
-
-Availability should not be assumed merely because a Resource exists.
-
-⸻
-
-27. Resource State
-
-A Resource may have state relevant to whether it can be acted upon.
-
-Example:
-
-Account:
-ACTIVE
-Card:
-BLOCKED
-Vehicle:
-MAINTENANCE
-API:
-RATE_LIMITED
-
-Resource state can become a Constraint on Actions.
-
-⸻
-
-28. Resource Ownership
-
-A Resource may have an ownership relationship.
-
-Actor ──owns──► Resource
-
-Example:
-
-Customer
-  └── owns ──► Account #123
-
-Ownership is not synonymous with Authority.
-
-An owner may not necessarily have unlimited operational authority.
-
-⸻
-
-29. Resource Custody
-
-Custody is distinct from ownership.
-
-Actor ──has_custody_of──► Resource
-
-Example:
-
-Bank
-  └── has_custody_of ──► Customer Funds
-
-The Bank may have custody without owning the underlying funds.
-
-⸻
-
-30. Resource Access
-
-An Actor may have access to a Resource.
-
-Actor ──has_access_to──► Resource
-
-Access does not automatically imply permission to perform every operation on that Resource.
-
-Example:
-
-Actor:
-Support Agent
-Access:
-Customer Account
-Authority:
-Can view account
-Authority:
-Cannot delete account
-
-⸻
-
-31. Resource Allocation
-
-A Resource may be allocated to an Actor, Intent, or Action.
-
-Resource ──allocated_to──► Actor
-
-or:
-
-Resource ──allocated_to──► Intent
-
-Example:
-
-GPU #4
-  └── allocated_to ──► MLTrainingIntent
-
-⸻
-
-32. Resource Reservation
-
-A Resource may be reserved before actual use.
-
-Intent
-  └── reserves ──► Resource
-
-Example:
-
-Intent:
-Book flight
-  └── reserves ──► Seat 14A
-
-Reservation does not necessarily mean consumption.
-
-⸻
-
-33. Resource Consumption
-
-An Action may consume a Resource.
-
-Action ──consumes──► Resource
-
-Example:
-
-TransferFunds
-  └── consumes ──► Account Balance
-
-Another:
-
-SendMessage
-  └── consumes ──► API Quota
-
-⸻
-
-34. Resource Modification
-
-An Action may modify a Resource.
-
-Action ──modifies──► Resource
-
-Example:
-
-UpdateCustomer
-  └── modifies ──► Customer Record
-
-⸻
-
-35. Resource Creation
-
-An Action may create a Resource.
-
-Action ──creates──► Resource
-
-Example:
-
-CreateAccount
-  └── creates ──► Account
-
-The newly created Resource becomes part of the canonical domain state.
-
-⸻
-
-36. Resource Destruction
-
-An Action may destroy or permanently remove a Resource.
-
-Action ──destroys──► Resource
-
-Example:
-
-DeleteFile
-  └── destroys ──► File
-
-Destructive operations should generally have stronger Policy, Authority, and Trust requirements.
-
-⸻
-
-37. Resource Transfer
-
-A Resource may move between Actors, Accounts, Locations, or other owners/custodians.
-
-Action ──transfers──► Resource
-
-Example:
-
-TransferFunds
-  └── transfers ──► Money
-
-The transfer relationship should preserve:
-
-source
-destination
-quantity
-time
-authority
-
-where applicable.
-
-⸻
-
-38. Resource Transformation
-
-An Action may transform one Resource into another state or Resource.
-
-Action
-   └── transforms ──► Resource
-
-Example:
-
-ConvertCurrency
-   └── transforms ──► USD → NGN
-
-Transformation does not necessarily imply destruction.
-
-⸻
-
-39. Resource Dependencies
-
-Resources may depend on other Resources.
-
-Resource ──depends_on──► Resource
-
-Example:
-
-Application
-  └── depends_on ──► Database
-
-Another:
-
-API Service
-  └── depends_on ──► Network
-
-⸻
-
-40. Resource Composition
-
-A Resource may contain or be composed of other Resources.
-
-Resource ──contains──► Resource
-
-Example:
-
-Warehouse
-  └── contains ──► Inventory Item
-
-Another:
-
-Cloud Account
-  └── contains ──► Compute Instance
-
-⸻
-
-41. Resource Hierarchy
-
-Resources may have parent-child relationships.
-
-Resource ──part_of──► Resource
-
-Example:
-
-GPU
-  └── part_of ──► Compute Instance
-
-This is different from simple ownership.
-
-⸻
-
-42. Resource Scope
-
-A Resource may have a scope.
-
-Possible scopes:
-
-Actor
-Organization
-Department
-Project
-Environment
-Region
-Account
-Tenant
-System
-
-Example:
-
-Resource:
-API Quota
-Scope:
-Organization = Acme
-
-⸻
-
-43. Resource Governance
-
-Resources may be governed by Policies.
-
-Resource ──governed_by──► Policy
-
-Example:
-
-CustomerData
-  └── governed_by ──► DataExportPolicy
-
-This is complementary to:
-
-Action ──governed_by──► Policy
-
-A Policy can govern both the Resource and the operation performed against it.
-
-⸻
-
-44. Resource Constraints
-
-Resources may have Constraints.
-
-Resource ──constrained_by──► Constraint
-
-Example:
-
-Account
-  └── constrained_by ──► DailyWithdrawalLimit
-
-This represents an inherent or externally imposed limit on Resource use.
-
-⸻
-
-45. Resource Authority
-
-Authority may be scoped to a Resource.
-
-Authority ──scoped_to──► Resource
-
-Example:
-
-AccountManagerAuthority
-  └── scoped_to ──► Account #123
-
-This allows Noema to distinguish:
-
-Can approve refunds
-
-from:
-
-Can approve refunds for this account.
-
-⸻
-
-46. Resource Capability
-
-Capabilities may operate on particular Resource types.
-
-Capability ──operates_on──► Resource
-
-Example:
-
-Capability:
-delete.customer
-  └── operates_on ──► Customer Record
-
-The Capability describes the operation.
-
-The Resource describes the target.
-
-⸻
-
-47. Resource and Intent
-
-An Intent may target or concern a Resource.
-
-Intent ──targets──► Resource
-
-Example:
-
-Intent:
-Delete my account
-  └── targets ──► Account #123
-
-targets should be used when the Resource is the direct object of the requested operation.
-
-concerns is broader.
-
-⸻
-
-48. Resource and Action
-
-An Action may:
-
-access
-read
-write
-modify
-create
-destroy
-consume
-allocate
-reserve
-release
-transfer
-transform
-
-a Resource.
-
-These relationships should be explicit where the distinction matters.
-
-⸻
-
-49. Resource Access Semantics
-
-Access should not be treated as a binary concept.
-
-Possible access modes include:
-
-READ
-WRITE
-EXECUTE
-ADMINISTER
-ALLOCATE
-TRANSFER
-DELETE
-
-Example:
-
-Actor:
-Support Agent
-Resource:
-Customer Record
-Access:
-READ
-Authority:
-May read
-Authority:
-May not delete
-
-⸻
-
-50. Resource Quantity
-
-Some Resources are quantifiable.
-
-Examples:
-
-Money
-Inventory
-Storage
-Bandwidth
-CPU
-Fuel
-Credit
-
-A quantity should have:
-
-value
-unit
-
-Example:
-
-500
-USD
-
-or:
-
-20
-GB
-
-⸻
-
-51. Resource Availability vs Quantity
-
-These are distinct.
-
-Resource Quantity:
-100 units
-Available Quantity:
-40 units
-
-The remainder may already be:
-
-* allocated
-* reserved
-* consumed
-* unavailable
-
-Noema should not equate total quantity with available quantity.
-
-⸻
-
-52. Resource Reservation
-
-Reservations create a temporal claim over a Resource.
-
-Reservation
-├── resource
-├── claimant
-├── quantity
-├── valid_from
-└── valid_until
-
-Example:
-
-Room A
-Reserved:
-10:00–11:00
-
-The Resource remains in existence.
-
-Its availability changes.
-
-⸻
-
-53. Resource Allocation vs Reservation
-
-These concepts should remain distinct.
-
-Reservation
-
-A future or conditional claim on a Resource.
-
-Allocation
-
-The Resource has been assigned for use.
-
-Example:
-
-Reservation
-    ↓
-Approval
-    ↓
-Allocation
-    ↓
-Use
-
-Not every domain requires all stages.
-
-⸻
-
-54. Resource Consumption vs Destruction
-
-Consumption does not necessarily destroy a Resource.
-
-Example:
-
-Consume:
-$100 from $1,000 balance
-
-The Account still exists.
-
-Destruction:
-
-Delete Account
-
-removes or retires the Resource itself.
-
-⸻
-
-55. Resource State Transitions
+69. Resource State Transitions
 
 Actions may cause Resource state transitions.
 
@@ -1106,148 +1535,33 @@ Example:
 
 Account
 ACTIVE
-  │
-  │ SuspendAccount
-  ▼
+   │
+   │ SuspendAccount
+   ▼
 SUSPENDED
 
 Another:
 
 Card
 ACTIVE
-  │
-  │ ReplaceCard
-  ▼
+   │
+   │ ReplaceCard
+   ▼
 REPLACED
 
-State transitions should be represented as Outcomes rather than hidden side effects.
+The semantic effect of such a transition should be represented through an Outcome.
+
+The Action is what was performed.
+
+The Outcome establishes what resulted.
+
+The Resource records the resulting canonical state where applicable.
 
 ⸻
 
-56. Resource and Outcome
+70. Resource Locking
 
-Outcomes describe what happened to Resources.
-
-Outcome ──affects──► Resource
-
-Example:
-
-Outcome:
-PaymentCompleted
-  └── affects ──► Account Balance
-
-This relationship closes the loop between execution and domain state.
-
-⸻
-
-57. Resource Provenance
-
-Resources may have provenance.
-
-Example:
-
-Resource:
-Customer Account
-Provenance:
-Created by AccountCreationAction
-
-This can establish lineage.
-
-Action
-  ↓
-creates
-  ↓
-Resource
-
-⸻
-
-58. Resource Lineage
-
-Resources may have historical lineage.
-
-Resource B
-  └── derived_from ──► Resource A
-
-Example:
-
-ReplacementCard
-  └── derived_from ──► OriginalCard
-
-This is important for auditability.
-
-⸻
-
-59. Resource Versioning
-
-Information and digital Resources may be versioned.
-
-Example:
-
-Document v1
-Document v2
-Document v3
-
-The Resource identity and Resource version should be distinguishable.
-
-Historical Actions should reference the version they actually affected where necessary.
-
-⸻
-
-60. Resource Availability and Trust
-
-A Resource’s availability can become a Trust input.
-
-Example:
-
-Intent:
-Book Room A
-Resource:
-Room A
-Availability:
-UNAVAILABLE
-
-Trust should not permit the Action simply because:
-
-Capability:
-book.room
-
-exists.
-
-Capability establishes possibility.
-
-Resource state establishes whether the target can currently support the Action.
-
-⸻
-
-61. Resource Conflict
-
-Two Intents may compete for the same Resource.
-
-Example:
-
-Intent A:
-Reserve GPU #1
-Intent B:
-Reserve GPU #1
-
-Noema must identify the Resource conflict.
-
-Resolution may depend on:
-
-* Policy
-* Priority
-* Reservation time
-* Authority
-* Actor
-* Business rules
-
-The Model must not arbitrarily choose.
-
-⸻
-
-62. Resource Locking
-
-Some execution systems may temporarily lock Resources.
+Execution systems may temporarily lock Resources.
 
 Conceptually:
 
@@ -1259,292 +1573,20 @@ Action Execution
    ↓
 Release
 
-Locking is an execution mechanism, not an ontology requirement.
+Locking is an execution mechanism, not a foundational ontology requirement.
 
-The ontology should represent the semantic effects of allocation or reservation rather than implementation-specific locking primitives.
-
-⸻
-
-63. Resource Contention
-
-Resource contention occurs when multiple Intents require the same constrained Resource.
-
-Intent A ──► Resource X
-Intent B ──► Resource X
-Intent C ──► Resource X
-
-Noema may need deterministic arbitration.
-
-This belongs at the intersection of:
-
-Resource
-+
-Constraint
-+
-Policy
-+
-Priority
-+
-Trust
+The ontology should represent the semantic effects of allocation, reservation, availability, or state rather than requiring a particular locking implementation.
 
 ⸻
 
-64. Resource Priority
+71. Resource Model
 
-Some Resources may have priority rules governing allocation.
-
-Example:
-
-Emergency request
-    >
-Normal request
-
-Priority is not an inherent property of every Resource.
-
-Where it matters, it should be represented explicitly in Context, Policy, or the relevant Intent/Allocation model.
-
-⸻
-
-65. Resource as a Target
-
-A Resource becomes operationally relevant when an Intent or Action targets it.
-
-Intent
-  ↓
-targets
-  ↓
-Resource
-
-This is one of the most important relationships in executable intent.
-
-Without a resolvable target, Noema may know what the Actor wants but not what the request applies to.
-
-⸻
-
-66. Resource Resolution
-
-The Model may help identify a candidate Resource from natural language.
-
-Example:
-
-“Transfer $500 from my savings account.”
-
-Model interpretation:
-
-candidate resource:
-Savings Account
-
-Noema must then resolve this against authoritative Entity/Resource data.
-
-Natural Language
-      ↓
-Candidate Resource
-      ↓
-Resource Resolution
-      ↓
-Canonical Resource
-
-The Model’s candidate must not automatically become the authoritative Resource.
-
-⸻
-
-67. Ambiguous Resource Resolution
-
-Example:
-
-“Transfer money from my account.”
-
-If the Actor has:
-
-Savings Account
-Current Account
-Dollar Account
-
-Noema must not guess.
-
-The system enters a clarification state.
-
-Resource Resolution
-      ↓
-Multiple valid candidates
-      ↓
-Ambiguity
-      ↓
-Clarification
-
-This is directly aligned with Noema’s deterministic Trust boundary.
-
-⸻
-
-68. Resource Identity and Ambiguity
-
-Natural-language references may be ambiguous:
-
-"my card"
-"my account"
-"the server"
-"that document"
-"the Lagos office"
-
-Noema should resolve these to canonical Resource identities using Context and authoritative evidence.
-
-If confidence is insufficient:
-
-UNKNOWN
-
-rather than an invented identity.
-
-⸻
-
-69. Resource Ownership Does Not Imply Unlimited Authority
-
-This is a critical invariant.
-
-Owner
-   ≠
-Unlimited Actor Authority
-
-Example:
-
-Customer owns Account.
-Policy:
-Account cannot be closed while legal proceedings are active.
-
-Ownership establishes a relationship.
-
-Policy and Authority determine what operations may occur.
-
-⸻
-
-70. Resource Access Does Not Imply Modification Authority
-
-Likewise:
-
-READ access
-   ≠
-WRITE authority
-
-Example:
-
-Support Agent
-  └── can read ──► Customer Record
-Support Agent
-  └── cannot modify ──► Customer Record
-
-⸻
-
-71. Resource Security Boundary
-
-Resources can represent security boundaries.
-
-Examples:
-
-Database
-Account
-API Key
-Customer Record
-Cloud Environment
-Repository
-
-Actions against these Resources should be evaluated using:
-
-Actor
-+
-Authority
-+
-Policy
-+
-Context
-+
-Evidence
-
-⸻
-
-72. Resource and Multi-Tenancy
-
-In a multi-tenant system, Resource scope may include a Tenant.
-
-Resource
-  └── scoped_to ──► Tenant
-
-Noema must prevent an Actor’s authority in one Tenant from implicitly extending to another.
-
-⸻
-
-73. Resource and Ownership Transfer
-
-Ownership itself can change.
-
-Example:
-
-Account
-Owner A
-   │
-   │ TransferOwnership
-   ▼
-Owner B
-
-The transfer should produce an Outcome establishing the new ownership state.
-
-Historical ownership remains part of the domain history.
-
-⸻
-
-74. Resource Deletion
-
-Deleting a Resource does not necessarily mean erasing every historical reference to it.
-
-Example:
-
-Account #123
-   ↓
-Deleted
-
-Historical records may still reference:
-
-Account #123
-
-for:
-
-* audit
-* financial reconciliation
-* legal obligations
-* Outcome history
-
-Therefore:
-
-Resource deletion
-≠
-historical relationship deletion
-
-⸻
-
-75. Resource and Auditability
-
-For consequential Resources, Noema should preserve:
-
-Who accessed it?
-Why?
-Under which Intent?
-Which Action?
-Under which Authority?
-Which Policy?
-What happened?
-
-This is one of the major reasons Resources belong explicitly in the ontology.
-
-⸻
-
-76. Resource Model
-
-Conceptually:
+Conceptually, a Resource may expose properties such as:
 
 Resource
 ├── id
 ├── type
 ├── state
-├── owner
-├── custodian
 ├── scope
 ├── quantity
 ├── availability
@@ -1552,49 +1594,50 @@ Resource
 ├── provenance
 └── version
 
-Not every Resource requires every field.
+Not every Resource requires every property.
+
+Properties should exist where they have semantic meaning for the Resource.
+
+Ownership, custody, access, allocation, governance, Authority, and other relationships should remain relationships rather than being collapsed indiscriminately into Resource attributes.
 
 ⸻
 
-77. Resource Relationship Model
+72. Resource Relationship Model
 
-The foundational Resource graph:
+The foundational Resource relationships include:
 
-                 Actor
-                   │
-              owns/accesses
-                   │
-                   ▼
-                Resource
-             /     |      \
-            /      |       \
-     governed_by  constrained_by  depends_on
-          │          │              │
-          ▼          ▼              ▼
-       Policy    Constraint      Resource
-          │
-          ▼
-       Authority
-          │
-          ▼
-      Capability
-          │
-          ▼
-        Action
-          │
-     ┌────┴────┐
-     ▼         ▼
- consumes   modifies
-     │         │
-     └────┬────┘
-          ▼
-       Resource
+Actor ──owns──► Resource
+Actor ──has_custody_of──► Resource
+Actor ──has_access_to──► Resource
+Intent ──targets──► Resource
+Resource ──allocated_to──► Actor / Intent / Action
+Intent ──reserves──► Resource
+Action ──consumes──► Resource
+Action ──modifies──► Resource
+Action ──creates──► Resource
+Action ──destroys──► Resource
+Action ──transfers──► Resource
+Action ──transforms──► Resource
+Outcome ──affects──► Resource
+Resource ──depends_on──► Resource
+Resource ──contains──► Resource
+Resource ──part_of──► Resource
+Resource ──derived_from──► Resource
+Resource ──governed_by──► Policy
+Resource ──constrained_by──► Constraint
+Authority ──scoped_to──► Resource
+Capability ──operates_on──► Resource
+Resource ──scoped_to──► Scope
+
+The canonical relationship vocabulary and general relationship semantics are defined by ontology/relationships.md.
+
+This document defines the meaning of Resource within those relationships.
 
 ⸻
 
-78. Resource in the Noema Execution Model
+73. Resource in the Noema Execution Model
 
-The broader flow becomes:
+The Resource participates in the broader semantic flow:
 
 Actor
   │
@@ -1605,7 +1648,8 @@ Intent
   │                  │
   │                  ├── Policy
   │                  ├── Constraint
-  │                  ├── Authority
+  │                  ├── Authority Scope
+  │                  ├── State
   │                  └── Availability
   │
   ▼
@@ -1618,80 +1662,128 @@ Action
   ├── modifies ───► Resource
   ├── creates ────► Resource
   ├── destroys ───► Resource
-  └── transfers ──► Resource
+  ├── transfers ──► Resource
+  └── transforms ─► Resource
+  │
+  ▼
+Execution
   │
   ▼
 Outcome
   │
   └── affects ────► Resource
 
-⸻
-
-79. Canonical Resource Invariants
-
-The following should be foundational:
-
-1. A Resource is something that can be operationally acted upon, used, allocated, accessed, consumed, modified, transferred, or governed.
-2. Resource is distinct from Capability.
-3. Resource is distinct from Policy.
-4. Resource is distinct from Constraint.
-5. Resource is distinct from Context.
-6. A Resource is generally an Entity occupying an operational role.
-7. Capability describes what can be done; Resource describes what can be acted upon.
-8. Existence of a Resource does not imply availability.
-9. Availability is contextual and potentially temporal.
-10. Ownership does not imply unlimited Authority.
-11. Access does not imply modification Authority.
-12. Resource identity must be resolved against authoritative data where consequential.
-13. Ambiguous Resource references must not be silently resolved by guessing.
-14. Resource state can constrain Action execution.
-15. Resource consumption is distinct from Resource destruction.
-16. Resource reservation is distinct from Resource allocation.
-17. Resource creation and destruction should be represented through Actions and Outcomes.
-18. Historical Resource relationships must remain auditable.
-19. Resource governance must be explicit through Policy and Authority relationships.
-20. Consequential Resource operations must pass through Noema’s Trust boundary.
+The Resource is therefore part of the semantic grounding required between understanding an Intent and permitting an Action.
 
 ⸻
 
-80. Canonical Principle
+74. Minimal Resource Resolution
 
-A Resource is the operational object or capacity against which an Intent or Action has consequence.
+For a consequential Intent involving a Resource, Noema should be able to resolve, where applicable:
 
-The critical distinction is:
-
+Actor
+   ↓
 Intent
-  = What is wanted
-Action
-  = What is done
-Capability
-  = What can be done
-Resource
-  = What is acted upon
-Constraint
-  = What limits the operation
-Policy
-  = What governs the operation
-Authority
-  = Who is permitted to perform it
-Context
-  = The circumstances in which it occurs
-Trust
-  = Whether Noema permits the operation
-Outcome
-  = What actually happened
+   ↓
+Target Resource
+   ↓
+Resource Identity
+   ↓
+Resource State
+   ↓
+Resource Availability
+   ↓
+Relevant Constraints
+   ↓
+Relevant Policies
+   ↓
+Relevant Authority Scope
+   ↓
+Candidate Action
 
-That gives us a much cleaner semantic chain:
+Only after the relevant Resource relationships are sufficiently resolved should the system cross the deterministic Trust boundary.
+
+⸻
+
+75. Resource Conflict Resolution
+
+Where multiple requests contend for a Resource, Noema should preserve the relevant facts rather than collapsing them into an arbitrary decision.
+
+For example:
+
+Intent A ──reserves──► GPU #1
+Intent B ──reserves──► GPU #1
+
+The resulting state may require consideration of:
+
+Resource
++
+Availability
++
+Reservation
++
+Constraint
++
+Policy
++
+Context
++
+Authority
+
+The Resource ontology establishes what is being contested.
+
+The applicable governance and resolution mechanisms determine how the conflict is handled.
+
+⸻
+
+76. Canonical Resource Invariants
+
+The following are foundational:
+
+1. A Resource is an operational object, asset, information object, service, or capacity against which an Intent or Action may have consequence.
+2. Resource is semantically distinct from Entity, even where a Resource is an Entity occupying an operational role.
+3. Resource is distinct from Capability.
+4. Resource is distinct from Policy.
+5. Resource is distinct from Constraint.
+6. Resource is distinct from Context.
+7. Capability describes what can be done; Resource describes what can be acted upon.
+8. The existence of a Resource does not imply its availability.
+9. Resource availability may be contextual and temporal.
+10. Resource state may constrain an Action.
+11. Ownership does not imply unlimited Authority.
+12. Access does not imply modification Authority.
+13. Resource identity must be resolved against authoritative data where consequential.
+14. Ambiguous Resource references must not be silently resolved by guessing.
+15. Resource quantity is distinct from Resource availability.
+16. Resource reservation is distinct from Resource allocation.
+17. Resource consumption is distinct from Resource destruction.
+18. Resource creation and destruction should be represented through Actions and resulting Outcomes.
+19. Resource governance should be explicit through relevant Policy relationships.
+20. Resource Authority scope should be explicit where applicable.
+21. Resource state and availability are relevant inputs to consequential execution.
+22. Resource conflicts must not be silently resolved by arbitrary selection.
+23. Historical Resource relationships must remain auditable.
+24. Resource deletion does not require deletion of historical references.
+25. Model-generated Resource candidates are not automatically authoritative Resources.
+26. A Resource relationship that materially affects Trust should have sufficient supporting Evidence and provenance.
+27. Resource semantics must remain independent of storage or execution implementation.
+28. Consequential operations against Resources must cross Noema’s Trust boundary.
+
+⸻
+
+77. Canonical Resource Chain
+
+The Resource-centered execution chain is:
 
 Actor
    │
    ▼
 Intent ──────────────► Resource
    │                       │
+   ├── Context ────────────┤
    ├── Policy ─────────────┤
    ├── Constraint ─────────┤
-   ├── Context ────────────┤
-   └── Authority ──────────┘
+   └── Authority Scope ────┘
                │
                ▼
              Trust
@@ -1708,4 +1800,61 @@ Intent ──────────────► Resource
                ▼
             Resource
 
-This is particularly important for the broader Noema idea: intent cannot become executable merely because the model understood the user’s words. It has to resolve the actual Resource those words refer to, establish the relationships around that Resource, and then cross the deterministic Trust boundary.
+The Resource is not merely a target identifier attached to an Action.
+
+It is part of the semantic state required to determine whether an Intent can be grounded into a consequential operation.
+
+⸻
+
+78. Canonical Principle
+
+A Resource is the operational object, asset, information object, service, or capacity against which an Intent or Action has consequence.
+
+The foundational distinction is:
+
+Intent
+  = what is wanted
+Action
+  = what is done
+Capability
+  = what can be done
+Resource
+  = what is acted upon or used
+Constraint
+  = what limits the operation
+Policy
+  = what governs the operation
+Authority
+  = the scope under which an operation may be performed
+Context
+  = the circumstances in which the operation is interpreted
+Trust
+  = whether the operation is permitted to cross the execution boundary
+Execution
+  = the attempt to perform the Action
+Outcome
+  = what resulted
+
+Therefore:
+
+Meaning
+   ↓
+Intent
+   ↓
+Resource Resolution
+   ↓
+Relationship Resolution
+   ↓
+Trust
+   ↓
+Action
+   ↓
+Execution
+   ↓
+Outcome
+   ↓
+Resource State
+
+The critical Noema invariant is:
+
+An Intent cannot become executable merely because the Model understood what the Actor said. The intended Resource must be resolved to a canonical referent, the relevant Resource relationships must be established, and the resulting operation must satisfy the conditions required to cross the Trust boundary.

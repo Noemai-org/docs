@@ -1,19 +1,19 @@
-State
+# State
 
-Status: Foundational Draft
-Version: 0.1
-Domain: Ontology
-Canonical Path: ontology/state.md
+**Status:** Foundational Draft  
+**Version:** 0.2  
+**Domain:** Ontology  
+**Canonical Path:** `ontology/state.md`
 
 ⸻
 
 1. Definition
 
-A State is a canonical representation of the condition of an Entity, Resource, Process, or other domain object at a particular point in time.
+A State is a canonical representation of the condition of an Entity, Resource, Process, or other domain object at a defined point or interval in time.
 
 A State answers:
 
-What is true about this thing now, or at a defined point in time?
+What is true about this thing at this point in time?
 
 Examples:
 
@@ -35,11 +35,15 @@ ActivateAccount
 
 describes an Action intended to change that condition.
 
+State is therefore a representation of domain condition, not an operation.
+
 ⸻
 
 2. State in the Noema Model
 
-State connects Intent, Action, and Outcome.
+State connects what is currently true with what an Intent seeks to change.
+
+The canonical relationship is:
 
 Current State
       │
@@ -47,7 +51,13 @@ Current State
     Intent
       │
       ▼
-    Action
+Candidate Action
+      │
+      ▼
+    Trust
+      │
+      ▼
+  Execution
       │
       ▼
    Outcome
@@ -55,11 +65,11 @@ Current State
       ▼
 Resulting State
 
-For example:
+Example:
 
 Account
-  Current State:
-  SUSPENDED
+Current State:
+SUSPENDED
 Intent:
 Reactivate account
 Action:
@@ -69,20 +79,28 @@ AccountReactivated
 Resulting State:
 ACTIVE
 
+This allows Noema to distinguish:
+
+* what is true;
+* what is wanted;
+* what could change;
+* what is permitted to change;
+* what actually changed.
+
 ⸻
 
 3. State Is Not the Same as Entity
 
-An Entity is the thing.
+An Entity is the identifiable thing.
 
-State is the condition of the thing.
+A State is a condition of that thing.
 
 Entity:
 Account #123
 State:
 ACTIVE
 
-The Entity can persist while its State changes.
+The Entity may persist while its State changes:
 
 Account #123
     │
@@ -91,19 +109,17 @@ Account #123
     ├── ACTIVE
     └── CLOSED
 
+State does not replace the identity of its subject.
+
 ⸻
 
 4. State Is Not the Same as Outcome
 
-This distinction is critical.
+This distinction is foundational.
 
-State
+State represents what is true.
 
-What is true.
-
-Outcome
-
-What happened as the result of an Action or event.
+Outcome represents what resulted from an Action or Execution.
 
 Example:
 
@@ -111,31 +127,41 @@ Action:
 SuspendAccount
 Outcome:
 AccountSuspended
-State:
+Resulting State:
 Account = SUSPENDED
 
-The Outcome represents the transition/result.
+The Outcome establishes what happened.
 
-The State represents the resulting condition.
+The State establishes the resulting condition.
+
+An Outcome may therefore support a State transition without being identical to the State itself.
 
 ⸻
 
 5. State Is Not the Same as Action
+
+An Action is an operation.
+
+A State is a condition.
 
 Action:
 ApproveLoan
 State:
 APPROVED
 
-An Action is an operation.
+The Action may cause the State transition:
 
-A State is a condition.
+PENDING
+   │
+   │ ApproveLoan
+   ▼
+APPROVED
 
 ⸻
 
 6. State Is Not the Same as Context
 
-Context describes the circumstances surrounding an Intent or Action.
+Context describes circumstances relevant to interpreting or evaluating an Intent or Action.
 
 State describes the condition of a domain object.
 
@@ -146,24 +172,26 @@ User is authenticated.
 State:
 Account is ACTIVE.
 
-Both may affect Trust evaluation, but they represent different concepts.
+Both may contribute to Trust evaluation, but they remain distinct concepts.
+
+State should not be buried inside an opaque Context representation when it is itself a canonical domain fact.
 
 ⸻
 
 7. State Is Not the Same as Constraint
 
-A Constraint restricts what may happen.
+A Constraint limits what may happen.
 
-A State describes what currently is.
+A State describes what currently is or was true.
 
 Example:
 
 State:
 Account balance = $500
 Constraint:
-Transfer amount must be <= available balance
+Transfer amount <= available balance
 
-The State provides the value against which the Constraint may be evaluated.
+The State supplies information against which the Constraint can be evaluated.
 
 ⸻
 
@@ -171,23 +199,27 @@ The State provides the value against which the Constraint may be evaluated.
 
 Foundational State categories include:
 
-Lifecycle State
-Operational State
-Availability State
-Authorization State
-Processing State
-Financial State
-Relationship State
-Health State
-Configuration State
+* Lifecycle State
+* Operational State
+* Availability State
+* Authorization State
+* Processing State
+* Financial State
+* Relationship State
+* Health State
+* Configuration State
 
-Domains may define more specific State taxonomies.
+These categories are extensible.
+
+Domain-specific ontologies may define more precise State taxonomies.
+
+Noema should not require every domain to use the same State vocabulary.
 
 ⸻
 
 9. Lifecycle State
 
-Describes where an Entity or Resource is in its lifecycle.
+Lifecycle State describes where an Entity or Resource is within its domain lifecycle.
 
 Example:
 
@@ -205,13 +237,13 @@ CONFIRMED
 FULFILLED
 CANCELLED
 
-Lifecycle States generally have defined transition rules.
+Lifecycle transitions should be defined by the relevant domain.
 
 ⸻
 
 10. Operational State
 
-Describes whether something is currently functioning or operating.
+Operational State describes the current operational condition of a domain object.
 
 Examples:
 
@@ -226,11 +258,13 @@ Example:
 Service:
 RUNNING
 
+Operational State may affect whether an Action can validly operate on the object.
+
 ⸻
 
 11. Availability State
 
-Describes whether a Resource can currently be used.
+Availability State describes whether a Resource can currently support a particular use.
 
 Examples:
 
@@ -240,21 +274,23 @@ RESERVED
 ALLOCATED
 OCCUPIED
 
-Availability is often contextual and temporal.
+Availability is often temporal and contextual.
 
 A Resource may be:
 
 AVAILABLE at 10:00
 
-but:
+and:
 
 RESERVED at 11:00
+
+Existence therefore does not imply availability.
 
 ⸻
 
 12. Authorization State
 
-Represents authorization-related conditions.
+Authorization State represents the current condition of an authorization-related object or relationship.
 
 Examples:
 
@@ -264,17 +300,17 @@ PENDING_APPROVAL
 REVOKED
 EXPIRED
 
-Authorization State should not replace the canonical Authority model.
+Authorization State must not replace the canonical Authority model.
 
-Authority defines the permission relationship.
+Authority establishes the semantic permission relationship.
 
-State describes its current condition.
+State describes the current condition of that authority or authorization.
 
 ⸻
 
 13. Processing State
 
-Used for operations or workflows.
+Processing State describes the condition of an operation, workflow, or process.
 
 Examples:
 
@@ -295,6 +331,8 @@ Processing State is often transient.
 
 14. Financial State
 
+Financial State represents domain-defined financial conditions.
+
 Examples:
 
 PAID
@@ -303,11 +341,13 @@ PARTIALLY_PAID
 OVERDUE
 REFUNDED
 
-These states should be domain-defined rather than inferred casually from arbitrary numeric fields.
+Financial States should be explicitly defined by the relevant domain rather than casually inferred from arbitrary numeric fields.
 
 ⸻
 
 15. Configuration State
+
+Configuration State describes whether a configurable object is configured or enabled.
 
 Examples:
 
@@ -337,13 +377,23 @@ State
 ├── source
 └── provenance
 
-Not every State requires every field.
+Not every State requires every attribute.
+
+The representation must preserve the distinction between:
+
+* the subject whose condition is represented;
+* the semantic State type;
+* the State value;
+* when the State is valid;
+* when it was observed;
+* where it came from;
+* how it can be traced.
 
 ⸻
 
 17. State Subject
 
-Every State must describe what it is the state of.
+Every State must identify what it is the State of.
 
 Example:
 
@@ -355,39 +405,11 @@ or:
 Vehicle #42
   └── state: AVAILABLE
 
-The subject must be identifiable.
+The subject must be identifiable within the relevant canonical domain.
 
 ⸻
 
-18. State Value
-
-The State contains a canonical value.
-
-Examples:
-
-ACTIVE
-SUSPENDED
-AVAILABLE
-FAILED
-COMPLETED
-
-Where appropriate, State may contain structured values.
-
-Example:
-
-Account Balance:
-500 USD
-
-Here:
-
-State Type:
-balance
-State Value:
-500 USD
-
-⸻
-
-19. State Type
+18. State Type
 
 A State should have a semantic type.
 
@@ -401,13 +423,42 @@ capacity
 authorization
 processing
 
-Avoid treating every arbitrary field as a canonical State without semantic definition.
+Noema should avoid treating every arbitrary database field as a canonical State.
+
+A State becomes ontologically meaningful when its semantics are defined.
+
+⸻
+
+19. State Value
+
+A State contains a canonical value appropriate to its State type.
+
+Examples:
+
+ACTIVE
+SUSPENDED
+AVAILABLE
+FAILED
+COMPLETED
+
+State values may also be structured.
+
+Example:
+
+State Type:
+balance
+State Value:
+500 USD
+
+The value should preserve the semantics required to evaluate relevant Constraints, Policies, Actions, or Intents.
 
 ⸻
 
 20. State Validity
 
-State may be valid for a defined period.
+A State may be valid for a defined period.
+
+Example:
 
 State:
 AVAILABLE
@@ -416,13 +467,17 @@ valid_from:
 valid_until:
 12:00
 
-This matters for scheduling and Resource availability.
+Validity is distinct from observation time.
+
+A State can have been observed at one time while being valid over another defined interval.
+
+This distinction is important for scheduling and Resource availability.
 
 ⸻
 
 21. Observed State
 
-A State may be an observation rather than an authoritative fact.
+A State may represent an observation rather than an authoritative current fact.
 
 Example:
 
@@ -434,13 +489,13 @@ The observation should preserve:
 observed_at
 source
 
-because the State may change after observation.
+because the underlying State may have changed after observation.
 
 ⸻
 
 22. Current State
 
-The current State is the latest authoritative State applicable at the current point in time.
+Current State is the State Noema resolves as applicable at the relevant evaluation time according to the domain’s authority, validity, provenance, and temporal semantics.
 
 Conceptually:
 
@@ -452,15 +507,15 @@ State History
      └── 12:00 CLOSED
                      ▲
                      │
-                Current State
+              evaluation time
 
-The system must define how “current” is determined.
+“Current” must therefore be a resolved semantic determination, not merely the most recently retrieved database value.
 
 ⸻
 
 23. State History
 
-State changes should be historically reconstructable where the domain requires it.
+Where the domain requires temporal auditability, State changes should remain historically reconstructable.
 
 Example:
 
@@ -469,7 +524,7 @@ Account #123
 10:15 → SUSPENDED
 11:30 → ACTIVE
 
-This provides temporal context for Trust and audit decisions.
+Historical State is necessary where Trust, audit, reconciliation, or Outcome interpretation depends on what was true at a particular time.
 
 ⸻
 
@@ -491,20 +546,24 @@ SUSPENDED
     ▼
 ACTIVE
 
+A State Transition describes the semantic change.
+
+It is not itself the Action that caused the change.
+
 ⸻
 
 25. State Transition Is Not an Action
 
-The distinction:
+The distinction is:
 
 Action:
 ReactivateAccount
 Transition:
 SUSPENDED → ACTIVE
 
-The Action is the operation.
+The Action describes the operation.
 
-The transition is the resulting state change.
+The Transition describes the resulting domain change.
 
 ⸻
 
@@ -523,6 +582,7 @@ Transition
 
 Example:
 
+Subject:
 Account #123
 FROM:
 SUSPENDED
@@ -533,6 +593,8 @@ ReactivateAccount
 AUTHORIZED BY:
 AccountOwnerAuthority
 
+Not every transition requires every attribute, but consequential transitions should preserve sufficient lineage to explain the change.
+
 ⸻
 
 27. Valid State Transitions
@@ -541,24 +603,23 @@ Not every State should transition to every other State.
 
 Example:
 
-Account:
 ACTIVE → SUSPENDED
 SUSPENDED → ACTIVE
 ACTIVE → CLOSED
 
-But:
+while:
 
 CLOSED → ACTIVE
 
 may be invalid.
 
-The valid transition graph is domain-specific.
+Valid transition semantics are domain-specific and may be constrained by Policy, Constraint, Authority, or current State.
 
 ⸻
 
 28. State Machine
 
-A domain may define a finite state machine.
+A domain may define a finite State machine.
 
 Example:
 
@@ -578,13 +639,15 @@ Example:
       │ reactivate
       └────────────► ACTIVE
 
-Noema should know the allowed transition semantics where State determines whether an Action is valid.
+Where State determines whether an Action is valid, Noema should have access to the relevant transition semantics before the Trust boundary is crossed.
 
 ⸻
 
 29. State Preconditions
 
 An Action may require a particular State before execution.
+
+Example:
 
 Action:
 ShipOrder
@@ -595,9 +658,9 @@ If:
 
 Order = CANCELLED
 
-the Action is not valid.
+the Action is not valid under that transition model.
 
-This becomes a Trust input.
+State therefore becomes a Trust input.
 
 ⸻
 
@@ -605,12 +668,14 @@ This becomes a Trust input.
 
 An Action may specify an expected resulting State.
 
+Example:
+
 Action:
 SuspendAccount
 Expected State:
 SUSPENDED
 
-This allows Noema to evaluate whether the Outcome produced the intended state.
+This allows Noema to evaluate whether the resulting Outcome established the intended State.
 
 ⸻
 
@@ -632,7 +697,7 @@ Result:
 Constraint:
 VIOLATED
 
-Trust should not permit the Action.
+The Action should not be treated as permitted merely because a corresponding Capability exists.
 
 ⸻
 
@@ -647,29 +712,31 @@ Only active accounts may initiate transfers.
 State:
 Account = SUSPENDED
 
-Therefore:
+The applicable Policy and State together may establish that:
 
 TransferFunds
-→ DENIED
+→ not permitted
+
+The Policy determines the governing rule; State supplies the relevant domain condition.
 
 ⸻
 
 33. State and Context
 
-State can be part of the Context used to interpret an Intent.
+State may contribute to Context used during Intent interpretation and Trust evaluation.
 
 Example:
 
 Context:
 Current Account State = SUSPENDED
 
-However, State should remain independently addressable as a canonical fact rather than being buried inside an opaque Context object.
+However, the canonical State should remain independently resolvable rather than existing only as an unstructured Context field.
 
 ⸻
 
 34. State and Resource
 
-Resource availability is a State.
+Resource availability is commonly represented through State.
 
 Example:
 
@@ -685,11 +752,13 @@ GPU #4
 State:
 ALLOCATED
 
+Resource identity and State remain distinct.
+
 ⸻
 
 35. State and Capability
 
-A Capability may be available only when the relevant Resource or Actor is in an appropriate State.
+A Capability may exist even when the relevant Resource cannot currently support an Action.
 
 Example:
 
@@ -703,7 +772,9 @@ versus:
 Account State:
 CLOSED
 
-The Capability may still exist, but the Action cannot necessarily be performed against that Resource.
+The Capability establishes an available ability in the system.
+
+The State determines whether that ability can currently be applied to the particular Resource under consideration.
 
 ⸻
 
@@ -723,13 +794,15 @@ Later:
 State:
 REVOKED
 
-The historical Authority relationship remains meaningful, but current execution should treat it as unavailable.
+The historical Authority relationship remains meaningful, but the current State may prevent it from supporting a consequential Action.
+
+Authority semantics remain defined by the Authority model.
 
 ⸻
 
 37. State and Trust
 
-State is one of the primary deterministic inputs into Trust.
+State is a primary deterministic input to Trust.
 
 Conceptually:
 
@@ -747,7 +820,7 @@ Constraint
 +
 Authority
 +
-Current State
+Relevant State
 +
 Evidence
         │
@@ -758,7 +831,7 @@ Evidence
    ▼         ▼
  PERMIT     DENY
 
-The Trust Engine should evaluate canonical State rather than relying solely on model-generated assumptions.
+The Trust boundary should rely on canonical State resolved from appropriate sources rather than treating model-generated assumptions as established fact.
 
 ⸻
 
@@ -766,12 +839,12 @@ The Trust Engine should evaluate canonical State rather than relying solely on m
 
 Noema must distinguish:
 
-KNOWN STATE
-UNKNOWN STATE
-STALE STATE
-CONFLICTING STATE
+KNOWN
+UNKNOWN
+STALE
+CONFLICTING
 
-These are not equivalent.
+These states of knowledge are not equivalent to domain State values.
 
 Example:
 
@@ -783,13 +856,13 @@ does not mean:
 Account Status:
 ACTIVE
 
-Noema must not infer the latter without sufficient evidence.
+Unknown State must not silently become a positive State assertion.
 
 ⸻
 
 39. Stale State
 
-A previously known State may no longer be reliable.
+A previously known State may no longer be sufficiently reliable for the current decision.
 
 Example:
 
@@ -798,17 +871,19 @@ Vehicle = AVAILABLE
 Observed:
 2 hours ago
 
-A booking request now may require fresh availability information.
+A booking request may require fresh availability information.
 
 Therefore:
 
 Known ≠ Current
 
+Freshness requirements belong to the relevant evaluation semantics.
+
 ⸻
 
 40. Conflicting State
 
-Different authoritative or semi-authoritative sources may disagree.
+Different sources may report different States.
 
 Example:
 
@@ -817,15 +892,22 @@ PAID
 Internal Database:
 PENDING
 
-Noema should preserve the conflict.
+Noema should preserve the conflict rather than silently selecting whichever value was retrieved first.
 
-It should not silently choose a value merely because one source was retrieved first.
+Resolution may depend on:
+
+* source authority;
+* temporal validity;
+* provenance;
+* Policy;
+* reconciliation rules;
+* evidence.
 
 ⸻
 
 41. State Provenance
 
-Every consequential State should have provenance.
+Consequential State should preserve sufficient provenance.
 
 Example:
 
@@ -836,20 +918,22 @@ Account Service
 Observed:
 2026-08-23T09:12:00Z
 
-This allows Trust to determine whether the State is sufficiently authoritative.
+Provenance allows Noema to determine whether the State is sufficiently authoritative for the decision being made.
 
 ⸻
 
 42. State Confidence
 
-Where State is inferred rather than directly observed:
+Some State assertions may be inferred rather than directly established.
+
+Example:
 
 State:
 Vehicle = AVAILABLE
 Confidence:
 0.72
 
-This should not automatically be treated as authoritative.
+An inferred State should not automatically become authoritative.
 
 Noema should distinguish:
 
@@ -859,24 +943,29 @@ from:
 
 Authoritative State
 
-particularly for consequential Actions.
+especially where the State is consequential to execution.
+
+Confidence alone does not establish authority.
 
 ⸻
 
 43. Model-Inferred State
 
-The Model may infer State from natural language.
+The Model may infer a State from natural language.
 
 Example:
 
-“My card was blocked yesterday.”
+User:
+"My card was blocked yesterday."
 
 Possible interpretation:
 
 Card State:
 BLOCKED
 
-But Noema should treat this as a claim requiring resolution against authoritative state where execution depends on it.
+This is a candidate assertion, not automatically an authoritative domain fact.
+
+The canonical flow is:
 
 User Statement
       ↓
@@ -884,7 +973,7 @@ Candidate State
       ↓
 State Resolution
       ↓
-Authoritative State
+Authoritative / Resolved State
 
 ⸻
 
@@ -892,24 +981,28 @@ Authoritative State
 
 When State matters to execution, Noema should resolve:
 
-What is the subject?
-What State is being asserted?
-When was it true?
-Who/what observed it?
-Is the source authoritative?
-Is it still valid?
+1. What is the subject?
+2. What State is being asserted?
+3. What State type is involved?
+4. When was the State true?
+5. Who or what observed it?
+6. What is the source?
+7. Is the source authoritative for this State?
+8. Is the State still valid?
+9. Are there conflicting assertions?
+10. Does the State satisfy the freshness requirements of the decision?
 
-Only then should the State become a deterministic Trust input.
+Only after sufficient resolution should the State become a deterministic Trust input.
 
 ⸻
 
-45. State Mutation
+45. State Observation vs State Mutation
 
-Noema should distinguish between:
+Noema should distinguish:
 
 State observation
 
-and:
+from:
 
 State mutation
 
@@ -923,7 +1016,7 @@ Outcome
   ↓
 State Transition
 
-A read-only observation does not mutate State.
+A read-only observation does not mutate the underlying State.
 
 ⸻
 
@@ -935,19 +1028,21 @@ Example:
 
 UpdateProfile
 
-should have explicit affected State:
+should have explicit affected domain State rather than silently modifying unrelated domain conditions.
 
-CustomerProfile
+Explicit State effects improve:
 
-rather than silently changing unrelated domain state.
-
-This supports auditability and deterministic reasoning.
+* auditability;
+* verification;
+* replay;
+* reconciliation;
+* deterministic reasoning.
 
 ⸻
 
 47. State and Idempotency
 
-State is important for determining whether an Action has already been applied.
+State can help determine whether an intended operation has already been satisfied.
 
 Example:
 
@@ -956,15 +1051,17 @@ Activate Account
 Current State:
 ACTIVE
 
-Possible interpretations include:
+The appropriate semantic interpretation may be:
 
-Already satisfied
+Desired State already holds.
 
 rather than:
 
-Execute ActivateAccount again
+Execute ActivateAccount again.
 
-This is a key mechanism for avoiding unnecessary or duplicate execution.
+This helps Noema avoid unnecessary or duplicate execution.
+
+The determination remains subject to the Intent, Policy, and relevant domain semantics.
 
 ⸻
 
@@ -976,21 +1073,17 @@ Example:
 
 Intent:
 "Keep my account active."
-
 Desired State:
-
 Account = ACTIVE
 
 Another:
 
 Intent:
 "Cancel my subscription."
-
 Desired State:
-
 Subscription = CANCELLED
 
-The desired State should be derived explicitly where possible.
+Desired State should be represented explicitly where it can be resolved with sufficient semantic confidence.
 
 ⸻
 
@@ -998,12 +1091,14 @@ The desired State should be derived explicitly where possible.
 
 These must remain distinct.
 
+Example:
+
 Current State:
 SUSPENDED
 Desired State:
 ACTIVE
 
-The gap between them creates the need for Action.
+The difference creates a State Delta:
 
 Current State
       ↓
@@ -1011,17 +1106,19 @@ State Delta
       ↓
 Candidate Action
       ↓
+Trust
+      ↓
 Outcome
       ↓
 Desired State
 
-This is a powerful representation for Noema’s intent model.
+The existence of a State Delta does not by itself establish that an Action is authorized or executable.
 
 ⸻
 
 50. State Delta
 
-A State Delta describes the intended or observed change between States.
+A State Delta describes an intended or observed change between States.
 
 Example:
 
@@ -1033,19 +1130,20 @@ or:
 Balance:
 $500 → $400
 
-State Delta is not itself an Action.
+State Delta describes change.
 
-It describes change.
+It is not itself an Action.
 
 ⸻
 
 51. State Delta and Intent
 
-An Intent can often be represented as a desired State Delta.
+An Intent can often be represented partly through a desired State Delta.
 
 Example:
 
-“Move $100 from savings to checking.”
+Intent:
+"Move $100 from savings to checking."
 
 Desired changes:
 
@@ -1054,33 +1152,38 @@ $500 → $400
 Checking:
 $200 → $300
 
-This gives Noema a precise semantic target against which candidate Actions can be evaluated.
+This provides a concrete semantic target against which candidate Actions and Outcomes can be evaluated.
+
+Not every Intent can or should be reduced to a State Delta.
 
 ⸻
 
 52. State and Outcome Verification
 
-After execution:
+After execution, Noema should compare expected and observed domain State where applicable.
+
+Example:
 
 Expected:
 Account = ACTIVE
 Observed:
 Account = SUSPENDED
 
-Then:
+The infrastructure Action may have completed successfully while the intended domain State was not achieved.
 
-Intent:
-NOT SATISFIED
+Therefore:
 
-The Action may have executed successfully from an infrastructure perspective while failing to achieve the intended domain Outcome.
+Action success
+≠
+Intent satisfaction
 
-This distinction is fundamental.
+Intent satisfaction requires evaluation of the resulting domain condition and relevant Outcome.
 
 ⸻
 
 53. State and Partial Success
 
-Some Actions modify multiple States.
+An Action may affect multiple States.
 
 Example:
 
@@ -1088,17 +1191,19 @@ TransferFunds
 
 Expected:
 
-Source balance: -$100
-Destination balance: +$100
+Source balance:
+-$100
+Destination balance:
++$100
 
-If only the source changes:
+Observed:
 
 Source:
 UPDATED
 Destination:
 UNCHANGED
 
-Noema must be able to represent partial or inconsistent Outcomes.
+Noema must be able to represent the resulting partial or inconsistent State changes.
 
 It must not infer complete Intent satisfaction merely because the Action returned successfully.
 
@@ -1106,7 +1211,7 @@ It must not infer complete Intent satisfaction merely because the Action returne
 
 54. State Consistency
 
-Where multiple Resources participate in an Action, Noema should be able to determine whether their resulting States satisfy the intended invariant.
+Where multiple Resources participate in an Action, Noema may need to evaluate whether their resulting States satisfy a domain invariant.
 
 Example:
 
@@ -1123,7 +1228,9 @@ If:
 Source - $100
 Destination + $0
 
-the intended State transition has not been satisfied.
+the intended State transition has not been fully satisfied.
+
+State consistency is therefore relevant to Outcome verification and Intent satisfaction.
 
 ⸻
 
@@ -1131,23 +1238,23 @@ the intended State transition has not been satisfied.
 
 In distributed systems, State may be:
 
-eventually consistent
-strongly consistent
-stale
-replicated
-cached
-observed
-authoritative
+* eventually consistent;
+* strongly consistent;
+* stale;
+* replicated;
+* cached;
+* observed;
+* authoritative.
 
-Noema’s ontology does not dictate the underlying consistency model.
+The ontology does not prescribe an underlying consistency model.
 
-However, Trust decisions must know what State semantics they are relying on.
+However, Trust evaluation must know what State semantics it is relying upon.
 
 ⸻
 
 56. State Freshness
 
-For consequential operations, State may require a freshness requirement.
+Consequential decisions may require State freshness.
 
 Example:
 
@@ -1159,15 +1266,15 @@ Then:
 Observed:
 Seat available 5 minutes ago
 
-is insufficient.
+may be insufficient.
 
-Freshness becomes part of the Trust evaluation.
+Freshness is therefore a property that may participate in Trust evaluation.
 
 ⸻
 
-57. State Transitions and Evidence
+57. State Transition Evidence
 
-A State Transition should be supported by Evidence where required.
+A consequential State Transition should be supported by appropriate Evidence where required.
 
 State Transition
       │
@@ -1180,11 +1287,13 @@ PENDING → COMPLETED
 Evidence:
 Payment Provider Confirmation
 
+Evidence supports the assertion that the transition occurred; it is not itself the State.
+
 ⸻
 
 58. State Transition Authority
 
-Consequential State transitions should identify the Action and Authority responsible.
+Consequential State transitions should preserve their Action and Authority lineage where applicable.
 
 State Transition
 ├── caused_by ──► Action
@@ -1203,25 +1312,25 @@ AccountOwnerAuthority
 
 59. State Transition Policy
 
-Policies may define allowed transitions.
+Policies may constrain which State transitions are permitted.
 
 Example:
 
 Policy:
 A closed account cannot be reactivated.
 
-This establishes:
+This constrains:
 
 CLOSED
-   └──X──► ACTIVE
+   └── X ──► ACTIVE
 
-The Policy therefore becomes part of the transition validation.
+Policy therefore contributes to transition validation without replacing the State model itself.
 
 ⸻
 
 60. State Transition Graph
 
-A canonical transition can be modeled as:
+A canonical transition can be represented as:
 
         Current State
               │
@@ -1232,8 +1341,9 @@ A canonical transition can be modeled as:
            Intent
               │
               ▼
-            Action
+        Candidate Action
               │
+              ▼
           Trust Gate
               │
               ▼
@@ -1248,31 +1358,34 @@ A canonical transition can be modeled as:
               ▼
         Resulting State
 
+The resulting State must be established from the Outcome and authoritative observations appropriate to the domain.
+
 ⸻
 
 61. State and Noema’s Deterministic Boundary
-
-This is one of the most important principles for the architecture.
 
 The Model may infer:
 
 "The user probably wants to reactivate the account."
 
-But Noema must resolve:
+Noema must resolve the canonical facts needed for execution:
 
 Which account?
 Current State?
+Desired State?
 Allowed transition?
 Applicable Policy?
 Required Authority?
 Available Capability?
+Relevant Resource?
+Required Evidence?
 Expected resulting State?
 
 before execution.
 
-The Model can propose.
+The Model may propose interpretations and candidate Actions.
 
-The canonical State model determines what is actually true.
+The canonical State model determines what is established as true for Trust evaluation.
 
 ⸻
 
@@ -1284,6 +1397,8 @@ Entity / Resource
        │
        └── has_state ──► State
                               │
+                              ├── type
+                              ├── value
                               ├── valid_from
                               ├── valid_until
                               ├── observed_at
@@ -1301,7 +1416,7 @@ Action
    ▼
 Outcome
    │
-   │ produces
+   │ establishes / produces
    ▼
 State B
 
@@ -1310,8 +1425,10 @@ Governance:
 Action
    │
    ├── governed_by ──► Policy
-   ├── constrained_by ─► Constraint
+   ├── constrained_by ──► Constraint
    └── authorized_by ──► Authority
+
+The exact relationship predicates remain defined by ontology/relationships.md.
 
 ⸻
 
@@ -1319,32 +1436,37 @@ Action
 
 The following are foundational:
 
-1. State describes the condition of a domain object at a point in time.
+1. State describes the condition of a domain object at a defined point or interval in time.
 2. State is distinct from Entity.
 3. State is distinct from Action.
 4. State is distinct from Outcome.
 5. State is distinct from Context.
 6. State may be current, historical, observed, inferred, stale, or conflicting.
-7. State must identify its subject.
-8. Consequential State should have sufficient provenance.
-9. State transitions should be explicit where domain correctness depends on them.
-10. Actions cause State changes; States do not cause Actions by themselves.
-11. Valid State transitions are domain-specific.
-12. Policies and Constraints may restrict valid transitions.
-13. Authority may be required for State transitions.
-14. State may serve as a deterministic Trust input.
-15. Unknown State must not be treated as a known State.
-16. Stale State must not automatically be treated as current State.
-17. Model-inferred State must not automatically become authoritative State.
-18. Expected State and Observed State must remain distinguishable.
-19. Successful Action execution does not necessarily imply successful State transition.
-20. Intent satisfaction should ultimately be evaluated against resulting State and Outcome where applicable.
+7. Every State must identify its subject.
+8. State should have a semantic type and canonical value.
+9. Consequential State should have sufficient provenance.
+10. State transitions should be explicit where domain correctness depends on them.
+11. Actions may cause State transitions; State does not itself constitute an Action.
+12. Valid State transitions are domain-specific.
+13. Policies and Constraints may restrict valid State transitions.
+14. Authority may be required for consequential State transitions.
+15. State may serve as a deterministic Trust input.
+16. Unknown State must not be treated as a known State.
+17. Stale State must not automatically be treated as current State.
+18. Conflicting State assertions must not be silently collapsed into one fact.
+19. Model-inferred State must not automatically become authoritative State.
+20. Expected State and observed/resulting State must remain distinguishable.
+21. Successful Action execution does not necessarily imply successful State transition.
+22. State observation must remain distinguishable from State mutation.
+23. State history should remain reconstructable where required for auditability or Trust.
+24. Intent satisfaction should ultimately be evaluated against resulting State and Outcome where applicable.
+25. State resolution must account for subject identity, temporal validity, provenance, authority, freshness, and conflicts where consequential.
 
 ⸻
 
 64. Canonical Principle
 
-State is Noema’s representation of what is true about the domain at a particular point in time.
+State is Noema’s canonical representation of what is true about a domain object at a defined point or interval in time.
 
 The central distinction is:
 
@@ -1361,31 +1483,47 @@ Desired State
 Candidate Action
       │
       ▼
-Trust
+     Trust
       │
       ▼
-Execution
+   Execution
       │
       ▼
-Outcome
+    Outcome
       │
       ▼
 Resulting State
 
-This gives Noema a concrete way to reason about change rather than merely interpreting language.
-
 The deeper canonical loop is therefore:
 
 WHAT IS TRUE
-     ↓
+      ↓
 WHAT IS WANTED
-     ↓
+      ↓
 WHAT MUST CHANGE
-     ↓
+      ↓
 WHAT MAY CHANGE
-     ↓
+      ↓
 WHAT DID CHANGE
-     ↓
+      ↓
 IS THE DESIRED STATE NOW TRUE?
 
-That loop is one of the strongest foundations for the Noema Intent OS.
+This gives Noema a canonical representation of change, not merely language interpretation.
+
+The critical architectural boundary remains:
+
+Model proposes
+      ↓
+Noema resolves
+      ↓
+Trust evaluates
+      ↓
+Action executes
+      ↓
+Outcome is observed
+      ↓
+State is established
+      ↓
+Intent satisfaction is evaluated
+
+State therefore provides the canonical truth surface for domain condition against which Noema can distinguish an interpreted request from an authorized operation and, ultimately, an intended change from an actually achieved one.
