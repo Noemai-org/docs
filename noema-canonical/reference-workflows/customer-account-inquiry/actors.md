@@ -1,15 +1,15 @@
-Actors
+# Actors
 
 Status: Reference Workflow
-Version: 0.1
+Version: 0.2
 Domain: Reference Workflows
 Canonical Path: reference-workflows/customer-account-inquiry/actors.md
 
 ⸻
 
-1. Definition
+## 1. Definition
 
-An Actor is a Principal, system, service, or human participant that performs, authorizes, provides, receives, or influences an operation within the Customer Account Inquiry workflow.
+An Actor is a Principal, system, service, or human participant that performs, authorizes, provides, receives, reviews, or influences an operation within the Customer Account Inquiry workflow.
 
 Actors are distinct from:
 
@@ -19,32 +19,51 @@ Resource
 System of Record
 Role
 Permission
+Authority
+Principal
 
 An Actor participates in the workflow.
 
 An Action describes what is performed.
 
-A Permission determines what an Actor is authorized to do.
+A Permission describes what an Actor or Principal may be allowed to do.
+
+Authority establishes the organizational or system boundary within which that permission is meaningful.
+
+A Principal is the identity represented in an authorization decision.
 
 ⸻
 
-2. Purpose
+## 2. Purpose
 
 The purpose of the Actor model is to establish:
 
 who initiates the workflow
 who is represented by the Intent
+which Principal is represented by the request
 which systems provide information
-which systems execute Actions
+which systems execute capabilities
 who authorizes access
 who may intervene
 who receives the Outcome
+which Actor is accountable for each consequential operation
 
-The Actor model also establishes clear boundaries between the Customer, Noema, enterprise systems, and human operators.
+The Actor model establishes explicit boundaries between:
+
+Customer
+Principal
+Noema
+Enterprise Systems
+Human Operators
+Resources
+Authority
+Permissions
+
+Actor participation does not itself establish authorization.
 
 ⸻
 
-3. Actor Model
+## 3. Actor Model
 
 The reference workflow can be represented as:
 
@@ -55,6 +74,7 @@ Customer
     │
     ├── Identity System
     ├── Account System
+    ├── Ledger
     ├── Transaction System
     ├── Statement System
     └── Support System
@@ -64,11 +84,11 @@ Customer
 
 Not every execution involves every Actor.
 
-The participating Actors depend on the Intent and resulting Action.
+The participating Actors depend on the resolved Intent, Action, Resource, Policy, and execution path.
 
 ⸻
 
-4. Primary Actors
+## 4. Primary Actors
 
 The primary Actors are:
 
@@ -79,19 +99,20 @@ Enterprise Systems
 Supporting Actors include:
 
 Identity System
-Account / Ledger System
+Account System
+Ledger
 Transaction System
 Statement System
 Support System
 Human Support Agent
 
-These Actors have different responsibilities and authority boundaries.
+These Actors have different responsibilities, authority boundaries, and execution relationships.
 
 ⸻
 
-5. Customer
+## 5. Customer
 
-The Customer is the Principal initiating the Intent.
+The Customer is the human Actor initiating the Intent.
 
 Examples:
 
@@ -103,43 +124,83 @@ Examples:
 
 The Customer provides the initial natural-language request.
 
-The Customer’s request does not by itself establish:
+The Customer's request does not by itself establish:
 
 identity
+authentication
 authorization
 resource
-intent certainty
+Intent certainty
 enterprise state
+ownership
 
-These must be established through the Noema workflow.
+These must be established through the Noema workflow and authoritative enterprise systems.
 
 ⸻
 
-6. Principal
+## 6. Principal
 
-The Principal is the identity on whose behalf the workflow is being performed.
+The Principal is the identity represented by the workflow for purposes of authorization and accountability.
 
 In the simplest case:
 
+Customer = Actor
 Customer = Principal
 
-However, the two concepts are not inherently identical.
+However, these concepts are not inherently identical.
 
 A workflow may involve:
 
-Customer
+Actor
     ↓
-acting as
+acts_for
     ↓
 Principal
 
-or a Customer may act under an authorized delegation.
+Examples include:
 
-Noema must preserve the distinction between the person interacting with the system and the identity represented by the request.
+delegated access
+authorized representatives
+service-mediated requests
+organizational identities
+
+Noema must preserve the distinction between:
+
+who is interacting with Noema
+
+and:
+
+whose authority, identity, or entitlement is represented by the request.
 
 ⸻
 
-7. Noema
+## 7. Actor vs Principal
+
+An Actor is a participant in the workflow.
+
+A Principal is the identity represented in an authorization decision.
+
+Often:
+
+Actor = Principal
+
+But this must not be assumed.
+
+For delegated access:
+
+Actor A
+    ↓ acts_for
+Principal B
+    ↓
+Authorization
+
+The authorization decision must bind to the correct Principal and Resource.
+
+Actor identity alone does not establish permission.
+
+⸻
+
+## 8. Noema
 
 Noema is the Intent-to-Execution system coordinating the workflow.
 
@@ -148,21 +209,25 @@ Noema is responsible for:
 Intent interpretation
 Intent resolution
 Context assembly
-Ambiguity handling
+ambiguity handling
 Trust evaluation
 Policy evaluation
-Authorization evaluation
+authorization coordination
 Action selection
-Execution coordination
+execution coordination
 Outcome verification
-Execution state
-Auditability
+execution state
+intervention state
+auditability
+provenance
 
 Noema does not own the enterprise Business State accessed through the workflow.
 
+Noema owns the state of its own execution.
+
 ⸻
 
-8. Noema’s Authority Boundary
+## 9. Noema's Authority Boundary
 
 Noema has authority over its own execution domain.
 
@@ -174,6 +239,7 @@ Action State
 Execution State
 Intervention State
 Outcome State
+Provenance of its execution journey
 
 Noema does not thereby gain authority over:
 
@@ -184,11 +250,15 @@ Statement State
 Customer Record
 Support Case State
 
-Those remain owned by the appropriate enterprise systems.
+Those remain authoritative within the appropriate enterprise systems.
+
+The enterprise remains authoritative for Business State.
+
+Noema remains authoritative for the execution state it owns.
 
 ⸻
 
-9. Enterprise Systems
+## 10. Enterprise Systems
 
 Enterprise Systems are Actors that provide authoritative data or capabilities required by the workflow.
 
@@ -205,20 +275,31 @@ Each system has a defined authority boundary.
 
 For example:
 
+Identity System
+    → identity authority
+
+Account System
+    → account relationship / account metadata authority
+
 Ledger
-    → balance
+    → financial balance / ledger-state authority
+
 Transaction System
-    → transactions
+    → transaction authority
+
 Statement System
-    → statements
+    → statement authority
+
 Support System
-    → complaints / cases
+    → complaint / case authority
 
 Noema must preserve these boundaries.
 
+An enterprise system returning data does not automatically establish authority over every fact or interpretation associated with that data.
+
 ⸻
 
-10. Identity System
+## 11. Identity System
 
 The Identity System establishes or provides information about the Principal.
 
@@ -230,14 +311,17 @@ identity status
 authentication status
 identity attributes
 account relationships
+delegation relationships
 
-Noema may consume this information as Context.
+Noema may consume this information as Context and Evidence.
 
-The Identity System remains authoritative for the identity information within its defined domain.
+The Identity System remains authoritative for identity information within its defined domain.
+
+Authentication must remain distinct from authorization and Trust.
 
 ⸻
 
-11. Account System
+## 12. Account System
 
 The Account System provides account-related information.
 
@@ -249,13 +333,15 @@ account ownership
 account relationships
 account metadata
 
-The Account System may also be the System of Record for specific account attributes.
+The Account System may be the System of Record for specific account attributes.
 
 The exact authority boundary must be explicitly defined by the enterprise.
 
+Noema must not infer account ownership solely from a natural-language reference.
+
 ⸻
 
-12. Ledger
+## 13. Ledger
 
 The Ledger is authoritative for financial state where the enterprise defines it as the System of Record.
 
@@ -271,6 +357,8 @@ Customer
     ↓
 Noema
     ↓
+Identity / Authorization
+    ↓
 Ledger
     ↓
 Canonical Balance
@@ -279,11 +367,11 @@ Noema
     ↓
 Customer
 
-Noema does not create or redefine the balance.
+Noema does not create, calculate, redefine, or substitute an inferred balance for canonical ledger state.
 
 ⸻
 
-13. Transaction System
+## 14. Transaction System
 
 The Transaction System provides transaction information within its authority boundary.
 
@@ -301,17 +389,21 @@ For transaction search:
 
 Intent
    ↓
-search_transactions
+Action
    ↓
 Transaction System
    ↓
 Transaction Results
+   ↓
+Verification
 
-Noema validates that returned transactions satisfy the requested scope.
+Noema validates that returned transactions satisfy the requested Resource and scope.
+
+A transaction returned by the system must not be treated as evidence that the requesting Principal is authorized to access it unless authorization has independently established that relationship.
 
 ⸻
 
-14. Statement System
+## 15. Statement System
 
 The Statement System provides statements or statement-related resources.
 
@@ -332,12 +424,14 @@ retrieve_statement
 Statement System
    ↓
 Statement
+   ↓
+Verification
 
 Noema does not become the authoritative owner of the statement.
 
 ⸻
 
-15. Support System
+## 16. Support System
 
 The Support System manages customer complaints and support cases.
 
@@ -366,19 +460,23 @@ Case
 
 The Support System remains authoritative for the resulting support case.
 
+Noema records the execution journey and resulting Outcome but does not become the System of Record for the case.
+
 ⸻
 
-16. Human Support Agent
+## 17. Human Support Agent
 
 A Human Support Agent may participate when automated execution cannot safely continue.
 
 Examples:
 
 identity ambiguity
+authorization ambiguity
 data conflict
-unsupported complaint
+unsupported request
 policy exception
 enterprise inconsistency
+unknown execution state
 
 The Human Support Agent may:
 
@@ -387,54 +485,68 @@ provide clarification
 make an authorized decision
 resolve an exception
 continue a workflow
+escalate a case
 
-Human intervention must remain bounded by organizational authority and Policy.
+Human intervention must remain bounded by:
+
+identity
+role
+permission
+organizational authority
+Policy
+audit requirements
 
 ⸻
 
-17. Human Intervention Boundary
+## 18. Human Intervention Boundary
 
 A Human Support Agent does not automatically gain unrestricted authority by entering the workflow.
 
 Human actions remain subject to:
 
 identity
+authentication
 role
 permissions
 organizational boundaries
-policy
+tenant boundaries
+Policy
 audit requirements
 
 A human decision should be recorded as part of the execution journey.
 
+Human intervention is itself an attributable workflow event.
+
 ⸻
 
-18. Actor vs Role
+## 19. Actor vs Role
 
 An Actor is a participant.
 
 A Role defines a set of responsibilities or permissions associated with an Actor.
 
-For example:
+Example:
 
 Actor:
 Support Agent A
+
 Role:
 Customer Support Agent
+
 Permissions:
-view customer account
+view authorized customer account
 create complaint
-view transaction details
+view authorized transaction details
 
 The Role does not itself become the Actor.
 
 ⸻
 
-19. Actor vs Permission
+## 20. Actor vs Permission
 
 Actors and Permissions must remain distinct.
 
-For example:
+Example:
 
 Customer A
     │
@@ -443,13 +555,13 @@ Customer A
 
 The Customer is the Actor.
 
-The permission determines whether the requested Action is authorized.
+The Permission determines whether the requested Action may be authorized.
 
 Being an Actor does not imply unrestricted access.
 
 ⸻
 
-20. Actor vs Resource
+## 21. Actor vs Resource
 
 An Actor performs or requests operations against Resources.
 
@@ -471,33 +583,11 @@ Customer
 
 The Resource remains distinct from the Actor.
 
-⸻
-
-21. Actor vs Principal
-
-The Actor is the participant in the workflow.
-
-The Principal is the identity represented in the authorization decision.
-
-Often:
-
-Actor = Principal
-
-But this cannot be assumed universally.
-
-For delegated access:
-
-Actor
-    ↓
-acts_for
-    ↓
-Principal
-
-Noema must preserve this distinction when relevant.
+Authorization must bind the relevant Actor / Principal to the specific resolved Resource.
 
 ⸻
 
-22. Actor Identity
+## 22. Actor Identity
 
 Every consequential Actor interaction should be attributable to an identity appropriate to the workflow.
 
@@ -514,17 +604,24 @@ Actor {
 
 Not every field is required for every Actor.
 
-The model exists to establish accountability and authority.
+The semantic purpose is:
+
+accountability
+authority resolution
+authorization
+auditability
+provenance
 
 ⸻
 
-23. Actor Types
+## 23. Actor Types
 
 The reference workflow may contain several Actor types:
 
 HUMAN
     Customer
     Support Agent
+
 SYSTEM
     Identity System
     Account System
@@ -532,32 +629,49 @@ SYSTEM
     Transaction System
     Statement System
     Support System
+
 ORCHESTRATOR
     Noema
 
-The type of Actor affects how authority, authentication, authorization, and accountability are evaluated.
+The Actor type affects how:
+
+authentication
+authorization
+authority
+accountability
+provenance
+
+are evaluated.
 
 ⸻
 
-24. System Actors
+## 24. System Actors
 
 Enterprise Systems are treated as Actors because they participate in execution.
 
 A System Actor may:
 
 provide data
-execute an Action
+execute a capability
 return a result
 emit an Event
 confirm state
 reject a request
 report failure
 
-System Actors must have defined integration contracts and authority boundaries.
+System Actors must have defined:
+
+integration contracts
+authority boundaries
+identity
+capability boundaries
+provenance
+
+A System Actor's participation does not give it authority outside its defined domain.
 
 ⸻
 
-25. Noema as an Orchestrating Actor
+## 25. Noema as an Orchestrating Actor
 
 Noema is not merely another enterprise application.
 
@@ -565,28 +679,34 @@ Its role is to coordinate:
 
 Intent
 Context
+Evidence
 Trust
+Policy
+Authorization
 Action
 Execution
 Outcome
-
-It does not replace the authority of the enterprise systems involved.
+Verification
 
 Conceptually:
 
 Customer
     ↓
 Noema
-    ├── requests data
+    ├── resolves Intent
+    ├── assembles Context
     ├── evaluates Trust
+    ├── evaluates Policy
     ├── invokes Actions
     └── verifies Outcomes
             ↓
     Enterprise Systems
 
+Noema does not replace enterprise authority.
+
 ⸻
 
-26. Actor and Intent
+## 26. Actor and Intent
 
 The initiating Actor provides the source of the Intent.
 
@@ -598,18 +718,18 @@ Intent
 
 The Intent should preserve the relationship to the initiating Principal.
 
-For example:
+Example:
 
 Intent {
     principal = customer_123
     operation = transaction_search
 }
 
-This allows Noema to determine whose data is being requested.
+The Principal reference must subsequently be bound to the authorized Resource.
 
 ⸻
 
-27. Actor and Identity Resolution
+## 27. Actor and Identity Resolution
 
 Natural language may identify an Actor indirectly.
 
@@ -633,13 +753,15 @@ enterprise identity data
 
 Identity resolution must be sufficiently grounded for the requested Action.
 
+Identity resolution must not silently become authorization.
+
 ⸻
 
-28. Actor and Ambiguity
+## 28. Actor and Ambiguity
 
 Actor ambiguity must remain explicit.
 
-Example:
+Examples:
 
 Two eligible customers:
 John Smith
@@ -651,21 +773,29 @@ Customer
     ↓
 Multiple organizational identities
 
-Noema must not silently select an Actor when the ambiguity is consequential.
+or:
+
+Principal
+    ↓
+Multiple eligible accounts
+
+Noema must not silently select an Actor or Principal when the ambiguity is consequential.
 
 The workflow should transition to:
 
 AMBIGUOUS
     ↓
-CLARIFICATION
+CLARIFY
 
 or another Policy-defined resolution path.
 
+Consequential probabilistic guessing is not an acceptable Actor-resolution mechanism.
+
 ⸻
 
-29. Actor and Authorization
+## 29. Actor and Authorization
 
-Authorization evaluates whether an Actor or Principal may perform an Action against a Resource.
+Authorization evaluates whether a Principal may perform a specific Action against a specific Resource within a specific Scope.
 
 Conceptually:
 
@@ -676,14 +806,18 @@ Action
 Resource
     +
 Scope
+    +
+Policy
     ↓
 Authorization Decision
+
+Authorization must attach to the fully resolved business Resource.
 
 For example:
 
 Customer A
     +
-view_transactions
+search_transactions
     +
 Account A
     ↓
@@ -693,17 +827,84 @@ while:
 
 Customer A
     +
-view_transactions
+search_transactions
     +
 Account B
     ↓
 DENY
 
-where the enterprise Policy does not authorize access.
+where Policy does not authorize access.
+
+Technical capability access does not establish business authorization.
 
 ⸻
 
-30. Actor and Organizational Boundaries
+## 30. Target-Bound Authorization
+
+Authorization must be bound to the resolved target.
+
+The following is insufficient:
+
+Customer A
+    ↓
+authorized to call search_transactions
+
+The workflow must establish:
+
+Customer A
+    +
+search_transactions
+    +
+Account A
+    +
+scope
+    ↓
+authorized
+
+A technically authorized capability invoked against the wrong Resource is not an authorized operation.
+
+This protects against confused-deputy failures.
+
+The Action must therefore carry the resolved Resource and authorization context into the execution boundary.
+
+⸻
+
+## 31. Authorization Layers
+
+Authorization may involve distinct layers.
+
+### Technical Authorization
+
+Can this Principal invoke the capability?
+
+Example:
+
+Customer A
+    → may invoke transaction search
+
+### Policy Authorization
+
+Does the requested parameterization satisfy applicable Policy?
+
+Example:
+
+Customer A
+    → may access authorized transaction history
+    → within permitted scope
+
+### Business Authorization
+
+Given the fully resolved Principal, Action, Resource, Context, and current Business State, is this specific operation permitted?
+
+This layer binds authorization to the actual enterprise situation.
+
+The layers must not be collapsed into a single assumption that:
+
+"the user is authenticated, therefore the action is authorized."
+
+⸻
+
+## 32. Actor and Organizational Boundaries
 
 Actors may belong to different organizational scopes.
 
@@ -715,20 +916,23 @@ Business Unit
 Legal Entity
 Environment
 
-An Actor’s authority must not cross these boundaries implicitly.
+An Actor's authority must not cross these boundaries implicitly.
 
 For example:
 
 Customer A
     → Tenant A
+
 Customer B
     → Tenant B
 
 Shared identifiers do not imply shared authority.
 
+Cross-tenant or cross-account access must be explicitly authorized.
+
 ⸻
 
-31. Actor and Data Boundaries
+## 33. Actor and Data Boundaries
 
 Actors should receive only the data necessary for their authorized purpose.
 
@@ -746,33 +950,41 @@ unrelated transactions
 other customers
 internal enterprise metadata
 unrelated account information
+credentials
+secrets
 
 Actor participation does not eliminate data minimization requirements.
 
 ⸻
 
-32. Actor and Policy
+## 34. Actor and Policy
 
 Policies constrain what Actors may do.
 
 Examples:
 
 Customer
-    → may retrieve own statements
+    → may retrieve authorized statements
+
+Customer
+    → may search authorized transactions
+
 Support Agent
-    → may create complaints
+    → may create complaints within assigned authority
+
 Noema
-    → may invoke approved enterprise Actions
+    → may invoke approved Actions
+
 Ledger
     → authoritative for balance
 
 Policy defines these relationships.
 
-Noema should not infer authority merely from an Actor’s existence.
+Noema should not infer authority merely from Actor existence, authentication, or natural-language request.
 
 ⸻
 
-33. Actor and Trust
+## 35. Actor and Trust
 
 Trust evaluates whether the workflow has sufficient grounds to proceed.
 
@@ -784,8 +996,9 @@ authorization
 delegation
 organizational membership
 resource ownership
-policy
+Policy
 risk
+freshness of evidence
 
 Trust does not reduce to Actor identity alone.
 
@@ -793,66 +1006,96 @@ Known Actor
     ≠
 Authorized Action
 
+Authenticated Actor
+    ≠
+Authorized Resource
+
+Authorized Capability
+    ≠
+Authorized Business Outcome
+
 ⸻
 
-34. Actor and Action
+## 36. Actor and Action
 
-An Actor may initiate, authorize, invoke, or execute an Action.
+An Actor may:
+
+initiate
+authorize
+invoke
+execute
+review
+verify
+
+an Action.
 
 For example:
 
 Customer
     ↓ initiates
 balance inquiry
+
 Noema
     ↓ invokes
-retrieve_balance
+get_account_balance
+
 Ledger
-    ↓ performs
-balance retrieval
+    ↓ provides
+canonical balance
 
 These are different relationships.
 
-Noema should preserve them rather than treating every participant as the executor.
+Noema must preserve them rather than treating every participant as the executor.
 
 ⸻
 
-35. Actor and Action Ownership
+## 37. Actor and Action Ownership
 
-The Actor initiating an Action does not necessarily own the Action’s underlying Resource.
+The Actor initiating an Action does not necessarily own the Action's underlying Resource.
 
 For example:
 
 Customer
     ↓ requests
-retrieve_balance
+get_account_balance
     ↓ against
 Account
-    ↓ owned by / authoritative within
-Enterprise
+    ↓ authoritative within
+Ledger / Enterprise
 
-Noema must preserve enterprise ownership semantics.
+Noema must preserve enterprise ownership and authority semantics.
 
 ⸻
 
-36. Actor and Enterprise Authority
+## 38. Actor and Enterprise Authority
 
 Enterprise Systems define authority over Business State.
 
 For example:
 
+Identity System
+    → identity authority
+
+Account System
+    → account relationship authority
+
 Ledger
     → balance authority
+
 Transaction System
     → transaction authority
+
 Statement System
     → statement authority
+
+Support System
+    → case authority
 
 Noema cannot override this authority merely because it orchestrates the workflow.
 
 ⸻
 
-37. Actor and Evidence
+## 39. Actor and Evidence
 
 Actor activity can generate Evidence.
 
@@ -860,18 +1103,25 @@ Examples:
 
 Customer
     → provided clarification
+
 Identity System
     → authenticated Principal
+
 Ledger
     → returned balance
+
 Support Agent
-    → approved exception
+    → approved authorized intervention
 
 Evidence should preserve the Actor or System responsible for the observation or decision where relevant.
 
+Evidence must not automatically be treated as authoritative merely because an Actor produced it.
+
+Authority remains domain-specific.
+
 ⸻
 
-38. Actor and Provenance
+## 40. Actor and Provenance
 
 Consequential interactions should preserve provenance.
 
@@ -879,22 +1129,28 @@ Conceptually:
 
 Provenance {
     actor
+    principal
     action
+    resource
     source
-    timestamp
     authority
+    timestamp
 }
 
 This allows Noema to answer:
 
-Who provided this information?
-Which system produced it?
+Who initiated this Intent?
+Which Principal was represented?
+Which Actor provided this information?
+Which system produced the result?
 Who authorized this decision?
-Which Actor performed this Action?
+Which system executed the capability?
+Who intervened?
+Which Actor or System produced the resulting evidence?
 
 ⸻
 
-39. Actor and Events
+## 41. Actor and Events
 
 Actors may produce or consume Events.
 
@@ -903,9 +1159,11 @@ Examples:
 Ledger
     ↓
 balance.changed
+
 Support System
     ↓
 case.created
+
 Noema
     ↓
 execution.completed
@@ -914,26 +1172,36 @@ Events should identify their producer where required.
 
 Noema should not treat an Event producer as automatically authoritative for every fact contained in the Event.
 
+Events are Evidence or Context unless their authority is explicitly established.
+
 ⸻
 
-40. Actor and Human Clarification
+## 42. Actor and Human Clarification
 
 A Customer may provide clarification:
 
 Noema:
 "Which account?"
+
 Customer:
 "My current account."
 
 The Customer remains the originating Actor.
 
-The clarification becomes additional information for Intent Resolution.
+The clarification becomes additional Context for Intent Resolution.
 
-Noema must still validate the resulting Resource against enterprise identity and authorization data.
+Noema must still validate the resulting Resource against:
+
+enterprise identity
+account relationships
+authorization
+Policy
+
+Customer clarification does not by itself establish canonical Resource ownership.
 
 ⸻
 
-41. Actor and Complaint Logging
+## 43. Actor and Complaint Logging
 
 Complaint Logging introduces a second enterprise-side Actor:
 
@@ -953,7 +1221,7 @@ The transition from automated workflow to human support must be explicit and aud
 
 ⸻
 
-42. Actor and Read Operations
+## 44. Actor and Read Operations
 
 The Phase 1 operations are:
 
@@ -969,23 +1237,25 @@ For example:
 
 Customer
     ↓
-view
+requests
     ↓
-own account data
+authorized account data
 
 does not imply:
 
 Customer
     ↓
-view
+access
     ↓
 any enterprise account
 
 Read access remains scoped.
 
+Read-only does not mean authorization-free.
+
 ⸻
 
-43. Actor and Future Financial Writes
+## 45. Actor and Future Financial Writes
 
 Future financial write operations introduce stronger Actor requirements.
 
@@ -1003,13 +1273,15 @@ transaction limits
 risk evaluation
 confirmation
 fresh state
-policy approval
+Policy approval
+idempotency
+postcondition verification
 
 These requirements belong to future write workflows and should not be implicitly introduced into the Phase 1 reference workflow.
 
 ⸻
 
-44. Actor Failure
+## 46. Actor Failure
 
 Actors and systems may become unavailable.
 
@@ -1024,18 +1296,26 @@ Human Agent unavailable
 
 Noema must not treat unavailable Actors as silently successful.
 
-The workflow must transition according to the relevant failure and recovery Policy.
+The workflow must transition according to the relevant Failure and Recovery Policy.
+
+Where required information prevents a safe decision:
+
+UNKNOWN
+or
+ESCALATE
+
+must remain distinguishable from successful execution.
 
 ⸻
 
-45. Actor Authentication
+## 47. Actor Authentication
 
 Authentication establishes that an Actor is who they claim to be.
 
 Authentication is distinct from:
 
-authorization
 identity resolution
+authorization
 Trust
 
 Conceptually:
@@ -1044,15 +1324,19 @@ Authentication
       ↓
 Identity
       ↓
+Authority
+      ↓
 Authorization
       ↓
-Trust
+Trust / Policy
+      ↓
+Action
 
-The exact sequence may vary by workflow, but the semantic distinctions must remain.
+The exact operational sequence may vary by workflow, but the semantic distinctions must remain.
 
 ⸻
 
-46. Actor Authorization
+## 48. Actor Authorization
 
 Authorization determines what an authenticated Actor or Principal is allowed to do.
 
@@ -1069,10 +1353,13 @@ Action
 Resource
 Scope
 Policy
+Authority
+
+Authorization must be target-bound where the Action operates on a consequential Resource.
 
 ⸻
 
-47. Actor Accountability
+## 49. Actor Accountability
 
 Consequential workflow events should be attributable.
 
@@ -1080,16 +1367,25 @@ Noema should be able to determine:
 
 who initiated the Intent
 which Principal was represented
+which Actor authorized the operation
 which system provided the data
-which system executed the Action
+which system executed the capability
 which human intervened
-which Actor produced the Outcome
+which Actor produced the Evidence
+which system established the Business State
+which Outcome resulted
 
-This supports auditability and incident investigation.
+This supports:
+
+auditability
+incident investigation
+replay analysis
+policy analysis
+accountability
 
 ⸻
 
-48. Actor Lifecycle
+## 50. Actor Lifecycle
 
 Actors may enter and leave a workflow.
 
@@ -1111,11 +1407,16 @@ UNAVAILABLE
     ↓
 RECOVERY / ESCALATION
 
-Actor lifecycle is distinct from Intent and Execution lifecycle.
+Actor lifecycle is distinct from:
+
+Intent lifecycle
+Action lifecycle
+Execution lifecycle
+Outcome lifecycle
 
 ⸻
 
-49. Actor Model
+## 51. Actor Model
 
 Conceptually:
 
@@ -1133,7 +1434,7 @@ This is a semantic model rather than a requirement for a literal database repres
 
 ⸻
 
-50. Actor Relationships
+## 52. Actor Relationships
 
 The reference workflow contains relationships such as:
 
@@ -1141,16 +1442,22 @@ Customer
     ├── initiates → Intent
     ├── represents → Principal
     └── receives → Outcome
+
 Noema
     ├── resolves → Intent
     ├── assembles → Context
     ├── evaluates → Trust
+    ├── evaluates → Policy
+    ├── coordinates → Authorization
     ├── invokes → Action
     └── verifies → Outcome
+
 Enterprise System
     ├── provides → Data
     ├── executes → Capability
-    └── establishes → Business State
+    ├── establishes → Business State
+    └── produces → Evidence / Events
+
 Human Support Agent
     ├── reviews → Execution
     ├── provides → Intervention
@@ -1158,7 +1465,7 @@ Human Support Agent
 
 ⸻
 
-51. Reference Actor Flow
+## 53. Reference Actor Flow
 
 The complete Actor interaction can be represented as:
 
@@ -1168,6 +1475,8 @@ The complete Actor interaction can be represented as:
                        ▼
                      NOEMA
                        │
+              Identity / Principal
+                       │
           ┌────────────┼────────────┐
           │            │            │
           ▼            ▼            ▼
@@ -1176,21 +1485,52 @@ The complete Actor interaction can be represented as:
           │            │            │
           └────────────┼────────────┘
                        │
+                 Trust / Policy
+                       │
+                 Authorization
+                       │
                        ▼
-                    NOEMA
+                    ACTION
                        │
-                       ├──────► STATEMENT SYSTEM
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+       LEDGER      STATEMENT     SUPPORT
+                    SYSTEM       SYSTEM
+          │            │            │
+          └────────────┼────────────┘
                        │
-                       └──────► SUPPORT SYSTEM
-                                      │
-                                      ▼
-                              HUMAN SUPPORT AGENT
+                    RESULT
+                       │
+                       ▼
+                     NOEMA
+                       │
+                 Verification
+                       │
+                       ▼
+                    OUTCOME
+                       │
+                       ▼
+                    CUSTOMER
 
-The participating path depends on the requested operation.
+If automation cannot safely continue:
+
+                     NOEMA
+                       │
+                    ESCALATE
+                       │
+                       ▼
+              HUMAN SUPPORT AGENT
+                       │
+                  INTERVENTION
+                       │
+                       ▼
+                     NOEMA
+
+The participating path depends on the resolved Intent and Policy.
 
 ⸻
 
-52. Example: Balance Inquiry
+## 54. Example: Balance Inquiry
 
 Customer
     ↓
@@ -1202,9 +1542,17 @@ Identity System
     ↓
 Principal
     ↓
+Account Resolution
+    ↓
+Authorization
+    ↓
+get_account_balance
+    ↓
 Ledger
     ↓
 Canonical Balance
+    ↓
+Verification
     ↓
 Noema
     ↓
@@ -1214,7 +1562,7 @@ Actors remain distinct from the data and Actions exchanged between them.
 
 ⸻
 
-53. Example: Transaction Search
+## 55. Example: Transaction Search
 
 Customer
     ↓
@@ -1224,27 +1572,47 @@ Noema
     ↓
 Identity System
     ↓
+Principal
+    ↓
+Account / Resource Resolution
+    ↓
+Trust / Policy
+    ↓
+Authorization
+    ↓
+search_transactions
+    ↓
 Transaction System
     ↓
 Transaction Results
     ↓
 Noema
     ↓
+Verification
+    ↓
 Customer
 
-If multiple accounts are eligible:
+If multiple consequential Resources remain eligible:
 
 Transaction Search
         ↓
 Ambiguity
         ↓
-Customer Clarification
+CLARIFY
 
-The workflow does not guess the intended account.
+The workflow does not guess the intended Resource.
+
+If the Principal is not authorized for the candidate Resource:
+
+Authorization
+        ↓
+REJECT
+
+The workflow must not expose protected information merely to assist clarification.
 
 ⸻
 
-54. Example: Complaint Logging
+## 56. Example: Complaint Logging
 
 Customer
     ↓
@@ -1256,11 +1624,15 @@ Identity / Transaction Context
     ↓
 Trust
     ↓
+Authorization
+    ↓
 create_complaint
     ↓
 Support System
     ↓
 Case Created
+    ↓
+Verification
     ↓
 Customer
 
@@ -1273,10 +1645,75 @@ Human Support Agent
 Review / Intervention
     ↓
 Updated Workflow State
+    ↓
+Noema
+
+The Support System remains authoritative for the Case.
 
 ⸻
 
-55. Actor Invariants
+## 57. Actor and the Execution Boundary
+
+Actors participate before, at, and after the execution boundary.
+
+Before execution:
+
+Customer
+    ↓
+Intent
+    ↓
+Noema
+    ↓
+Identity
+    ↓
+Context
+    ↓
+Trust
+    ↓
+Policy
+    ↓
+Authorization
+    ↓
+Action
+
+At execution:
+
+Action
+    ↓
+Enterprise Capability
+
+After execution:
+
+Enterprise Result
+    ↓
+Evidence
+    ↓
+Verification
+    ↓
+Outcome
+    ↓
+Customer / Human Agent
+
+The model must not be treated as the authority that determines the final consequential operation after the Action has been established.
+
+⸻
+
+## 58. Actor and Fail-Closed Behavior
+
+When an Actor or required enterprise system is unavailable, ambiguous, unauthorized, or unable to establish required state, Noema must not silently proceed.
+
+The workflow must transition according to Policy:
+
+REJECT
+CLARIFY
+ESCALATE
+UNKNOWN
+
+The absence of an error is not sufficient evidence of successful execution.
+
+⸻
+
+## 59. Actor Invariants
 
 Invariant 1
 
@@ -1288,11 +1725,11 @@ The Actor initiating an Intent must remain distinguishable from the Intent itsel
 
 Invariant 3
 
-Actor, Principal, Role, Permission, Resource, and Action are distinct concepts.
+Actor, Principal, Role, Permission, Resource, Authority, and Action are distinct concepts.
 
 Invariant 4
 
-An Actor’s participation does not imply unrestricted authorization.
+An Actor's participation does not imply unrestricted authorization.
 
 Invariant 5
 
@@ -1358,11 +1795,59 @@ Invariant 20
 
 Future financial write operations require stronger Actor and Trust guarantees and must be defined separately from the Phase 1 reference workflow.
 
+Invariant 21
+
+Authorization must bind to the fully resolved Resource where the Action operates on a consequential Resource.
+
+Invariant 22
+
+Technical authorization to invoke a capability does not establish business authorization for a specific Resource or Outcome.
+
+Invariant 23
+
+Actor identity, Principal identity, authentication, authorization, Trust, and Policy must remain semantically distinguishable.
+
+Invariant 24
+
+Noema must not expose protected Resource information merely because Resource resolution is ambiguous or authorization has failed.
+
+Invariant 25
+
+Human intervention must itself be attributable and auditable.
+
+Invariant 26
+
+Enterprise Actor authority must remain bounded by the system's defined domain.
+
+Invariant 27
+
+Actor provenance must be preserved sufficiently to reconstruct consequential decisions and execution.
+
+Invariant 28
+
+Unavailable or uncertain Actors must not be treated as silently successful.
+
+Invariant 29
+
+Customer clarification does not override canonical enterprise identity, authorization, or Resource ownership.
+
+Invariant 30
+
+Actor participation does not transfer Business State authority from the enterprise System of Record to Noema.
+
+Invariant 31
+
+An Action must not execute against a Resource for which the represented Principal has not been authorized.
+
+Invariant 32
+
+Cross-account and cross-tenant access must never arise through implicit Actor resolution.
+
 ⸻
 
-56. Final Definition
+## 60. Final Definition
 
-Actors are the identifiable human, system, service, or organizational participants that initiate, authorize, provide, execute, review, or receive operations within the Customer Account Inquiry workflow.
+Actors are the identifiable human, system, service, or organizational participants that initiate, authorize, provide, execute, review, verify, or receive operations within the Customer Account Inquiry workflow.
 
 The fundamental relationship is:
 
@@ -1372,21 +1857,35 @@ ACTOR
 INTENT
    │
    ▼
+PRINCIPAL
+   │
+   ▼
 NOEMA
    │
    ├── resolves
    ├── contextualizes
    ├── evaluates Trust
+   ├── evaluates Policy
+   ├── coordinates Authorization
    └── invokes
+          │
+          ▼
+       ACTION
           │
           ▼
    ENTERPRISE ACTOR
           │
           ▼
+     BUSINESS STATE
+          │
+          ▼
        RESULT
           │
           ▼
-       NOEMA
+       EVIDENCE
+          │
+          ▼
+       VERIFICATION
           │
           ▼
        OUTCOME
@@ -1396,4 +1895,10 @@ NOEMA
 
 And the architectural rule is:
 
-An Actor’s participation establishes who is involved in the workflow; it does not by itself establish what that Actor is authorized to access, what Action they may perform, or which Business State they control.
+An Actor's participation establishes who is involved in the workflow; it does not by itself establish what that Actor is authorized to access, what Action they may perform, which Resource they may act against, or which Business State they control.
+
+Authorization must bind the represented Principal, approved Action, resolved Resource, Scope, and applicable Policy.
+
+Enterprise Systems remain authoritative for the Business State within their domains.
+
+Noema remains authoritative for the execution state it owns and for the causal record of how the workflow reached its Outcome.

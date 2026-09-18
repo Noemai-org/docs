@@ -1,7 +1,7 @@
 Context
 
 Status: Reference Workflow
-Version: 0.1
+Version: 0.2
 Domain: Reference Workflows
 Canonical Path: reference-workflows/customer-account-inquiry/context.md
 
@@ -9,120 +9,139 @@ Canonical Path: reference-workflows/customer-account-inquiry/context.md
 
 1. Definition
 
-Context is the structured set of information available to Noema for understanding, validating, planning, executing, and verifying an Intent within a specific execution journey.
+Context is the typed, execution-scoped set of information available to Noema at a particular point in an execution journey for understanding, resolving, authorizing, planning, executing, verifying, recovering, and explaining an Intent.
 
-For the Customer Account Inquiry workflow, Context provides the information required to determine:
+Context provides the information required to determine:
 
-who is asking
-what they are asking about
-which enterprise resources are relevant
-what information is available
-what authority applies
-what constraints apply
-what has already happened
+* who is asking
+* which Principal is represented
+* what the Principal intends
+* which Resources are relevant
+* which enterprise state has been observed
+* what Evidence supports those observations
+* what information is derived or model-generated
+* what authority and Policy apply
+* what Trust conditions exist
+* what Action requirements remain
+* what has already happened in the execution journey
 
-Context is not itself Intent.
+Context is not itself:
 
-Context is not Business State.
+* Intent
+* Truth
+* Business State
+* Evidence
+* Trust
+* Policy
+* Action
+* Outcome
 
-Context is not Evidence.
-
-Context is the information envelope within which Noema makes execution decisions.
+Context is the execution information envelope. It carries facts, references, candidates, evidence, state, and constraints while preserving their classifications, provenance, authority, freshness, and scope.
 
 Conceptually:
 
 Principal
-     │
-     ├── Identity
-     ├── Intent
-     ├── Enterprise State
-     ├── Permissions
-     ├── History
-     ├── Evidence
-     └── Policy
-             │
-             ▼
-          Context
-             │
-             ▼
-        Trust + Action
+   │
+   ▼
+Intent
+   │
+   ▼
+Context Assembly
+   │
+   ├── Identity
+   ├── Resources
+   ├── Enterprise State
+   ├── Evidence
+   ├── Derived Data
+   ├── User Input
+   ├── Model Candidates
+   ├── Permissions
+   ├── Policy
+   ├── Temporal State
+   └── Execution State
+           │
+           ▼
+      Trust + Action
 
 ⸻
 
 2. Purpose
 
-The purpose of Context in this workflow is to provide sufficient information for Noema to execute customer account inquiries without requiring unrestricted access to enterprise data.
+The purpose of Context is to give Noema enough grounded information to safely execute the resolved Intent without granting the system unrestricted access to enterprise information.
 
 Context should answer:
 
-What does Noema need to know
-to safely perform this specific task?
+What does Noema need to know, at this point in the execution, to make the next permitted decision?
 
 The answer should be:
 
-the minimum sufficient context
+minimum sufficient context
 
 rather than:
 
-everything available about the customer
+maximum available customer data
+
+Context therefore acts as both an execution resource and a security boundary.
 
 ⸻
 
 3. Core Principle
 
-Context is task-scoped.
+Context is execution-scoped, Action-aware, typed, and provenance-preserving.
 
-A Customer Account Inquiry should only receive the information required for the resolved Intent and Action.
+A Customer Account Inquiry should receive only the information required for its current Intent, Policy, and Action path.
 
 For example:
 
 Intent:
 "What is my account balance?"
-
-may require:
-
-customer_id
-account_id
-account_type
-authorization_context
+Required Context may include:
+    principal_id
+    account_reference
+    authorization_context
+    required_freshness
 
 It does not automatically require:
 
 full transaction history
 home address
 employment information
-other accounts
+unrelated accounts
 complete customer profile
 
-Context therefore follows the principle:
+The governing principle is:
 
-Context should be sufficient for execution, but no broader than necessary.
+Context must be sufficient for the current execution step, but no broader than necessary.
 
 ⸻
 
 4. Context Is Not Truth
 
-Context may contain information from multiple sources.
-
-For example:
+Context may contain information from multiple semantic classes:
 
 Context
 ├── Canonical Data
 ├── Evidence
 ├── Derived Data
-├── Historical Data
 ├── User Input
+├── Model Interpretation
+├── Model Candidate
+├── Historical Data
+├── Policy
+├── Permissions
 └── Noema Execution State
 
 These categories do not have equal authority.
 
-Context is the container in which information is made available.
-
-It does not automatically make that information authoritative.
+Context does not upgrade the authority of the information it contains.
 
 Therefore:
 
 Context ≠ Truth
+Context ≠ Authority
+Context ≠ Evidence
+
+A value remains subject to its own semantic classification while inside Context.
 
 ⸻
 
@@ -130,50 +149,58 @@ Context ≠ Truth
 
 Canonical Data represents authoritative enterprise information within a defined authority boundary.
 
-Context may contain Canonical Data.
-
-For example:
-
-Context
-    │
-    └── Account.balance
-            │
-            └── source = Ledger
-
-The Context carries the information.
-
-The Ledger establishes its authority.
-
-Noema must preserve that distinction.
-
-⸻
-
-6. Context and Evidence
-
-Evidence records information that supports a proposition or execution decision.
-
-Context may include Evidence.
+Context may carry Canonical Data or a reference to it.
 
 Example:
 
 Context
    │
-   └── Evidence
+   └── account.balance
           │
-          └── Ledger observed account balance
+          ├── source = Ledger
+          ├── authority = canonical
+          └── observed_at = timestamp
 
-The Evidence provides provenance for information used during execution.
+Context carries the observation.
+
+The enterprise System of Record establishes its authority.
+
+Noema must not create canonical authority merely by storing or transmitting a value.
+
+⸻
+
+6. Context and Evidence
+
+Evidence is information that supports a proposition, state classification, authorization decision, execution decision, or verification result.
+
+Context may contain Evidence references or evidence records.
+
+Example:
+
+Ledger
+   ↓
+observed account balance
+   ↓
+Evidence
+   ↓
+Context
+
+Evidence must preserve sufficient provenance to establish:
+
+* source
+* observation time
+* Resource
+* relevant version
+* authority
+* result or observation
 
 Therefore:
 
-Context
-   contains
-      ↓
-Evidence
-Context
-   does not become
-      ↓
-Evidence
+Context contains Evidence
+
+does not mean:
+
+Context becomes Evidence
 
 ⸻
 
@@ -181,124 +208,119 @@ Evidence
 
 Intent describes what the Principal wants to accomplish.
 
-Context provides information needed to understand and execute that Intent.
+Context supplies information required to resolve and execute that Intent.
 
 Example:
 
 Intent:
 "How much do I have?"
 Context:
-customer_id = 4821
-account_id = 9912
-currency = NGN
-authenticated = true
+    principal_id = ...
+    account_id = ...
+    currency = NGN
+    authentication_state = AUTHENTICATED
 
 Together:
 
-Intent
-   +
-Context
-   ↓
-Action Resolution
+Intent + Context
+       ↓
+Resolution
+       ↓
+Trust / Policy
+       ↓
+Action
 
-Context does not replace Intent.
+Context does not replace Intent and must not silently rewrite it.
 
 ⸻
 
 8. Context and Principal
 
-The Principal is the identity under whose authority the request is being made.
-
-For the Customer Account Inquiry workflow:
-
-Principal
-    ↓
-Customer
-    ↓
-Authenticated Identity
+The Principal is the identity under whose authority the request is being evaluated.
 
 Context may contain:
 
 principal_id
+actor_id
 authentication_state
 session_id
-organization
 tenant
+organization
+delegation_reference
 
 where required.
 
-The Principal identity must be grounded against enterprise identity data where consequential access is involved.
+The Principal must be grounded against enterprise identity information when consequential access is involved.
+
+An authenticated identity is not automatically an authorized identity for every Resource or Action.
 
 ⸻
 
 9. Context and Identity Resolution
 
-Natural-language requests frequently contain ambiguous identity references.
+Natural-language requests frequently contain identity references that require resolution.
 
 Example:
 
-"Show my account balance."
+“Show my account balance.”
 
-The phrase:
-
-my account
-
-must resolve to an authorized enterprise Resource.
+The phrase my account must resolve to an authorized enterprise Resource.
 
 Conceptually:
 
+Actor
+   ↓
 Principal
-    ↓
+   ↓
 Identity Resolution
-    ↓
+   ↓
 Customer
-    ↓
+   ↓
 Account
 
-If multiple candidate resources exist and Policy requires certainty:
+If multiple materially different candidates remain:
 
 Ambiguity
-    ↓
-Clarification
+   ↓
+CLARIFY / ESCALATE
 
-Context must not silently resolve material ambiguity through probabilistic guessing.
+Context must preserve unresolved candidates rather than silently converting a candidate into a canonical identity.
 
 ⸻
 
 10. Context and Resource Resolution
 
-The workflow may involve multiple enterprise Resources.
+Resources may include:
 
-Examples:
+* Customer
+* Account
+* Transaction
+* Statement
+* Support Case
 
-Customer
-Account
-Transaction
-Statement
-Support Case
-
-Context should contain only the Resources relevant to the current Action.
+Context should contain only Resource references relevant to the current execution step.
 
 For example:
 
 get_account_balance
     ↓
-account_id
+account_reference
 
 while:
 
 create_complaint
     ↓
-customer_id
-related_transaction_id
+customer_reference
+related_transaction_reference
+related_account_reference
 
-may require additional identifiers.
+Resource references must preserve sufficient scope to prevent cross-resource or cross-tenant confusion.
 
 ⸻
 
 11. Context and Account Scope
 
-Account identity must include sufficient scope to prevent accidental cross-account access.
+An account identifier must not be treated as globally sufficient where enterprise identifiers may collide.
 
 Conceptually:
 
@@ -308,59 +330,73 @@ Account {
     account_id
 }
 
-The exact fields depend on the enterprise environment.
+The relevant boundary may also include:
+
+environment
+legal_entity
+business_unit
 
 The important property is:
 
 identifier + authority scope
 
-rather than identifier alone.
+rather than:
+
+identifier alone
 
 ⸻
 
 12. Context and Authorization
 
-Context may contain authorization-relevant information.
-
-For example:
+Context may carry authorization-relevant information:
 
 principal_id
 account_id
 relationship
 permissions
 organization
+tenant
 scope
+delegation
 
-Authorization should then be evaluated according to enterprise Policy.
+But the presence of authorization Context does not itself constitute an authorization decision.
 
-The presence of an account identifier in Context does not imply that the Principal is authorized to access it.
+Authorization remains a distinct evaluation:
 
-Therefore:
+Principal
+    +
+Action
+    +
+Resource
+    +
+Scope
+    +
+Policy
+    ↓
+Authorization Decision
 
-Context contains resource
-        ≠
-Principal authorized for resource
+A Resource appearing in Context does not imply that the Principal is authorized to access it.
 
 ⸻
 
 13. Context and Permissions
 
-Permissions constrain what Noema may do with Context.
+Permissions constrain what Actions may be performed with the available Context.
 
-A Customer may be allowed to:
+For example, a Customer may be permitted to:
 
-read balance
-read transactions
-retrieve statements
-create complaints
+* read balance
+* read transactions
+* retrieve statements
+* create complaints
 
-but not:
+while not being permitted to:
 
-access another customer's account
-modify account ownership
-execute financial transfers
+* access another customer’s account
+* modify account ownership
+* execute financial transfers
 
-Context must not be used to bypass enterprise authorization.
+Context must never be used as a mechanism to bypass enterprise authorization.
 
 ⸻
 
@@ -371,24 +407,24 @@ Business State belongs to the enterprise systems that own the relevant domain.
 For example:
 
 Ledger
-    ↓
+   ↓
 Account Balance
 
-Noema may retrieve this state into Context.
+Noema may retrieve that state into Context.
 
-It does not become the owner of the balance.
+It does not thereby become the owner of the balance.
 
 Therefore:
 
 Enterprise Business State
           ↓
-        Context
+       Context
 
-rather than:
+not:
 
 Context
    ↓
-new Noema Business State
+new canonical Noema Business State
 
 ⸻
 
@@ -400,13 +436,13 @@ Examples:
 
 intent_status
 trust_status
+authorization_status
 action_status
 execution_status
 intervention_status
+outcome_status
 
-This may appear in Context when required for continuation or recovery.
-
-Conceptually:
+Enterprise state and Noema execution state must remain semantically distinct.
 
 Enterprise State
        +
@@ -414,15 +450,15 @@ Noema Execution State
        ↓
 Context
 
-These states must remain semantically distinct.
+Context may reference both without conflating them.
 
 ⸻
 
 16. Context and Temporal State
 
-Context may contain time-related information.
+Temporal interpretation must become explicit before an Action that depends on time is executed.
 
-Examples:
+Context may contain:
 
 request_time
 current_time
@@ -431,16 +467,13 @@ observed_at
 date_from
 date_to
 timezone
+temporal_resolution
 
-Temporal interpretation must be explicit.
+For:
 
-For example:
+“transactions from yesterday”
 
-"transactions from yesterday"
-
-should resolve into an explicit interval before Action execution.
-
-Conceptually:
+Noema should establish an explicit interval:
 
 Natural Language
        ↓
@@ -448,30 +481,33 @@ Temporal Resolution
        ↓
 date_from + date_to + timezone
 
+The resolved interval, rather than the unresolved phrase, should be supplied to the Action.
+
 ⸻
 
 17. Context and Historical State
 
-Previous interactions may be relevant to the current execution.
+Previous interactions may be relevant:
 
-Examples:
+* previous clarification
+* previous Action
+* previous failure
+* previous customer response
+* previous execution attempt
 
-previous clarification
-previous Action
-previous failure
-previous customer response
+Historical Context must remain distinguishable from current enterprise state.
 
-Historical information should only be included when it is relevant to the current Intent.
+Historical information must not silently override current canonical state.
 
-Historical Context must not silently override current canonical enterprise state.
+When historical information conflicts with current authoritative state, authority and Policy determine the resolution.
 
 ⸻
 
-18. Context and Evidence Freshness
+18. Context and Freshness
 
-Information inside Context may have different freshness characteristics.
+Context facts may differ in freshness.
 
-For example:
+Example:
 
 Ledger observation:
 10 seconds old
@@ -480,60 +516,70 @@ Transaction projection:
 Customer-provided information:
 2 hours old
 
-Context should preserve freshness information where it affects Trust or execution.
+Freshness must be represented where it affects Trust, Action eligibility, or verification.
 
-Freshness is distinct from authority.
+Freshness and authority are independent:
 
 fresh ≠ canonical
 canonical ≠ necessarily fresh
+
+A fresh projection does not become canonical merely because it is newer.
 
 ⸻
 
 19. Context and Provenance
 
-Consequential Context should preserve provenance.
+Consequential Context facts should preserve provenance.
 
 Conceptually:
 
 ContextFact {
     value
+    classification
     source
     authority
     observed_at
     effective_at
     version
+    scope
+    freshness
 }
 
-This allows Noema to determine:
+This allows Noema to answer:
 
-Where did this information come from?
-When was it observed?
-Who is authoritative for it?
+* Where did this information come from?
+* What kind of information is it?
+* When was it observed?
+* What Resource does it describe?
+* Who is authoritative for it?
+* Was it current enough for the Action?
 
 ⸻
 
 20. Context Assembly
 
-Context should be assembled from relevant sources.
+Context should be assembled from relevant sources according to the requirements of the resolved Intent, Action, and Policy.
 
 Conceptually:
 
 Intent
-   │
-   ▼
-Required Context
+   ↓
+Context Requirements
    │
    ├── Identity
-   ├── Enterprise Data
-   ├── Permissions
+   ├── Resource
+   ├── Enterprise State
    ├── Evidence
+   ├── Permissions
    ├── Temporal State
+   ├── Policy
    └── Execution State
-            │
-            ▼
-         Context
+          ↓
+       Context
 
-Context assembly should be driven by the requirements of the Action and Policy.
+Context assembly must be deterministic at the boundary where a consequential decision depends on the resulting values.
+
+The model may propose interpretations or candidates; the Context layer must preserve their classification until grounded.
 
 ⸻
 
@@ -549,40 +595,47 @@ maximum available context
 
 This reduces:
 
-privacy exposure
-security risk
-reasoning complexity
-latency
-token usage
-data leakage
+* privacy exposure
+* security risk
+* reasoning complexity
+* latency
+* unnecessary model input
+* data leakage
+* accidental scope expansion
 
-Context minimization is therefore both a security and execution principle.
+Context minimization is therefore both an architectural and security principle.
 
 ⸻
 
 22. Context Expansion
 
-Context may expand during execution when new information becomes necessary.
+Context may expand during execution when a new requirement is established.
 
 Example:
 
 Initial Context
     ↓
-customer_id
-Need account
+principal_id
+    ↓
+account resolution required
     ↓
 account_id
-Need statement
+    ↓
+statement requested
     ↓
 statement period
 
-Context should grow based on actual execution requirements rather than being fully populated upfront.
+Expansion must be requirement-driven.
+
+Noema should not pre-load unrelated enterprise data merely because it may become useful.
 
 ⸻
 
 23. Context Reduction
 
-Information that is no longer required may be removed or excluded from downstream Actions.
+Context should support controlled reduction.
+
+Information no longer required by a downstream Action should not automatically propagate.
 
 For example:
 
@@ -590,50 +643,49 @@ Identity Resolution
     ↓
 customer_id established
 
-An internal identity-resolution artifact may not need to be passed to every subsequent enterprise capability.
+An internal identity-resolution artifact does not need to be passed to every enterprise capability.
 
-Context should therefore support controlled propagation.
+Context propagation must therefore be explicit rather than ambient.
 
 ⸻
 
 24. Context and Data Boundaries
 
-Context must respect enterprise Data Boundaries.
-
-For example:
-
-Customer Account Inquiry
-        ↓
-Account Data
-
-does not automatically authorize access to:
-
-internal fraud models
-employee records
-other customers
-restricted operational data
-
 Context assembly must respect:
 
-tenant boundaries
-organizational boundaries
-legal boundaries
-permission boundaries
-purpose boundaries
+* tenant boundaries
+* organizational boundaries
+* legal boundaries
+* environment boundaries
+* permission boundaries
+* purpose boundaries
+* Resource boundaries
+
+For example, Customer Account Inquiry does not automatically authorize access to:
+
+* internal fraud models
+* employee records
+* other customers
+* restricted operational data
+
+Context must not become a side channel around enterprise data controls.
 
 ⸻
 
 25. Context and Data Minimization
 
+Context requirements depend on the Action.
+
 For:
 
 get_account_balance
 
-the required Context may be:
+the Context may require:
 
 principal_id
-account_id
+account_reference
 authorization_context
+freshness_requirement
 
 For:
 
@@ -650,51 +702,48 @@ create_complaint
 
 it may require:
 
-customer_id
+customer_reference
 complaint_description
 related_resource
+idempotency_key
 
-The Context schema therefore depends on the Action.
+The Action contract determines the required Context.
 
 ⸻
 
 26. Context and Action Selection
 
-Context can determine which Actions are available or appropriate.
+Context supports Action selection but does not independently authorize execution.
 
 Example:
 
 Intent:
 "How much did I spend last month?"
+Context:
+    principal = customer
+    account = resolved
+    period = previous calendar month
 
-Context establishes:
-
-principal = customer
-account = 123
-period = previous calendar month
-
-This supports:
+This supports resolution to:
 
 get_spending_summary
 
-rather than:
+when the resolved Intent requires an aggregate result.
 
-search_transactions
-
-alone, when the resolved Intent requires an aggregate result.
+The Action must still pass Trust, Policy, authorization, and Precondition checks.
 
 ⸻
 
 27. Context and Planning
 
-Planning uses Context to determine Action dependencies.
+Planning uses Context to establish dependencies and determine what information must be acquired next.
 
 Example:
 
 Context:
-customer_id = 123
-account_id = unknown
-period = 2026-08
+    customer_id = 123
+    account_id = unknown
+    period = 2026-08
 
 The plan may require:
 
@@ -704,7 +753,9 @@ search transactions
       ↓
 get spending summary
 
-Context therefore evolves alongside the execution plan.
+Context evolves with the plan.
+
+Planning must not treat missing Context as permission to invent values.
 
 ⸻
 
@@ -717,19 +768,21 @@ Example:
 Precondition:
 Principal authorized for Account
 
-requires:
+may require:
 
 principal_id
 account_id
 authorization information
+tenant
+scope
 
-If required Context is missing:
+If required Context is absent:
 
 Precondition
       ↓
-Cannot evaluate
+cannot evaluate
       ↓
-Execution blocked
+BLOCKED
 
 Missing information is not equivalent to a satisfied Precondition.
 
@@ -737,7 +790,7 @@ Missing information is not equivalent to a satisfied Precondition.
 
 29. Context and Postconditions
 
-Postcondition verification may update Context.
+Postcondition verification may add new Context.
 
 Example:
 
@@ -749,32 +802,37 @@ verification
       ↓
 case.status
 
-The resulting information may become part of the execution Context and Evidence.
+The resulting state may become:
+
+* Context
+* Evidence
+* Outcome input
+
+but the Support System remains authoritative for the case.
 
 ⸻
 
 30. Context and Trust
 
-Trust evaluates the quality and sufficiency of information available in Context.
+Trust evaluates whether the information in Context is sufficient and reliable enough for the requested decision.
 
-For example:
+Context may contain:
 
-Context
-   ├── canonical account
-   ├── authenticated principal
-   ├── authorization evidence
-   └── temporal information
-             │
-             ▼
-           Trust
+canonical account reference
+authenticated principal
+authorization evidence
+temporal resolution
+state observations
+provenance
+freshness
 
 If Context contains unresolved ambiguity:
 
 Trust
    ↓
-Insufficient
+INSUFFICIENT
    ↓
-Clarify / Escalate
+CLARIFY / ESCALATE
 
 Trust must not manufacture certainty from incomplete Context.
 
@@ -782,15 +840,14 @@ Trust must not manufacture certainty from incomplete Context.
 
 31. Context and Model Output
 
-The model may contribute information to Context.
+The model may contribute information to Context, including:
 
-Examples:
-
-interpreted intent
-extracted merchant
-extracted date range
-candidate account
-candidate Action
+* interpreted Intent
+* extracted merchant
+* extracted date range
+* candidate Resource
+* candidate Action
+* candidate classification
 
 These values must retain their semantic classification.
 
@@ -802,28 +859,34 @@ must not silently become:
 
 canonical_account_id
 
-without the appropriate grounding.
+The model proposes.
+
+Grounding establishes.
+
+Policy and Trust determine whether the grounded information may support execution.
+
+The POC specification explicitly requires that free-form model output never reach an execution pathway and that schema validation exist before model output can participate in execution. NOEMA POC Specification_1.pdf
 
 ⸻
 
 32. Context and User Input
 
-User-provided information can be part of Context.
+User-provided information may be included in Context.
 
 Example:
 
-"I made a payment to Netflix yesterday."
+“I made a payment to Netflix yesterday.”
 
-The phrase may produce:
+This may produce:
 
 merchant = Netflix
-date = yesterday
+date_reference = yesterday
 
-These are inputs or interpretations.
+These remain user-provided information or model interpretation until grounded.
 
 They are not automatically canonical enterprise facts.
 
-Where necessary, they must be validated against enterprise data.
+Where the Action depends on canonical state, enterprise data must establish the relevant fact.
 
 ⸻
 
@@ -835,7 +898,7 @@ Example:
 
 spending_last_month = ₦450,000
 
-If calculated from transactions, this should be classified as derived.
+If calculated from transactions, it should be classified as derived.
 
 Noema must preserve the distinction between:
 
@@ -845,11 +908,13 @@ and:
 
 derived spending summary
 
+A derived value must not be represented as an authoritative ledger fact unless the enterprise explicitly defines it as such.
+
 ⸻
 
 34. Context and Multiple Sources
 
-Context may contain information from several systems.
+Context may contain information from several enterprise systems.
 
 Example:
 
@@ -869,7 +934,14 @@ Support System
       ↓
 existing cases
 
-Noema must preserve the authority and provenance of each source.
+Noema must preserve:
+
+* source
+* authority
+* timestamp
+* version
+* scope
+* classification
 
 Agreement between sources does not automatically establish authority.
 
@@ -877,7 +949,7 @@ Agreement between sources does not automatically establish authority.
 
 35. Context Conflicts
 
-Context may contain conflicting information.
+Context may contain conflicting observations.
 
 Example:
 
@@ -886,7 +958,7 @@ account status = ACTIVE
 Projection:
 account status = CLOSED
 
-Noema should not resolve this conflict through model preference.
+Noema must not resolve the conflict through model preference.
 
 Instead:
 
@@ -894,9 +966,15 @@ Conflict
    ↓
 Authority Resolution
    ↓
+State Reconstruction
+   ↓
 Trust / Policy
    ↓
-Continue / Clarify / Escalate / Reject
+Continue / CLARIFY / ESCALATE / REJECT
+
+Where enterprise state is materially contradictory, Context must preserve the contradiction rather than collapsing it into a guessed value.
+
+The POC specifically treats contradictory enterprise state as a first-class condition requiring reconstruction rather than best-guess resolution. NOEMA POC Specification_1.pdf
 
 ⸻
 
@@ -914,9 +992,9 @@ Context incomplete
        ↓
 Trust / Policy
        ↓
-Retry / Clarify / Escalate / Reject
+RETRY / CLARIFY / ESCALATE / REJECT
 
-A missing authoritative fact should not silently be replaced with an uncertain value when Policy prohibits it.
+A missing authoritative fact must not be silently replaced with an uncertain value when Policy requires the authoritative fact.
 
 ⸻
 
@@ -924,34 +1002,38 @@ A missing authoritative fact should not silently be replaced with an uncertain v
 
 The initial Customer Account Inquiry workflow is primarily read-oriented.
 
-Typical Context requirements are therefore:
+Typical Context requirements include:
 
-identity
-resource
-scope
-filters
-time
-authorization
+* identity
+* Resource
+* scope
+* filters
+* time
+* authorization
+* freshness
 
-The workflow does not require unrestricted mutation Context.
+The Phase 1 boundary does not authorize financial movement.
+
+The POC specification makes prohibited monetary actions architecturally impossible and restricts safe execution to bounded, non-monetary capabilities. NOEMA POC Specification_1.pdf
 
 ⸻
 
 38. Context and Complaint Logging
 
-create_complaint is the principal support-state-changing Action in the workflow.
+create_complaint is the principal support-state-changing Action in this workflow.
 
 Its Context may include:
 
-customer_id
+customer_reference
 complaint_description
-related_transaction
-related_account
-previous relevant interaction
+related_transaction_reference
+related_account_reference
+relevant prior interaction
+idempotency_key
 
-Only the relevant information should be passed to the Support System.
+Only relevant information should be passed to the Support System.
 
-Noema should not attach the customer’s entire Context to a complaint automatically.
+Noema must not attach the customer’s entire Context automatically.
 
 ⸻
 
@@ -959,9 +1041,9 @@ Noema should not attach the customer’s entire Context to a complaint automatic
 
 A Customer may issue:
 
-"Show me what I spent last month and open a complaint about the Netflix transaction."
+“Show me what I spent last month and open a complaint about the Netflix transaction.”
 
-This may produce multiple Context requirements:
+This may require:
 
 customer identity
 account
@@ -970,9 +1052,7 @@ transaction
 merchant
 complaint description
 
-The Context must remain partitionable by Action.
-
-Conceptually:
+But Context must remain partitionable by Action:
 
 Compound Intent
        ↓
@@ -997,13 +1077,15 @@ Global Execution Context
         ├── Transaction Context
         └── Support Context
 
-An enterprise integration should receive only the portion required for its Action.
+An enterprise integration receives only the portion required by its Action.
+
+Partitioning is a security property as well as an architectural property.
 
 ⸻
 
 41. Context and External Integrations
 
-Integrations translate Noema Context into enterprise-specific requests.
+Integrations translate typed Noema Context into enterprise-specific requests.
 
 Conceptually:
 
@@ -1015,62 +1097,71 @@ Integration
       ↓
 Enterprise API
 
-The Integration should not be responsible for inventing missing Context.
+The Integration must not invent missing Context.
 
-If required information is absent, execution should stop according to Policy.
+If required information is absent, execution stops according to Policy.
+
+The Action remains the semantic execution unit; the enterprise API remains an implementation interface.
 
 ⸻
 
 42. Context and Execution State
 
-Context may track the current execution position.
+Context may reference the current execution position.
 
 Example:
 
 Action:
 search_transactions
-State:
+Execution State:
 EXECUTING
 
 After execution:
 
 Action:
 search_transactions
-State:
+Execution State:
 SUCCEEDED
 
 Execution state belongs to Noema.
 
 Transaction state belongs to the enterprise.
 
+These must never be conflated.
+
 ⸻
 
 43. Context and Recovery
 
-When execution fails, sufficient Context should be retained to determine whether recovery is possible.
+When execution fails or becomes uncertain, sufficient Context must be retained to determine whether recovery is possible.
 
 Example:
 
 Action:
 retrieve_statement
-Failure:
-timeout
+Execution:
+TIMEOUT
 
 Recovery may require:
 
 action_id
+action_version
 statement_id
 account_id
 request_id
 attempt
+idempotency_key
+execution_state
 
-Context should therefore support controlled recovery without requiring reconstruction from model memory.
+Recovery must not depend on reconstructing critical information from model memory.
+
+A timeout must remain distinguishable from a confirmed failure or success until the relevant enterprise state has been verified. The POC explicitly defines timeout as EXECUTION_OUTCOME_UNKNOWN until verification resolves it. NOEMA POC Specification PDF.pdf
 
 ⸻
 
 44. Context and Idempotency
 
-For Actions that can create state, Context may contain an idempotency key.
+For state-changing Actions, Context may contain the idempotency key.
 
 Example:
 
@@ -1078,49 +1169,60 @@ create_complaint
       ↓
 idempotency_key
 
-The key should be stable across retries of the same logical Action execution.
+The key must be created before the external call and remain stable across retries of the same logical Action execution.
 
-Noema should distinguish:
+Noema must distinguish:
 
-new execution
+new logical execution
 
 from:
 
-retry of existing execution
+retry / replay of existing logical execution
+
+The POC requires idempotency to be established before execution and duplicate/replay handling to produce exactly one effect. NOEMA POC Specification_1.pdf
 
 ⸻
 
 45. Context and Auditability
 
-For consequential execution, the execution record should preserve the relevant Context snapshot or sufficient references to reconstruct it.
+For consequential execution, Noema should preserve a Context snapshot or sufficient references to reconstruct the relevant Context.
 
-This should allow Noema to answer:
+The record should allow Noema to answer:
 
-What did Noema know?
-When did it know it?
-Where did the information come from?
-What Action did it enable?
-What Policy applied?
+* What did Noema know?
+* When did it know it?
+* Where did each relevant fact come from?
+* What was canonical?
+* What was derived?
+* What was merely a model candidate?
+* What Action did the Context enable?
+* Which Policy version applied?
+* What was executed?
+* What was verified?
 
-The objective is not to retain every piece of available data.
+The objective is not indefinite retention of every available datum.
 
-It is to retain enough information to reconstruct the decision and execution path.
+The objective is deterministic reconstruction of the relevant decision and execution path.
+
+The POC requires consequential decisions to be reconstructable from the audit store and treats causal provenance as a core proof requirement. NOEMA POC Specification_1.pdf
 
 ⸻
 
 46. Context Lifecycle
 
-Context evolves through the execution lifecycle.
+Context evolves through the execution lifecycle:
 
 REQUEST
    ↓
 INITIAL CONTEXT
    ↓
-IDENTITY RESOLUTION
+IDENTITY / RESOURCE RESOLUTION
    ↓
 ENRICHED CONTEXT
    ↓
-TRUST
+STATE RECONSTRUCTION
+   ↓
+TRUST + POLICY
    ↓
 ACTION
    ↓
@@ -1128,59 +1230,62 @@ EXECUTION EVIDENCE
    ↓
 UPDATED CONTEXT
    ↓
-POSTCONDITION
+POSTCONDITION / VERIFICATION
    ↓
-FINAL CONTEXT
+OUTCOME
 
 Context is therefore dynamic.
 
-It is not necessarily a single immutable object created at request time.
+It is not necessarily one immutable object created at request time.
 
 ⸻
 
 47. Context Snapshot
 
-At important execution boundaries, Noema may create a Context Snapshot.
+At important execution boundaries, Noema may create Context Snapshots.
 
 Examples:
 
-pre-trust snapshot
-pre-action snapshot
-post-action snapshot
-postcondition snapshot
+* pre-resolution snapshot
+* pre-trust snapshot
+* pre-action snapshot
+* post-action snapshot
+* postcondition snapshot
+* recovery snapshot
 
 Snapshots support:
 
-audit
-debugging
-recovery
-reconstruction
+* audit
+* debugging
+* recovery
+* incident analysis
+* causal reconstruction
 
-The exact persistence strategy is an implementation concern.
+The persistence strategy is an implementation concern; the semantic requirement is reconstructability.
 
 ⸻
 
-48. Context Freshness
+48. Context Freshness Requirements
 
-Context facts may expire.
+Freshness requirements should be explicit where the validity of a Context fact changes materially over time.
 
 For example:
 
 balance observed at 09:00
 
-may no longer satisfy a requirement at:
+may no longer satisfy an Action at:
 
 09:30
 
-if the Action requires current state.
+if the Action requires current authoritative state.
 
-Freshness requirements therefore belong to the relevant Action and Policy.
+Freshness requirements belong to the Action and Policy, not to a generic assumption that all Context is equally current.
 
 ⸻
 
 49. Context Expiration
 
-Context should support explicit expiration semantics where required.
+Context should support expiration semantics where required.
 
 Conceptually:
 
@@ -1190,9 +1295,11 @@ ContextFact {
     expires_at
 }
 
-Not every Context fact requires an expiration time.
+Not every fact requires expiration.
 
-Only facts whose validity changes materially over time need explicit freshness handling.
+Only facts whose validity materially changes with time require explicit expiration or freshness handling.
+
+Expired Context must not silently satisfy a freshness-sensitive Precondition.
 
 ⸻
 
@@ -1200,15 +1307,17 @@ Only facts whose validity changes materially over time need explicit freshness h
 
 Context must preserve environment boundaries.
 
-For example:
+Example:
 
 environment = production
 
-must not be silently mixed with:
+must remain distinct from:
 
 environment = staging
 
-A production Action must never be satisfied using staging Context merely because the values appear plausible.
+Production execution must never be satisfied using staging Context merely because the values appear plausible.
+
+Environment is part of the execution boundary.
 
 ⸻
 
@@ -1228,26 +1337,26 @@ account_id = 123
 
 The identifier alone is insufficient.
 
-Tenant identity is part of the execution boundary.
+Tenant identity is part of the Resource and authorization boundary.
 
 ⸻
 
 52. Context and Organizational Boundaries
 
-Where an enterprise contains multiple organizational units, Context should preserve relevant organizational scope.
+Where the enterprise contains multiple organizational scopes, Context should preserve relevant:
 
-For example:
+* organization
+* business unit
+* legal entity
+* environment
 
-organization
-business_unit
-legal_entity
+These may affect:
 
-may affect:
-
-resource visibility
-authorization
-policy
-available Actions
+* Resource visibility
+* authorization
+* Policy
+* available Actions
+* authority
 
 Context must not collapse these boundaries.
 
@@ -1259,23 +1368,37 @@ Conceptually:
 
 Context {
     execution_id
+    actor
     principal
     tenant
     organization
+    environment
     intent
     resources
     canonical_data
+    observations
     evidence
     derived_data
+    user_input
+    model_candidates
     permissions
-    temporal_state
     policy
+    policy_version
+    temporal_state
+    freshness_requirements
     trust_state
+    authorization_state
     execution_state
+    action_state
+    outcome_state
     provenance
+    idempotency
+    recovery
 }
 
 This is a semantic model rather than a requirement for a literal database schema.
+
+The important property is preservation of semantic classification and provenance.
 
 ⸻
 
@@ -1283,18 +1406,25 @@ This is a semantic model rather than a requirement for a literal database schema
 
 Context
    │
-   ├── contains → Intent
-   ├── contains → Principal
-   ├── contains → Resource References
+   ├── references → Intent
+   ├── references → Actor / Principal
+   ├── references → Resources
    ├── contains → Canonical Data
+   ├── contains → Observations
    ├── contains → Evidence
    ├── contains → Derived Data
+   ├── contains → User Input
+   ├── contains → Model Candidates
    ├── contains → Permissions
+   ├── contains → Policy + Policy Version
    ├── contains → Temporal State
    ├── contains → Trust State
+   ├── contains → Authorization State
    └── contains → Execution State
 
-These relationships do not imply equal authority among the contained information.
+These relationships do not imply equal authority.
+
+A Context field must retain its classification independently of where it is stored.
 
 ⸻
 
@@ -1302,7 +1432,7 @@ These relationships do not imply equal authority among the contained information
 
 Invariant 1
 
-Context must be scoped to an execution journey.
+Context must be scoped to a specific execution journey.
 
 Invariant 2
 
@@ -1318,7 +1448,7 @@ Evidence retains its provenance independently of Context.
 
 Invariant 5
 
-Model-generated information must retain its classification as interpretation or hypothesis until grounded.
+Model-generated information must retain its classification as interpretation or hypothesis until appropriately grounded.
 
 Invariant 6
 
@@ -1326,11 +1456,11 @@ User-provided information must not automatically become canonical enterprise dat
 
 Invariant 7
 
-Context must contain the minimum information necessary for the relevant execution.
+Context must contain the minimum information necessary for the relevant execution step.
 
 Invariant 8
 
-Context must respect enterprise data, tenant, organizational, legal, and permission boundaries.
+Context must respect enterprise data, tenant, organizational, legal, environment, and permission boundaries.
 
 Invariant 9
 
@@ -1342,11 +1472,11 @@ Missing required Context must not be treated as a satisfied Precondition.
 
 Invariant 11
 
-Ambiguous Context must not be resolved through probabilistic guessing when Policy requires deterministic resolution.
+Ambiguous Context must not be resolved through probabilistic guessing where Policy requires deterministic resolution.
 
 Invariant 12
 
-Context freshness must be considered when freshness affects the Action.
+Context freshness must be considered whenever freshness affects the Action or Trust decision.
 
 Invariant 13
 
@@ -1400,42 +1530,106 @@ Invariant 25
 
 Context is an execution resource, not a substitute for enterprise authority.
 
+Invariant 26
+
+A model candidate must never silently become a canonical Resource, enterprise fact, authorization result, or executable Action input.
+
+Invariant 27
+
+A Context value used for a consequential decision must retain enough classification and provenance to determine whether it is canonical, observed, derived, user-provided, historical, or model-generated.
+
+Invariant 28
+
+Contradictory enterprise observations must remain representable as contradictory until resolved through authority, state reconstruction, Trust, and Policy.
+
+Invariant 29
+
+A timeout or unavailable source must not cause Context to manufacture a successful or failed enterprise state.
+
+Invariant 30
+
+Policy-sensitive Context must preserve the governing Policy version used for the decision.
+
+Invariant 31
+
+Context must not cause an Action to execute merely because the required fields can be syntactically populated.
+
+Invariant 32
+
+Context must preserve the distinction between a Resource candidate and a resolved Resource.
+
+Invariant 33
+
+Context must preserve the distinction between execution Outcome and enterprise Business State.
+
+Invariant 34
+
+Context required for recovery must be sufficient to distinguish a new logical execution from retry, replay, or verification of an existing execution.
+
+Invariant 35
+
+Context must never be used as an implicit authorization bypass or confused-deputy channel.
+
 ⸻
 
 56. Final Definition
 
-Context is the minimum sufficient, structured information available to Noema during an execution journey.
+Context is the minimum sufficient, typed, execution-scoped information envelope through which Noema carries the information required to understand, resolve, authorize, plan, execute, verify, recover, and explain a specific Intent while preserving the authority, provenance, freshness, scope, and semantic classification of every consequential fact.
 
 For the Customer Account Inquiry workflow:
 
-PRINCIPAL
-    │
-    ▼
-INTENT
-    │
-    ▼
-CONTEXT
-    │
-    ├── Identity
-    ├── Resource
-    ├── Canonical Data
-    ├── Evidence
-    ├── Permissions
-    ├── Temporal State
-    └── Execution State
-    │
-    ▼
-TRUST + POLICY
-    │
-    ▼
-ACTION
-    │
-    ▼
-ENTERPRISE SYSTEM
-    │
-    ▼
-OUTCOME
+ACTOR / PRINCIPAL
+        │
+        ▼
+      INTENT
+        │
+        ▼
+ CONTEXT ASSEMBLY
+        │
+        ├── Identity
+        ├── Resource References
+        ├── Canonical Data
+        ├── Observations
+        ├── Evidence
+        ├── Derived Data
+        ├── User Input
+        ├── Model Candidates
+        ├── Permissions
+        ├── Policy + Version
+        ├── Temporal State
+        ├── Freshness
+        └── Execution State
+        │
+        ▼
+ STATE RECONSTRUCTION
+        │
+        ▼
+   TRUST + POLICY
+        │
+        ▼
+      ACTION
+        │
+        ▼
+ ENTERPRISE CAPABILITY
+        │
+        ▼
+ ENTERPRISE STATE
+        │
+        ▼
+ EXECUTION EVIDENCE
+        │
+        ▼
+   VERIFICATION
+        │
+        ▼
+      OUTCOME
 
 And the architectural rule is:
 
-Noema should know enough to execute safely, but never assume that everything it knows is true, authoritative, or necessary.
+Noema should know enough to execute safely, but Context must never cause Noema to confuse what it knows with what is authoritative, what is current, what is resolved, what is permitted, or what the model merely proposed.
+
+The deeper rule is:
+
+Context carries information; authority remains with the system, evidence, policy, or state that establishes it.
+
+This update also aligns the Context contract with the POC’s explicit requirements for deterministic execution, typed boundaries, state reconstruction, policy-versioned decisions, unknown execution outcomes, idempotency, and causal auditability. NOEMA POC Specification_1.pdf

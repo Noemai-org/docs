@@ -1,7 +1,7 @@
 Trust
 
 Status: Reference Workflow
-Version: 0.1
+Version: 0.2
 Domain: Reference Workflows
 Canonical Path: reference-workflows/customer-account-inquiry/trust.md
 
@@ -9,48 +9,72 @@ Canonical Path: reference-workflows/customer-account-inquiry/trust.md
 
 1. Definition
 
-Trust is the deterministic evaluation of whether the available Intent, Context, Evidence, enterprise state, identity, permissions, and Policy are sufficient to allow an Action to proceed.
+Trust is Noema’s deterministic decision boundary for determining whether an Intent, together with its resolved Principal, Target, Context, Evidence, enterprise state, permissions, Policy, and Action-specific requirements, is sufficiently grounded and permitted to proceed to execution.
 
 Trust answers:
 
-“Do we have enough justified grounds to allow this Action to execute?”
+“Do we have sufficient justified grounds, authority, and required conditions to allow this specific Action to execute now?”
 
-For the Customer Account Inquiry workflow, Trust is the gate between understanding what the Customer wants and allowing Noema to act on that understanding.
+The relationship is:
 
+Customer Request
+       ↓
 Intent
-   ↓
-Context
-   ↓
+       ↓
+Context / Resolution
+       ↓
 Evidence
-   ↓
+       ↓
 Trust
-   ↓
+       ↓
 Action
-   ↓
+       ↓
 Execution
+       ↓
+Outcome
 
 The model may be probabilistic.
 
 Trust must not be.
 
+Trust is therefore distinct from:
+
+* model confidence
+* Intent
+* Context
+* Evidence
+* Authorization
+* Policy
+* Action
+* Execution State
+* Outcome
+* Failure
+
+Trust determines whether the Action is permitted to proceed. It does not establish what ultimately happened.
+
 ⸻
 
 2. Purpose
 
-The purpose of Trust is to prevent Noema from turning uncertain interpretation into consequential execution.
+The purpose of Trust is to prevent uncertain interpretation, insufficient evidence, stale state, or missing authority from becoming unsupported or unauthorized execution.
 
 Trust evaluates whether:
 
-the Principal is sufficiently established
-the Target is sufficiently resolved
-the Intent is sufficiently understood
-required Context is available
-required enterprise data is authoritative enough
-required permissions exist
-Policy requirements are satisfied
-Action-specific conditions are satisfied
+* the Principal is sufficiently established
+* the Target is sufficiently resolved
+* the Intent is sufficiently understood
+* required Context is available
+* required enterprise state is sufficiently authoritative and fresh
+* required permissions exist
+* Organizational Boundaries are satisfied
+* Data Boundaries are satisfied
+* Policy requirements are satisfied
+* Action-specific Preconditions are satisfied
+* required evidence is sufficient
+* any required confirmation is present
+* the execution conditions remain valid at the point of execution
 
-The result is a deterministic decision.
+The Trust decision is deterministic:
 
 EXECUTE
 CLARIFY
@@ -59,7 +83,9 @@ REJECT
 
 There is no:
 
-probably execute
+PROBABLY_EXECUTE
+HIGH_CONFIDENCE_EXECUTE
+MODEL_APPROVED
 
 state.
 
@@ -69,54 +95,77 @@ state.
 
 Trust is not model confidence.
 
-Model Confidence
-        ↓
-     Evidence
-        ↓
-      Trust
+Model
+  ↓
+Candidate Interpretation
+  ↓
+Intent / Context
+  ↓
+Evidence + Enterprise State
+  ↓
+Trust Evaluation
+  ↓
+Decision
 
-A model may report:
+A model may produce:
 
-intent confidence = 98%
+intent_confidence = 0.98
 
 but Noema may still determine:
 
 CLARIFY
 
-if the Customer has multiple eligible accounts.
+if multiple eligible accounts remain unresolved.
 
-Conversely, a model may have moderate confidence in the linguistic interpretation while deterministic enterprise context makes the intended operation unambiguous.
+Conversely, a linguistic interpretation with moderate model confidence may become sufficiently grounded through deterministic Context and enterprise Evidence.
 
-Trust therefore evaluates the complete execution situation rather than a model score alone.
+Therefore:
+
+Trust ≠ Model Confidence
+
+Model output may contribute to the inputs evaluated by Trust.
+
+It cannot independently authorize execution.
 
 ⸻
 
 4. Trust Decision
 
-The Trust decision is an explicit state:
+The Trust decision is an explicit, machine-readable state.
+
+Conceptually:
 
 TrustDecision {
+    trust_decision_id
+    execution_id
+    action_id
     decision
     reasons
+    evaluated_inputs
     evidence
     policy
     evaluated_at
+    expires_at
+    version
+    provenance
 }
 
-Possible decisions:
+Possible decisions are:
 
 EXECUTE
 CLARIFY
 ESCALATE
 REJECT
 
-The decision must be reproducible from the relevant inputs and Policy.
+The decision must be reproducible from the relevant inputs, Policy, enterprise state, and Trust evaluation version.
+
+Where a Trust decision is later re-evaluated, the original decision must remain auditable.
 
 ⸻
 
 5. EXECUTE
 
-EXECUTE means all required Trust conditions have been satisfied.
+EXECUTE means all required Trust conditions for the specific Action have been satisfied.
 
 Example:
 
@@ -128,14 +177,31 @@ Target:
 single eligible account
 Permission:
 allowed
-Enterprise data:
-available
+Enterprise State:
+available and sufficiently authoritative
 Policy:
+satisfied
+Preconditions:
 satisfied
 Trust:
 EXECUTE
 
-No additional human confirmation is required unless Policy explicitly requires it.
+The Action may proceed.
+
+EXECUTE does not mean the Action has succeeded.
+
+The distinction is:
+
+Trust:
+EXECUTE
+Action:
+permitted to run
+Execution:
+subsequently occurs
+Outcome:
+determines what actually resulted
+
+Noema must not represent EXECUTE as an Outcome.
 
 ⸻
 
@@ -150,35 +216,39 @@ Customer:
 Accounts:
 Savings
 Current
-
-If no deterministic default exists:
-
+Applicable default:
+none
 Trust:
 CLARIFY
 
-The ambiguity becomes part of the execution state.
+The ambiguity becomes an explicit workflow state.
 
-Noema must not select an account merely because the model considers one more likely.
+Noema must not resolve material ambiguity merely because one interpretation appears statistically more likely.
+
+Clarification should request the minimum information necessary to resolve the blocking condition.
 
 ⸻
 
 7. ESCALATE
 
-ESCALATE means the request cannot safely proceed through the normal automated path and requires a designated human or higher-authority process.
+ESCALATE means the request cannot safely proceed through the normal automated Trust path and requires a designated human or higher-authority process.
 
-Examples:
+Examples include:
 
-enterprise policy requires human review
-identity cannot be established automatically
-conflicting enterprise authority
-exceptional customer circumstance
+* enterprise identity sources conflict and cannot be reconciled automatically
+* Policy requires human review
+* an exceptional customer condition requires human handling
+* enterprise authority is conflicting or indeterminate
+* automated verification is insufficient for the Action’s risk level
 
-Escalation is different from clarification.
+Escalation is distinct from clarification.
 
 CLARIFY
-→ Customer can provide the missing information
+→ the Customer can provide the missing information
 ESCALATE
-→ Automated execution is insufficient
+→ automated execution is insufficient and a designated higher-authority path is required
+
+Escalation must preserve the evidence and Policy conditions that caused it.
 
 ⸻
 
@@ -188,15 +258,30 @@ REJECT means execution is not permitted.
 
 Examples:
 
-Principal not authorized
-Action not permitted
-resource outside organizational boundary
-request violates Policy
-unsupported capability
+NOT_AUTHORIZED
+OUT_OF_SCOPE
+UNSUPPORTED_ACTION
+POLICY_REJECTED
+ORGANIZATIONAL_BOUNDARY_VIOLATION
+DATA_BOUNDARY_VIOLATION
 
-Rejection should not be represented as a model failure.
+A rejection is a Trust or Policy decision.
 
-It is a deterministic Policy or Trust decision.
+It is not an Execution Failure because the Action was not authorized to execute.
+
+Trust:
+REJECT
+       ↓
+Action:
+not executed
+
+This must remain distinct from:
+
+Trust:
+EXECUTE
+       ↓
+Execution:
+FAILED
 
 ⸻
 
@@ -204,40 +289,59 @@ It is a deterministic Policy or Trust decision.
 
 Trust may evaluate:
 
-Intent
-Context
-Evidence
-Identity
-Permissions
-Canonical Data
-Policy
-Action
-Preconditions
-Risk
-Temporal constraints
-Organizational boundaries
-Data boundaries
+* Intent
+* Principal
+* Target
+* Context
+* Evidence
+* Identity
+* Permissions
+* Canonical Data
+* Policy
+* Action
+* Preconditions
+* Risk
+* freshness
+* temporal constraints
+* Organizational Boundaries
+* Data Boundaries
+* required confirmation
+* relevant execution state
+* Trust version
 
 Conceptually:
 
-                    Intent
-                      │
-Context ──────────────┤
-Evidence ─────────────┤
-Identity ─────────────┤
-Permissions ──────────┤
-Canonical Data ───────┤
-Policy ───────────────┤
-Preconditions ────────┤
-                      ▼
-                    TRUST
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-       EXECUTE     CLARIFY     ESCALATE
-                                  │
-                                  ▼
-                               REJECT
+                         Intent
+                           │
+Principal ─────────────────┤
+Target ────────────────────┤
+Context ───────────────────┤
+Evidence ──────────────────┤
+Identity ──────────────────┤
+Permissions ───────────────┤
+Canonical Data ────────────┤
+Policy ────────────────────┤
+Preconditions ─────────────┤
+Risk ──────────────────────┤
+Freshness ─────────────────┤
+Boundaries ────────────────┤
+                           ▼
+                         TRUST
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+           EXECUTE      CLARIFY      ESCALATE
+              │                         │
+              │                         ▼
+              │                       HUMAN /
+              │                    HIGHER-AUTHORITY
+              │
+              └─────────────────────────────┐
+                                            ▼
+                                          ACTION
+                    REJECT
+                       ↓
+                  NO EXECUTION
 
 ⸻
 
@@ -245,17 +349,17 @@ Preconditions ────────┤
 
 Trust does not create Intent.
 
-Intent is established first.
+Intent is established through the Intent and Intent Resolution stages.
 
 Customer Request
-      ↓
+       ↓
 Intent
-      ↓
+       ↓
 Trust Evaluation
 
-Trust determines whether that Intent is sufficiently grounded to proceed.
+Trust determines whether the resolved Intent is sufficiently grounded to permit the relevant Action.
 
-If the Intent itself remains materially ambiguous:
+If the Intent itself remains materially ambiguous, Trust must not silently manufacture certainty.
 
 Intent
    ↓
@@ -265,29 +369,46 @@ CLARIFY
 
 ⸻
 
-11. Trust and Identity
+11. Trust and Principal
 
-Identity is fundamental to account inquiry.
+The Principal is the entity on whose behalf the Action is requested.
 
-The Customer may say:
+For Customer Account Inquiry, the Customer generally acts as the Principal.
+
+The request:
 
 "Show me my balance."
 
-Noema must establish who:
+does not independently establish which enterprise identity or account is intended.
 
-"my"
-
-refers to.
-
-The authenticated Principal may provide an initial identity anchor, but enterprise identity must be resolved according to the applicable integration and Policy.
-
-Trust should not rely solely on linguistic assumptions.
+Trust must rely on established identity and authorization evidence rather than linguistic ownership assumptions.
 
 ⸻
 
-12. Trust and Resource Resolution
+12. Trust and Identity
 
-The Intent may identify a Resource indirectly.
+Identity is fundamental to Customer-specific enterprise access.
+
+The authenticated session may provide an initial identity anchor.
+
+Enterprise identity resolution must establish the relevant Principal according to the applicable integration and Policy.
+
+Trust should consider:
+
+* identity source
+* authentication state
+* identity binding
+* freshness
+* integrity
+* conflicting identity evidence
+
+Trust must not treat a Customer assertion alone as sufficient when stronger enterprise identity evidence is required.
+
+⸻
+
+13. Trust and Resource Resolution
+
+An Intent may identify a Resource indirectly.
 
 Example:
 
@@ -298,129 +419,159 @@ If the Principal has one eligible account:
 Target:
 account_123
 
-may be deterministically resolved.
+may be deterministically established.
 
-If there are multiple accounts and no applicable default:
+If multiple eligible accounts exist and no applicable deterministic default exists:
 
 Target:
 AMBIGUOUS
-
-Therefore:
-
 Trust:
 CLARIFY
 
+Known Resource identifiers do not themselves establish authorization.
+
 ⸻
 
-13. Trust and Canonical Data
+14. Trust and Canonical Data
 
-Trust should prefer authoritative enterprise data when the decision depends on enterprise state.
+When Trust depends on enterprise Business State, Noema should use the authoritative enterprise source required by the applicable Policy and Action Contract.
 
 Example:
 
-Intent:
-get_account_balance
 Enterprise Ledger:
 account_123 → balance = ₦500,000
 
-The Ledger is authoritative for the balance.
+The Ledger is authoritative for the enterprise balance.
 
-A model-generated value:
+A model-generated statement:
 
-₦500,000
+balance = ₦500,000
 
-does not independently establish Trust.
+does not independently establish the enterprise state or Trust.
+
+Noema must preserve the distinction between:
+
+Canonical Enterprise State
+
+and:
+
+Model Interpretation / Derived Context
 
 ⸻
 
-14. Trust and Context
+15. Trust and Context
 
-Context provides the information needed to evaluate an Intent.
+Context provides the bounded information required to evaluate the current Action.
 
-For example:
+Example:
 
 Context:
 Principal = Customer 123
 Account = Account 456
-Account status = ACTIVE
+Account Status = ACTIVE
+Permission = read_account
 
-Trust evaluates whether that Context is sufficient.
+Trust evaluates whether that Context is sufficient and appropriately grounded.
 
-If required Context is missing:
+Missing Context may result in:
 
-Trust
-   ↓
 CLARIFY
 
 or:
 
-Trust
-   ↓
 ESCALATE
 
-depending on Policy.
+or:
+
+REJECT
+
+depending on the applicable Policy and reason.
+
+Context must not contain more information than required by the current execution.
 
 ⸻
 
-15. Trust and Evidence
+16. Trust and Evidence
 
 Evidence supports Trust decisions.
 
-Examples:
+Examples include:
 
-authenticated session
-enterprise identity record
-account ownership relationship
-permission record
-enterprise API response
-Policy evaluation
+* authenticated session evidence
+* enterprise identity record
+* account ownership relationship
+* permission record
+* enterprise API response
+* authoritative resource record
+* Policy evaluation
+* verification response
+* enterprise event
 
-Evidence should have provenance.
+Evidence should preserve provenance.
 
-Trust should not depend on unsupported claims.
+Conceptually:
+
+Evidence {
+    evidence_id
+    source
+    authority
+    observed_at
+    effective_at
+    version
+    integrity
+    scope
+}
+
+Unsupported assertions must not be treated as equivalent to verified enterprise evidence.
 
 ⸻
 
-16. Evidence Strength
+17. Evidence Strength
 
-Evidence can have different authority.
+Evidence may differ in authority.
 
 For example:
 
-Enterprise Identity System
+Authoritative Enterprise System
+        >
+Trusted Enterprise Projection
         >
 Customer-provided assertion
         >
 Model inference
 
-This does not mean Customer-provided information is useless.
+This is not an absolute universal ordering.
 
-It means evidence must be evaluated according to:
+The required evidence strength depends on:
 
-source
-authority
-freshness
-relevance
-specificity
-integrity
+* Action
+* Policy
+* risk
+* data authority
+* freshness
+* specificity
+* integrity
+* organizational boundary
 
-The required evidence strength depends on the Action and Policy.
+The relevant question is:
+
+Is this evidence sufficient for this specific Trust decision?
 
 ⸻
 
-17. Trust and Model Output
+18. Trust and Model Output
 
-The model may produce candidate interpretations:
+The model may produce candidate:
 
-intent_type
-target
-parameters
-entities
-temporal expressions
+* Intent types
+* Targets
+* Parameters
+* Entities
+* temporal expressions
+* transaction references
+* classifications
 
-These are inputs to Trust.
-
-They are not Trust decisions.
+These become inputs to deterministic grounding and Trust evaluation.
 
 LLM
  ↓
@@ -428,15 +579,19 @@ Candidate Interpretation
  ↓
 Grounding
  ↓
+Context
+ ↓
+Evidence
+ ↓
 Trust
 
 The model cannot bypass deterministic validation.
 
 ⸻
 
-18. Trust and Model Confidence
+19. Trust and Model Confidence
 
-Model confidence can be recorded as supporting metadata.
+Model confidence may be retained as metadata.
 
 Example:
 
@@ -444,31 +599,40 @@ model_confidence = 0.97
 
 But:
 
-0.97
+0.97 ≠ EXECUTE
 
-does not mean:
-
-EXECUTE
-
-The Trust Engine must evaluate the complete set of constraints.
+Trust evaluates the complete execution condition.
 
 Therefore:
 
-Trust ≠ Confidence Score
+Model Confidence
+        ≠
+Trust Decision
+
+A highly confident model interpretation may still produce:
+
+CLARIFY
+
+or:
+
+REJECT
+
+when deterministic conditions require it.
 
 ⸻
 
-19. Trust and Policy
+20. Trust and Policy
 
-Policy defines the rules under which an Intent and Action may proceed.
+Policy defines the normative requirements under which an Action may proceed.
 
 Example:
 
 Policy:
 Customer may retrieve account information
-when authenticated and authorized.
+when authenticated, authorized,
+and within the applicable resource boundary.
 
-Trust evaluates whether those requirements are satisfied.
+Trust evaluates whether those requirements are satisfied for the current execution.
 
 Policy
    ↓
@@ -480,13 +644,13 @@ Decision
 
 Policy is normative.
 
-Trust evaluates the current situation against it.
+Trust is the deterministic evaluation of the current situation against those requirements.
 
 ⸻
 
-20. Trust and Permissions
+21. Trust and Permissions
 
-Permissions determine whether the Principal is authorized to perform or access the requested capability.
+Permissions determine whether the Principal is authorized to access the requested capability or Resource.
 
 Example:
 
@@ -497,45 +661,49 @@ read_account
 Target:
 Account 456
 
-If permission is absent:
+If the required permission is absent:
 
 REJECT
 
-Trust must not compensate for missing authorization by relying on model confidence or Customer assertions.
+Trust must not compensate for missing authorization through:
+
+* model confidence
+* Customer assertions
+* statistical likelihood
+* prior successful access to another Resource
 
 ⸻
 
-21. Trust and Organizational Boundaries
+22. Trust and Organizational Boundaries
 
-An authenticated Principal may still be outside the permitted organizational boundary.
+Authorization must respect organizational and tenancy boundaries.
 
 Example:
 
 Customer A
-      ↓
+   ↓
 Tenant A
-      ↓
+   ↓
 Account A
 
-Attempting to access:
+must not imply authorization for:
 
 Tenant B
 
-must not be allowed merely because the Resource identifier is known.
+Trust may therefore evaluate:
 
-Trust must evaluate:
+* tenant
+* organization
+* legal entity
+* environment
+* Resource ownership
+* account relationship
 
-tenant
-organization
-legal entity
-environment
-resource ownership
-
-where applicable.
+A known Resource identifier is not sufficient to cross an organizational boundary.
 
 ⸻
 
-22. Trust and Data Boundaries
+23. Trust and Data Boundaries
 
 Trust does not grant unrestricted access to Context.
 
@@ -545,21 +713,25 @@ account_id
 account_status
 balance
 
-but not:
+without requiring:
 
-full customer profile
-unrelated transaction history
-private metadata
+full_customer_profile
+unrelated_transaction_history
+private_metadata
 
 Trust must operate within the applicable Data Boundary.
 
 Trust
    ↓
 Minimum Required Data
+   ↓
+Action
+
+Additional data must not be acquired merely because it might improve model confidence.
 
 ⸻
 
-23. Trust and Preconditions
+24. Trust and Preconditions
 
 Preconditions establish facts that must be true before an Action executes.
 
@@ -570,7 +742,7 @@ retrieve_statement
 Precondition:
 account is active
 
-Trust evaluates whether the required preconditions can be established.
+Trust evaluates whether the required precondition can be established.
 
 If:
 
@@ -581,127 +753,148 @@ is verified:
 Precondition:
 SATISFIED
 
-If the state cannot be established:
+If it cannot be established, the resulting Trust decision depends on Policy:
 
-Trust:
-CLARIFY / ESCALATE / REJECT
+CLARIFY
+ESCALATE
+REJECT
 
-according to Policy.
+Trust must not assume a missing precondition is satisfied.
 
 ⸻
 
-24. Trust and Postconditions
+25. Trust and Postconditions
 
-Postconditions primarily verify execution results rather than authorize execution.
+Postconditions primarily establish whether the Action produced the expected result.
 
 Therefore:
 
 Preconditions
-   ↓
+      ↓
 Trust
-   ↓
+      ↓
 Action
-   ↓
+      ↓
 Execution
-   ↓
+      ↓
 Postconditions
-   ↓
+      ↓
 Outcome
 
-Trust should not claim successful execution before the Action has occurred and its result has been established.
+Postconditions must not be used to authorize an Action after the fact.
+
+Trust answers:
+
+“May this Action execute?”
+
+Outcome answers:
+
+“What resulted from the execution?”
+
+These are separate semantic layers.
 
 ⸻
 
-25. Trust and Read Operations
+26. Trust and Read Operations
 
-The Customer Account Inquiry workflow is primarily composed of read and support operations.
+The Customer Account Inquiry workflow contains primarily read operations.
 
-For a simple read:
+For:
 
 "What's my balance?"
 
 Trust may evaluate:
 
-identity
-account ownership
-permission
-resource resolution
-data availability
-policy
+* Principal
+* identity
+* account ownership
+* Resource resolution
+* permission
+* enterprise data authority
+* freshness
+* Policy
+* Preconditions
 
-If these are satisfied:
+If satisfied:
 
 EXECUTE
 
-The low execution risk does not eliminate the need for deterministic authorization.
+Read-only does not mean permission-free.
 
 ⸻
 
-26. Trust and Complaint Logging
+27. Trust and Complaint Logging
 
-Complaint logging is a state-changing operation.
+Complaint logging creates support-system state.
 
-Therefore it may require additional Trust conditions compared with a simple read.
-
-Example:
+Therefore:
 
 create_complaint
 
-may require:
+may require stronger or additional Trust conditions than a simple read.
 
-authenticated Principal
-resolved transaction
-permitted complaint channel
-required complaint information
-Policy compliance
+Possible requirements include:
 
-The Action should execute only when the applicable Trust requirements are satisfied.
+* authenticated Principal
+* resolved transaction
+* resolved account
+* permitted complaint channel
+* required complaint information
+* applicable Policy
+* required confirmation
+* support-system availability where relevant
+
+The Action should execute only when its Action-specific Trust requirements are satisfied.
 
 ⸻
 
-27. Trust and Compound Intent
+28. Trust and Compound Intent
 
 A Compound Intent may contain Actions with different Trust requirements.
 
 Example:
 
-Intent:
-"Show my balance and log a complaint about this transaction."
+"Show my balance and report this transaction."
 
 Conceptually:
 
 get_account_balance
-      ↓
+        ↓
 Trust A
 create_complaint
-      ↓
+        ↓
 Trust B
 
-Trust should be evaluated at the Action boundary where requirements differ.
+Trust must be evaluated at the Action boundary where requirements differ.
 
-One trusted component must not automatically make another trusted.
+Trust for one Action must not automatically authorize another.
 
 ⸻
 
-28. Trust Isolation
+29. Trust Isolation
 
-Trust should be scoped to the specific execution decision.
+Trust is scoped to the specific Action and execution context.
 
 Trust Decision A
-      ↓
+       ↓
 Action A
 
 does not automatically authorize:
 
 Action B
 
-even when both originate from the same Customer message.
+even when:
 
-This prevents authorization from leaking across Action boundaries.
+* both originated from the same Customer message
+* both involve the same Principal
+* both involve the same Account
+* Action A was successfully authorized
+
+This prevents authorization and evidence from leaking across Action boundaries.
 
 ⸻
 
-29. Trust and Temporal Validity
+30. Trust and Temporal Validity
 
 Trust decisions may become stale.
 
@@ -711,22 +904,24 @@ Example:
 Account = ACTIVE
 10:05
 Account = CLOSED
+10:10
+previous Trust decision still exists
 
-A Trust decision made at 10:00 should not automatically authorize execution at 10:10 if the Action requires current state.
+A Trust decision made at 10:00 must not automatically authorize an Action at 10:10 if the Action requires current account state.
 
-Therefore Trust may require:
+Trust may therefore require:
 
-freshness constraints
-version checks
-revalidation
-
-before execution.
+* freshness constraints
+* version checks
+* expiration
+* revalidation
+* current enterprise state
 
 ⸻
 
-30. Trust Revalidation
+31. Trust Revalidation
 
-When execution is delayed or Context changes, Trust may need to be evaluated again.
+When execution is delayed or relevant Context changes, Trust may need to be evaluated again.
 
 Initial Trust
       ↓
@@ -738,24 +933,34 @@ Revalidation
       ↓
 Execution
 
-Revalidation should use the current applicable Policy and enterprise state.
+Revalidation must use the current applicable:
+
+* Policy
+* Context
+* Evidence
+* enterprise state
+* permissions
+* freshness requirements
+* Action Contract
+
+A prior EXECUTE decision must not be treated as permanently valid.
 
 ⸻
 
-31. Trust and Enterprise Events
+32. Trust and Enterprise Events
 
 Enterprise events may invalidate previously established conditions.
 
 Example:
 
-Account status:
+Account:
 ACTIVE
 
 followed by:
 
 account.closed
 
-Noema must not blindly continue based on stale Context.
+Noema must not blindly continue using stale Context when the event materially affects the Action.
 
 Enterprise Event
       ↓
@@ -765,7 +970,7 @@ Trust Re-evaluation
 
 ⸻
 
-32. Trust and Conflicting Evidence
+33. Trust and Conflicting Evidence
 
 Evidence may conflict.
 
@@ -773,16 +978,23 @@ Example:
 
 Identity System:
 Customer → Account A
-Customer Profile Cache:
+Profile Projection:
 Customer → Account B
 
-Trust should not resolve this by source count or model preference.
+Trust must not resolve the conflict through:
 
-It must determine:
+* source counting
+* model preference
+* recency alone
+* statistical likelihood
 
-which source is authoritative
-whether the evidence is current
-whether reconciliation is required
+Instead, Noema must determine:
+
+* which source is authoritative
+* whether the sources describe different effective states
+* whether evidence is current
+* whether reconciliation is required
+* whether Policy permits proceeding
 
 If authority cannot be established:
 
@@ -796,94 +1008,102 @@ according to Policy.
 
 ⸻
 
-33. Trust and Ambiguity
+34. Trust and Ambiguity
 
 Ambiguity is a first-class Trust condition.
 
-Examples:
+Examples include:
 
-multiple accounts
-multiple matching customers
-unclear transaction
-unclear time period
-multiple possible Actions
+* multiple eligible accounts
+* multiple possible Resources
+* unclear transaction
+* unclear period
+* multiple possible Actions
+* conflicting identity relationships
+* insufficiently specific customer request
 
-The system should preserve:
-
-AMBIGUITY
-
-rather than silently collapsing it.
-
-Conceptually:
+The system should preserve the ambiguity rather than silently collapse it.
 
 Ambiguity
     ↓
 Trust
     ↓
-CLARIFY
+CLARIFY / ESCALATE
+
+Ambiguity must not become authorization merely because one interpretation has higher model probability.
 
 ⸻
 
-34. Trust and Determinism
+35. Trust and Determinism
 
-Trust must produce the same decision when presented with the same relevant inputs, Policy, and state.
+For the same relevant inputs, Policy, Trust version, and applicable enterprise state, Trust should produce the same decision.
 
 Conceptually:
 
 Trust(
     Intent,
+    Principal,
+    Target,
     Context,
     Evidence,
+    Permissions,
     Policy,
-    State
+    Preconditions,
+    State,
+    Risk,
+    Freshness
 )
         ↓
 Deterministic Decision
 
-The model may influence the inputs.
+The model may influence candidate inputs.
 
 It must not control the final Trust decision.
 
+Where external enterprise state changes, the inputs have changed and a different Trust decision may therefore be valid.
+
 ⸻
 
-35. Trust and Risk
+36. Trust and Risk
 
 Different Actions have different risk profiles.
 
 For example:
 
-get_account_balance
+retrieve_balance
 
-has lower execution risk than:
+generally has different Trust requirements from:
 
 create_complaint
 
-Risk may influence the required Trust conditions.
+Risk may influence:
 
-Higher-risk operations may require:
+* identity strength
+* evidence requirements
+* freshness requirements
+* confirmation requirements
+* verification requirements
+* human review requirements
 
-stronger identity
-fresher data
-additional evidence
-explicit confirmation
-human review
+Trust requirements must therefore be Action-specific.
 
-Trust requirements should therefore be Action-specific.
+The Phase 1 workflow remains bounded to read and support operations, but support-system writes must still satisfy their applicable Trust requirements.
 
 ⸻
 
-36. Trust and Explicit Confirmation
+37. Trust and Explicit Confirmation
 
-Some Actions may require explicit Customer confirmation even when Intent is otherwise sufficiently understood.
+Some Actions may require explicit Customer confirmation even when the Intent is otherwise sufficiently resolved.
 
 Example:
 
 Intent:
 create_complaint
-Trust:
+Trust conditions:
 identity resolved
 target resolved
 permission valid
+Policy satisfied
 Policy:
 explicit confirmation required
 
@@ -891,48 +1111,64 @@ The resulting state is:
 
 WAITING_FOR_CONFIRMATION
 
-followed by:
+This is not itself one of the four Trust decisions.
 
+It is a workflow state indicating that execution is blocked pending a required Policy condition.
+
+Once confirmation is received and remains valid:
+
+Trust:
 EXECUTE
 
-only after the required confirmation is received.
+may be established.
 
 ⸻
 
-37. Trust and Clarification
+38. Trust and Clarification
 
-Clarification should request only the information necessary to resolve the blocking ambiguity.
+Clarification should request only information necessary to resolve the blocking condition.
 
 Example:
 
 Customer:
 "Show my balance."
 Noema:
-"You have two accounts. Which one do you mean: Current or Savings?"
+"You have two accounts. Which one do you mean:
+Current or Savings?"
 
-The clarification should not ask for information that is already established.
+Noema should not ask the Customer to repeat information already established.
 
 This follows the principle of minimum necessary interaction.
 
 ⸻
 
-38. Trust and Escalation
+39. Trust and Escalation
 
-Escalation should be explicit and reasoned.
+Escalation must be explicit and reasoned.
 
 Example:
 
 Trust:
 ESCALATE
 Reason:
-enterprise identity systems disagree
+authoritative identity sources conflict
 and Policy requires human resolution.
 
-The escalation state should preserve the evidence and Policy that caused it.
+The escalation record should preserve:
+
+* Trust decision
+* reasons
+* Evidence
+* Policy
+* relevant enterprise state
+* timestamp
+* Trust version
+
+Human intervention must not erase the original automated Trust state.
 
 ⸻
 
-39. Trust and Rejection
+40. Trust and Rejection
 
 Rejection should identify the governing reason.
 
@@ -944,14 +1180,18 @@ REJECT
 reason = OUT_OF_SCOPE
 REJECT
 reason = UNSUPPORTED_ACTION
+REJECT
+reason = POLICY_REJECTED
 
-A rejection is a valid deterministic outcome, not an execution failure.
+A rejection is a valid deterministic Trust decision.
+
+It is not an Execution Failure.
 
 ⸻
 
-40. Trust Decision Reasons
+41. Trust Decision Reasons
 
-Every consequential Trust decision should preserve machine-readable reasons.
+Consequential Trust decisions should preserve machine-readable reasons.
 
 Example:
 
@@ -964,33 +1204,57 @@ TrustDecision {
         account_A,
         account_B
     ]
-    policy: customer-account-selection-v1
+    policy:
+        customer-account-selection-v1
 }
 
-This supports auditability and debugging.
+Possible reason codes include:
+
+IDENTITY_UNRESOLVED
+IDENTITY_CONFLICT
+TARGET_AMBIGUOUS
+TARGET_UNRESOLVED
+INTENT_AMBIGUOUS
+MISSING_REQUIRED_CONTEXT
+NOT_AUTHORIZED
+OUT_OF_SCOPE
+UNSUPPORTED_ACTION
+POLICY_REJECTED
+PRECONDITION_UNSATISFIED
+STALE_CONTEXT
+INSUFFICIENT_EVIDENCE
+CONFLICTING_EVIDENCE
+HUMAN_REVIEW_REQUIRED
+CONFIRMATION_REQUIRED
+
+Reason codes must be machine-readable rather than dependent on natural-language interpretation.
 
 ⸻
 
-41. Trust and Auditability
+42. Trust and Auditability
 
-Trust decisions should be reconstructable.
+Trust decisions must be reconstructable.
 
-Noema should be able to answer:
+Noema should be able to establish:
 
-What Intent was evaluated?
-Which Principal was involved?
-Which Resource was targeted?
-Which Evidence was considered?
-Which Policy applied?
-Which enterprise state was observed?
-Why was the decision made?
-When was the decision made?
+* which Intent was evaluated
+* which Principal was involved
+* which Target was resolved
+* which Context was considered
+* which Evidence was considered
+* which Policy applied
+* which enterprise state was observed
+* which Preconditions were evaluated
+* which Trust version was used
+* why the decision was made
+* when the decision was made
+* whether the decision was subsequently revalidated
 
 This makes Trust an auditable part of the execution journey.
 
 ⸻
 
-42. Trust and Provenance
+43. Trust and Provenance
 
 Evidence used by Trust should retain provenance.
 
@@ -1002,20 +1266,29 @@ Evidence {
     observed_at
     effective_at
     version
+    scope
+    integrity
 }
 
-A Trust decision without sufficient provenance may be impossible to reconstruct reliably.
+The Trust decision should retain references to the Evidence used to establish the decision.
+
+This prevents a Trust decision from becoming detached from the grounds on which it was made.
 
 ⸻
 
-43. Trust and Failure
+44. Trust and Failure
 
-Trust failure is not the same as Execution failure.
+Trust failure is not the same as Execution Failure.
+
+Example:
 
 Trust:
 REJECT
 
-means the Action was never authorized to execute.
+means:
+
+Action:
+not authorized to execute
 
 Whereas:
 
@@ -1025,15 +1298,19 @@ EXECUTE
 Execution:
 FAILED
 
-means the Action was authorized but execution failed.
+means:
 
-These states must remain separate.
+Action:
+was authorized
+but execution did not successfully complete
+
+These states must remain semantically distinct.
 
 ⸻
 
-44. Trust and Unknown Execution
+45. Trust and Unknown Execution
 
-Trust may successfully authorize an Action while execution later becomes unknown.
+Trust may authorize an Action while execution later becomes uncertain.
 
 Trust:
 EXECUTE
@@ -1043,13 +1320,22 @@ Action
 Execution:
 UNKNOWN
 
-The Unknown state must not retroactively invalidate the original Trust decision.
+The UNKNOWN state belongs to Execution/Outcome semantics.
 
-Instead, Noema should handle the execution uncertainty through reconciliation, retry, escalation, or other applicable recovery mechanisms.
+It must not retroactively invalidate the original Trust decision.
+
+Instead, Noema should apply the relevant recovery path:
+
+* reconciliation
+* retry where permitted
+* escalation
+* human intervention
+
+For state-changing support Actions such as complaint creation, reconciliation and idempotency requirements are particularly important.
 
 ⸻
 
-45. Trust and Outcome
+46. Trust and Outcome
 
 Trust occurs before execution.
 
@@ -1061,17 +1347,72 @@ Action
    ↓
 Execution
    ↓
+Evidence
+   ↓
 Outcome
 
 Trust determines whether execution may proceed.
 
 Outcome determines what resulted.
 
-These responsibilities must not be conflated.
+Therefore:
+
+Trust ≠ Outcome
+
+A Trust decision of:
+
+EXECUTE
+
+does not imply:
+
+SUCCESS
+
+Only the subsequent execution and appropriate evidence can establish the Outcome.
 
 ⸻
 
-46. Trust and Human Intervention
+47. Trust and Outcome Verification
+
+Trust should not be used to establish execution success.
+
+For example:
+
+Trust:
+EXECUTE
+
+followed by:
+
+Enterprise Request:
+successful transport
+
+does not automatically establish:
+
+Outcome:
+SUCCESS
+
+Outcome determination belongs to the post-execution verification path.
+
+Conceptually:
+
+Trust
+   ↓
+EXECUTE
+   ↓
+Action
+   ↓
+Execution
+   ↓
+Evidence
+   ↓
+Verification
+   ↓
+Outcome
+
+This preserves the boundary between authorization and result establishment.
+
+⸻
+
+48. Trust and Human Intervention
 
 Human intervention may occur when deterministic automation cannot establish sufficient Trust.
 
@@ -1085,52 +1426,86 @@ ESCALATE
       ↓
 Human Review
       ↓
-Updated Context / Decision
+Updated Context / Evidence
+      ↓
+Trust Re-evaluation
 
-Human intervention does not mean the model was simply “not confident enough.”
+Human intervention does not mean that the model was merely “not confident enough.”
 
-It means the defined automated Trust boundary was insufficient.
+It means the defined automated Trust boundary was insufficient for the current case.
 
-⸻
-
-47. Trust and Customer Account Inquiry
-
-The reference workflow can be represented as:
-
-Customer Request
-       ↓
-Intent Resolution
-       ↓
-Identity Resolution
-       ↓
-Resource Resolution
-       ↓
-Context Assembly
-       ↓
-Evidence Collection
-       ↓
-Trust Evaluation
-       │
-       ├── CLARIFY
-       ├── ESCALATE
-       ├── REJECT
-       └── EXECUTE
-                ↓
-             Action
-                ↓
-            Execution
-                ↓
-             Outcome
-
-Trust is the deterministic gate that prevents ambiguous interpretation from becoming unauthorized or unsupported execution.
+The original Trust decision must remain auditable.
 
 ⸻
 
-48. Trust Model
+49. Trust and Reconciliation
+
+Trust may determine that an Action can execute, while later execution uncertainty requires reconciliation.
+
+Example:
+
+Trust:
+EXECUTE
+      ↓
+create_complaint
+      ↓
+Execution:
+UNKNOWN
+      ↓
+Reconciliation
+      ↓
+Complaint System
+      ↓
+Case Found
+
+The reconciled enterprise state may then support the Outcome:
+
+SUCCESS
+
+Trust does not itself perform reconciliation.
+
+It establishes whether the Action may proceed and whether relevant Preconditions are satisfied.
+
+⸻
+
+50. Trust and Idempotency
+
+For state-changing Actions, an Unknown Execution or Outcome must not automatically lead to another attempt.
+
+Example:
+
+create_complaint
+      ↓
+UNKNOWN
+      ↓
+Check existing request / idempotency key
+      ↓
+Case found
+      ↓
+Outcome:
+SUCCESS
+
+Noema must use the applicable Action Contract and Policy to determine whether retry is permitted.
+
+Trust requirements for a retry may need to be re-evaluated if:
+
+* relevant state changed
+* Policy changed
+* authorization changed
+* Context became stale
+* the retry constitutes a new execution
+
+⸻
+
+51. Trust Model
 
 Conceptually:
 
 TrustEvaluation {
+    trust_decision_id
+    execution_id
+    action_id
+    action_version
     intent
     principal
     target
@@ -1141,33 +1516,48 @@ TrustEvaluation {
     preconditions
     risk
     freshness
+    boundaries
     decision
     reasons
     evaluated_at
+    expires_at
+    version
+    provenance
 }
 
 This is a semantic model rather than a requirement for a literal database schema.
 
 ⸻
 
-49. Trust Relationships
+52. Trust Relationships
 
 Trust
    │
    ├── evaluates → Intent
+   ├── evaluates → Principal
+   ├── evaluates → Target
    ├── uses → Context
    ├── grounded_by → Evidence
    ├── checks → Identity
    ├── checks → Permissions
+   ├── checks → Organizational Boundaries
+   ├── checks → Data Boundaries
    ├── constrained_by → Policy
    ├── validates → Preconditions
    ├── considers → Risk
+   ├── considers → Freshness
    ├── produces → Trust Decision
    └── gates → Action
 
+Trust does not:
+
+produce → Outcome
+
+Outcome is established after execution.
+
 ⸻
 
-50. Reference Trust Decisions
+53. Reference Trust Decisions
 
 Unambiguous Balance Inquiry
 
@@ -1179,6 +1569,8 @@ Account:
 single eligible account
 Permission:
 valid
+Enterprise Data:
+authoritative and sufficiently fresh
 Policy:
 satisfied
 Trust:
@@ -1223,7 +1615,7 @@ unresolved
 Trust:
 ESCALATE
 
-Sufficient Intent but Missing Required Information
+Missing Required Information
 
 Intent:
 retrieve_statement
@@ -1234,9 +1626,33 @@ not permitted
 Trust:
 CLARIFY
 
+Stale Context
+
+Intent:
+retrieve_statement
+Account State:
+ACTIVE at initial evaluation
+Current Enterprise State:
+CLOSED
+Trust:
+revalidation required
+
+The Action must not proceed until the applicable Trust requirements are satisfied.
+
+Unsupported Capability
+
+Intent:
+close_account
+Action:
+outside reference workflow scope
+Trust:
+REJECT
+reason:
+OUT_OF_SCOPE
+
 ⸻
 
-51. Trust Invariants
+54. Trust Invariants
 
 Invariant 1
 
@@ -1252,7 +1668,7 @@ Model confidence must never independently authorize execution.
 
 Invariant 4
 
-Trust must evaluate the complete set of applicable execution conditions.
+Trust must evaluate the applicable execution conditions for the specific Action.
 
 Invariant 5
 
@@ -1260,7 +1676,12 @@ Trust decisions must be explicit and machine-readable.
 
 Invariant 6
 
-The only normal Trust decisions are EXECUTE, CLARIFY, ESCALATE, and REJECT.
+The normal Trust decisions are:
+
+EXECUTE
+CLARIFY
+ESCALATE
+REJECT
 
 Invariant 7
 
@@ -1272,7 +1693,7 @@ Identity must be sufficiently established before accessing Customer-specific ent
 
 Invariant 9
 
-Resource resolution must be grounded before consequential execution.
+Resource resolution must be grounded before execution.
 
 Invariant 10
 
@@ -1280,7 +1701,7 @@ Permissions must be evaluated independently of model interpretation.
 
 Invariant 11
 
-Canonical enterprise data should be preferred when Trust depends on authoritative enterprise state.
+Canonical enterprise data must be preferred when Trust depends on authoritative enterprise state.
 
 Invariant 12
 
@@ -1292,7 +1713,7 @@ Trust decisions must be evaluated against the applicable Policy.
 
 Invariant 14
 
-Preconditions must be established before the Action is permitted to execute.
+Required Preconditions must be established before an Action is permitted to execute.
 
 Invariant 15
 
@@ -1300,7 +1721,7 @@ Postconditions must not be used to retroactively authorize an Action.
 
 Invariant 16
 
-Trust decisions are scoped to the specific Action and execution context.
+Trust decisions must be scoped to the specific Action and execution context.
 
 Invariant 17
 
@@ -1308,11 +1729,11 @@ Trust for one Action must not automatically authorize another Action.
 
 Invariant 18
 
-Trust may require revalidation when relevant state, Context, Policy, or freshness changes.
+Trust may require revalidation when relevant state, Context, Policy, permissions, or freshness changes.
 
 Invariant 19
 
-Conflicting evidence must not be resolved through source counting or model preference.
+Conflicting Evidence must not be resolved through source counting or model preference.
 
 Invariant 20
 
@@ -1324,11 +1745,11 @@ Trust authorization does not imply successful Execution.
 
 Invariant 22
 
-Execution uncertainty must not retroactively rewrite the Trust decision.
+Execution uncertainty must not retroactively rewrite the original Trust decision.
 
 Invariant 23
 
-Consequential Trust decisions must preserve sufficient evidence and provenance for auditability.
+Consequential Trust decisions must preserve sufficient Evidence and provenance for auditability.
 
 Invariant 24
 
@@ -1338,11 +1759,47 @@ Invariant 25
 
 Noema must never convert uncertainty into authorization merely because the model is confident.
 
+Invariant 26
+
+Trust must not establish an Outcome; Outcome must be established through post-execution evidence and verification.
+
+Invariant 27
+
+A successful transport response must not by itself establish either Trust success or Business Outcome success.
+
+Invariant 28
+
+Trust requirements must be evaluated at the Action boundary when Actions have different authorization, risk, or evidence requirements.
+
+Invariant 29
+
+Trust decisions must preserve sufficient temporal information to determine whether the decision remains valid.
+
+Invariant 30
+
+Required Customer confirmation is a Policy-controlled execution condition and must not be inferred from model confidence or silence.
+
+Invariant 31
+
+Trust must not grant access to data beyond the applicable Data Boundary merely to improve interpretation or confidence.
+
+Invariant 32
+
+For state-changing Actions, retry after execution uncertainty must respect reconciliation, idempotency, Policy, and current Trust requirements.
+
+Invariant 33
+
+The original Trust decision must remain auditable when later revalidation or human intervention produces a different decision.
+
+Invariant 34
+
+Noema must never manufacture Trust merely to satisfy the Customer’s requested Intent.
+
 ⸻
 
-52. Final Definition
+55. Final Definition
 
-Trust is Noema’s deterministic decision boundary for determining whether an Intent is sufficiently grounded and permitted to become an executable Action.
+Trust is Noema’s deterministic decision boundary for determining whether a resolved Intent, Principal, Target, Context, Evidence, enterprise state, permissions, Policy, and Action-specific Preconditions are sufficiently grounded and permitted for a specific Action to execute.
 
 The fundamental relationship is:
 
@@ -1354,13 +1811,18 @@ INTERPRETATION
    ▼
 INTENT
    │
+   ├── PRINCIPAL
+   ├── TARGET
    ├── CONTEXT
    ├── EVIDENCE
    ├── IDENTITY
    ├── PERMISSIONS
    ├── CANONICAL DATA
    ├── POLICY
-   └── PRECONDITIONS
+   ├── PRECONDITIONS
+   ├── RISK
+   ├── FRESHNESS
+   └── BOUNDARIES
             │
             ▼
           TRUST
@@ -1376,8 +1838,18 @@ INTENT
  EXECUTION
      │
      ▼
+  EVIDENCE
+     │
+     ▼
+ VERIFICATION
+     │
+     ▼
   OUTCOME
 
-And the architectural rule is:
+The architectural rule is:
 
-The model may interpret. Trust decides. Noema must never execute merely because an interpretation appears probable. When identity, intent, resources, permissions, enterprise state, or policy requirements remain materially uncertain, that uncertainty must produce a deterministic state—CLARIFY, ESCALATE, or REJECT—rather than probabilistic execution.
+The model may interpret. Evidence grounds. Policy constrains. Trust decides. Action executes. Outcome establishes what actually resulted.
+
+Noema must never execute merely because an interpretation appears probable. When identity, Intent, Target, permissions, enterprise state, evidence, freshness, Preconditions, or Policy requirements remain materially uncertain, that uncertainty must produce an explicit deterministic state rather than probabilistic execution.
+
+Trust authorizes execution; it does not manufacture certainty, and it does not manufacture the Outcome.

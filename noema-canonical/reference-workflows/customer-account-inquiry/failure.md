@@ -1,7 +1,7 @@
 Failure
 
 Status: Reference Workflow
-Version: 0.1
+Version: 0.2
 Domain: Reference Workflows
 Canonical Path: reference-workflows/customer-account-inquiry/failure.md
 
@@ -9,26 +9,37 @@ Canonical Path: reference-workflows/customer-account-inquiry/failure.md
 
 1. Definition
 
-Failure is the explicit representation of an execution that did not satisfy the conditions required for successful completion.
+Failure is the explicit, evidence-backed representation of a known unsuccessful execution condition.
 
 Within the Customer Account Inquiry workflow, Failure answers:
 
-“What prevented the requested Action from completing successfully?”
+What prevented the requested Action from completing successfully?
 
-Failure is an execution state and diagnostic classification. It is not an assumption that something went wrong merely because Noema did not immediately receive a response.
+Failure is an execution-domain state and diagnostic classification. It is not an assumption that something went wrong merely because Noema did not immediately receive a response.
 
-The distinction is fundamental:
+The fundamental distinction is:
 
 Action
    ↓
-Execution
+Execution Attempt
    ↓
 Result
    │
-   ├── Success
-   ├── Failure
-   ├── Unknown
-   └── Partial
+   ├── SUCCEEDED
+   ├── FAILED
+   ├── UNKNOWN
+   └── PARTIAL
+
+Failure must therefore be grounded in execution evidence.
+
+Noema must never infer failure merely from:
+
+* lack of response
+* model uncertainty
+* stale Context
+* ambiguous Intent
+* an unexpected but unresolved enterprise state
+* a timeout whose business consequence is unknown
 
 ⸻
 
@@ -36,22 +47,26 @@ Result
 
 The purpose of Failure handling is to ensure that Noema:
 
-detects failure
-classifies failure
-preserves evidence
-determines recoverability
-applies Policy
-communicates accurately
+* detects failure
+* distinguishes failure from uncertainty
+* classifies the failure
+* preserves the evidence establishing it
+* determines whether recovery is possible
+* determines whether retry is safe
+* applies the governing Policy
+* preserves causal relationships
+* prevents unsafe duplicate execution
+* communicates the verified state accurately
 
-Failure must lead to a deterministic next state.
+Failure must always lead to a defined next state.
 
-It must never result in the model simply deciding what “probably happened.”
+The model must never simply decide what “probably happened.”
 
 ⸻
 
 3. Core Principle
 
-Failure must be distinguished from uncertainty.
+Failure must remain distinct from uncertainty.
 
 For example:
 
@@ -59,27 +74,32 @@ Enterprise API
      ↓
 HTTP 400
      ↓
-known rejection
+Known rejection
      ↓
 FAILED
 
-is different from:
+is materially different from:
 
 Enterprise API
      ↓
-connection lost
+Request may have been accepted
      ↓
-execution outcome unknown
+Connection lost
+     ↓
+Outcome cannot be established
      ↓
 UNKNOWN
 
 Therefore:
 
 No response ≠ Failure
-
-and:
-
 Failure ≠ Unknown
+Timeout ≠ automatically Failed
+Retryable ≠ automatically Safe to Retry
+
+The objective is not to eliminate uncertainty.
+
+The objective is to represent uncertainty honestly and resolve it safely.
 
 ⸻
 
@@ -87,395 +107,51 @@ Failure ≠ Unknown
 
 Failure belongs to the Execution domain.
 
+The conceptual boundary is:
+
 Intent
    ↓
 Context
    ↓
 Trust
    ↓
+Policy
+   ↓
 Action
    ↓
 Execution
    ↓
-Failure
+Result
 
-Failure should not be introduced merely because:
+Before execution:
 
-the model is uncertain
+model uncertainty
+intent ambiguity
+missing Context
+insufficient Trust
+authorization uncertainty
 
-Model uncertainty belongs to Trust and Intent resolution.
+belong to the decision path.
 
-Execution Failure describes what happened during Action execution.
+After an Action is admitted to execution:
+
+validation failure
+authorization rejection
+enterprise rejection
+transport failure
+timeout
+dependency failure
+verification failure
+
+belong to execution and recovery semantics.
+
+This distinction prevents Noema from treating an unresolved Intent as though an enterprise Action had failed.
 
 ⸻
 
 5. Failure Categories
 
-Failures in this workflow may include:
-
-validation failure
-authorization failure
-resource failure
-enterprise rejection
-integration failure
-network failure
-timeout
-dependency failure
-verification failure
-policy failure
-
-Each category should have explicit semantics.
-
-⸻
-
-6. Validation Failure
-
-A Validation Failure occurs when the Action request does not satisfy its Action Contract.
-
-Example:
-
-search_transactions
-date_from > date_to
-
-Result:
-
-VALIDATION_FAILED
-
-The Action should not be sent to the enterprise system.
-
-Invalid Request
-     ↓
-Execution Blocked
-
-⸻
-
-7. Missing Context Failure
-
-An Action may fail to become executable because required Context is unavailable.
-
-Example:
-
-Intent:
-"Show me my balance."
-Required:
-account_id
-Available:
-customer_id only
-
-Noema must not invent an account.
-
-The correct transition may be:
-
-Missing Context
-      ↓
-Clarification
-
-rather than:
-
-Missing Context
-      ↓
-Failure
-
-Whether this is represented as a workflow failure or blocked execution depends on the broader state model.
-
-⸻
-
-8. Authorization Failure
-
-Authorization Failure occurs when the Principal is not permitted to perform the Action against the target Resource.
-
-Example:
-
-Principal
-    ↓
-Account B
-    ↓
-Authorization Denied
-
-Result:
-
-AUTHORIZATION_FAILED
-
-Noema must not retry authorization failures unless Policy explicitly indicates that authorization state may change and retry is appropriate.
-
-⸻
-
-9. Resource Failure
-
-A requested Resource may not exist or may no longer be accessible.
-
-Example:
-
-account_id = 123
-      ↓
-Account Not Found
-
-Possible result:
-
-RESOURCE_NOT_FOUND
-
-Noema should not substitute another account merely because it appears similar.
-
-If multiple candidate Resources exist:
-
-Ambiguous Resource
-      ↓
-Clarification
-
-⸻
-
-10. Enterprise Rejection
-
-An enterprise system may receive a valid request but reject the Action according to its own Business Rules.
-
-Example:
-
-Noema
-   ↓
-retrieve_statement
-   ↓
-Statement System
-   ↓
-Request Rejected
-
-The enterprise response is authoritative for the rejection.
-
-Noema should preserve the returned reason where permitted.
-
-⸻
-
-11. Network Failure
-
-A network failure occurs when Noema cannot successfully communicate with the enterprise capability.
-
-Examples:
-
-connection refused
-connection reset
-DNS failure
-transport error
-
-Network failure does not necessarily establish that the enterprise Action did not execute.
-
-Therefore the resulting state may be:
-
-NETWORK_FAILURE
-
-with the execution Outcome potentially:
-
-UNKNOWN
-
-depending on when the failure occurred.
-
-⸻
-
-12. Timeout
-
-A timeout occurs when the enterprise system does not respond within the configured execution window.
-
-Example:
-
-create_complaint
-      ↓
-request sent
-      ↓
-timeout
-
-Noema cannot automatically conclude:
-
-complaint was not created
-
-The correct execution state may be:
-
-UNKNOWN
-
-followed by verification or reconciliation.
-
-⸻
-
-13. Dependency Failure
-
-An Action may depend on another enterprise capability.
-
-Example:
-
-get_spending_summary
-       ↓
-Transaction System
-       ↓
-Aggregation Service
-       ↓
-Unavailable
-
-The resulting failure should identify the dependency that prevented execution.
-
-DEPENDENCY_FAILURE
-
-This allows Policy to determine whether retry or escalation is appropriate.
-
-⸻
-
-14. Verification Failure
-
-Execution may appear successful but fail its required Postcondition.
-
-Example:
-
-create_complaint
-      ↓
-HTTP 200
-      ↓
-Expected case_id absent
-      ↓
-Verification Failure
-
-Result:
-
-VERIFICATION_FAILED
-
-This must not automatically be reported to the Customer as success.
-
-⸻
-
-15. Semantic Failure
-
-A transport-level success does not guarantee semantic success.
-
-Example:
-
-HTTP 200
-{
-    status: "REJECTED"
-}
-
-The enterprise capability responded successfully, but the requested Business Action did not succeed.
-
-Noema must classify the semantic result correctly.
-
-Transport Success
-      ≠
-Business Success
-
-⸻
-
-16. Policy Failure
-
-Execution may be blocked by Noema Policy even when the enterprise capability is available.
-
-Example:
-
-Action
-   ↓
-Policy
-   ↓
-Not permitted
-
-Possible result:
-
-POLICY_BLOCKED
-
-No enterprise invocation should occur if Policy blocks execution before the execution boundary.
-
-⸻
-
-17. Failure vs Trust Failure
-
-Trust Failure occurs before or during the decision to execute.
-
-Execution Failure occurs after an Action has entered execution or after execution was attempted.
-
-Example:
-
-Ambiguous account
-      ↓
-Trust cannot establish sufficient confidence
-      ↓
-CLARIFY
-
-This is not an Execution Failure.
-
-By contrast:
-
-Account resolved
-      ↓
-Action approved
-      ↓
-Enterprise API rejects request
-      ↓
-EXECUTION FAILURE
-
-These states must remain distinct.
-
-⸻
-
-18. Failure vs Clarification
-
-Clarification is appropriate when additional information from the Principal is required.
-
-Example:
-
-"Show me my account."
-
-Multiple accounts:
-
-Account A
-Account B
-
-Result:
-
-AMBIGUOUS
-   ↓
-CLARIFY
-
-Noema should not represent this as an enterprise execution failure.
-
-⸻
-
-19. Failure vs Escalation
-
-Escalation is appropriate when the system cannot safely resolve a failure automatically.
-
-Example:
-
-Enterprise systems disagree
-        ↓
-Authority cannot be established
-        ↓
-ESCALATE
-
-Escalation is therefore a Policy-driven response to a condition, not itself a failure category.
-
-⸻
-
-20. Failure Classification
-
-A Failure should contain sufficient information to determine what happened.
-
-Conceptually:
-
-Failure {
-    code
-    category
-    message
-    execution_id
-    action_id
-    attempt
-    source
-    retryable
-    recoverable
-    occurred_at
-    evidence
-}
-
-The exact schema is implementation-specific.
-
-⸻
-
-21. Failure Codes
-
-Failure codes should be stable and machine-readable.
-
-Examples:
+The reference workflow recognizes the following failure and blocking conditions:
 
 VALIDATION_FAILED
 AUTHORIZATION_FAILED
@@ -488,74 +164,699 @@ DEPENDENCY_FAILURE
 VERIFICATION_FAILED
 POLICY_BLOCKED
 
-Human-readable messages may accompany these codes.
+Additional domain-specific classifications may be introduced where required.
+
+The classification must be machine-readable and stable.
 
 ⸻
 
-22. Retryability
+6. Validation Failure
 
-A Failure should have explicit retry semantics.
+A Validation Failure occurs when the Action request does not satisfy its Action Contract.
 
 Example:
 
-TIMEOUT
-    ↓
-potentially retryable
+search_transactions
+date_from > date_to
+        ↓
+VALIDATION_FAILED
 
-while:
+The enterprise capability must not be invoked.
 
-AUTHORIZATION_FAILED
-    ↓
-normally not retryable
+Invalid Action Input
+       ↓
+Validation Gate
+       ↓
+Execution Blocked
 
-Retryability must be determined by Action and Policy, not by the model.
+Examples include:
+
+* required parameter missing
+* invalid type
+* malformed identifier
+* invalid date interval
+* invalid enum value
+* parameter outside permitted range
+* resource scope inconsistent with the Action Contract
+
+Validation failure occurs before the execution boundary.
 
 ⸻
 
-23. Retry Safety
+7. Missing Context
 
-A Failure may be technically retryable but operationally unsafe to retry.
+An Action may fail to become executable because required Context is unavailable.
+
+Example:
+
+Intent:
+"Show me my balance."
+Available:
+customer_id
+Required:
+account_id
+        ↓
+Missing Context
+
+Noema must not invent the missing account.
+
+The appropriate transition may be:
+
+Missing Context
+      ↓
+Clarification
+
+or:
+
+Missing Context
+      ↓
+Blocked
+
+depending on the Action, Policy, and broader state model.
+
+Missing Context is not automatically an enterprise execution failure.
+
+⸻
+
+8. Authorization Failure
+
+Authorization Failure occurs when the Principal is not permitted to perform the Action against the resolved Resource and scope.
+
+Example:
+
+Principal A
+     ↓
+Account B
+     ↓
+Authorization Denied
+     ↓
+AUTHORIZATION_FAILED
+
+Noema must not bypass the denial by:
+
+* selecting another Resource
+* changing the Principal
+* weakening the scope
+* retrying indefinitely
+* asking the model to reinterpret authorization
+
+Authorization decisions belong to the authorization and Policy layers.
+
+A denied Action must not be executed merely because the Customer requested it.
+
+⸻
+
+9. Resource Failure
+
+A requested Resource may not exist or may no longer be accessible.
+
+Example:
+
+account_id = 123
+       ↓
+Account Not Found
+       ↓
+RESOURCE_NOT_FOUND
+
+Noema must not substitute another Resource because it appears similar.
+
+If multiple candidate Resources exist:
+
+Multiple Candidates
+       ↓
+AMBIGUOUS
+       ↓
+CLARIFY
+
+Resource resolution and authorization must remain bound to the same execution scope.
+
+⸻
+
+10. Enterprise Rejection
+
+An enterprise system may receive a structurally valid Action and reject it according to its own Business Rules.
+
+Example:
+
+Noema
+   ↓
+retrieve_statement
+   ↓
+Statement System
+   ↓
+Request Rejected
+
+The enterprise system is authoritative for the returned Business-State rejection.
+
+Noema should preserve the relevant enterprise error classification and reason where permitted by Data Boundaries.
+
+This is different from a transport failure.
+
+The enterprise system responded and established that the requested operation was not accepted.
+
+⸻
+
+11. Network Failure
+
+A Network Failure occurs when Noema cannot successfully communicate with the enterprise capability.
+
+Examples:
+
+* connection refused
+* connection reset
+* DNS failure
+* transport error
+* connection interruption
+
+A network failure does not necessarily establish that the enterprise Action did not execute.
+
+Therefore:
+
+NETWORK_FAILURE
+       ↓
+What is known about request acceptance?
+       │
+       ├── definitely not sent → FAILED / NOT_EXECUTED
+       │
+       └── may have been accepted → UNKNOWN
+
+The resulting execution state depends on the point at which communication failed.
+
+⸻
+
+12. Timeout
+
+A timeout occurs when Noema does not receive a result within the configured execution window.
+
+A timeout is an observation about communication.
+
+It is not automatically an observation about Business State.
+
+For example:
+
+create_complaint
+      ↓
+request sent
+      ↓
+timeout
+
+Noema cannot conclude:
+
+complaint was not created
+
+unless additional evidence establishes that fact.
+
+The appropriate state may be:
+
+EXECUTION_OUTCOME_UNKNOWN
+
+followed by a fresh verification read.
+
+The POC specifically treats EXECUTION_OUTCOME_UNKNOWN as a load-bearing execution state rather than a disguised failure. NOEMA POC Specification_1.pdf
+
+⸻
+
+13. Unknown Execution Outcome
+
+Unknown is not a Failure classification.
+
+It is an execution state indicating:
+
+Noema cannot currently establish whether the Action succeeded or failed.
 
 Example:
 
 create_complaint
       ↓
+request sent
+      ↓
+connection lost
+      ↓
+UNKNOWN
+
+The correct next step is not:
+
+UNKNOWN
+   ↓
+blind retry
+
+It is:
+
+UNKNOWN
+   ↓
+fresh verification read
+   ↓
+authoritative state
+   ├── found → SUCCEEDED
+   ├── definitively absent → recovery decision
+   └── still unresolved → ESCALATE / remain UNKNOWN
+
+The POC explicitly requires that a timeout never silently become “failed” or “retry it”; an EXECUTION_OUTCOME_UNKNOWN state must be resolved through fresh state verification before another execution attempt. NOEMA POC Specification PDF.pdf
+
+⸻
+
+14. Dependency Failure
+
+An Action may depend on one or more enterprise capabilities.
+
+Example:
+
+get_spending_summary
+       ↓
+Transaction System
+       ↓
+Aggregation Capability
+       ↓
+Unavailable
+
+Result:
+
+DEPENDENCY_FAILURE
+
+The failure record must identify the dependency that prevented successful completion.
+
+This allows Policy to determine whether to:
+
+* retry
+* wait
+* recover
+* escalate
+* inform the Customer
+
+A downstream Action blocked by a dependency failure must not be incorrectly recorded as though it independently executed and failed.
+
+⸻
+
+15. Verification Failure
+
+Execution may appear successful while the required Postcondition cannot be established.
+
+Example:
+
+create_complaint
+      ↓
+HTTP 200
+      ↓
+expected case_id absent
+      ↓
+VERIFICATION_FAILED
+
+The transport response alone is insufficient.
+
+The Action must not be represented to the Customer as successfully completed unless the required verification condition is satisfied.
+
+Verification is therefore part of execution semantics, not merely an observability feature.
+
+The POC explicitly treats Verification as a core component because an HTTP response is not equivalent to a verified business outcome. NOEMA POC Specification_1.pdf
+
+⸻
+
+16. Semantic Failure
+
+Transport-level success does not guarantee Business Success.
+
+Example:
+
+HTTP 200
+{
+    "status": "REJECTED"
+}
+
+The enterprise capability responded successfully at the transport layer.
+
+The requested Business Action did not.
+
+Therefore:
+
+Transport Success
+       ≠
+Business Success
+
+Noema must classify the semantic result according to the Action Contract and enterprise response semantics.
+
+⸻
+
+17. Policy Block
+
+Execution may be blocked by Noema Policy even when:
+
+* the enterprise capability is available
+* the request is syntactically valid
+* the Principal is authenticated
+* the Resource exists
+
+Example:
+
+Action
+   ↓
+Policy Evaluation
+   ↓
+Not Permitted
+   ↓
+POLICY_BLOCKED
+
+No enterprise invocation occurs when Policy blocks the Action before the execution boundary.
+
+Policy failure must not be represented as an enterprise failure.
+
+The POC requires deterministic, versioned Policy evaluation and records the Policy version governing the Trust Decision. NOEMA POC Specification MD.md
+
+⸻
+
+18. Failure vs Trust Failure
+
+Trust Failure occurs while determining whether the proposed Action should be permitted.
+
+Execution Failure occurs when an Action has entered execution or an execution attempt has been made and a known unsuccessful condition is established.
+
+Example:
+
+Ambiguous account
+      ↓
+Trust insufficient
+      ↓
+CLARIFY
+
+This is not Execution Failure.
+
+By contrast:
+
+Account resolved
+      ↓
+Trust = ALLOW
+      ↓
+Action executed
+      ↓
+Enterprise rejects request
+      ↓
+FAILED
+
+These states must remain semantically distinct.
+
+⸻
+
+19. Failure vs Clarification
+
+Clarification is appropriate when additional information from the Principal is required to resolve material ambiguity.
+
+Example:
+
+"Show me my account."
+Account A
+Account B
+        ↓
+AMBIGUOUS
+        ↓
+CLARIFY
+
+No enterprise execution failure occurred.
+
+The system simply lacks sufficient information to safely determine the intended Resource.
+
+Noema must never convert ambiguity into a guessed Resource merely to avoid a clarification.
+
+⸻
+
+20. Failure vs Escalation
+
+Escalation is a Policy-driven response to a condition.
+
+It is not itself a Failure category.
+
+Example:
+
+Enterprise systems disagree
+        ↓
+Authority cannot safely be established
+        ↓
+ESCALATE
+
+Similarly:
+
+Repeated recovery failure
+        ↓
+Policy threshold reached
+        ↓
+ESCALATE
+
+The underlying condition may be:
+
+* failure
+* contradiction
+* unknown state
+* authorization issue
+* insufficient evidence
+
+while the resulting workflow action is:
+
+ESCALATE
+
+⸻
+
+21. Failure Classification
+
+A Failure should contain sufficient structured information to establish what happened.
+
+Conceptually:
+
+Failure {
+    execution_id
+    action_id
+    action_version
+    execution_attempt_id
+    category
+    code
+    source
+    dependency
+    occurred_at
+    retryable
+    recoverable
+    safe_to_retry
+    message_reference
+    evidence_reference
+    resulting_state
+}
+
+The exact persistence schema is implementation-specific.
+
+The semantic distinction between:
+
+retryable
+recoverable
+safe_to_retry
+
+should remain explicit.
+
+These are not interchangeable properties.
+
+⸻
+
+22. Failure Codes
+
+Failure codes should be stable and machine-readable.
+
+Reference codes include:
+
+VALIDATION_FAILED
+AUTHORIZATION_FAILED
+RESOURCE_NOT_FOUND
+RESOURCE_UNAVAILABLE
+ENTERPRISE_REJECTED
+NETWORK_FAILURE
+TIMEOUT
+DEPENDENCY_FAILURE
+VERIFICATION_FAILED
+POLICY_BLOCKED
+
+Execution outcome states include:
+
+SUCCEEDED
+FAILED
+UNKNOWN
+PARTIAL
+
+The implementation may extend the vocabulary, but equivalent concepts must not be represented inconsistently across Actions.
+
+⸻
+
+23. Retryability
+
+A Failure may have explicit retry semantics.
+
+For example:
+
+temporary service unavailable
+        ↓
+potentially retryable
+
+while:
+
+authorization denied
+        ↓
+normally not retryable
+
+Retryability must be defined by the Action Contract and Policy.
+
+The model must not determine retryability through intuition.
+
+Each registered capability should have explicit:
+
+* retry semantics
+* recovery semantics
+* verification strategy
+* risk classification
+
+The POC’s Capability Registry explicitly requires these properties for each capability. NOEMA POC Specification MD.md
+
+⸻
+
+24. Retry Safety
+
+A Failure can be retryable without being safe to repeat blindly.
+
+Example:
+
+create_complaint
+      ↓
+request sent
+      ↓
 timeout
 
-The enterprise system may already have created the complaint.
+The enterprise system may already have created the Case.
 
 Therefore:
 
 retryable
-
-must not automatically mean:
-
+    ≠
 safe to repeat
 
-Idempotency and reconciliation must be considered.
+Before retrying a potentially state-changing Action, Noema must consider:
+
+* whether the request may already have been accepted
+* idempotency support
+* current enterprise state
+* verification
+* reconciliation
+* retry budget
+* Action risk
+* Policy
 
 ⸻
 
-24. Failure Recovery
+25. Verification-Before-Retry
 
-Recovery should follow a deterministic path.
+For an uncertain state, retry must be gated by a fresh verification read.
 
-Failure
+Conceptually:
+
+UNKNOWN
    ↓
+Fresh Verification Read
+   ↓
+Current Enterprise State
+   │
+   ├── Action succeeded → SUCCEEDED
+   │
+   ├── Action did not occur → retry if permitted
+   │
+   └── state unresolved → ESCALATE / remain UNKNOWN
+
+The POC’s execution-safety mechanism explicitly requires a client-generated idempotency key to exist before the call, distinct execution-attempt IDs, bounded retry budgets, and fresh verification before another attempt. NOEMA POC Specification PDF.pdf
+
+This is a core safety rule.
+
+⸻
+
+26. Idempotency and Duplicate Prevention
+
+State-changing Actions require explicit idempotency semantics.
+
+For example:
+
+Logical Action
+      ↓
+idempotency_key
+      ↓
+execution_attempt_1
+
+If the attempt times out:
+
+execution_attempt_1
+      ↓
+UNKNOWN
+      ↓
+verification
+      ↓
+retry only if safe
+
+A second attempt must not silently create a second logical operation.
+
+The idempotency key should be generated and persisted before the enterprise call where the capability supports it.
+
+Duplicate user submissions and duplicate enterprise callbacks should be deduplicated against the appropriate idempotency identity.
+
+⸻
+
+27. Execution Attempt vs Logical Execution
+
+A logical Action execution may contain multiple attempts.
+
+execution_id
+   │
+   ├── execution_attempt_id = A1
+   ├── execution_attempt_id = A2
+   └── execution_attempt_id = A3
+
+The logical execution remains the same.
+
+Each attempt should retain:
+
+execution_attempt_id
+attempt_number
+started_at
+ended_at
+request_reference
+result
+failure
+
+This distinction is required for:
+
+* retry analysis
+* duplicate prevention
+* audit
+* reconciliation
+* operational debugging
+
+An execution_attempt_id must not be confused with the broader intent_id. The POC explicitly requires unique execution-attempt identity. NOEMA POC Specification PDF.pdf
+
+⸻
+
+28. Recovery
+
+Recovery follows a deterministic path.
+
+Failure / Unknown
+       ↓
 Classify
-   ↓
+       ↓
 Policy
-   ├── Retry
-   ├── Reconcile
-   ├── Clarify
-   ├── Escalate
-   └── Reject
+       ├── Retry
+       ├── Verify
+       ├── Reconcile
+       ├── Wait
+       ├── Clarify
+       ├── Escalate
+       └── Reject
 
-The model should not select the recovery path based solely on intuition.
+The model may explain the recovery state.
+
+It must not independently select an unsafe recovery path.
+
+The recovery mechanism must be encoded in the Action/Capability semantics and Policy.
 
 ⸻
 
-25. Recovery After Read Failure
+29. Recovery After Read Failure
 
 For a read Action:
 
@@ -563,23 +864,24 @@ get_account_balance
       ↓
 TIMEOUT
 
-Noema may:
+Noema may retry if:
 
-retry
+* the failure is transient
+* the Action is retryable
+* Policy permits the retry
+* the retry does not violate execution constraints
 
-if Policy permits.
-
-If the enterprise system remains unavailable:
+If the authoritative source remains unavailable:
 
 retry exhausted
       ↓
-ESCALATE / INFORM
+INFORM / ESCALATE
 
-Noema must not fabricate a balance.
+Noema must not fabricate or silently substitute an unsupported balance.
 
 ⸻
 
-26. Recovery After Statement Failure
+30. Recovery After Statement Failure
 
 For:
 
@@ -587,61 +889,77 @@ retrieve_statement
 
 a temporary infrastructure failure may be retryable.
 
-A permanent rejection may not be.
-
 Example:
 
 Service Unavailable
       ↓
 Retry
 
-versus:
+while:
 
 Statement Not Available
       ↓
-Do Not Retry
+No Retry
       ↓
-Inform Customer
+Inform Customer / Escalate
 
-The distinction must be based on the enterprise result and Policy.
+The distinction must come from the enterprise result and governing Policy.
 
 ⸻
 
-27. Recovery After Transaction Search Failure
+31. Recovery After Transaction Search Failure
 
 For:
 
 search_transactions
 
-Noema may retry transient failures.
+transient infrastructure failures may be retryable.
 
-If the Transaction System returns a definitive error:
+But a definitive input error should not be retried indefinitely.
+
+Example:
 
 Invalid Date Range
+      ↓
+VALIDATION_FAILED
+      ↓
+Correct / Clarify
 
-Noema should correct or clarify the input rather than repeatedly retrying the same invalid request.
+rather than:
+
+Invalid Date Range
+      ↓
+Retry
+      ↓
+Invalid Date Range
+      ↓
+Retry
 
 ⸻
 
-28. Recovery After Spending Summary Failure
+32. Recovery After Spending Summary Failure
 
-A spending summary may depend on transaction data.
+A spending summary may depend upon transaction data or an aggregation capability.
 
-If the underlying Transaction System is unavailable:
+Example:
 
 get_spending_summary
-        ↓
-Dependency Failure
+       ↓
+Transaction System unavailable
+       ↓
+DEPENDENCY_FAILURE
 
-Noema may retry according to dependency Policy.
+Noema may retry according to the dependency’s defined semantics.
 
-It must not replace the unavailable authoritative source with an unsupported estimate merely to produce an answer.
+It must not replace unavailable authoritative transaction information with an unsupported estimate simply to produce an answer.
+
+If the summary is derived, the provenance of the underlying data must remain available for verification.
 
 ⸻
 
-29. Recovery After Complaint Creation Failure
+33. Recovery After Complaint Creation Failure
 
-Complaint creation requires special handling because it changes enterprise state.
+Complaint creation is a state-changing Action and therefore requires stronger recovery semantics.
 
 Example:
 
@@ -649,57 +967,174 @@ create_complaint
       ↓
 timeout
 
-Noema must consider:
+Before another write attempt, Noema must determine:
 
 Was the request accepted?
-Does the enterprise system support idempotency?
+       ↓
 Can the Case be queried?
+       ↓
+Does the enterprise support idempotency?
+       ↓
 Can the operation be reconciled?
 
-Only after these questions are resolved should Noema determine whether another attempt is safe.
+The safe sequence is:
+
+TIMEOUT
+   ↓
+UNKNOWN
+   ↓
+QUERY SOURCE OF TRUTH
+   ↓
+Case found
+   ↓
+SUCCEEDED
+
+If the Case cannot be found:
+
+Case not found
+   ↓
+Determine whether retry is safe
+   ↓
+Retry only if Policy + Action semantics permit
+
+The POC recovery playbook specifically requires re-querying the downstream system after a timeout following ticket submission rather than submitting a second ticket blindly. NOEMA POC Specification PDF.pdf
 
 ⸻
 
-30. Unknown Outcome
+34. Reconciliation
 
-Unknown is not a failure classification.
-
-It is an execution outcome indicating that Noema cannot establish whether the Action succeeded or failed.
-
-Execution
-   ↓
-Unknown
-   ↓
-Reconciliation
-
-For state-changing Actions, Unknown should be treated conservatively.
-
-⸻
-
-31. Partial Failure
-
-Compound Intents may result in partial failure.
+Reconciliation resolves uncertain execution by comparing Noema’s execution record with authoritative enterprise state.
 
 Example:
 
-get_account_balance
-    → SUCCEEDED
-search_transactions
-    → FAILED
+Noema:
+execution = UNKNOWN
+Support System:
+case_id = 84721
+status = OPEN
 
-The overall workflow should preserve both outcomes.
+If the Action Contract permits that evidence to establish completion:
 
-It must not collapse them into:
+UNKNOWN
+   ↓
+RECONCILIATION
+   ↓
+SUCCEEDED
 
-FAILED
+Reconciliation must use the appropriate System of Record.
 
-without retaining the successful Action.
+It must not resolve conflicting systems by model preference.
 
 ⸻
 
-32. Failure Propagation
+35. Contradictory Enterprise State
 
-A failed dependency may prevent downstream Actions.
+A particularly important failure condition occurs when enterprise systems disagree.
+
+For example:
+
+Ledger:
+transaction successful
+Switch:
+transaction failed
+
+Noema must not:
+
+* average the values
+* choose the more optimistic result
+* choose whichever response arrived last
+* ask the model to decide
+* silently collapse the contradiction
+
+Instead:
+
+Conflicting authoritative evidence
+       ↓
+CONTRADICTORY
+       ↓
+ESCALATE
+
+The POC explicitly requires contradictory ledger/switch state to be classified as CONTRADICTORY and escalated rather than resolved through a default preference rule. NOEMA POC Specification_1.pdf
+
+⸻
+
+36. State Reconstruction and Failure
+
+A Customer may describe a transaction as “failed” when the actual enterprise state is different.
+
+Possible reconstructed states include:
+
+DEBIT_CONFIRMED
+CREDIT_MISSING
+SETTLEMENT_PENDING
+REVERSAL_PENDING
+REVERSED
+DUPLICATE
+PARTIAL
+PROVIDER_UNAVAILABLE
+RECEIVING_INSTITUTION_UNAVAILABLE
+STALE
+CONTRADICTORY
+EXECUTION_OUTCOME_UNKNOWN
+
+Therefore:
+
+Customer says "failed"
+        ↓
+Intent / Context
+        ↓
+State Reconstruction
+        ↓
+Actual enterprise state
+
+The Customer’s description is evidence about the request, not automatically the canonical transaction state.
+
+The POC explicitly requires state reconstruction rather than treating a user’s description of a failed transaction as the final state. NOEMA POC Specification_1.pdf
+
+⸻
+
+37. Stale State Is Not Automatically Failure
+
+A stale enterprise read is not necessarily a failed Action.
+
+Example:
+
+Switch status
+      ↓
+observed_at = 10 minutes ago
+      ↓
+freshness SLA = 5 minutes
+      ↓
+STALE
+
+The correct interpretation is:
+
+STALE
+   ↓
+fresh read required
+
+not:
+
+STALE
+   ↓
+FAILED
+
+Staleness is a property of evidence freshness.
+
+It must remain distinct from:
+
+* failure
+* contradiction
+* unknown
+* successful execution
+
+The POC requires stale state to be explicitly tagged rather than silently treated as current. NOEMA POC Specification_1.pdf
+
+⸻
+
+38. Failure Propagation
+
+A failed upstream dependency may prevent downstream Actions from executing.
 
 Example:
 
@@ -711,65 +1146,121 @@ search_transactions
       ↓
 BLOCKED
 
-The downstream Action was not necessarily itself executed.
+The downstream Action was not necessarily executed.
 
 Therefore:
 
-BLOCKED
+BLOCKED ≠ FAILED
 
-must remain distinguishable from:
-
-FAILED
+The execution record must preserve the distinction.
 
 ⸻
 
-33. Failure Cascades
+39. Failure Cascades
 
-Noema should prevent one failure from being incorrectly interpreted as multiple independent failures.
+Noema should prevent one root failure from being represented as multiple unrelated failures.
 
 Example:
 
 Transaction System unavailable
         ↓
-search_transactions FAILED
+search_transactions
         ↓
-get_spending_summary BLOCKED
+FAILED
+        ↓
+get_spending_summary
+        ↓
+BLOCKED
 
 The root cause is the dependency failure.
 
-Audit records should preserve the causal relationship.
+The audit trail should preserve:
+
+root cause
+   ↓
+affected Action
+   ↓
+blocked dependent Action
+
+This permits accurate operational diagnosis.
 
 ⸻
 
-34. Failure Evidence
+40. Partial Failure
 
-Every consequential Failure should retain relevant Evidence.
+Compound Intents may produce partial success.
 
-Examples:
+Example:
+
+get_account_balance
+    → SUCCEEDED
+search_transactions
+    → FAILED
+
+The overall workflow must preserve both results.
+
+It must not collapse the entire execution into:
+
+FAILED
+
+without retaining the successful Action.
+
+Conceptually:
+
+Compound Intent
+      ↓
+Action A → SUCCEEDED
+Action B → FAILED
+      ↓
+PARTIAL
+
+The Customer-facing response should accurately represent the portions that were established and the portions that were not.
+
+⸻
+
+41. Failure Evidence
+
+Every consequential Failure should retain the evidence necessary to establish what occurred.
+
+Possible evidence includes:
 
 HTTP status
 enterprise error code
-response body reference
-timeout information
+response classification
 request identifier
-dependency identifier
+execution_attempt_id
 timestamp
-attempt number
+dependency identifier
+timeout metadata
+verification result
+enterprise response reference
 
-Sensitive information should be subject to the applicable Data Boundaries.
+Sensitive enterprise payloads should not automatically be retained in full.
+
+The principle is:
+
+minimum necessary data
++
+maximum necessary traceability
+
+The POC explicitly adopts minimum necessary data and maximum necessary traceability while keeping enterprise systems as the systems of record. NOEMA POC Specification PDF.pdf
 
 ⸻
 
-35. Failure Provenance
+42. Failure Provenance
 
 Noema should be able to answer:
 
-What failed?
-Where did it fail?
-When did it fail?
-Which Action was being executed?
-Which attempt failed?
-What evidence established the failure?
+* What failed?
+* Which Action was executing?
+* Which attempt failed?
+* Where did the failure occur?
+* When did it occur?
+* What evidence established the failure?
+* Which enterprise dependency was involved?
+* Which Policy governed recovery?
+* Was retry attempted?
+* Why was retry permitted or prohibited?
 
 Conceptually:
 
@@ -780,222 +1271,175 @@ Evidence
 Source
    ↓
 Timestamp
+   ↓
+Execution Attempt
+   ↓
+Policy
+   ↓
+Recovery Decision
+
+“The model said so” is never sufficient provenance for a Trust or execution decision. NOEMA POC Specification PDF.pdf
 
 ⸻
 
-36. Failure Auditability
+43. Failure Auditability
 
-Failure records should support reconstruction of the execution journey.
+Failure records must support reconstruction of the execution journey without relying on model memory.
 
 Example:
 
 execution_id = EXE-123
 action = retrieve_statement
-attempt = 2
+execution_attempt_id = ATT-002
 source = Statement System
 failure = TIMEOUT
 occurred_at = ...
 retryable = true
+safe_to_retry = false
+recovery = VERIFY
 
-This should allow operators to reconstruct the sequence without relying on model memory.
+An operator should be able to reconstruct:
 
-⸻
+what happened
+→
+what Noema knew
+→
+what evidence existed
+→
+what Policy applied
+→
+what recovery occurred
+→
+what ultimately became true
 
-37. Customer-Facing Failure
-
-Customer-facing responses should reflect the verified execution state.
-
-For example, if the balance service is unavailable:
-
-The balance could not be retrieved right now.
-
-is appropriate.
-
-Noema should not respond:
-
-Your balance is ₦500,000.
-
-using stale or fabricated information simply because the requested Action failed.
+The POC’s audit requirement is explicitly causal rather than equivalent to ordinary agent/tool logging. NOEMA POC Specification PDF.pdf
 
 ⸻
 
-38. Failure Communication
+44. Failure and Operational Memory
 
-Failure communication should distinguish among:
+Failure records should contribute to structured Operational Memory where appropriate.
 
-known failure
-temporary unavailability
-unknown outcome
-authorization denial
-missing information
+The purpose is not to create a general-purpose AI memory system.
 
-These have different implications for the Customer.
+The useful historical record is:
 
-For example:
+what happened
+what was known
+why the decision was made
+what was authorized
+what happened after execution
 
-Account not found
-
-is materially different from:
-
-The account service is temporarily unavailable.
+The POC specifies structured records of cases, evidence, decisions, and outcomes rather than a general vector-memory system. NOEMA POC Specification PDF.pdf
 
 ⸻
 
-39. Failure and Model Explanation
-
-The model may convert structured Failure information into a natural-language explanation.
-
-However:
-
-Failure Classification
-        ↓
-Execution System
-        ↓
-Model Explanation
-
-not:
-
-Model
-   ↓
-invent Failure Classification
-
-The model can explain the failure.
-
-It should not manufacture one.
-
-⸻
-
-40. Failure and Human Intervention
+45. Failure and Human Intervention
 
 Human intervention may be required when:
 
-execution remains UNKNOWN
-enterprise systems conflict
-recovery is unsafe
-Policy requires review
-repeated retries fail
+* execution remains UNKNOWN
+* authoritative systems contradict one another
+* recovery is unsafe
+* repeated retries fail
+* authorization cannot be established
+* Policy requires review
+* required evidence cannot be obtained
+* an Action’s consequences cannot be safely determined
 
 Conceptually:
 
-Failure / Unknown
-       ↓
+Failure / Unknown / Contradiction
+          ↓
 Policy
-       ↓
+          ↓
 Human Intervention
-       ↓
-Resume / Recover / Reject
+          ↓
+Resume / Reconcile / Recover / Reject
+
+Human intervention must be represented explicitly in the execution lifecycle.
+
+It is not an informal exception outside the system.
 
 ⸻
 
-41. Failure and Compensation
+46. Failure and Compensation
 
-For the Customer Account Inquiry workflow, most Actions are read operations and therefore generally require no compensation.
+Most Actions in the Customer Account Inquiry workflow are read-oriented and therefore do not require compensation.
 
 For state-changing Actions such as:
 
 create_complaint
 
-compensation is generally not equivalent to simply retrying.
-
-If a complaint was successfully created but Noema failed to record the result, reconciliation should occur before any further state-changing Action.
-
-⸻
-
-42. Failure and Idempotency
-
-Idempotency is particularly important for failures occurring after an enterprise request may have been accepted.
+compensation must not be confused with retry.
 
 Example:
 
-create_complaint
+Complaint creation
       ↓
-request sent
-      ↓
-timeout
-
-Before retrying:
-
-check idempotency
-
-or:
-
-reconcile enterprise state
-
-where supported.
-
-This prevents duplicate Cases.
-
-⸻
-
-43. Failure and Postconditions
-
-A Postcondition Failure occurs when execution completed but the expected state cannot be established.
-
-Example:
-
-create_complaint
-      ↓
-Enterprise Response
-      ↓
-Expected Case unavailable
-      ↓
-Postcondition failed
-
-Noema must not mark the Action as successfully completed merely because the transport request succeeded.
-
-⸻
-
-44. Failure and Canonical Data
-
-When failure relates to enterprise Business State, the authoritative enterprise system should determine the state.
-
-For example:
-
-Noema:
 UNKNOWN
-Support System:
-case_id = 123
-status = OPEN
+      ↓
+Reconciliation
+      ↓
+Case exists
 
-Noema may reconcile the execution to:
+The correct action is to reconcile the existing Case, not create another one.
 
-SUCCEEDED
-
-based on the canonical enterprise state.
+Compensation semantics are Action-specific and should only be introduced where the enterprise capability defines them.
 
 ⸻
 
-45. Failure and Data Boundaries
+47. Failure and Data Boundaries
 
-Failure records must not become a mechanism for copying sensitive enterprise data into Noema.
+Failure handling must not become a mechanism for copying sensitive enterprise data into Noema.
 
-Error responses should be minimized and classified.
+For example, an enterprise error response may contain:
+
+* unrelated customer information
+* internal diagnostics
+* credentials
+* operational metadata
+* data belonging to another Resource
+
+Noema should retain only what is required to establish and audit the Failure.
 
 For example:
 
 enterprise_error_code
+request_id
+timestamp
 
-may be sufficient instead of retaining an entire response containing unrelated customer information.
+may be sufficient.
+
+The full response need not automatically become part of Context or Audit.
 
 ⸻
 
-46. Failure and Environment
+48. Failure and Environment
 
 Failures must preserve the environment in which they occurred.
 
+Example:
+
 environment = production
+execution = EXE-123
 
 must remain distinct from:
 
 environment = staging
+execution = EXE-123
 
-A staging failure must never affect the state of a production execution.
+A staging failure must never affect a production execution.
+
+Environment is part of the execution boundary.
 
 ⸻
 
-47. Failure and Tenant Scope
+49. Failure and Tenant Scope
 
 Failure records must preserve tenant scope.
+
+Example:
 
 tenant = A
 execution = EXE-123
@@ -1005,21 +1449,119 @@ must not be confused with:
 tenant = B
 execution = EXE-123
 
-Execution identifiers should therefore be interpreted within their appropriate authority boundary.
+Execution identifiers must therefore be interpreted within the appropriate authority and tenancy boundary.
 
 ⸻
 
-48. Failure State Model
+50. Failure and Organizational Scope
+
+Where an enterprise contains multiple organizational or legal boundaries, Failure records must preserve relevant scope.
+
+Examples:
+
+tenant
+organization
+business_unit
+legal_entity
+environment
+
+A failure in one organizational boundary must not silently alter the execution state of another.
+
+⸻
+
+51. Failure and Policy Unavailability
+
+If Policy is required to determine whether an Action may proceed or recover and the Policy service is unavailable, Noema must not fail open.
+
+The safe conceptual behavior is:
+
+Policy unavailable
+       ↓
+Cannot establish required authorization/policy decision
+       ↓
+FAIL CLOSED
+       ↓
+ESCALATE / UNKNOWN
+
+The POC specifically requires Policy-service unavailability during evaluation to fail closed rather than produce ALLOW. NOEMA POC Specification PDF.pdf
+
+⸻
+
+52. Failure and Model/Intent Engine Unavailability
+
+If the Intent Engine or model provider is unavailable, Noema must not silently downgrade the trust path to an ungoverned heuristic.
+
+The POC recovery behavior is:
+
+Intent Engine unavailable
+       ↓
+UNKNOWN
+       ↓
+Honest response
+       ↓
+Retry path
+
+The system must not bypass the Trust Engine merely because the model provider is unavailable. NOEMA POC Specification PDF.pdf
+
+⸻
+
+53. Failure and Session Resume
+
+If a Customer abandons a workflow and later resumes it, Noema must not blindly continue from a stale Context snapshot.
 
 Conceptually:
 
+Previous Intent Object
+       ↓
+Resume
+       ↓
+Last valid Intent Object version
+       ↓
+Re-verify current state freshness
+       ↓
+Continue / Clarify / Reconcile
+
+The POC explicitly requires resumption from the last valid Intent Object version with state freshness re-verified before continuation. NOEMA POC Specification PDF.pdf
+
+⸻
+
+54. Failure and Immutable Intent Versions
+
+Once an Intent Object has been admitted to the Trust Engine, it must not be silently mutated.
+
+If the Customer changes the request after a failure:
+
+Intent v1
+   ↓
+Execution
+   ↓
+Failure
+   ↓
+Customer amendment
+   ↓
+Intent v2
+   ↓
+supersedes v1
+
+The amendment must be an explicit, auditable transition.
+
+This prevents a later user statement from silently rewriting the Intent under which a previous Action was authorized.
+
+The POC specifies immutable Intent Object versions with explicit supersedes relationships. NOEMA POC Specification_1.pdf
+
+⸻
+
+55. Failure State Model
+
+The core execution relationship is:
+
 EXECUTING
     │
-    ├── known failure ──────→ FAILED
+    ├── known unsuccessful condition ──→ FAILED
     │
-    ├── uncertain result ───→ UNKNOWN
+    ├── uncertain result ─────────────→ UNKNOWN
     │
-    └── success ────────────→ SUCCEEDED
+    └── verified success ─────────────→ SUCCEEDED
 
 A known Failure may then enter:
 
@@ -1028,37 +1570,66 @@ FAILED
 Policy
    ├── RETRY
    ├── RECOVER
+   ├── RECONCILE
    ├── ESCALATE
    └── REJECT
 
+An uncertain result follows:
+
+UNKNOWN
+   ↓
+Fresh Verification
+   ↓
+Reconciliation
+
+The state machine must not permit a direct transition:
+
+UNKNOWN
+   ↓
+SUCCEEDED
+
+without sufficient verification evidence.
+
+The POC transaction state model similarly prohibits a terminal-success interpretation of timeout without an intervening verification step. NOEMA POC Specification_1.pdf
+
 ⸻
 
-49. Failure Lifecycle
+56. Failure Lifecycle
+
+The reference lifecycle is:
 
 Action
    ↓
 Execution Attempt
    ↓
-Failure Detected
+Result
    ↓
-Failure Classified
+Failure / Unknown Detected
    ↓
-Evidence Recorded
+Classify
    ↓
-Policy Evaluated
+Record Evidence
+   ↓
+Evaluate Policy
    ↓
 Recovery Decision
-   ├── Retry
+   ├── Verify
    ├── Reconcile
+   ├── Retry
+   ├── Wait
    ├── Clarify
    ├── Escalate
    └── Reject
+   ↓
+Updated Execution State
+   ↓
+Verified Outcome
 
-The lifecycle must remain deterministic.
+Every transition should be deterministic and auditable.
 
 ⸻
 
-50. Failure Model
+57. Failure Model
 
 Conceptually:
 
@@ -1066,39 +1637,131 @@ Failure {
     execution_id
     action_id
     action_version
+    execution_attempt_id
     category
     code
-    attempt
     source
     dependency
     occurred_at
     retryable
     recoverable
+    safe_to_retry
     message_reference
     evidence_reference
+    policy_reference
     resulting_state
+    tenant
+    organization
+    environment
 }
 
 This is a semantic model rather than a requirement for a literal database schema.
 
 ⸻
 
-51. Failure Relationships
+58. Failure Relationships
 
 Failure
    │
    ├── belongs_to → Execution
+   │
+   ├── belongs_to → Execution Attempt
+   │
    ├── caused_by → Dependency
+   │
    ├── supported_by → Evidence
-   ├── classified_by → Policy
-   ├── may_trigger → Retry
+   │
+   ├── governed_by → Policy
+   │
+   ├── may_trigger → Verification
+   │
    ├── may_trigger → Reconciliation
+   │
+   ├── may_trigger → Retry
+   │
    ├── may_trigger → Human Intervention
+   │
    └── results_in → Execution State
+
+The relationships preserve causal structure.
 
 ⸻
 
-52. Failure Invariants
+59. Reference Recovery Playbook
+
+The Customer Account Inquiry workflow must explicitly cover at least the following failure scenarios.
+
+Downstream timeout after state-changing submission
+
+Submission
+   ↓
+Timeout
+   ↓
+UNKNOWN
+   ↓
+Re-query source of truth
+   ↓
+Case found?
+
+Never submit a second state-changing request blindly. NOEMA POC Specification PDF.pdf
+
+Missing webhook confirmation
+
+Webhook missing
+      ↓
+Do not assume failure
+      ↓
+Poll source of truth
+      ↓
+Verify current state
+
+The POC specifically requires direct polling of the source of truth on a bounded backoff schedule. NOEMA POC Specification PDF.pdf
+
+Policy service unavailable
+
+Policy unavailable
+      ↓
+FAIL CLOSED
+      ↓
+ESCALATE
+
+Never fail open to ALLOW. NOEMA POC Specification PDF.pdf
+
+Model provider unavailable
+
+Model unavailable
+      ↓
+UNKNOWN
+      ↓
+Honest retry path
+
+Do not bypass the Trust Engine with a lower-rigor heuristic. NOEMA POC Specification PDF.pdf
+
+Contradictory enterprise state
+
+Ledger ≠ Switch
+      ↓
+CONTRADICTORY
+      ↓
+ESCALATE
+
+Never average or choose the more optimistic source. NOEMA POC Specification_1.pdf
+
+Session resumed after abandonment
+
+Resume
+   ↓
+Last valid Intent Object version
+   ↓
+Re-verify freshness
+   ↓
+Continue
+
+Do not trust a stale Context snapshot merely because it was previously valid. NOEMA POC Specification PDF.pdf
+
+⸻
+
+60. Failure Invariants
 
 Invariant 1
 
@@ -1118,11 +1781,11 @@ Failure must remain distinct from Clarification.
 
 Invariant 5
 
-A missing Context requirement must not be satisfied through guessing.
+Missing Context must never be satisfied through guessing.
 
 Invariant 6
 
-Validation failures must prevent invalid Actions from being executed.
+Validation failures must prevent invalid Actions from executing.
 
 Invariant 7
 
@@ -1130,7 +1793,7 @@ Authorization failures must not be bypassed through retries or alternative Resou
 
 Invariant 8
 
-A Resource failure must not cause Noema to substitute another Resource without explicit resolution.
+Resource failure must not cause silent Resource substitution.
 
 Invariant 9
 
@@ -1142,67 +1805,127 @@ Verification failure must prevent an Action from being represented as successful
 
 Invariant 11
 
-Timeouts must not automatically be interpreted as business failure.
+Timeout must not automatically be interpreted as Business Failure.
 
 Invariant 12
 
-Retryability must be determined by Action semantics and Policy.
+Unknown execution outcome must remain distinct from Failure.
 
 Invariant 13
 
-Retryable does not necessarily mean safe to repeat.
+An Unknown outcome must be resolved through fresh verification before a potentially consequential retry.
 
 Invariant 14
 
-State-changing Actions must consider idempotency and reconciliation before retry.
+Retryability must be determined by Action semantics and Policy.
 
 Invariant 15
 
-Failure must preserve sufficient Evidence to establish what occurred.
+Retryable does not necessarily mean safe to repeat.
 
 Invariant 16
 
-Failure records must preserve relevant execution, tenant, organizational, and environment scope.
+State-changing Actions must consider idempotency and reconciliation before retry.
 
 Invariant 17
 
-Failure information must respect enterprise Data Boundaries.
+Idempotency identity must be established before execution where supported.
 
 Invariant 18
 
-Downstream Actions blocked by an upstream failure must remain distinguishable from Actions that actually failed.
+Each execution attempt must remain distinguishable from the logical Action execution.
 
 Invariant 19
 
-Failure cascades must preserve causal relationships.
+Failure must preserve sufficient Evidence to establish what occurred.
 
 Invariant 20
 
-Compound execution must preserve individual Action failures independently.
+Failure records must preserve execution, tenant, organizational, and environment scope.
 
 Invariant 21
 
-Customer-facing responses must reflect verified execution state.
+Failure information must respect enterprise Data Boundaries.
 
 Invariant 22
 
-The model may explain Failure but must not independently define Failure classification.
+Downstream Actions blocked by an upstream failure must remain distinguishable from Actions that actually executed and failed.
 
 Invariant 23
 
-Recovery must follow explicit Policy rather than probabilistic model judgment.
+Failure cascades must preserve causal relationships.
 
 Invariant 24
 
-Unknown outcomes must have an explicit reconciliation or intervention path where applicable.
+Compound execution must preserve individual Action failures independently.
 
 Invariant 25
 
-Noema must never manufacture success merely because the requested result is unavailable.
+Partial execution success must remain distinguishable from complete success.
+
+Invariant 26
+
+Contradictory authoritative enterprise state must not be resolved through model preference.
+
+Invariant 27
+
+Stale enterprise state must not silently be treated as current.
+
+Invariant 28
+
+Policy unavailability must not cause consequential execution to fail open.
+
+Invariant 29
+
+Model or Intent Engine unavailability must not bypass the Trust Engine.
+
+Invariant 30
+
+Human intervention must be represented explicitly in the execution lifecycle.
+
+Invariant 31
+
+The model may explain Failure but must not independently define Failure classification.
+
+Invariant 32
+
+Recovery must follow explicit Action and Policy semantics rather than probabilistic model judgment.
+
+Invariant 33
+
+Unknown outcomes must have an explicit verification, reconciliation, or intervention path where applicable.
+
+Invariant 34
+
+Customer-facing responses must reflect verified execution state.
+
+Invariant 35
+
+Noema must never manufacture success because the requested result is unavailable.
+
+Invariant 36
+
+Noema must never manufacture Failure merely because execution evidence is incomplete.
+
+Invariant 37
+
+A later user statement must not silently rewrite the Intent Object version under which an earlier Action was evaluated.
+
+Invariant 38
+
+Failure handling must preserve the distinction between enterprise Business State and Noema Execution State.
+
+Invariant 39
+
+Every consequential Failure must remain reconstructable from structured execution and evidence records rather than model memory.
+
+Invariant 40
+
+The system must fail safely rather than dangerously when required evidence, policy, state, or verification is unavailable.
 
 ⸻
 
-53. Final Definition
+61. Final Definition
 
 Failure is the explicit, evidence-backed representation of a known unsuccessful execution condition within Noema.
 
@@ -1214,25 +1937,68 @@ ACTION
 EXECUTION
    │
    ▼
+EXECUTION ATTEMPT
+   │
+   ▼
 RESULT
    │
-   ├── SUCCESS
+   ├── SUCCEEDED
    │
-   ├── FAILURE
+   ├── FAILED
    │      │
-   │      ├── Validate
+   │      ├── Detect
    │      ├── Classify
-   │      ├── Record Evidence
-   │      └── Apply Policy
+   │      ├── Preserve Evidence
+   │      ├── Apply Policy
+   │      └── Recover / Escalate / Reject
    │
    ├── UNKNOWN
-   │      ↓
-   │   Reconcile
+   │      │
+   │      ├── Fresh Verification
+   │      └── Reconcile
    │
    └── PARTIAL
-          ↓
-       Continue / Recover
+          │
+          ├── Preserve individual Action states
+          └── Continue / Recover / Escalate
 
 And the architectural rule is:
 
-Noema must never treat uncertainty as failure, and must never treat failure as permission to guess. A failure must be classified from execution evidence, governed by Policy, and resolved through an explicit recovery, reconciliation, escalation, clarification, or rejection path.
+Noema must never treat uncertainty as failure, and must never treat failure as permission to guess. A Failure must be established from execution evidence, classified deterministically, governed by Action semantics and Policy, and resolved through an explicit verification, reconciliation, recovery, escalation, clarification, or rejection path.
+
+The deeper rule is:
+
+NO RESPONSE
+     ≠
+FAILURE
+TIMEOUT
+     ≠
+FAILED
+RETRYABLE
+     ≠
+SAFE TO RETRY
+TRANSPORT SUCCESS
+     ≠
+BUSINESS SUCCESS
+UNKNOWN
+     ≠
+FAILED
+MODEL EXPECTATION
+     ≠
+EXECUTION EVIDENCE
+
+Noema’s failure model therefore exists not merely to report what went wrong, but to prevent the system from converting incomplete knowledge into an unsafe conclusion or a duplicate consequential Action.
+
+The system must be able to say, with machine-verifiable provenance:
+
+This failed.
+Here is why.
+Here is the evidence.
+Here is what was known.
+Here is what remains unknown.
+Here is whether retry is permitted.
+Here is whether retry is safe.
+Here is what was verified.
+Here is what Policy requires next.
+
+That is the boundary between failure handling and simply asking an agent to “handle errors gracefully.”
