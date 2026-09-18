@@ -1,9 +1,7 @@
-Yes. For this one, I’ll keep the same canonical-document structure and treat interaction-model.md as the product-level model for how a human, Noema, and enterprise systems interact, rather than conflating it with the lower-level API/interface model.
-
 Interaction Model
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Product
 Canonical Path: product/interaction-model.md
 
@@ -11,142 +9,174 @@ Canonical Path: product/interaction-model.md
 
 1. Definition
 
-The Interaction Model defines how humans, Noema, enterprise systems, and external capabilities participate in an intent-driven execution.
+The Interaction Model defines how humans and other authorized participants communicate with Noema, how those interactions affect Intent and execution state, and how Noema communicates execution requirements, progress, intervention requests, and verified outcomes.
 
 The Interaction Model answers:
 
-“How does a human express intent, how does Noema interpret and govern it, and how does the resulting execution interact with the enterprise?”
+“How does a participant express or trigger Intent, how does Noema interact with that participant during execution, and how are resulting outcomes communicated?”
 
 Noema is not primarily a conversational interface.
 
-It is an execution system in which interaction is the mechanism through which human intent enters, evolves, and receives observable outcomes.
+It is an intent-driven execution system in which Interaction is the mechanism through which a participant:
+
+* expresses Intent;
+* provides or resolves Context;
+* resolves ambiguity;
+* satisfies confirmation or authorization requirements;
+* receives execution status;
+* responds to execution interruptions;
+* modifies or cancels an Intent where permitted;
+* receives verified Outcomes.
 
 Conceptually:
 
-Human
-  │
-  ▼
-Interaction
-  │
-  ▼
-Intent
-  │
-  ▼
-Noema
-  │
-  ├── Context
-  ├── Trust
-  ├── Planning
-  └── Execution
-          │
-          ▼
-   Enterprise Systems
-          │
-          ▼
-        Outcome
-          │
-          ▼
-      Interaction
-          │
-          ▼
-        Human
+Participant
+     │
+     ▼
+ Interaction
+     │
+     ▼
+   Intent
+     │
+     ▼
+   Noema
+     │
+     ├── Context
+     ├── Evidence
+     ├── Trust
+     ├── Policy
+     ├── Action
+     └── Execution
+              │
+              ▼
+       Enterprise Systems
+              │
+              ▼
+           Outcome
+              │
+              ▼
+         Interaction
+              │
+              ▼
+         Participant
 
 Interaction therefore exists on both sides of execution:
 
 Intent In
-    ↓
+   ↓
 Execution
-    ↓
+   ↓
 Outcome Out
 
 ⸻
 
 2. Purpose
 
-The purpose of the Interaction Model is to define the semantic relationship between:
+The purpose of the Interaction Model is to establish the semantic relationship between:
 
-* Human
+* Participant
 * Interaction
+* Session
 * Intent
-* Noema
+* Context
+* Evidence
 * Trust
+* Policy
 * Action
 * Execution
-* Outcome
 * Enterprise Systems
+* Outcome
+* Human Intervention
 
-The model establishes that interaction is not equivalent to:
+The model establishes that Interaction is not equivalent to:
 
-* chat
-* UI
-* API requests
-* messages
-* prompts
+* chat;
+* UI;
+* API requests;
+* prompts;
+* messages;
+* notifications;
+* voice.
 
-Those are mechanisms through which interaction may occur.
+These are interaction mechanisms or representations.
 
-Interaction is the broader semantic process through which a participant communicates intent, receives system responses, resolves uncertainty, authorizes decisions, observes execution, or intervenes in execution.
+Interaction is the broader semantic process through which an authorized participant communicates with and participates in a Noema execution lifecycle.
 
 ⸻
 
 3. Core Principle
 
-Noema should optimize for intent completion, not conversation completion.
+Noema should optimize for Intent completion and trustworthy outcome, not conversation completion.
 
 A conversation may end without an Action being executed.
 
 An Action may be executed without a long conversation.
 
+An execution may require multiple interactions.
+
 Therefore:
 
 Conversation ≠ Interaction
+Interaction ≠ Intent
 Interaction ≠ Execution
 Execution ≠ Conversation
 
 The relevant product objective is:
 
-Human Intent
-     ↓
+Participant Intent
+       ↓
 Correct Interpretation
-     ↓
+       ↓
+Required Resolution
+       ↓
 Trusted Execution
-     ↓
-Observable Outcome
+       ↓
+Verified Outcome
+       ↓
+Appropriate Communication
 
 ⸻
 
-4. Interaction as a State Transition
+4. Interaction as a Semantic Event
 
-An Interaction may cause Noema’s Intent State to change.
+An Interaction is a participant-facing event that may affect or observe the Noema execution lifecycle.
 
-For example:
+An Interaction may:
 
-User:
-"Refund my last payment."
-        ↓
-Intent:
-refund_payment
-        ↓
-Ambiguity:
-Which payment?
-        ↓
-Noema:
-"Which payment do you mean?"
-        ↓
-User:
-"The $500 payment from yesterday."
-        ↓
-Resolved Intent
+* introduce an Intent;
+* provide Context;
+* provide Evidence about participant intent;
+* answer a clarification;
+* confirm an Action;
+* reject a proposed Action;
+* modify an Intent;
+* request cancellation;
+* satisfy an approval requirement;
+* provide information required for execution;
+* respond to an intervention request;
+* observe execution progress;
+* receive an Outcome.
 
-The interaction therefore participates in Intent Resolution.
+Therefore, Interaction is not merely transport.
+
+It is a semantic event within the execution lifecycle.
 
 ⸻
 
 5. Interaction vs Intent
 
-Intent represents what the user wants to accomplish.
+Intent represents what a participant wants to accomplish.
 
-Interaction represents the exchange through which that Intent is expressed, clarified, confirmed, modified, or completed.
+Interaction represents the exchange through which that Intent is:
+
+* expressed;
+* clarified;
+* confirmed;
+* modified;
+* authorized;
+* observed;
+* completed;
+* or terminated.
 
 Therefore:
 
@@ -161,34 +191,48 @@ Interaction ≠ Intent
 A single Intent may involve multiple Interactions.
 
 Interaction 1
-    ↓
+     ↓
 Intent
-    ↓
+     ↓
 Interaction 2
-    ↓
+     ↓
 Clarification
-    ↓
+     ↓
 Interaction 3
-    ↓
+     ↓
 Confirmation
+     ↓
+Execution
+     ↓
+Interaction 4
+     ↓
+Outcome
 
 ⸻
 
 6. Interaction vs Conversation
 
-Conversation is one possible interaction mechanism.
+Conversation is one interaction modality.
 
-For example:
+Noema may support:
 
-Chat
-Voice
-UI
-API
-Workflow
+* Chat
+* Voice
+* Structured UI
+* Forms
+* Buttons
+* API
+* Webhook
+* Event
+* Workflow Trigger
+* Approval Interface
+* Operator Interface
 
-may all produce interactions with Noema.
+The semantic model must therefore remain independent of conversational presentation.
 
-The semantic model should therefore not depend on a particular interface modality.
+A conversation may contain multiple Interactions.
+
+An Interaction may also exist without a conversation.
 
 ⸻
 
@@ -198,39 +242,42 @@ Noema may support multiple interaction modalities.
 
 Examples include:
 
-Natural Language
-Chat
-Voice
-Structured UI
-Forms
-Buttons
-API
-Webhook
-Event
-Workflow Trigger
-Human Approval
+* Natural Language
+* Chat
+* Voice
+* Structured UI
+* Forms
+* Buttons
+* API
+* Webhook
+* Event
+* Workflow Trigger
+* Human Approval
+* Operator Intervention
+* Notification
 
-These modalities may produce different representations of the same underlying Intent.
+Different modalities may represent the same semantic Intent.
 
 For example:
 
+Natural Language:
 "Freeze my card."
-Button:
+Structured UI:
 [Freeze Card]
 API:
 freeze_card(card_id)
 Voice:
 "Freeze the card ending in 1234."
 
-The interaction representation differs.
+The representation differs.
 
 The semantic Intent may be equivalent.
 
 ⸻
 
-8. Interaction as a Semantic Boundary
+8. Interaction Boundary
 
-Interaction is the boundary between participant communication and Noema’s internal execution model.
+Interaction is the boundary between participant communication and Noema’s semantic execution model.
 
 Conceptually:
 
@@ -243,73 +290,218 @@ External Participant
       Intent
         │
         ▼
-     Noema
+      Noema
 
-Noema should translate interaction into explicit semantic state rather than allowing interface-specific representations to become execution state directly.
+Noema should translate interaction into explicit semantic state.
+
+Interface-specific representations must not become execution state directly.
+
+For example:
+
+"Yes"
+
+is not independently executable authorization.
+
+It must be bound to sufficient context, Intent, Action, principal, and applicable requirements.
 
 ⸻
 
-9. Human Participant
+9. Participant
 
-The Human is the primary source of user Intent in many Noema interactions.
+A Participant is an authorized actor capable of initiating, influencing, observing, approving, or intervening in a Noema execution lifecycle.
+
+Participants may include:
+
+* End User
+* Employee
+* Customer
+* Application
+* API Client
+* Workflow
+* Enterprise System
+* Event Source
+* Approver
+* Operator
+* Administrator
+* Noema itself, where Policy explicitly permits system-initiated interaction
+
+Participant identity and authority must be represented explicitly where consequential interaction occurs.
+
+⸻
+
+10. Human Participant
+
+The Human is a primary source of Intent in many Noema interactions.
 
 The Human may:
 
-* express Intent
-* provide Context
-* resolve ambiguity
-* confirm an Action
-* reject a proposed Action
-* modify an Intent
-* provide missing information
-* approve escalation
-* intervene in execution
+* express Intent;
+* provide Context;
+* resolve ambiguity;
+* confirm an Action;
+* reject a proposed Action;
+* modify an Intent;
+* provide missing information;
+* approve an escalation;
+* intervene in execution;
+* request cancellation;
+* acknowledge an Outcome.
 
 The Human is therefore an active participant in the execution lifecycle.
 
 ⸻
 
-10. Human Does Not Own Noema State
+11. Participant Authority
 
-The Human initiates or influences Intent but does not directly mutate Noema’s internal execution state.
+Participant identity does not by itself establish authority.
+
+Noema must distinguish:
+
+Who is participating?
+        ↓
+What authority does the participant possess?
+        ↓
+What Action does that authority permit?
+        ↓
+Under what Policy?
+
+A participant may be authenticated while still being unauthorized to perform a particular Action.
+
+⸻
+
+12. Interaction Does Not Directly Mutate Execution State
+
+Participants communicate with Noema through Interactions.
+
+They do not directly mutate authoritative Noema execution state.
 
 For example:
 
 Human:
 "Send the invoice."
 
-does not directly set:
+does not directly establish:
 
 execution.status = SUCCEEDED
 
-Noema must establish the resulting state through its execution process.
+Noema must establish execution state through the execution lifecycle.
+
+Similarly:
+
+Human:
+"The payment is refunded."
+
+does not establish:
+
+payment.status = REFUNDED
+
+The relevant enterprise System of Record remains authoritative.
 
 ⸻
 
-11. Explicit Confirmation
+13. Interaction State
 
-Some interactions require explicit confirmation before execution.
+Interaction State describes the state of the interaction mechanism.
+
+Examples include:
+
+RECEIVED
+PROCESSING
+AWAITING_RESPONSE
+RESPONSE_SENT
+DELIVERED
+ACKNOWLEDGED
+EXPIRED
+CANCELLED
+FAILED
+
+Interaction State must remain distinct from Intent State and Execution State.
+
+⸻
+
+14. Intent State
+
+Intent State describes the semantic state of the participant’s requested outcome.
+
+Examples include:
+
+EXPRESSED
+AMBIGUOUS
+CLARIFYING
+RESOLVED
+AUTHORIZED
+READY
+EXECUTING
+PAUSED
+COMPLETED
+REJECTED
+CANCELLED
+
+Interaction may cause an Intent State transition.
+
+It does not define the state arbitrarily.
+
+⸻
+
+15. Execution State
+
+Execution State describes what Noema has established about execution.
+
+Examples include:
+
+NOT_STARTED
+READY
+RUNNING
+WAITING
+SUCCEEDED
+FAILED
+PARTIAL
+UNKNOWN
+RECONCILING
+COMPENSATING
+ESCALATED
+CANCELLED
+
+Interaction must not collapse these states into conversational language that changes their meaning.
+
+⸻
+
+16. Interaction, Intent, and Execution State Must Remain Distinct
+
+These models are related but must not be conflated.
+
+Interaction State
+        ↓
+may affect
+        ↓
+Intent State
+        ↓
+may authorize / produce
+        ↓
+Execution State
+        ↓
+produces
+        ↓
+Outcome
 
 For example:
 
-Intent:
-Transfer $20,000
-Trust:
-Requires Confirmation
 Interaction:
-"You're about to transfer $20,000 to Account 123. Confirm?"
-Human:
-"Confirm."
+"Yes, proceed."
+Interaction State:
+RECEIVED
+Intent State:
+AUTHORIZED
+Execution State:
+NOT_STARTED
 
-Confirmation is an explicit interaction event.
-
-It should not be inferred from ambiguous language or passive continuation.
+A confirmation does not mean that execution has succeeded.
 
 ⸻
 
-12. Clarification
+17. Clarification
 
-Clarification is an interaction used to resolve material uncertainty.
+Clarification is an Interaction used to resolve material uncertainty.
 
 Example:
 
@@ -320,62 +512,64 @@ Noema:
 User:
 "The business plan."
 
-The clarification modifies the Intent State.
+The clarification may transition:
 
-Clarification is therefore not merely conversational UX.
+AMBIGUOUS
+    ↓
+CLARIFYING
+    ↓
+RESOLVED
 
-It is part of deterministic Intent Resolution.
+Clarification is therefore part of deterministic Intent Resolution, not merely conversational UX.
 
 ⸻
 
-13. Interaction and Ambiguity
+18. Material Ambiguity
 
-Ambiguity may require additional interaction.
+Not all ambiguity requires interaction.
 
-Conceptually:
+Noema should determine whether ambiguity is:
 
-Intent
-  ↓
-Ambiguity
-  ↓
-Interaction
-  ↓
-Clarification
-  ↓
-Resolved Intent
+* irrelevant;
+* resolvable from authoritative Context;
+* resolvable from existing Evidence;
+* clarification-required;
+* policy-sensitive;
+* execution-blocking.
 
-The system must not use interaction merely to conceal uncertainty.
-
-If ambiguity remains material:
+If material ambiguity remains unresolved:
 
 AMBIGUOUS
 
-must remain a valid state.
+remains a valid state.
+
+Noema must not convert unresolved ambiguity into execution merely to reduce interaction count.
 
 ⸻
 
-14. Interaction and Confidence
+19. Interaction and Confidence
 
-Model confidence may inform whether further interaction is necessary.
+Model confidence may inform whether additional Interaction is useful.
 
 However:
 
-confidence ≠ authorization
-confidence ≠ trust
-confidence ≠ confirmation
-confidence ≠ execution
+Confidence ≠ Authorization
+Confidence ≠ Trust
+Confidence ≠ Confirmation
+Confidence ≠ Identity
+Confidence ≠ Execution
 
-A high-confidence model interpretation does not automatically authorize a consequential Action.
+A high-confidence model interpretation does not independently authorize a consequential Action.
 
-Noema must apply the relevant Trust and Policy rules.
+Trust, Policy, authorization, and Action Contract requirements remain authoritative.
 
 ⸻
 
-15. Interaction and Trust
+20. Interaction and Trust
 
 Trust determines whether an Intent can proceed toward execution.
 
-Interaction may therefore be used to satisfy Trust requirements.
+Interaction may satisfy explicit Trust requirements.
 
 For example:
 
@@ -383,7 +577,7 @@ Intent
   ↓
 Trust Evaluation
   ↓
-Additional Confirmation Required
+Confirmation Required
   ↓
 Interaction
   ↓
@@ -393,13 +587,15 @@ Trust Evaluation
   ↓
 Execute
 
-Interaction is therefore one mechanism through which Trust requirements can be fulfilled.
+Interaction is therefore one mechanism through which Trust requirements may be fulfilled.
+
+It does not replace the Trust decision.
 
 ⸻
 
-16. Interaction and Authorization
+21. Interaction and Authorization
 
-Authorization should not be inferred merely because a user asks for something.
+Authorization must not be inferred merely because a participant requests an Action.
 
 For example:
 
@@ -410,72 +606,74 @@ does not establish:
 
 User authorized to refund payment 123
 
-Noema may need to verify identity, permissions, delegation, and Policy before execution.
+Noema may need to establish:
 
-Interaction may request additional authorization information where necessary.
+* participant identity;
+* resource identity;
+* authority;
+* delegation;
+* organizational scope;
+* applicable Policy;
+* Action-specific permissions.
 
 ⸻
 
-17. Interaction and Identity
+22. Interaction and Identity
 
-An Interaction may identify the initiating principal.
+An Interaction may identify its initiating principal through:
 
-The identity may come from:
-
-* authenticated session
-* enterprise identity provider
-* delegated identity
-* API credentials
-* service identity
-* explicit identity selection
+* authenticated session;
+* enterprise identity provider;
+* delegated identity;
+* API credential;
+* service identity;
+* workflow identity;
+* explicit identity selection.
 
 Identity must be grounded sufficiently for the requested Action.
 
-Ambiguous identity should trigger deterministic resolution rather than guessing.
+Ambiguous identity must trigger deterministic resolution rather than guessing.
 
 ⸻
 
-18. Interaction and Context
+23. Interaction and Context
 
-Interactions may provide Context.
+Interactions may provide or reference Context.
 
 Example:
 
 User:
 "Use the account we discussed earlier."
 
-The interaction contains information that may reference existing Context.
+Noema must determine whether referenced Context is:
 
-Noema must determine whether the Context is:
+* relevant;
+* current;
+* authoritative;
+* authorized;
+* sufficiently specific;
+* still applicable to the current Intent.
 
-* relevant
-* current
-* authoritative
-* authorized
-* sufficient
-
-Context must not automatically become executable truth.
+Context does not automatically become executable truth.
 
 ⸻
 
-19. Interaction and Evidence
+24. Interaction and Evidence
 
-An Interaction can become Evidence about what a participant explicitly communicated.
+An Interaction may provide Evidence about participant communication.
 
 For example:
 
 User:
 "Yes, refund the $500 payment."
 
-This interaction may provide evidence of explicit confirmation.
+may provide Evidence of explicit confirmation.
 
-However, user statements do not automatically establish enterprise Business State.
-
-Therefore:
+However:
 
 Interaction
    ↓
-Evidence about User Intent
+Evidence about participant communication
 
 is distinct from:
 
@@ -483,35 +681,37 @@ Enterprise System
    ↓
 Evidence about Business State
 
+A participant’s statement does not independently establish enterprise state.
+
 ⸻
 
-20. Interaction and Action
+25. Interaction and Action
 
-Interaction may result in an Action being proposed, confirmed, executed, or reported.
+Interaction may result in an Action being:
 
-Conceptually:
+* proposed;
+* clarified;
+* confirmed;
+* authorized;
+* executed;
+* reported.
 
-Interaction
-    ↓
-Intent
-    ↓
-Action
-
-The interaction itself is not the Action.
+The Interaction itself is not the Action.
 
 For example:
 
+Interaction:
 "Freeze my card."
-
-is an interaction expressing Intent.
-
+Intent:
 freeze_card
+Action:
+freeze_card(card_id)
 
-is the Action.
+The semantic Action remains subject to Trust, Policy, Preconditions, and Action Contract requirements.
 
 ⸻
 
-21. Interaction and Planning
+26. Interaction and Planning
 
 Some Intents require planning before execution.
 
@@ -520,7 +720,7 @@ Example:
 User:
 "Close my account and make sure all pending refunds are handled."
 
-Noema may need to construct a plan:
+Noema may construct:
 
 Identify Account
       ↓
@@ -528,17 +728,21 @@ Retrieve Pending Refunds
       ↓
 Resolve Refund Actions
       ↓
+Execute Refunds
+      ↓
+Verify Refund Outcomes
+      ↓
 Close Account
       ↓
-Verify Outcomes
+Verify Account State
 
-Interaction may be used to explain or resolve decisions in the plan.
+Interaction may occur during planning when ambiguity, authorization, Policy, or execution requirements demand participant input.
 
 ⸻
 
-22. Interaction and Execution
+27. Interaction and Execution
 
-Interaction does not execute an Action directly.
+Interaction must not directly bypass the execution boundary.
 
 The execution path remains:
 
@@ -546,37 +750,176 @@ Interaction
      ↓
 Intent
      ↓
-Trust
+Context / Evidence
      ↓
-Action
+Trust / Policy
+     ↓
+Action Contract
      ↓
 Execution
      ↓
 Enterprise System
 
-This separation prevents conversational input from bypassing execution controls.
+This separation prevents conversational input from becoming an uncontrolled execution mechanism.
 
 ⸻
 
-23. Execution Progress
+28. Explicit Confirmation
+
+Some Actions require explicit confirmation before execution.
+
+Example:
+
+Intent:
+Transfer $20,000
+Trust:
+Confirmation Required
+Interaction:
+"You're about to transfer $20,000 to Account 123. Confirm?"
+Participant:
+"Confirm."
+
+Confirmation is an explicit Interaction event.
+
+It must be bound to the relevant Intent or Action.
+
+Passive continuation or unrelated conversational content must not be treated as confirmation.
+
+⸻
+
+29. Confirmation Binding
+
+Consequential confirmation should include sufficient binding information.
+
+Conceptually:
+
+Confirmation
+     │
+     ├── intent_id
+     ├── action_id
+     ├── principal
+     ├── timestamp
+     ├── target
+     └── relevant parameters
+
+This prevents:
+
+"Yes"
+
+from being incorrectly reused as authorization for a different Action.
+
+⸻
+
+30. Confirmation Is Not Permanent Authorization
+
+Confirmation may become stale.
+
+For example:
+
+Intent:
+Transfer $10,000
+Confirmed
+    ↓
+Enterprise State Changes
+    ↓
+Precondition Invalidated
+
+Noema may need to revalidate before execution.
+
+Therefore:
+
+Confirmation ≠ Permanent Authorization
+
+Confirmation remains subject to applicable Trust, Policy, freshness, and execution requirements.
+
+⸻
+
+31. Reconfirmation
+
+If material execution conditions change, Noema may require renewed Interaction.
+
+Conceptually:
+
+Intent
+  ↓
+Confirmed
+  ↓
+Enterprise State Changes
+  ↓
+Precondition Invalidated
+  ↓
+Revalidation
+  ↓
+Reconfirmation / Replan / Reject
+
+This prevents stale confirmation from authorizing materially different execution.
+
+⸻
+
+32. Interaction and Planning Changes
+
+A participant may modify an Intent before or during execution where permitted.
+
+Example:
+
+User:
+"Send $500."
+User:
+"Actually, send $700."
+
+Noema must determine whether the second Interaction represents:
+
+* modification of the existing Intent;
+* a new Intent;
+* an incompatible change requiring re-resolution;
+* a change requiring renewed authorization or confirmation.
+
+The resulting semantic state must remain explicit.
+
+⸻
+
+33. Interaction and Cancellation
+
+A participant may request cancellation.
+
+Example:
+
+User:
+"Cancel that."
+
+Noema must resolve:
+
+Which Intent?
+Which Action?
+What is its current execution state?
+Is cancellation still possible?
+What does Policy permit?
+
+An Action that has already become irreversible may not be cancellable.
+
+Cancellation therefore remains an execution decision, not merely a conversational command.
+
+⸻
+
+34. Interaction and Execution Progress
 
 Noema may expose execution progress through Interaction.
 
-For example:
+Examples:
 
 "Your refund request was submitted."
 "Waiting for the payment provider."
 "Refund confirmed."
 
-These messages represent observations about Execution State.
+These communications must correspond to actual Noema or enterprise observations.
 
-They should correspond to actual Noema state rather than generated narrative.
+Generated narrative must not create execution state.
 
 ⸻
 
-24. Interaction and Outcomes
+35. Interaction and Outcome
 
-An Outcome should be communicated through Interaction in a way appropriate to the participant.
+An Outcome should be communicated according to established execution state.
 
 Example:
 
@@ -585,77 +928,75 @@ SUCCEEDED
 Interaction:
 "Your card has been frozen."
 
-The communication should be grounded in the actual execution outcome.
+The communication should be grounded in the verified Action Outcome.
 
-Noema should not claim success merely because the Action was attempted.
+Noema should not claim success merely because an Action was attempted.
 
 ⸻
 
-25. Interaction and Failure
+36. Interaction and Failure
 
-Failures may require additional interaction.
-
-Example:
-
-Action
-  ↓
-Execution
-  ↓
-Failure
-  ↓
-Interaction
+Failures may require additional Interaction.
 
 Noema may communicate:
 
-* what failed
-* whether the Action was attempted
-* whether the outcome is known
-* whether retry is possible
-* whether human intervention is required
+* what failed;
+* whether execution was attempted;
+* whether the outcome is known;
+* whether retry is permitted;
+* whether reconciliation is required;
+* whether human intervention is required;
+* what next actions are available.
 
-The communication must preserve the distinction between:
+The communication must preserve distinctions such as:
 
 FAILED
 
-and:
+versus:
 
 UNKNOWN
 
+versus:
+
+PARTIAL
+
 ⸻
 
-26. Interaction and Unknown Outcomes
+37. Interaction and Unknown Outcomes
 
 An external write may time out after the enterprise system receives the request.
 
-Noema should not tell the user:
+Noema must not automatically tell the participant:
 
-“The payment failed.”
+"The payment failed."
 
-unless failure is established.
+if failure has not been established.
 
 Instead:
 
 Execution
-   ↓
+    ↓
 Outcome = UNKNOWN
-   ↓
+    ↓
 Reconciliation
-   ↓
+    ↓
+Verified State
+    ↓
 Interaction
 
-The participant should receive a representation consistent with the actual execution state.
+Participant-facing communication must remain consistent with the established execution state.
 
 ⸻
 
-27. Interaction and Human Intervention
+38. Interaction and Human Intervention
 
-Human intervention is distinct from ordinary user interaction.
+Human intervention is distinct from ordinary participant interaction.
 
-A user may simply provide Intent.
+A user may provide Intent.
 
 An operator may be required to resolve an execution exception.
 
-For example:
+Example:
 
 User Intent
     ↓
@@ -669,13 +1010,22 @@ Resolution
     ↓
 Execution Continues
 
-The operator’s role, authority, and intervention must be explicitly represented.
+The operator’s:
+
+* identity;
+* authority;
+* intervention;
+* decision;
+* timestamp;
+* relationship to the affected Intent
+
+should be represented where required.
 
 ⸻
 
-28. Interaction and Compound Intent
+39. Interaction and Compound Intent
 
-A Compound Intent may produce multiple interaction points.
+A Compound Intent may produce multiple Interaction points.
 
 Example:
 
@@ -690,16 +1040,26 @@ Execute Refund
 Verify Refund
         ↓
 Close Account
+        ↓
+Verify Account
 
-Noema may interact with the user between these stages when required by Trust, Policy, ambiguity, or failure.
+Interaction may occur between stages when required by:
+
+* ambiguity;
+* Trust;
+* Policy;
+* authorization;
+* failure;
+* approval;
+* recovery.
 
 ⸻
 
-29. Interaction and Long-Running Execution
+40. Interaction and Long-Running Execution
 
 An Interaction does not necessarily end when execution begins.
 
-Long-running Actions may produce multiple interaction events.
+Long-running Actions may generate multiple Interaction events.
 
 Example:
 
@@ -714,14 +1074,16 @@ External Event
 Execution Resumed
   ↓
 Completed
+  ↓
+Outcome Communicated
 
-The participant may observe these transitions through the appropriate interaction channel.
+The participant may observe relevant transitions through an appropriate interaction channel.
 
 ⸻
 
-30. Interaction Continuity
+41. Interaction Continuity
 
-Noema should preserve continuity between related interactions.
+Noema should preserve continuity between related Interactions.
 
 Example:
 
@@ -732,15 +1094,17 @@ Interaction 2:
 Interaction 3:
 "Yes, do it."
 
-These interactions may belong to the same Intent lifecycle.
+These Interactions may belong to the same Intent lifecycle.
 
-Noema should maintain the relevant relationship without assuming that every subsequent message belongs to the previous Intent.
+Continuity must be established semantically rather than assumed solely from temporal proximity.
+
+A subsequent message does not automatically belong to a previous Intent.
 
 ⸻
 
-31. Interaction Sessions
+42. Interaction Session
 
-An Interaction Session may group related interactions.
+An Interaction Session may group related Interactions.
 
 Conceptually:
 
@@ -750,63 +1114,37 @@ Interaction Session
     ├── Interaction
     ├── Clarification
     ├── Confirmation
+    ├── Approval
     └── Outcome
 
-A session provides continuity.
+A Session provides continuity and organizational context.
 
-It does not automatically establish semantic authority over every message within it.
-
-⸻
-
-32. Interaction and Intent Lifecycle
-
-Interactions may correspond to different Intent lifecycle stages.
-
-Expressed
-   ↓
-Understood
-   ↓
-Clarifying
-   ↓
-Resolved
-   ↓
-Authorized
-   ↓
-Executing
-   ↓
-Completed
-
-The interaction layer provides the participant-facing representation of these transitions.
+It does not automatically establish semantic authority over every Interaction within it.
 
 ⸻
 
-33. Interaction State vs Intent State
+43. Interaction Session vs Intent Lifecycle
 
-These states must remain distinct.
+A Session may contain:
 
-Interaction State may describe:
+* one Intent;
+* multiple related Intents;
+* unrelated Interactions;
+* notifications;
+* approvals;
+* operator interventions.
 
-message_received
-awaiting_response
-response_sent
-session_active
+Therefore:
 
-Intent State may describe:
+Session ≠ Intent
 
-expressed
-ambiguous
-resolved
-authorized
-executing
-completed
-
-An interaction can change Intent State, but the two models should not be conflated.
+Intent membership must be established explicitly enough for consequential execution.
 
 ⸻
 
-34. Interaction and Enterprise State
+44. Interaction and Enterprise State
 
-Interaction should not be treated as authoritative enterprise state.
+Interaction is not authoritative enterprise state.
 
 For example:
 
@@ -817,119 +1155,131 @@ does not establish:
 
 payment.status = REFUNDED
 
-The authoritative enterprise system must establish that state where required.
-
-Interaction provides information about what the participant claims or intends.
+Where enterprise state matters, Noema must obtain authoritative Evidence from the relevant enterprise system.
 
 ⸻
 
-35. Interaction and Canonical Data
+45. Interaction and Canonical Data
 
-Interaction may reference Canonical Data.
+Interaction may provide references to Canonical Data.
 
 Example:
 
 User:
 "Refund payment 123."
 
-Noema resolves:
+The Interaction supplies:
 
 payment_id = 123
 
-against the authoritative enterprise system.
+The enterprise System of Record establishes:
 
-The interaction supplies the reference.
+* whether payment 123 exists;
+* its current state;
+* whether it is eligible;
+* what other canonical properties apply.
 
-The enterprise system establishes the canonical state.
+Interaction provides participant intent.
+
+Enterprise systems establish authoritative Business State.
 
 ⸻
 
-36. Interaction and Data Boundaries
+46. Interaction and Data Boundaries
 
-Noema should not expose unnecessary enterprise data through Interaction.
+Noema should expose only information necessary and authorized for the Interaction.
 
-For example, a user asking:
+For example:
 
+User:
 "What's the status of my refund?"
 
-should receive only the information authorized and necessary to answer the request.
+The response should contain only information permitted by:
 
-Interaction therefore inherits relevant:
+* identity;
+* authorization;
+* Policy;
+* privacy requirements;
+* organizational scope;
+* data minimization requirements.
 
-* privacy
-* authorization
-* data minimization
-* organizational boundaries
+Interaction must not become a channel for uncontrolled enterprise data disclosure.
 
 ⸻
 
-37. Interaction and Explainability
+47. Interaction and Explainability
 
-Noema should be able to explain relevant execution decisions without exposing internal reasoning or sensitive implementation details.
+Noema should communicate relevant execution decisions without exposing hidden model reasoning or unnecessary implementation details.
 
 For example:
 
 "Your request requires approval because transfers above $10,000 require a second approver."
 
-This communicates the Policy outcome.
+This communicates the applicable Policy result.
 
-It does not require exposing hidden model reasoning.
-
-⸻
-
-38. Interaction and Policy
-
-Policy may determine what Noema must communicate.
-
-For example:
-
-Policy:
-Financial transfers above $50,000
-require explicit confirmation.
-
-Interaction must then provide an appropriate confirmation step.
-
-Policy may also determine:
-
-* what information may be shown
-* who may approve
-* when clarification is required
-* when escalation is required
-* when execution must be rejected
+It does not require exposing private chain-of-thought or internal model reasoning.
 
 ⸻
 
-39. Interaction and Risk
+48. Interaction and Policy
+
+Policy may determine how Noema must interact with a participant.
+
+Policy may define:
+
+* when confirmation is required;
+* when clarification is required;
+* what information may be disclosed;
+* who may approve;
+* when escalation is required;
+* when reconfirmation is required;
+* when execution must be rejected;
+* which interaction channels may be used.
+
+Therefore:
+
+Policy
+   ↓
+Interaction Requirements
+
+is part of the execution model.
+
+⸻
+
+49. Interaction and Risk
 
 Higher-risk Actions may require stronger interaction controls.
 
 For example:
 
-Low Risk
-→ direct execution
-Medium Risk
-→ confirmation
-High Risk
-→ confirmation + approval
-Critical Risk
-→ human intervention
+Lower Risk
+    ↓
+Direct Execution
+Higher Risk
+    ↓
+Explicit Confirmation
+Higher Risk + Additional Authority
+    ↓
+Confirmation + Approval
+Critical / Exceptional
+    ↓
+Human Intervention
 
 The exact thresholds are Policy-defined.
 
-Interaction is the mechanism through which those requirements may be satisfied.
+Interaction implements those requirements; it does not define them independently.
 
 ⸻
 
-40. Interaction and Determinism
+50. Interaction and Determinism
 
-Interaction must not become a mechanism for hiding probabilistic execution decisions.
+Interaction must not become a mechanism for concealing probabilistic decisions.
 
 For example:
 
-Noema:
 "I think you probably mean Account 123."
 
-is not a deterministic resolution.
+is not deterministic resolution.
 
 Instead:
 
@@ -941,35 +1291,43 @@ Explicit Selection
    ↓
 Resolved Intent
 
-Interaction converts unresolved uncertainty into explicit information where possible.
+Interaction should convert unresolved uncertainty into explicit information where possible.
 
 ⸻
 
-41. Interaction and Model Output
+51. Interaction and Model Output
 
-The model may generate candidate interpretations or responses.
+The model may generate candidate interpretations or candidate responses.
 
-Those outputs are not automatically executable interaction state.
+Those outputs are not automatically authoritative Interaction State.
 
 Conceptually:
 
 Model
   ↓
-Candidate Interpretation
+Candidate Interpretation / Response
   ↓
 Noema Validation
   ↓
-Intent / Interaction State
+Semantic State
+  ↓
+Interaction
 
-Noema owns the resulting state.
+Noema owns the resulting semantic state.
 
-The model does not.
+The model does not independently establish:
+
+* authorization;
+* confirmation;
+* execution;
+* enterprise state;
+* Outcome.
 
 ⸻
 
-42. Interaction and Structured UI
+52. Interaction and Structured UI
 
-A structured interface may represent the same semantic interaction as natural language.
+Structured interfaces may represent the same semantic Interaction as natural language.
 
 For example:
 
@@ -989,11 +1347,11 @@ The semantic model should remain interface-independent.
 
 ⸻
 
-43. Interaction and API Consumers
+53. Interaction and API Consumers
 
-External applications may interact with Noema through APIs.
+External applications may interact with Noema programmatically.
 
-For example:
+Example:
 
 Application
     ↓
@@ -1001,23 +1359,25 @@ Intent API
     ↓
 Noema
 
-The interaction model should therefore apply to programmatic participants as well as humans.
+A machine-originated Interaction remains subject to:
 
-A machine-originated interaction still requires:
+* identity;
+* authorization;
+* Intent semantics;
+* Trust;
+* Policy;
+* Action Contracts;
+* execution controls.
 
-* identity
-* authorization
-* intent semantics
-* trust
-* execution controls
+API interaction is therefore another Interaction modality, not a bypass around the model.
 
 ⸻
 
-44. Interaction and Events
+54. Interaction and Events
 
-Events may produce interactions with Noema.
+Events may trigger or participate in Noema execution.
 
-For example:
+Example:
 
 Enterprise Event
       ↓
@@ -1025,34 +1385,43 @@ Noema
       ↓
 Intent / Execution State
 
-Events differ from human interactions because they are machine-generated observations or triggers.
+Events differ from human Interactions because they are machine-generated observations or triggers.
 
-They should retain their source and provenance.
+They must retain:
 
-⸻
+* source;
+* timestamp;
+* provenance;
+* event identity;
+* relevant version information.
 
-45. Interaction and Notifications
-
-Notifications are one output form of Interaction.
-
-Examples:
-
-Email
-Push Notification
-SMS
-Webhook
-Dashboard Update
-Chat Message
-
-A notification should represent actual Noema or enterprise state.
-
-It should not imply an execution outcome that has not been established.
+An event must not be treated as equivalent to a human authorization unless Policy explicitly establishes such authority.
 
 ⸻
 
-46. Interaction and Proactive Behavior
+55. Interaction and Notifications
 
-Noema may initiate an interaction when permitted by Policy.
+Notifications are output forms of Interaction.
+
+Examples include:
+
+* Email
+* Push Notification
+* SMS
+* Webhook
+* Dashboard Update
+* Chat Message
+* In-application notification
+
+A notification should represent established Noema or enterprise state.
+
+It must not imply an execution outcome that has not been established.
+
+⸻
+
+56. Interaction and Proactive Behavior
+
+Noema may initiate Interaction when explicitly permitted by Policy and system design.
 
 Example:
 
@@ -1060,25 +1429,29 @@ Upcoming Policy Expiration
         ↓
 Noema
         ↓
-User Notification
+Participant Notification
         ↓
-User Confirmation
+Participant Confirmation
         ↓
 Execution
 
-Proactive interaction must still respect:
+Proactive Interaction must respect:
 
-* identity
-* authorization
-* consent
-* Policy
-* data boundaries
+* identity;
+* authorization;
+* consent where applicable;
+* Policy;
+* data boundaries;
+* notification permissions;
+* execution requirements.
+
+Proactive behavior does not create independent authority to execute consequential Actions.
 
 ⸻
 
-47. Interaction and Interruptions
+57. Interaction and Interruptions
 
-Execution may require interruption of the normal lifecycle.
+Execution may require interruption.
 
 Example:
 
@@ -1094,218 +1467,41 @@ Approval
    ↓
 Resume
 
-The interruption should be represented explicitly rather than treated as a failure.
+The interruption should be represented explicitly.
+
+A paused execution is not necessarily a failure.
 
 ⸻
 
-48. Interaction and Cancellation
+58. Interaction and Recovery
 
-A participant may request cancellation.
+When execution fails or becomes uncertain, Interaction may support recovery.
 
 Example:
 
-User:
-"Cancel that."
-Noema:
-Which active Intent?
+Execution Failed / Unknown
         ↓
-Resolved Intent
+Recovery Determination
         ↓
-Cancellation Policy
-        ↓
-Cancel / Reject / Continue
-
-Cancellation must be evaluated against the current execution state.
-
-An Action that has already become irreversible may not be cancellable.
-
-⸻
-
-49. Interaction and Modification
-
-An Intent may change before execution.
-
-Example:
-
-User:
-"Send $500."
-User:
-"Actually, send $700."
-
-Noema must determine whether this is:
-
-Modification of Existing Intent
-
-or:
-
-New Intent
-
-The resulting Intent State must remain explicit.
-
-⸻
-
-50. Interaction and Confirmation Expiry
-
-Confirmation may become stale.
-
-For example:
-
-User confirms:
-Transfer $10,000
-Later:
-Account state changes materially
-
-Noema may need to revalidate the Intent before execution.
-
-Therefore:
-
-Confirmation ≠ Permanent Authorization
-
-Confirmation remains subject to applicable Trust, Policy, and freshness requirements.
-
-⸻
-
-51. Interaction and Reconfirmation
-
-If material execution conditions change, Noema may require renewed interaction.
-
-Example:
-
-Intent
-  ↓
-Confirmed
-  ↓
-Enterprise State Changes
-  ↓
-Precondition Invalidated
-  ↓
-Revalidation
-  ↓
-Reconfirmation / Reject / Replan
-
-This prevents stale confirmation from authorizing a materially different execution.
-
-⸻
-
-52. Interaction and Auditability
-
-Consequential interactions should be auditable.
-
-Relevant records may include:
-
-interaction_id
-participant
-timestamp
-intent
-intent_version
-confirmation
-authorization
-execution_id
-outcome
-
-The exact information retained depends on Policy and data-retention requirements.
-
-⸻
-
-53. Interaction Provenance
-
-Noema should preserve where an interaction originated.
-
-Possible sources:
-
-Human
-Application
-API
-Workflow
-Event
-Operator
-System
-
-This provenance affects interpretation, authorization, and auditability.
-
-⸻
-
-54. Interaction Security
-
-Interactions may contain sensitive information.
-
-Noema should apply:
-
-* authentication
-* authorization
-* encryption
-* access control
-* data minimization
-* retention policies
-* redaction
-* secure logging
-
-Interaction history should not become an uncontrolled data store.
-
-⸻
-
-55. Interaction Integrity
-
-Consequential interactions should be attributable and tamper-resistant.
-
-For example:
-
-"Confirm transfer."
-must be associated with:
-principal
-timestamp
-intent
-amount
-target
-confirmation context
-
-A generic:
-
-"Yes"
-
-should not be treated as authorization without sufficient contextual binding.
-
-⸻
-
-56. Interaction Binding
-
-Confirmation and approval should be bound to the specific Intent or Action they authorize.
-
-Conceptually:
-
-Confirmation
-     │
-     ├── intent_id
-     ├── action_id
-     ├── principal
-     ├── timestamp
-     └── relevant parameters
-
-This prevents confirmation from being incorrectly reused for a different operation.
-
-⸻
-
-57. Interaction and Recovery
-
-When execution fails, Interaction can guide recovery.
-
-Example:
-
-Execution Failed
-      ↓
-Determine Recovery
-      ↓
 Interaction
-      ↓
-Retry / Modify / Escalate / Cancel
+        ↓
+Retry / Reconcile / Modify / Escalate / Cancel
 
-Recovery choices must remain governed by Policy and execution semantics.
+Recovery options remain governed by:
+
+* Action Contract;
+* Policy;
+* Trust;
+* Integration semantics;
+* execution state.
+
+Interaction does not independently authorize recovery.
 
 ⸻
 
-58. Interaction and Compensation
+59. Interaction and Compensation
 
-If an executed Action requires compensation, Noema may interact with the participant where appropriate.
+If an executed Action requires compensation, Noema may interact with a participant where appropriate.
 
 Example:
 
@@ -1321,13 +1517,13 @@ Interaction
   ↓
 Human Decision
 
-Not every compensation requires user interaction.
+Not every compensation requires participant interaction.
 
-Policy determines when human participation is required.
+Policy and execution semantics determine whether human participation is required.
 
 ⸻
 
-59. Interaction and Multi-Actor Execution
+60. Interaction and Multi-Actor Execution
 
 Enterprise execution may involve multiple actors.
 
@@ -1343,13 +1539,22 @@ Noema
     ↓
 Enterprise System
 
-The Interaction Model must preserve actor identity and authority across the execution lifecycle.
+The Interaction Model must preserve actor identity and authority throughout the execution lifecycle.
 
 The requester and approver are not necessarily the same principal.
 
+Approval must therefore be bound to:
+
+* the approving principal;
+* the relevant Intent or Action;
+* applicable parameters;
+* authorization scope;
+* timestamp;
+* Policy requirements.
+
 ⸻
 
-60. Interaction and Organizational Boundaries
+61. Interaction and Organizational Boundaries
 
 Interactions must respect organizational boundaries.
 
@@ -1369,50 +1574,342 @@ Interaction permissions must therefore be evaluated within the relevant organiza
 
 ⸻
 
-61. Interaction and Enterprise Ownership
+62. Interaction and Enterprise Ownership
 
-Noema may mediate interaction with enterprise systems.
+Noema may mediate Interaction with enterprise systems.
 
 It does not become the owner of those systems’ Business State.
 
 Conceptually:
 
-Human
-  ↓
+Participant
+    ↓
 Interaction
-  ↓
+    ↓
 Noema
-  ↓
+    ↓
 Enterprise System
-  ↓
+    ↓
 Business State
 
-The enterprise remains authoritative for the resulting Business State.
+The enterprise remains authoritative for resulting Business State.
 
 ⸻
 
-62. Interaction as an Execution Surface
+63. Interaction as an Execution Surface
 
 Noema’s product surface is not limited to a chat window.
 
 The execution surface may include:
 
-Chat
-Voice
-Dashboard
-Approval UI
-API
-Webhook
-Notification
-Embedded Application
+* Chat
+* Voice
+* Dashboard
+* Approval UI
+* API
+* Webhook
+* Notification
+* Embedded Application
+* Operator Console
 
 The common abstraction is not the interface.
 
-It is the Intent → Trust → Action → Execution lifecycle.
+It is:
+
+Interaction
+    ↓
+Intent
+    ↓
+Trust / Policy
+    ↓
+Action
+    ↓
+Execution
+    ↓
+Verified Outcome
 
 ⸻
 
-63. Interaction Model
+64. Interaction Delivery
+
+The interaction mechanism is responsible for delivering participant-facing information through the appropriate channel.
+
+Delivery may involve:
+
+* synchronous response;
+* asynchronous notification;
+* polling;
+* webhook;
+* event subscription;
+* dashboard state;
+* approval request.
+
+Delivery status must remain distinct from semantic Outcome.
+
+For example:
+
+Notification Delivered
+
+does not imply:
+
+Action Succeeded
+
+⸻
+
+65. Interaction Expiry
+
+Some Interactions have validity windows.
+
+Examples include:
+
+* confirmation;
+* approval request;
+* authentication challenge;
+* temporary clarification request;
+* recovery decision.
+
+An expired Interaction must not automatically remain valid indefinitely.
+
+For consequential Interactions, expiry should be governed by Policy and the relevant execution contract.
+
+⸻
+
+66. Interaction Integrity
+
+Consequential Interactions should be attributable and tamper-resistant.
+
+For example:
+
+"Confirm transfer."
+
+should be associated with sufficient context:
+
+principal
+intent
+action
+amount
+target
+timestamp
+confirmation context
+
+A generic:
+
+"Yes"
+
+must not be treated as authorization without sufficient contextual binding.
+
+⸻
+
+67. Interaction Provenance
+
+Noema should preserve where an Interaction originated.
+
+Possible sources include:
+
+Human
+Application
+API
+Workflow
+Event
+Operator
+System
+
+Provenance may affect:
+
+* interpretation;
+* authorization;
+* Trust;
+* Policy;
+* auditability;
+* execution semantics.
+
+⸻
+
+68. Interaction Security
+
+Interactions may contain sensitive information.
+
+Noema should apply appropriate:
+
+* authentication;
+* authorization;
+* encryption;
+* access control;
+* data minimization;
+* retention;
+* redaction;
+* secure logging.
+
+Interaction history must not become an uncontrolled repository of enterprise data.
+
+⸻
+
+69. Interaction Auditability
+
+Consequential Interactions should be auditable.
+
+Relevant records may include:
+
+interaction_id
+session_id
+participant
+participant_identity
+source
+modality
+timestamp
+intent_id
+intent_version
+action_id
+confirmation
+authorization
+execution_id
+resulting_state
+
+The exact information retained depends on Policy, privacy requirements, and applicable retention obligations.
+
+⸻
+
+70. Interaction and Outcome Truth
+
+Participant-facing communication must preserve the distinction between:
+
+Requested
+Attempted
+Succeeded
+Failed
+Unknown
+Partially Executed
+Reconciled
+
+Noema must not use interaction language to collapse these states into a misleading simplified narrative.
+
+⸻
+
+71. Interaction and Enterprise Events
+
+Enterprise events may provide information about execution outcomes.
+
+For example:
+
+Payment System
+      ↓
+payment.refunded
+      ↓
+Event Infrastructure
+      ↓
+Noema
+      ↓
+Outcome Verification
+      ↓
+Interaction
+
+An event provides Evidence.
+
+Where required, authoritative state should still be verified according to the relevant Action and Integration contracts.
+
+⸻
+
+72. Interaction and State Freshness
+
+Interaction-derived information may become stale.
+
+For example:
+
+Participant:
+"Use account 123."
+Later:
+Account permissions change.
+
+Noema must not assume that prior Interaction remains sufficient for current execution.
+
+Freshness requirements depend on:
+
+* Action risk;
+* Policy;
+* Context;
+* enterprise state;
+* time elapsed;
+* confirmation requirements.
+
+⸻
+
+73. Interaction and Re-Resolution
+
+A previously resolved Intent may require re-resolution if material information changes.
+
+Conceptually:
+
+Resolved Intent
+      ↓
+Material State Change
+      ↓
+Revalidation
+      ↓
+Re-resolution / Reconfirmation / Reject
+
+Previous Interaction history is Evidence.
+
+It is not an immutable authorization to execute under materially changed conditions.
+
+⸻
+
+74. Interaction and Privacy
+
+Interaction must respect data boundaries.
+
+Noema should not expose:
+
+* unnecessary personal information;
+* unrelated enterprise information;
+* information outside participant authority;
+* hidden credentials;
+* sensitive implementation details.
+
+The interaction surface should expose the minimum information necessary for the participant to understand and participate in the relevant execution.
+
+⸻
+
+75. Interaction and Least Privilege
+
+Interaction capabilities should follow least privilege.
+
+A participant authorized to:
+
+View Payment
+
+is not automatically authorized to:
+
+Refund Payment
+
+A participant authorized to:
+
+Approve Payment
+
+is not necessarily authorized to:
+
+Modify Payment
+
+Interaction capabilities must therefore correspond to actual authority.
+
+⸻
+
+76. Interaction and Enterprise Ownership
+
+Noema may retain Interaction and execution history necessary for its own execution model.
+
+It must not silently transform participant interaction into ownership of enterprise Business State.
+
+Therefore:
+
+Enterprise Canonical State
+        +
+Noema Interaction / Execution State
+
+may coexist without creating competing authority.
+
+⸻
+
+77. Interaction Model
 
 Conceptually:
 
@@ -1420,6 +1917,7 @@ Interaction {
     interaction_id
     session_id
     participant
+    participant_identity
     modality
     source
     timestamp
@@ -1430,41 +1928,74 @@ Interaction {
     evidence
     confirmation
     authorization
+    provenance
     resulting_state
+    delivery_state
 }
 
 This is a semantic model rather than a requirement for a literal database table.
 
 ⸻
 
-64. Interaction Relationships
+78. Interaction Relationships
 
 Interaction
 │
 ├── initiated_by → Participant
 ├── belongs_to → Session
 ├── expresses → Intent
-├── provides → Context
-├── produces → Evidence
+├── references → Context
+├── provides → Evidence
 ├── resolves → Ambiguity
 ├── requests → Action
 ├── confirms → Intent / Action
+├── authorizes → Intent / Action
 ├── influences → Trust
+├── satisfies → Policy Requirement
 ├── observes → Execution
 ├── communicates → Outcome
-└── may_trigger → Human Intervention
+├── triggers → Intervention
+└── may_modify → Intent
 
 ⸻
 
-65. Interaction Invariants
+79. Interaction Lifecycle
+
+Conceptually:
+
+Created
+   ↓
+Received
+   ↓
+Authenticated / Attributed
+   ↓
+Interpreted
+   ↓
+Bound to Intent / Execution
+   ↓
+Processed
+   ↓
+Responded
+   ↓
+Delivered
+   ↓
+Completed / Expired
+
+Not every Interaction traverses every state.
+
+The lifecycle depends on modality and purpose.
+
+⸻
+
+80. Interaction Invariants
 
 Invariant 1
 
-Interaction is the semantic exchange through which participants communicate with and participate in Noema execution.
+Interaction is the semantic exchange through which authorized participants communicate with and participate in Noema execution.
 
 Invariant 2
 
-Interaction is not equivalent to conversation, UI, API, or any single transport mechanism.
+Interaction is not equivalent to conversation, UI, API, notification, or any single transport mechanism.
 
 Invariant 3
 
@@ -1472,47 +2003,47 @@ Intent and Interaction are distinct concepts.
 
 Invariant 4
 
-Interaction must not directly bypass Intent, Trust, Action, or Execution boundaries.
+Interaction State, Intent State, and Execution State must remain distinct.
 
 Invariant 5
 
-Model-generated responses are not automatically authoritative Interaction State.
+Interaction must not directly bypass Intent, Trust, Policy, Action Contract, or Execution boundaries.
 
 Invariant 6
 
-Material ambiguity must be resolved explicitly rather than hidden through conversational inference.
+Model-generated responses are not automatically authoritative Interaction State.
 
 Invariant 7
 
-High model confidence does not constitute authorization or confirmation.
+Material ambiguity must be resolved explicitly rather than hidden through probabilistic inference.
 
 Invariant 8
 
-User requests do not automatically establish enterprise Business State.
+Model confidence does not constitute authorization, Trust, confirmation, or execution.
 
 Invariant 9
 
-Enterprise state must be grounded against authoritative enterprise sources where required.
+Participant requests do not automatically establish enterprise Business State.
 
 Invariant 10
 
-Consequential confirmation must be bound to the relevant Intent or Action.
+Enterprise state must be grounded against authoritative enterprise sources where required.
 
 Invariant 11
 
-A generic confirmation must not be reused for an unrelated Action.
+Consequential confirmation must be bound to the relevant Intent or Action.
 
 Invariant 12
 
-Confirmation does not automatically remain valid when material execution conditions change.
+A generic confirmation must not be reused for an unrelated Action.
 
 Invariant 13
 
-Interaction State and Intent State must remain distinct.
+Confirmation does not remain permanently valid when material execution conditions change.
 
 Invariant 14
 
-Interaction may influence Intent State but does not directly define execution outcome.
+Interaction may influence Intent State but does not directly define execution Outcome.
 
 Invariant 15
 
@@ -1520,49 +2051,117 @@ Execution outcomes communicated through Interaction must reflect established exe
 
 Invariant 16
 
-Unknown execution outcomes must not be communicated as confirmed failure or success.
+Unknown execution outcomes must not be communicated as confirmed success or failure.
 
 Invariant 17
 
-Interaction provenance must be preserved where required for Trust and Auditability.
+Partial execution must remain distinguishable from complete failure.
 
 Invariant 18
 
-Interactions must respect identity, authorization, privacy, tenant, and organizational boundaries.
+Interaction provenance must be preserved where required for Trust, Policy, authorization, and Auditability.
 
 Invariant 19
 
-Interaction history must not become an uncontrolled source of enterprise truth.
+Interactions must respect identity, authorization, privacy, tenant, and organizational boundaries.
 
 Invariant 20
 
-Human intervention must be distinguished from ordinary user interaction.
+Interaction history must not become an uncontrolled source of enterprise truth.
 
 Invariant 21
 
-Machine-generated interactions must preserve their source and provenance.
+Human intervention must be distinguished from ordinary participant interaction.
 
 Invariant 22
 
-Different interaction modalities may represent the same semantic Intent.
+Machine-generated Interactions must preserve their source and provenance.
 
 Invariant 23
 
-Noema should optimize for Intent completion rather than conversation completion.
+Different interaction modalities may represent the same semantic Intent.
 
 Invariant 24
 
-Interaction may pause, resume, modify, clarify, confirm, cancel, or terminate participation in an Intent lifecycle according to Policy.
+Noema should optimize for Intent completion and trustworthy Outcome rather than conversation completion.
 
 Invariant 25
 
-Noema may mediate interaction with enterprise systems without becoming the owner of their Business State.
+Interaction may pause, resume, modify, clarify, confirm, cancel, or terminate participation in an Intent lifecycle according to Policy and execution state.
+
+Invariant 26
+
+Confirmation and approval must be bound to the relevant principal, Intent or Action, and applicable execution parameters.
+
+Invariant 27
+
+Expired or stale Interaction authorization must not be treated as permanently valid.
+
+Invariant 28
+
+Interaction delivery status must not be interpreted as Action execution status.
+
+Invariant 29
+
+Participant-facing communication must preserve the distinction between requested, attempted, succeeded, failed, unknown, partial, and reconciled execution states.
+
+Invariant 30
+
+Interaction may provide Evidence about participant communication but does not independently establish enterprise Business State.
+
+Invariant 31
+
+Context obtained through Interaction must remain subject to relevance, authority, freshness, and authorization requirements.
+
+Invariant 32
+
+Interaction must not expose enterprise information beyond what is necessary and authorized.
+
+Invariant 33
+
+API, event, workflow, and machine-originated Interactions remain subject to identity, authorization, Trust, Policy, and execution controls.
+
+Invariant 34
+
+Proactive Interaction does not create independent authority to execute consequential Actions.
+
+Invariant 35
+
+A previous Interaction may become insufficient when material Context, Policy, authorization, or enterprise state changes.
+
+Invariant 36
+
+Noema may mediate Interaction with enterprise systems without becoming the owner of their Business State.
+
+Invariant 37
+
+Interaction must not be used to conceal probabilistic execution decisions.
+
+Invariant 38
+
+The semantic Interaction model must remain independent of any specific interface or transport mechanism.
+
+Invariant 39
+
+Interaction should provide sufficient continuity to support multi-step Intent resolution without assuming that every subsequent participant message belongs to the previous Intent.
+
+Invariant 40
+
+Consequential Interaction records must retain sufficient provenance and binding information to reconstruct the participant’s role in the execution lifecycle.
+
+Invariant 41
+
+Interaction must not independently reinterpret or invent enterprise Actions.
+
+Invariant 42
+
+Interaction is part of the execution surface, but it is not itself the execution authority.
 
 ⸻
 
-66. Final Definition
+81. Final Definition
 
-The Interaction Model defines the semantic exchange through which humans and other authorized participants express Intent, resolve uncertainty, satisfy Trust requirements, observe execution, provide intervention, and receive outcomes from Noema.
+The Interaction Model defines the semantic exchange through which humans and other authorized participants express Intent, provide Context, resolve uncertainty, satisfy Trust and Policy requirements, confirm or modify Actions, observe execution, provide intervention, and receive verified Outcomes from Noema.
 
 The fundamental relationship is:
 
@@ -1575,7 +2174,10 @@ PARTICIPANT
     INTENT
       │
       ▼
-    TRUST
+CONTEXT / EVIDENCE
+      │
+      ▼
+ TRUST / POLICY
       │
       ▼
     ACTION
@@ -1587,7 +2189,7 @@ PARTICIPANT
 ENTERPRISE SYSTEM
       │
       ▼
-   OUTCOME
+ VERIFIED OUTCOME
       │
       ▼
  INTERACTION
@@ -1597,4 +2199,4 @@ PARTICIPANT
 
 The architectural rule is:
 
-Interaction is the human and system-facing surface of Noema’s execution lifecycle, but it must never bypass the semantic, trust, authorization, and execution boundaries that make that lifecycle trustworthy.
+Interaction is the participant-facing surface of Noema’s intent-to-execution lifecycle. It may provide information, resolve uncertainty, satisfy explicit execution requirements, and communicate verified state, but it must never bypass the semantic, trust, authorization, policy, action, or execution boundaries that make Noema trustworthy.

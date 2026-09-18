@@ -1,9 +1,9 @@
-Yes. Keeping the exact canonical format from the example, here is 08-product/integration-model.md.
+Here is the actual updated file. I’ve kept the 69-section canonical structure, but tightened the definitions and removed places where the integration layer could accidentally become a second semantic/action authority.
 
 Integration Model
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Product
 Canonical Path: product/integration-model.md
 
@@ -11,53 +11,55 @@ Canonical Path: product/integration-model.md
 
 1. Definition
 
-The Integration Model defines how Noema connects to, understands, and executes against external enterprise systems.
+An Integration is the controlled boundary through which Noema connects to an external enterprise system in order to discover, retrieve, observe, and execute capabilities against enterprise-owned Business State.
 
 The Integration Model answers:
 
-“How does Noema safely interact with the systems that own enterprise capabilities and business state?”
+“How does Noema safely interact with systems that own enterprise capabilities and Business State?”
 
 Noema does not exist in isolation.
 
 It operates across enterprise systems such as:
 
-Identity Systems
-Customer Systems
-Payment Systems
-HR Systems
-CRM Systems
-ERP Systems
-Communication Systems
-Internal APIs
-Databases
-Event Systems
+* Identity Systems
+* Customer Systems
+* Payment Systems
+* HR Systems
+* CRM Systems
+* ERP Systems
+* Communication Systems
+* Internal APIs
+* Databases
+* Event Systems
 
-The Integration Model establishes how these systems become executable capabilities within Noema without transferring ownership of their underlying Business State to Noema.
+The Integration Model defines how these systems become controlled execution surfaces within Noema without transferring ownership of their underlying Business State to Noema.
 
 Conceptually:
 
 Enterprise Systems
         │
         ▼
-   Integrations
+    Integrations
         │
         ▼
       Noema
         │
         ├── Intent
         ├── Context
+        ├── Evidence
         ├── Trust
+        ├── Action
         └── Execution
 
 Noema coordinates execution.
 
-The enterprise systems remain authoritative for their respective domains.
+Enterprise systems remain authoritative for their respective domains.
 
 ⸻
 
 2. Purpose
 
-The purpose of the Integration Model is to establish a consistent abstraction for interacting with heterogeneous enterprise systems.
+The purpose of the Integration Model is to establish a consistent semantic and execution abstraction for interacting with heterogeneous enterprise systems.
 
 Enterprise systems differ in:
 
@@ -73,7 +75,7 @@ Enterprise systems differ in:
 * versioning
 * authorization models
 
-Noema should not expose these differences directly to Intent.
+Noema should not expose these implementation differences directly to Intent.
 
 Instead:
 
@@ -85,15 +87,25 @@ Capability
       ↓
 Action Contract
       ↓
+Trust
+      ↓
 Execution
 
-The Integration Model provides the boundary between Noema’s semantic execution model and the implementation details of external systems.
+The Integration Model therefore provides the boundary between:
+
+Noema’s semantic execution model
+
+and:
+
+enterprise-specific implementation.
+
+The boundary may hide implementation details, but must not hide the guarantees required for safe execution.
 
 ⸻
 
 3. Integration Boundary
 
-An Integration is the boundary through which Noema interacts with an external system.
+An Integration is the controlled boundary through which Noema interacts with an external system.
 
 Conceptually:
 
@@ -105,7 +117,7 @@ Integration Boundary
   ▼
 Enterprise System
 
-The boundary defines:
+The boundary defines or exposes:
 
 * available capabilities
 * input requirements
@@ -115,10 +127,13 @@ The boundary defines:
 * transport
 * errors
 * state semantics
+* consistency guarantees
 * events
 * observability
+* provenance
+* execution guarantees
 
-Noema should interact through the defined boundary rather than making assumptions about the underlying system.
+Noema should interact through the defined Integration boundary rather than making assumptions about the underlying system.
 
 ⸻
 
@@ -127,26 +142,26 @@ Noema should interact through the defined boundary rather than making assumption
 An Integration is not the enterprise system itself.
 
 Enterprise System
-    │
-    ▼
-Integration
-    │
-    ▼
-Noema
+       │
+       ▼
+   Integration
+       │
+       ▼
+      Noema
 
 The enterprise system owns the business domain.
 
-The integration provides controlled access to that domain.
+The Integration provides controlled access to that domain.
 
 For example:
 
 Payment System
-    ↓
+      ↓
 Payment Integration
-    ↓
-Noema
+      ↓
+     Noema
 
-Noema does not become the Payment System merely because it can invoke its capabilities.
+Noema does not become the Payment System merely because it can invoke its capabilities or observe its state.
 
 ⸻
 
@@ -154,7 +169,7 @@ Noema does not become the Payment System merely because it can invoke its capabi
 
 A System exposes capabilities.
 
-An Integration makes those capabilities available to Noema.
+An Integration exposes those capabilities to Noema through a controlled executable boundary.
 
 For example:
 
@@ -170,15 +185,17 @@ Payment System
             ▼
           Noema
 
-The Integration translates between the enterprise system’s interface and Noema’s execution semantics.
+The Integration translates between the enterprise system’s implementation and Noema’s semantic execution model.
+
+A discovered endpoint is not automatically a trusted Capability.
 
 ⸻
 
 6. Integration vs Action
 
-An Action represents something Noema intends to cause.
+An Action represents the semantic operation Noema intends to cause.
 
-An Integration provides the mechanism through which that Action is executed against an external system.
+An Integration provides the mechanism through which that Action may be executed against a particular enterprise system.
 
 Therefore:
 
@@ -190,17 +207,23 @@ Integration
   ↓
 Enterprise System
 
-The Action describes the semantic operation.
+The Action answers:
 
-The Integration describes how that operation is performed against a particular system.
+What operation is Noema attempting to cause?
+
+The Integration answers:
+
+Through which enterprise boundary can that operation be executed?
+
+The Integration must not independently redefine the semantic Action.
 
 ⸻
 
 7. Integration vs Action Contract
 
-The Action Contract defines the executable requirements of an Action.
+An Action Contract defines the executable requirements of an Action.
 
-The Integration implements or exposes the mechanism required to satisfy that contract.
+The Integration implements or exposes the enterprise mechanism required to satisfy that contract.
 
 Conceptually:
 
@@ -208,9 +231,11 @@ Action Contract
       ↓
 Integration Capability
       ↓
-Enterprise API
+Enterprise Operation
 
 The Integration must provide sufficient guarantees for the Action Contract to remain meaningful.
+
+Where the enterprise system cannot satisfy the required contract semantics, the Integration must not silently claim compatibility.
 
 ⸻
 
@@ -240,7 +265,7 @@ This prevents enterprise-specific API details from leaking into the Intent model
 
 9. Integration Contract
 
-Each Integration should expose a contract describing what Noema can rely upon.
+Each executable Integration should expose a contract describing what Noema can rely upon.
 
 Conceptually:
 
@@ -253,22 +278,25 @@ IntegrationContract {
     preconditions
     postconditions
     consistency
+    idempotency
+    retry_semantics
     errors
     events
+    provenance
+    observability
+    lifecycle
     version
 }
 
 The exact representation may vary.
 
-The semantic contract must remain explicit.
+The semantic guarantees must remain explicit.
 
 ⸻
 
 10. Capability Discovery
 
-Noema may need to discover what an enterprise system can do.
-
-Sources may include:
+Noema may discover potential capabilities from:
 
 * API specifications
 * API schemas
@@ -285,11 +313,19 @@ Enterprise Sources
       ↓
 Integration Knowledge
       ↓
-Capabilities
+Potential Capabilities
+      ↓
+Capability Validation
+      ↓
+Executable Capabilities
       ↓
 Action Contracts
 
-Capability discovery must not be confused with unrestricted autonomous invention of actions.
+Capability discovery must not be confused with unrestricted autonomous invention of Actions.
+
+Discovery produces candidates.
+
+Validation establishes whether they are executable.
 
 ⸻
 
@@ -314,13 +350,15 @@ refund.status = CREATED
 
 Registration creates an explicit executable boundary.
 
+Registration alone does not bypass Trust, Authority, Policy, or Action Contract requirements.
+
 ⸻
 
 12. Capability Identity
 
 Capabilities should have stable semantic identities.
 
-Example:
+Examples:
 
 refund_payment
 replace_card
@@ -330,7 +368,7 @@ suspend_employee
 
 The underlying enterprise endpoint may change.
 
-The semantic capability should remain stable where its meaning remains unchanged.
+The semantic Capability should remain stable where its meaning and execution guarantees remain compatible.
 
 ⸻
 
@@ -384,7 +422,7 @@ Staging Integration
 
 Noema must not accidentally execute a Production Action against a staging or development system, or vice versa.
 
-Environment must therefore be part of the execution context where relevant.
+Environment must therefore be explicit wherever it affects execution authority or semantics.
 
 ⸻
 
@@ -404,7 +442,7 @@ must not implicitly access:
 
 Tenant B
 
-Integration identity and authorization should preserve the applicable tenant boundary.
+Integration identity, credentials, authorization, and execution scope must preserve the applicable tenant boundary.
 
 ⸻
 
@@ -452,11 +490,15 @@ from:
 
 What are we allowed to do?
 
+Integration authorization does not replace Noema’s Authority model.
+
+It is one layer of the overall authorization boundary.
+
 ⸻
 
 18. Delegated Authorization
 
-Some enterprise operations may execute on behalf of a user.
+Some enterprise operations execute on behalf of a user.
 
 Conceptually:
 
@@ -471,9 +513,9 @@ Enterprise System
 The Integration must preserve the distinction between:
 
 * Noema’s identity
-* the initiating user’s identity
-* the delegated authority
-* the target enterprise resource
+* initiating user’s identity
+* delegated authority
+* target enterprise resource
 
 This is particularly important for consequential Actions.
 
@@ -481,13 +523,15 @@ This is particularly important for consequential Actions.
 
 19. Credential Isolation
 
-Credentials should not become part of Intent or model-visible Context unnecessarily.
+Credentials must not become part of Intent or model-visible Context unnecessarily.
 
-The semantic execution path should be:
+The semantic execution path is:
 
 Intent
    ↓
 Action
+   ↓
+Trust
    ↓
 Integration
    ↓
@@ -495,7 +539,9 @@ Credential Resolution
    ↓
 Enterprise System
 
-Credentials should remain within the appropriate secure execution boundary.
+Credentials remain within the appropriate secure execution boundary.
+
+The model should not need access to credentials merely to determine an Action.
 
 ⸻
 
@@ -520,6 +566,8 @@ Mapping may include:
 
 Mapping must preserve semantic meaning.
 
+An Integration must not silently change the meaning of an Action input.
+
 ⸻
 
 21. Output Mapping
@@ -529,16 +577,16 @@ Enterprise responses must be translated back into Noema’s semantic model.
 Example:
 
 Enterprise API:
-{
-    "status": "replacement_requested"
-}
+status = "replacement_requested"
 
 may map to:
 
 Action Outcome:
 replacement_requested
 
-Noema should avoid binding Intent semantics directly to arbitrary transport representations.
+Where the response represents enterprise state rather than merely an execution response, Noema must preserve that distinction.
+
+Transport success is not automatically a Business Outcome.
 
 ⸻
 
@@ -552,9 +600,9 @@ Payment API v1
 Payment API v2
 Payment API v3
 
-Noema should know which schema and capability version an Integration implements.
+Noema should know which schema and Capability version an Integration implements.
 
-Schema changes must not silently alter the meaning of an Action.
+Schema changes must not silently alter the meaning of an Action Contract.
 
 ⸻
 
@@ -575,6 +623,7 @@ Versioning may represent:
 * capability changes
 * mapping changes
 * execution guarantees
+* consistency guarantees
 
 Noema should preserve compatibility where required.
 
@@ -589,9 +638,9 @@ For example:
 refund_payment v1
 refund_payment v2
 
-A capability version must represent meaningful semantic or execution-contract changes.
+A Capability version must represent meaningful semantic or execution-contract changes.
 
-A version change should not silently modify an existing Action’s behavior.
+A version change must not silently modify an existing Action’s behavior.
 
 ⸻
 
@@ -606,27 +655,33 @@ refund_payment
 Precondition:
 payment.status = CAPTURED
 
-The Integration may retrieve the relevant enterprise state.
+The Integration may retrieve the relevant authoritative enterprise State.
 
 Conceptually:
 
 Integration
     ↓
-Canonical Data
+Enterprise State
     ↓
-Precondition
+State Resolution
+    ↓
+Precondition Evaluation
+
+The Integration provides access to State.
+
+It does not decide whether the State satisfies the overall Trust requirement.
 
 ⸻
 
 26. Postconditions
 
-Integrations may expose the authoritative state required to verify Postconditions.
+Integrations may expose the authoritative State required to verify Postconditions.
 
 Example:
 
 Action:
 freeze_card
-Postcondition:
+Expected State:
 card.status = FROZEN
 
 Noema may execute:
@@ -639,9 +694,11 @@ and then verify:
 
 Integration
     ↓
-Canonical Card State
+Authoritative Card State
     ↓
 Postcondition
+
+This connects the Integration Model directly to Noema’s canonical State model.
 
 ⸻
 
@@ -653,7 +710,7 @@ Read operations may retrieve:
 
 * identity
 * resources
-* state
+* State
 * configuration
 * policy
 * capabilities
@@ -667,37 +724,40 @@ Integration
     ↓
 Read
     ↓
-Enterprise State
+Enterprise State / Data
     ↓
-Context / Evidence
+Observation
+    ↓
+Evidence / Context
+
+A read must not be represented as a mutation merely because it participates in an execution.
 
 ⸻
 
 28. Write Operations
 
-Write operations change enterprise state.
+Write operations may change enterprise Business State.
 
 Examples:
 
-create_payment
-refund_payment
-freeze_card
-close_account
-update_employee
+* create_payment
+* refund_payment
+* freeze_card
+* close_account
+* update_employee
 
-Write operations require stronger execution guarantees than ordinary reads.
+Consequential writes require stronger execution guarantees than ordinary reads.
 
-They should be governed by:
+They should be governed by applicable:
 
+* Authority
 * authorization
-* policy
+* Policy
 * Preconditions
 * idempotency
-* risk
+* risk requirements
 * Postconditions
 * auditability
-
-where applicable.
 
 ⸻
 
@@ -718,7 +778,7 @@ Same Idempotency Key
    ↓
 Same Logical Operation
 
-Noema should not assume that retrying an external write is safe without understanding the Integration’s semantics.
+Noema must not assume that retrying an external write is safe without understanding the Integration’s semantics.
 
 ⸻
 
@@ -726,9 +786,9 @@ Noema should not assume that retrying an external write is safe without understa
 
 Integration failures must distinguish between:
 
-Safe to retry
-Unsafe to retry
-Unknown
+SAFE_TO_RETRY
+UNSAFE_TO_RETRY
+UNKNOWN
 
 Examples:
 
@@ -741,7 +801,7 @@ Rate limit
 Duplicate request
 → depends on idempotency semantics
 
-Retry behavior must be governed by the Action and Integration contract.
+Retry behavior must be governed by the Action Contract and Integration guarantees.
 
 ⸻
 
@@ -765,7 +825,9 @@ The correct state may be:
 
 Outcome = UNKNOWN
 
-Noema should reconcile against authoritative enterprise state where possible.
+Noema should reconcile against authoritative enterprise State where possible.
+
+Unknown must remain distinct from failure.
 
 ⸻
 
@@ -785,7 +847,7 @@ UNAVAILABLE
 TIMEOUT
 UNKNOWN
 
-The normalized error must preserve sufficient underlying information for diagnosis and policy.
+The normalized error must preserve sufficient underlying information for diagnosis, Trust, Policy, and Execution decisions.
 
 ⸻
 
@@ -799,15 +861,17 @@ An error should indicate whether it is:
 * policy-related
 * resource-related
 * dependency-related
+* consistency-related
 * unknown
 
-This classification affects:
+This classification may affect:
 
 * retry
 * clarification
 * escalation
 * compensation
-* final outcome
+* reconciliation
+* final Outcome
 
 ⸻
 
@@ -826,11 +890,11 @@ Failed
 
 Noema must preserve the execution state of each operation.
 
-It must not represent the entire compound Intent as simply:
+It must not represent the entire compound Intent simply as:
 
 FAILED
 
-without preserving the partial execution history.
+without preserving the partial execution history and resulting enterprise State.
 
 ⸻
 
@@ -850,7 +914,7 @@ Noema
 
 Events can provide Evidence and help reconcile Execution State.
 
-Events do not automatically replace authoritative state queries.
+Events do not automatically replace authoritative State queries.
 
 ⸻
 
@@ -870,9 +934,9 @@ Projection
   ↓
 Read
 
-The read may temporarily reflect an older state.
+The read may temporarily reflect an older State.
 
-Noema must understand the consistency semantics before treating the result as sufficient evidence for consequential execution.
+Noema must understand the consistency semantics before treating the result as sufficient Evidence for consequential execution.
 
 ⸻
 
@@ -882,13 +946,13 @@ An Integration should describe relevant consistency guarantees.
 
 Examples:
 
-Strongly Consistent
-Eventually Consistent
-Read-After-Write
-Versioned
-Snapshot-Based
+* Strongly Consistent
+* Eventually Consistent
+* Read-After-Write
+* Versioned
+* Snapshot-Based
 
-The required consistency level depends on the Action.
+The required consistency level depends on the Action Contract and consequence of stale information.
 
 ⸻
 
@@ -906,7 +970,7 @@ Payment System
   ↓
 Unavailable
 
-Noema must represent this as an external dependency condition rather than treating it as an Intent failure.
+Noema must represent this as an external dependency condition rather than automatically treating it as an Intent failure.
 
 ⸻
 
@@ -922,9 +986,9 @@ Integration health may include:
 * schema compatibility
 * event delivery health
 
-Health information may influence execution decisions.
+Health information may influence execution decisions where explicitly governed.
 
-It must not, however, override Action-level Policy arbitrarily.
+Health must not independently override Action-level Policy or Trust requirements.
 
 ⸻
 
@@ -944,7 +1008,9 @@ latency
 result
 error
 
-Sensitive payloads and credentials should not be logged indiscriminately.
+Sensitive payloads and credentials must not be logged indiscriminately.
+
+Observability must support reconstruction without violating data-minimization requirements.
 
 ⸻
 
@@ -963,7 +1029,14 @@ T1
 Version:
 42
 
-This supports Evidence, Trust, Auditability, and later reconstruction.
+This supports:
+
+* Evidence
+* State Resolution
+* Trust
+* Auditability
+* reconciliation
+* historical reconstruction
 
 ⸻
 
@@ -987,6 +1060,8 @@ The Integration establishes how the information was obtained.
 
 Evidence establishes how that information supports a decision.
 
+The two concepts must remain distinct.
+
 ⸻
 
 43. Integration and Context
@@ -1005,7 +1080,9 @@ Context
 
 Context may contain both canonical and non-canonical information.
 
-Noema must preserve the authority and provenance of the underlying data.
+Noema must preserve the authority, timestamp, source, and provenance of underlying information where those characteristics matter.
+
+Canonical enterprise State should remain independently addressable rather than being buried inside an opaque Context object.
 
 ⸻
 
@@ -1023,7 +1100,9 @@ Evidence
     ↓
 Trust Evaluation
 
-The reliability and authority characteristics of the Integration therefore affect the evidence available to the Trust Engine.
+The reliability, authority, freshness, and consistency characteristics of the Integration affect the Evidence available to the Trust Engine.
+
+The Integration does not itself make the Trust decision.
 
 ⸻
 
@@ -1052,11 +1131,23 @@ Different Integrations may have different risk characteristics.
 For example:
 
 Read-only Integration
-→ Low execution risk
+→ lower execution consequence
 Financial Write Integration
-→ High execution risk
+→ higher execution consequence
 
-Risk evaluation should account for the capability being invoked and the authority exercised through the Integration.
+Risk evaluation should account for:
+
+* Capability
+* Action
+* Resource
+* Authority
+* Integration
+* environment
+* tenant
+* potential State transition
+* consequence
+
+Risk does not replace Policy or Authority.
 
 ⸻
 
@@ -1074,7 +1165,16 @@ Noema
       ↓
 Human Intervention
 
-Noema should preserve enough execution context for the human to understand what occurred and what action remains possible.
+Noema should preserve enough execution context for the human to understand:
+
+* what Intent was resolved
+* what Action was selected
+* what Trust decision occurred
+* what Integration was used
+* what was attempted
+* what was observed
+* what remains unknown
+* what next action is possible
 
 ⸻
 
@@ -1095,13 +1195,15 @@ Integration
     ↓
 Enterprise Capability
 
-Noema should not compensate by mutating its own copy of enterprise state.
+Noema must not compensate by mutating an internal copy of enterprise Business State.
+
+Compensation itself is an Action subject to its own Authority, Policy, Trust, Preconditions, and execution semantics.
 
 ⸻
 
 49. Integration and System of Record
 
-The Integration provides access to a System of Record.
+The Integration provides controlled access to a System of Record.
 
 It does not replace that System of Record.
 
@@ -1113,7 +1215,9 @@ Integration
       ↓
 Noema
 
-The authority remains with the enterprise system.
+Enterprise authority remains with the appropriate enterprise system.
+
+Noema may maintain execution and intent state without claiming ownership of the underlying business State.
 
 ⸻
 
@@ -1133,6 +1237,8 @@ Each Integration may be authoritative for different facts.
 
 Noema must not assume that one Integration is globally canonical.
 
+Authority is fact- and domain-specific.
+
 ⸻
 
 51. Integration Conflicts
@@ -1151,9 +1257,10 @@ Noema must determine:
 * which system is authoritative for the relevant fact;
 * whether the values describe different concepts;
 * whether one value is stale;
+* whether consistency guarantees differ;
 * whether reconciliation is required.
 
-The model must not resolve authoritative conflicts through probabilistic guessing.
+Noema must preserve unresolved conflict rather than silently selecting a value through probabilistic preference.
 
 ⸻
 
@@ -1177,7 +1284,7 @@ Capabilities
       ↓
 Actions
 
-The Integration Model provides the executable connection between the Action Graph and the underlying enterprise systems.
+The Integration Model provides the executable connection between the Enterprise Action Graph and the underlying enterprise systems.
 
 ⸻
 
@@ -1189,7 +1296,7 @@ Capability
 
 while the Integration identifies:
 
-How that capability is executed
+How that Capability is executed
 
 Therefore:
 
@@ -1209,7 +1316,7 @@ This separates semantic capability from implementation.
 
 Noema should abstract implementation details without hiding execution semantics.
 
-The abstraction should hide:
+The Integration should hide:
 
 * HTTP details
 * serialization
@@ -1219,7 +1326,7 @@ The abstraction should hide:
 
 while preserving:
 
-* capability
+* Capability
 * inputs
 * outputs
 * authorization
@@ -1227,7 +1334,14 @@ while preserving:
 * Postconditions
 * consistency
 * errors
+* idempotency
+* retry semantics
 * execution guarantees
+* provenance
+
+The abstraction boundary must therefore be:
+
+implementation-opaque but semantically explicit.
 
 ⸻
 
@@ -1247,9 +1361,9 @@ Payment Integration B
         ↓
 refund_payment
 
-provided the semantic Action Contract remains compatible.
+provided the semantic Action Contract and required execution guarantees remain compatible.
 
-This reduces coupling between Noema and individual vendors or implementations.
+This reduces unnecessary coupling between Noema and individual vendors or implementations.
 
 ⸻
 
@@ -1265,7 +1379,9 @@ New System
 
 Noema may temporarily operate multiple Integrations.
 
-Authority and capability mappings must be explicit during the transition.
+Authority, capability mappings, State semantics, and execution boundaries must be explicit during the transition.
+
+Noema must not infer that the newer system is authoritative merely because it was introduced later.
 
 ⸻
 
@@ -1283,6 +1399,7 @@ It must control:
 * capability exposure
 * tenant isolation
 * environment isolation
+* secret handling
 
 An Integration should expose only the capabilities required by Noema.
 
@@ -1303,6 +1420,14 @@ amount
 reason
 
 It should not require unrelated customer information.
+
+The Integration must therefore preserve:
+
+Least Privilege
++
+Purpose Limitation
++
+Data Minimization
 
 ⸻
 
@@ -1326,7 +1451,9 @@ Suspended
     ↓
 Retired
 
-Noema must not execute against an Integration whose lifecycle state does not permit execution.
+Noema must not execute against an Integration whose lifecycle State does not permit execution.
+
+Lifecycle State must be distinguished from the Business State owned by the external system.
 
 ⸻
 
@@ -1343,7 +1470,10 @@ Before an Integration becomes executable, Noema should validate:
 * tenant scope
 * consistency semantics
 * error mappings
+* idempotency
 * execution guarantees
+* State observation semantics
+* Postcondition verification
 
 An Integration should not become trusted merely because configuration exists.
 
@@ -1369,11 +1499,13 @@ may be trusted for one Capability but prohibited for another by Policy.
 
 Trust must therefore be evaluated at the appropriate scope.
 
+Integration trust is not a global boolean.
+
 ⸻
 
 62. Integration Failure Isolation
 
-An Integration failure should not corrupt Noema’s internal execution state.
+An Integration failure must not corrupt Noema’s internal execution state.
 
 Noema should preserve:
 
@@ -1383,10 +1515,19 @@ Action
 Execution Attempt
 Integration Result
 Outcome
+State Observations
 
 even when the external system fails.
 
-This allows recovery, reconciliation, or human intervention.
+This allows:
+
+* recovery
+* reconciliation
+* compensation
+* escalation
+* human intervention
+
+without rewriting execution history.
 
 ⸻
 
@@ -1400,13 +1541,17 @@ refund_payment
 
 is the intended Action.
 
-The Integration determines how that Action is actually invoked.
+Trust determines whether execution is permitted.
 
-The final execution path should therefore be:
+The Integration determines how the permitted Action is invoked against the enterprise system.
+
+Therefore:
 
 Model
    ↓
 Intent
+   ↓
+Resolution
    ↓
 Trust
    ↓
@@ -1416,7 +1561,7 @@ Integration
    ↓
 Enterprise System
 
-The Integration must not independently invent or reinterpret the intended Action.
+The Integration must not independently invent, reinterpret, or authorize Actions.
 
 ⸻
 
@@ -1448,7 +1593,7 @@ Vendor-specific execution belongs below the semantic Action boundary.
 
 65. Integration and Outcome
 
-The Integration provides the observations necessary to establish whether execution succeeded.
+The Integration provides the observations necessary to establish whether execution produced the intended enterprise result.
 
 Conceptually:
 
@@ -1458,13 +1603,25 @@ Integration
   ↓
 Enterprise System
   ↓
-Result
+Execution Result
+  ↓
+Observation
   ↓
 Outcome
+  ↓
+Resulting State
 
 A transport-level success response does not necessarily imply successful Business State transition.
 
 Outcome must be established according to the Action’s Postconditions and enterprise semantics.
+
+This distinction is essential:
+
+Transport Success
+       ≠
+Business Outcome Success
+       ≠
+Desired State Satisfied
 
 ⸻
 
@@ -1490,6 +1647,7 @@ Integration {
     retry_semantics
     error_mapping
     event_sources
+    state_observation
     provenance
     observability
     lifecycle
@@ -1506,13 +1664,24 @@ Integration
 ├── connects_to → System
 ├── exposes → Capability
 ├── implements → Action Contract
-├── retrieves → Canonical Data
+├── retrieves → Enterprise Data
+├── observes → Enterprise State
 ├── produces → Evidence
 ├── provides → Context
 ├── invokes → Enterprise Action
-├── observes → Business State
 ├── emits → Events
+├── verifies → Postcondition
 └── participates_in → Execution
+
+The Integration is therefore both:
+
+an access boundary
+
+and:
+
+an execution boundary.
+
+It is not the owner of the underlying Business State.
 
 ⸻
 
@@ -1532,11 +1701,11 @@ Intent must remain independent of vendor-specific implementation details.
 
 Invariant 4
 
-Semantic Actions must be separated from their transport-specific execution mechanisms.
+Semantic Actions must be separated from transport-specific execution mechanisms.
 
 Invariant 5
 
-Every executable Integration must have an explicit capability contract.
+Every executable Integration must have an explicit Capability contract.
 
 Invariant 6
 
@@ -1544,97 +1713,145 @@ Authentication and authorization are distinct concerns.
 
 Invariant 7
 
-Credentials must remain within the secure execution boundary.
+Integration authorization does not replace Noema Authority evaluation.
 
 Invariant 8
 
-Tenant and environment boundaries must be explicit.
+Credentials must remain within the secure execution boundary.
 
 Invariant 9
 
-Integration capabilities must not be inferred as executable merely because an API endpoint exists.
+Tenant and environment boundaries must be explicit.
 
 Invariant 10
 
-Schema and capability changes must not silently change Action semantics.
+An API endpoint does not automatically constitute an executable Capability.
 
 Invariant 11
 
-Consequential writes must respect the Integration’s idempotency and retry semantics.
+Schema and Capability changes must not silently change Action semantics.
 
 Invariant 12
 
-A timeout after a write must not automatically be interpreted as execution failure.
+Consequential writes must respect the Integration’s idempotency and retry semantics.
 
 Invariant 13
 
-Unknown external outcomes must remain explicitly unknown until reconciled.
+A timeout after a write must not automatically be interpreted as execution failure.
 
 Invariant 14
 
-Integration errors must preserve sufficient semantic information for Trust and Execution decisions.
+Unknown external Outcomes must remain explicitly unknown until reconciled.
 
 Invariant 15
 
-Events may provide Evidence of enterprise state changes but do not automatically replace authoritative state.
+Integration errors must preserve sufficient semantic information for Trust and Execution decisions.
 
 Invariant 16
 
-Integration data must retain sufficient provenance for consequential decisions.
+Events may provide Evidence of enterprise State changes but do not automatically replace authoritative State.
 
 Invariant 17
 
-Integration access must follow least-privilege and data-minimization principles.
+Integration observations must retain sufficient provenance for consequential decisions.
 
 Invariant 18
 
-An Integration must not bypass Noema’s Trust, Policy, or Action Contract boundaries.
+Integration access must follow least-privilege and data-minimization principles.
 
 Invariant 19
 
-An Integration must not independently reinterpret or invent Actions.
+An Integration must not bypass Noema’s Trust, Policy, Authority, or Action Contract boundaries.
 
 Invariant 20
 
-Integration failures must not corrupt Noema’s internal execution state.
+An Integration must not independently reinterpret or invent Actions.
 
 Invariant 21
 
-Compensation must operate through authorized enterprise capabilities.
+Integration failures must not corrupt Noema’s internal execution state.
 
 Invariant 22
 
-Multiple Integrations may coexist for different authority domains or implementations.
+Compensation must operate through authorized enterprise capabilities.
 
 Invariant 23
 
-Conflicting Integration results must be resolved through authority, consistency, or explicit reconciliation—not probabilistic guessing.
+Multiple Integrations may coexist for different authority domains or implementations.
 
 Invariant 24
 
-Integration trust is scoped to the relevant capability, resource, environment, tenant, and policy.
+Conflicting Integration results must be resolved through authority, consistency, State resolution, or explicit reconciliation—not probabilistic guessing.
 
 Invariant 25
 
-An Integration must not be executable when its lifecycle or validation state does not permit execution.
+Integration trust is scoped to the relevant Capability, Action, resource, environment, tenant, and Policy.
 
 Invariant 26
 
-Integration abstraction must hide implementation details without hiding execution semantics.
+An Integration must not be executable when its lifecycle or validation State does not permit execution.
 
 Invariant 27
 
-An Integration should be replaceable without unnecessarily changing the semantic Intent model.
+Integration abstraction must hide implementation details without hiding execution semantics.
 
 Invariant 28
 
+An Integration should be replaceable without unnecessarily changing the semantic Intent model.
+
+Invariant 29
+
 Noema may coordinate enterprise execution through Integrations without becoming the enterprise System of Record.
+
+Invariant 30
+
+Enterprise State remains authoritative according to the applicable domain authority model.
+
+Invariant 31
+
+Observed State must remain distinguishable from authoritative State where the source does not establish authority.
+
+Invariant 32
+
+Stale or eventually consistent Integration data must not automatically be treated as current State.
+
+Invariant 33
+
+Integration observations must preserve sufficient temporal information to determine whether State is current for the relevant Action.
+
+Invariant 34
+
+An Integration must not convert an uncertain external Outcome into a definitive success or failure without sufficient evidence.
+
+Invariant 35
+
+Postcondition verification must use State and Evidence appropriate to the Action’s required consistency and authority.
+
+Invariant 36
+
+A successful transport response does not by itself establish successful Business State transition.
+
+Invariant 37
+
+Integration execution must preserve the distinction between Execution Result, Outcome, and resulting enterprise State.
+
+Invariant 38
+
+Integration capabilities must expose sufficient guarantees for Noema to evaluate the relevant Action Contract deterministically.
+
+Invariant 39
+
+Integration-specific failures must remain distinguishable from Intent resolution failures and Trust denials.
+
+Invariant 40
+
+The Integration boundary must not become an alternate path around Noema’s deterministic execution boundary.
 
 ⸻
 
 69. Final Definition
 
-The Integration Model defines the controlled boundary through which Noema discovers, accesses, and executes enterprise capabilities while preserving enterprise ownership of Business State.
+The Integration Model defines the controlled boundary through which Noema discovers, accesses, observes, and executes enterprise capabilities while preserving enterprise ownership of Business State.
 
 The fundamental relationship is:
 
@@ -1656,8 +1873,61 @@ Enterprise System
     Execution
         │
         ▼
-Enterprise Outcome
+Enterprise Operation
+        │
+        ▼
+   Observation
+        │
+        ▼
+     Outcome
+        │
+        ▼
+Resulting Enterprise State
 
 The architectural rule is:
 
-Noema should abstract how enterprise capabilities are implemented without abstracting away the guarantees, authority, and constraints required to execute them safely.
+Noema should abstract how enterprise capabilities are implemented without abstracting away the guarantees, authority, State semantics, provenance, and constraints required to execute them safely.
+
+The deeper Noema boundary is therefore:
+
+Human Intent
+      ↓
+Intent Resolution
+      ↓
+Context + Evidence
+      ↓
+Current State
+      ↓
+Policy + Constraint + Authority
+      ↓
+Trust
+      ↓
+Action Contract
+      ↓
+Integration
+      ↓
+Enterprise Execution
+      ↓
+Outcome
+      ↓
+State Verification
+      ↓
+Resulting State
+
+And the ownership boundary remains:
+
+                NOEMA
+                  │
+        Intent / Trust / Action
+        Execution / Outcome
+                  │
+          Integration Boundary
+                  │
+                  ▼
+       ENTERPRISE SYSTEMS
+                  │
+        Business State / SoR
+
+Noema coordinates and governs execution against enterprise systems. It does not silently become the authority for the Business State those systems own.
+
+That is the canonical Integration boundary.

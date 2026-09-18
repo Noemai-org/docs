@@ -1,9 +1,7 @@
-For product-model.md, the focus should be broader than any individual interface or workflow: it defines what Noema is as a product, what constitutes its product boundary, and how the previously defined Intent → Trust → Action → Execution architecture becomes a coherent product system.
-
 Product Model
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Product
 Canonical Path: product/product-model.md
 
@@ -11,59 +9,70 @@ Canonical Path: product/product-model.md
 
 1. Definition
 
-The Noema Product Model defines the product as an intent-driven enterprise execution system that transforms human or machine intent into governed, verifiable action against enterprise systems.
+The Noema Product Model defines Noema as an intent-driven enterprise execution system that transforms human or machine intent into governed, authorized, observable, and verifiable execution against enterprise capabilities.
 
 Noema is not primarily:
 
-* a chatbot
-* a workflow builder
-* an automation platform
-* an API gateway
-* an enterprise search system
-* an AI assistant
+* a chatbot;
+* a conversational assistant;
+* a workflow builder;
+* an automation platform;
+* an API gateway;
+* an enterprise search system;
+* a system of record.
 
-These may be interfaces or capabilities of the product.
+These may be interfaces, implementation mechanisms, integrations, or capabilities surrounding the product.
 
 The product itself is:
 
-A system for understanding intent, establishing trust, executing authorized Actions, and maintaining the execution journey across enterprise systems.
+A system for resolving Intent, establishing Trust, selecting authorized Actions, executing them against enterprise capabilities, and maintaining the resulting execution journey and Outcome.
 
 Conceptually:
 
 Participant
      │
      ▼
-   Intent
+ Interaction
      │
      ▼
-  Context
+ Intent
      │
      ▼
-  Resolution
+ Resolution
      │
      ▼
-   Trust
+ Context + Evidence
      │
      ▼
-  Planning
+ Trust
      │
      ▼
-   Action
+ Action / Plan
      │
      ▼
  Execution
      │
      ▼
-Enterprise Systems
+ Enterprise Capability
      │
      ▼
-  Outcome
+ Business State
+     │
+     ▼
+ Verification
+     │
+     ▼
+ Outcome
+
+The fundamental product abstraction is therefore not conversation.
+
+It is governed intent execution.
 
 ⸻
 
 2. Product Purpose
 
-The purpose of Noema is to allow organizations to expose enterprise capabilities through a semantic execution layer without requiring users to understand the underlying systems, APIs, workflows, or operational complexity.
+The purpose of Noema is to allow organizations to expose existing enterprise capabilities through an intent-driven execution layer without requiring participants to understand the underlying applications, APIs, workflows, system boundaries, or operational procedures.
 
 Traditional enterprise interaction often requires:
 
@@ -77,43 +86,57 @@ System
   ↓
 API
 
-Noema introduces an intent layer:
+Noema introduces a semantic execution layer:
 
-User
-  ↓
+Participant
+     ↓
 Intent
-  ↓
+     ↓
 Noema
-  ↓
+     ↓
 Enterprise Capability
 
-Noema determines the appropriate execution path while preserving enterprise authority, permissions, policies, and Business State.
+Noema determines the executable representation while preserving:
+
+* enterprise authority;
+* identity;
+* authorization;
+* policy;
+* risk controls;
+* enterprise Business State;
+* execution constraints.
+
+Noema therefore sits between expressed intent and enterprise capability.
 
 ⸻
 
 3. Product Thesis
 
-Enterprise systems are increasingly capable of exposing APIs and machine-readable capabilities.
+Enterprise systems increasingly expose APIs, structured data, workflows, events, and machine-readable capabilities.
 
-The bottleneck is therefore shifting from:
+The remaining difficulty is not merely:
 
-“Can the system perform the operation?”
+Can the enterprise system perform the operation?
 
-to:
+It is:
 
-“Can the organization safely determine what the user intends and execute the correct operation?”
+Can the organization reliably determine what is intended, establish whether execution is permitted, and execute the correct operation with sufficient guarantees?
 
-Noema addresses this gap.
+Noema addresses this execution boundary.
 
 The product thesis is:
 
 Enterprise Capability
         +
-Intent Understanding
+Intent Resolution
+        +
+Context and Evidence
         +
 Deterministic Trust
         +
 Governed Execution
+        +
+Outcome Verification
         =
 Intent-Driven Enterprise Operations
 
@@ -121,7 +144,7 @@ Intent-Driven Enterprise Operations
 
 4. Core Product Abstraction
 
-The core product abstraction is:
+The stable Noema product abstraction is:
 
 Intent
    ↓
@@ -133,120 +156,153 @@ Execution
    ↓
 Outcome
 
-Everything else exists to support this lifecycle.
+The supporting product system includes:
 
-This includes:
+* Interaction;
+* Context;
+* Evidence;
+* Identity;
+* Authorization;
+* Policy;
+* Risk;
+* Integrations;
+* Enterprise Action Graph;
+* Planning;
+* Human Intervention;
+* Verification;
+* Auditability.
 
-* Context
-* Evidence
-* Identity
-* Permissions
-* Policy
-* Integrations
-* Planning
-* Human Intervention
-* Auditability
-* Data
-* Interfaces
+These components exist to make the core lifecycle executable and trustworthy.
 
 ⸻
 
 5. Product Boundary
 
-Noema sits between participants and enterprise systems.
+Noema sits between participants and enterprise capabilities.
 
-        PARTICIPANTS
-             │
-             ▼
-        ┌──────────┐
-        │  NOEMA   │
-        │          │
-        │ Intent   │
-        │ Trust    │
-        │ Action   │
-        │ Execution│
-        └──────────┘
-             │
-     ┌───────┼────────┐
-     ▼       ▼        ▼
-    CRM    Billing   HRIS
-     │       │        │
-     └───────┼────────┘
-             ▼
-      Enterprise State
+             PARTICIPANTS
+                  │
+                  ▼
+             INTERACTION
+                  │
+                  ▼
+        ┌───────────────────┐
+        │       NOEMA       │
+        │                   │
+        │ Intent            │
+        │ Context           │
+        │ Evidence          │
+        │ Trust             │
+        │ Policy            │
+        │ Action            │
+        │ Planning          │
+        │ Execution         │
+        │ Verification      │
+        │ Outcome           │
+        └───────────────────┘
+                  │
+          ┌───────┼────────┐
+          ▼       ▼        ▼
+         CRM    Billing    HRIS
+          │       │        │
+          └───────┼────────┘
+                  ▼
+          ENTERPRISE STATE
+
+The boundary is fundamental:
 
 Noema owns the execution journey.
 
-Enterprise systems own their respective Business State.
+Enterprise systems remain authoritative for their respective Business State.
 
 ⸻
 
-6. What Noema Owns
+6. Product Ownership
 
-Noema may own canonical state for:
+Noema may maintain canonical state for its execution domain, including:
 
-* Intent
-* Intent lifecycle
-* Intent resolution
-* Trust decisions
-* Action selection
-* Execution state
-* Execution attempts
-* Intervention state
-* Execution outcomes
-* Execution provenance
-* Execution audit records
+* Intent;
+* Intent lifecycle;
+* Intent resolution;
+* Context used for execution;
+* Evidence references;
+* Trust decisions;
+* Action selection;
+* Action plans;
+* Execution state;
+* Execution attempts;
+* Intervention state;
+* Verification state;
+* Execution outcomes;
+* execution provenance;
+* audit records.
 
-These constitute Noema’s execution domain.
+This is Noema execution state.
+
+It must not be confused with enterprise Business State.
 
 ⸻
 
-7. What Noema Does Not Own
+7. Enterprise Business State
 
 Noema does not automatically become the System of Record for:
 
-* accounts
-* balances
-* customers
-* employees
-* inventory
-* payments
-* orders
-* contracts
-* financial ledgers
-* enterprise permissions
-* other Business State
+* accounts;
+* balances;
+* customers;
+* employees;
+* inventory;
+* payments;
+* orders;
+* contracts;
+* financial ledgers;
+* enterprise permissions;
+* other domain-specific Business State.
 
-Those remain owned by the appropriate enterprise systems.
+Those remain authoritative within the relevant enterprise systems.
 
-The distinction is fundamental:
+The distinction is:
 
 Noema
 → execution truth
-Enterprise
+Enterprise Systems
 → business truth
+
+Noema may observe, reason over, and cause transitions in enterprise Business State through authorized capabilities.
+
+It does not thereby become its owner.
 
 ⸻
 
-8. Product Layers
+8. Product State
 
-The product can be understood as several cooperating layers.
+Noema should preserve distinct but related state domains.
 
-08-product
-      │
-      ├── Product Model
-      ├── Interaction Model
-      ├── Integration Model
-      ├── Commercial Wedge
-      └── Product-specific capabilities
-Core Runtime
-      │
-      ├── Intent
-      ├── Trust
-      ├── Execution
-      └── Data
+Intent State
+      +
+Interaction State
+      +
+Trust State
+      +
+Action State
+      +
+Execution State
+      +
+Intervention State
+      +
+Outcome State
 
-The Product layer defines how these technical primitives become a usable enterprise product.
+These states may participate in the same lifecycle but must not be collapsed into one undifferentiated status.
+
+For example:
+
+Interaction = response_sent
+Intent      = resolved
+Trust       = approved
+Execution   = running
+Outcome     = unknown
+
+A single status field is insufficient to represent the product lifecycle safely.
 
 ⸻
 
@@ -254,22 +310,24 @@ The Product layer defines how these technical primitives become a usable enterpr
 
 Noema may receive input from:
 
-* humans
-* enterprise applications
-* APIs
-* workflows
-* events
-* operators
-* automated systems
+* humans;
+* enterprise applications;
+* APIs;
+* workflows;
+* events;
+* operators;
+* automated systems.
 
 Input may be:
 
-unstructured
-semi-structured
-structured
-event-driven
+* unstructured;
+* semi-structured;
+* structured;
+* event-driven.
 
-Regardless of input format, the product should normalize the request into its semantic execution model.
+The input modality does not define the product semantics.
+
+Noema normalizes relevant input into its Intent and execution model.
 
 ⸻
 
@@ -277,31 +335,34 @@ Regardless of input format, the product should normalize the request into its se
 
 Noema produces more than a textual response.
 
-Possible outputs include:
+Product outputs may include:
 
-* resolved Intent
-* clarification request
-* confirmation request
-* Trust decision
-* Action proposal
-* execution status
-* execution outcome
-* escalation
-* intervention request
-* audit record
-* enterprise system update
+* resolved Intent;
+* clarification request;
+* confirmation request;
+* authorization request;
+* Trust decision;
+* Action proposal;
+* execution state;
+* execution progress;
+* verification state;
+* Outcome;
+* escalation;
+* intervention request;
+* audit record;
+* enterprise state transition.
 
 Therefore:
 
 Response ≠ Product Output
 
-A response is one representation of a product state or outcome.
+A response is one representation of product state, execution state, or Outcome.
 
 ⸻
 
-11. Product Flow
+11. Canonical Product Flow
 
-A canonical Noema product flow is:
+The canonical Noema product flow is:
 
 Input
   ↓
@@ -310,6 +371,8 @@ Intent Understanding
 Intent Resolution
   ↓
 Context Assembly
+  ↓
+Evidence Evaluation
   ↓
 Trust Evaluation
   ↓
@@ -323,120 +386,179 @@ Verification
   ↓
 Outcome
 
-At any stage the system may instead transition to:
+At relevant boundaries, the lifecycle may instead transition to:
 
 Clarify
 Escalate
 Reject
 Pause
 Retry
+Replan
+Compensate
+Cancel
 Intervene
+
+These are legitimate product states and paths.
 
 ⸻
 
-12. Intent as the Product Entry Point
+12. Intent as Product Entry Point
 
 Intent is the primary semantic entry point into Noema.
 
-A participant does not need to know:
+A participant should not need to know:
 
-* which application owns the capability
-* which API to call
-* which workflow to start
-* which sequence of operations is required
+* which application owns a capability;
+* which API endpoint implements it;
+* which workflow must be started;
+* which sequence of enterprise operations is required.
 
-The participant expresses the desired outcome.
+The participant expresses a desired outcome.
 
 For example:
 
 "Refund the customer's last payment."
 
-Noema determines the executable representation.
+Noema determines the executable representation from the available enterprise capabilities, context, policy, and Trust requirements.
 
 ⸻
 
-13. Intent Is Not an Instruction String
+13. Intent Is Not the Original Utterance
 
-An Intent is not merely the original user message.
+An Intent is not merely the input string.
 
 The product must distinguish:
 
-Natural Language
-       ↓
-Interpretation
-       ↓
+Interaction
+     ↓
+Candidate Interpretation
+     ↓
 Intent
-       ↓
+     ↓
+Resolved Intent
+     ↓
 Executable Intent
 
-The executable representation contains sufficient structure to determine what should happen without depending on the original wording alone.
+An executable Intent must contain sufficient semantic structure for Noema to determine what Action or Action Plan is being considered.
+
+The original wording remains interaction evidence; it is not itself the authoritative execution state.
 
 ⸻
 
 14. Intent Resolution
 
-Noema must resolve relevant dimensions of an Intent before consequential execution.
+Noema must resolve the dimensions required for consequential execution.
 
 These may include:
 
-* actor
-* target
-* resource
-* action
-* parameters
-* scope
-* constraints
-* desired outcome
+* actor;
+* target;
+* resource;
+* Action;
+* parameters;
+* scope;
+* constraints;
+* desired Outcome.
 
-If material information is missing:
+If material information is unavailable:
 
 Intent
    ↓
-Incomplete
+Incomplete / Ambiguous
    ↓
 Clarification
 
+Noema must not silently fill consequential gaps through unsupported assumptions.
+
 ⸻
 
-15. Trust as a Product Primitive
+15. Context
 
-Trust is not a secondary security feature.
+Context provides the information necessary to interpret and execute Intent.
 
-Trust determines whether Noema may safely transition an Intent into execution.
+Context may include:
 
-The Trust layer evaluates:
+* identity;
+* organizational scope;
+* enterprise state;
+* relevant historical interaction;
+* policy;
+* available capabilities;
+* previous execution state;
+* external evidence.
 
-* identity
-* authorization
-* evidence
-* policy
-* risk
-* preconditions
-* ambiguity
-* execution constraints
+Context is purpose-bound.
 
-The resulting state should be explicit.
+More context is not automatically better.
+
+Noema should retrieve and retain only the context required for the relevant Intent, Trust, Action, and execution decision.
+
+⸻
+
+16. Evidence
+
+Evidence establishes what Noema can legitimately rely upon.
+
+Examples:
+
+Identity Provider
+→ principal identity
+Payment System
+→ payment state
+Ledger
+→ account balance
+User Interaction
+→ explicit confirmation
+
+Evidence sources have different:
+
+* authority;
+* provenance;
+* freshness;
+* scope;
+* reliability.
+
+Noema must preserve those distinctions.
+
+⸻
+
+17. Trust as a Product Primitive
+
+Trust is a core product primitive.
+
+It determines whether an Intent may transition toward execution under the applicable conditions.
+
+Trust may evaluate:
+
+* identity;
+* authorization;
+* evidence;
+* policy;
+* ambiguity;
+* risk;
+* preconditions;
+* execution constraints;
+* freshness;
+* capability guarantees.
+
+The resulting decision must be explicit.
 
 EXECUTE
 CLARIFY
 ESCALATE
 REJECT
 
-Noema should not have a hidden:
+There is no semantic equivalent of:
 
 probably_execute
 
-state.
-
 ⸻
 
-16. Deterministic Trust
+18. Deterministic Trust Boundary
 
-The model may be probabilistic.
+AI models may be probabilistic.
 
-The Trust decision must not be.
-
-Conceptually:
+Consequential Noema decisions must be governed by explicit deterministic controls.
 
 Model
   ↓
@@ -446,17 +568,58 @@ Evidence
   ↓
 Policy
   ↓
+Authorization
+  ↓
+Risk
+  ↓
+Preconditions
+  ↓
 Deterministic Trust Decision
 
-If uncertainty remains material:
+If material uncertainty remains unresolved:
 
-Ambiguous
+AMBIGUOUS
 
-becomes a state requiring resolution rather than a reason to guess.
+must remain a valid state.
+
+The product must not convert uncertainty into execution merely to increase automation.
 
 ⸻
 
-17. Action as the Product Execution Unit
+19. AI Model Boundary
+
+AI models are components within Noema.
+
+They may assist with:
+
+* language understanding;
+* Intent extraction;
+* entity-resolution candidates;
+* context interpretation;
+* plan generation;
+* candidate Action selection;
+* response generation.
+
+They do not own:
+
+* enterprise authority;
+* authorization;
+* Policy;
+* Trust decisions;
+* canonical enterprise state;
+* execution outcome;
+* final execution authority.
+
+The product boundary is:
+
+Model
+→ proposes
+Noema
+→ validates, governs, and executes
+
+⸻
+
+20. Action as Product Execution Unit
 
 An Action represents an executable enterprise operation.
 
@@ -469,36 +632,79 @@ cancel_subscription
 update_address
 approve_invoice
 
-Actions are defined by explicit contracts.
+Actions must correspond to available enterprise capabilities and be governed by explicit Action Contracts.
 
-The contract establishes what is required for execution and what constitutes successful completion.
+An Action Contract establishes the requirements and guarantees necessary for execution.
 
 ⸻
 
-18. Action Selection
+21. Action Selection
 
-Noema maps resolved Intent to an appropriate Action or Action Plan.
+Noema maps resolved Intent to an available Action or Action Plan.
 
 Example:
 
 Intent:
 "Freeze my corporate card."
-        ↓
+       ↓
 Resolved Resource:
 Card 123
-        ↓
+       ↓
 Action:
 freeze_card(card_id=123)
 
-Action selection must be grounded in available enterprise capabilities.
+Action selection must be grounded in the enterprise capabilities available through trusted Integrations.
+
+Noema must not invent an executable capability merely because a model can describe one.
 
 ⸻
 
-19. Enterprise Capabilities
+22. Action Contracts
 
-Noema does not invent capabilities.
+An Action Contract defines the executable boundary of an Action.
 
-Capabilities are exposed by enterprise systems through integrations, APIs, schemas, documentation, configuration, workflows, or other trusted sources.
+Conceptually:
+
+Action
+  +
+Inputs
+  +
+Preconditions
+  +
+Authorization
+  +
+Policy
+  +
+Execution Semantics
+  +
+Postconditions
+
+This separates semantic Action selection from implementation-specific execution.
+
+The Action Contract is therefore a key control between:
+
+Intent
+
+and:
+
+Enterprise Write
+
+⸻
+
+23. Enterprise Capabilities
+
+Enterprise capabilities are exposed through enterprise systems and their associated Integrations.
+
+Sources may include:
+
+* APIs;
+* API schemas;
+* workflows;
+* documentation;
+* events;
+* configuration;
+* enterprise metadata;
+* explicitly registered capabilities.
 
 Conceptually:
 
@@ -514,34 +720,9 @@ The product maps Intent to capabilities that actually exist.
 
 ⸻
 
-20. Integration as a Product Boundary
+24. Enterprise Action Graph
 
-Integrations connect Noema to enterprise systems.
-
-An Integration provides access to:
-
-* systems
-* capabilities
-* data
-* events
-* identity
-* actions
-
-The Integration layer should preserve the distinction between:
-
-Noema semantic model
-
-and:
-
-Enterprise implementation model
-
-Noema should not require enterprise systems to adopt Noema’s internal representation of Business State.
-
-⸻
-
-21. Enterprise Action Graph
-
-The enterprise environment can be represented as a graph of:
+The Enterprise Action Graph represents the executable environment in terms of:
 
 Systems
    ↓
@@ -551,32 +732,36 @@ Actions
    ↓
 Resources
    ↓
+State
+   ↓
 Policies
    ↓
 Dependencies
    ↓
-State
+Outcomes
 
-Noema uses this graph to determine what execution paths are possible.
+The graph allows Noema to reason about available execution paths without reducing the enterprise environment to isolated API endpoints.
 
-The Enterprise Action Graph may be constructed from:
+It may be constructed from:
 
-* APIs
-* API schemas
-* documentation
-* events
-* workflows
-* policies
-* human configuration
-* system metadata
+* APIs;
+* schemas;
+* documentation;
+* workflows;
+* events;
+* policies;
+* configuration;
+* system metadata.
+
+The EAG is therefore a semantic representation of enterprise execution possibilities.
 
 ⸻
 
-22. Planning
+25. Planning
 
-A simple Intent may map directly to one Action.
+A simple Intent may map to one Action.
 
-A complex Intent may require a plan.
+A Compound Intent may require an Action Plan.
 
 Example:
 
@@ -588,53 +773,68 @@ Identify Account
       ↓
 Find Outstanding Refunds
       ↓
-Process Refunds
+Resolve Refund Actions
+      ↓
+Execute Refunds
       ↓
 Verify Refunds
       ↓
 Close Account
       ↓
-Verify Account Closure
+Verify Closure
 
-Planning determines the required execution sequence.
+Planning determines the required sequence and dependencies.
+
+Planning does not itself authorize execution.
+
+Each consequential Action remains subject to the applicable Trust and execution controls.
 
 ⸻
 
-23. Execution
+26. Execution
 
 Execution is the controlled realization of an Action or Action Plan against enterprise capabilities.
 
-Execution must preserve:
+Execution must preserve relevant:
 
-* authorization
-* preconditions
-* idempotency
-* retries
-* failure state
-* compensation
-* postconditions
-* provenance
-* auditability
+* authorization;
+* policy;
+* preconditions;
+* idempotency;
+* retry semantics;
+* failure state;
+* compensation;
+* postconditions;
+* provenance;
+* auditability.
 
-The product must distinguish:
+Noema must distinguish:
 
-Action selected
+Action Selected
 
 from:
 
-Action executed
+Action Attempted
 
-and:
+from:
 
-Action succeeded
+Action Accepted
+
+from:
+
+Business State Verified
+
+from:
+
+Outcome Established
 
 ⸻
 
-24. Outcome
+27. Outcome
 
 Outcome represents the established result of execution.
 
-Possible outcomes include:
+Possible states include:
 
 SUCCEEDED
 FAILED
@@ -643,15 +843,15 @@ UNKNOWN
 CANCELLED
 REJECTED
 
-Outcome must be based on evidence and execution state.
+Outcome must be established from execution evidence and applicable enterprise state.
 
-A generated response must never manufacture an outcome.
+A generated response must never manufacture an Outcome.
 
 ⸻
 
-25. Verification
+28. Verification
 
-Noema should verify consequential outcomes against appropriate enterprise state.
+For consequential operations, execution acceptance is not necessarily equivalent to Business State transition.
 
 Example:
 
@@ -662,36 +862,70 @@ request accepted
 Verification:
 card.status = FROZEN
 
-Execution acceptance and Business State verification are distinct.
+Verification establishes whether the relevant postcondition actually holds.
+
+Therefore:
+
+Execution
+   ↓
+Verification
+   ↓
+Outcome
+
+rather than:
+
+API Response
+   ↓
+Success
 
 ⸻
 
-26. Human-in-the-Loop
+29. Unknown Outcome
+
+A write operation may time out after reaching the enterprise system.
+
+Therefore:
+
+Request Sent
+     ↓
+Response Lost
+     ↓
+Outcome = UNKNOWN
+
+Noema must preserve UNKNOWN until sufficient evidence establishes the actual result.
+
+Where possible, reconciliation should query authoritative enterprise state or consume appropriate enterprise evidence.
+
+⸻
+
+30. Human Participation
 
 Human participation is a first-class product capability.
 
 Humans may participate as:
 
-* requester
-* confirmer
-* approver
-* operator
-* escalation recipient
-* resolver
+* requester;
+* confirmer;
+* approver;
+* operator;
+* resolver;
+* escalation recipient.
 
-Human intervention may be required when:
+Human participation may be required when:
 
-* ambiguity remains
-* authorization is insufficient
-* risk exceeds a threshold
-* systems conflict
-* execution fails
-* compensation is required
-* policy requires approval
+* ambiguity remains;
+* authorization is insufficient;
+* risk exceeds a policy threshold;
+* enterprise systems conflict;
+* execution fails;
+* compensation requires human judgment;
+* Policy requires approval.
+
+Human participation is therefore part of the execution model rather than evidence that the product failed to automate.
 
 ⸻
 
-27. Product and Automation
+31. Automation Boundary
 
 Noema should not optimize for maximum automation.
 
@@ -699,27 +933,20 @@ The objective is:
 
 Maximum safe execution within explicit enterprise boundaries.
 
-Sometimes the correct outcome is:
+Depending on the circumstances, the correct product behavior may be:
 
 AUTOMATE
-
-Sometimes:
-
 ASK
-
-Sometimes:
-
+CONFIRM
 ESCALATE
-
-Sometimes:
-
+PAUSE
 REJECT
 
-Automation is therefore a policy-controlled outcome, not the product objective by itself.
+Automation is therefore a governed execution outcome, not an unconditional product objective.
 
 ⸻
 
-28. Product and Ambiguity
+32. Ambiguity
 
 Ambiguity is a first-class product state.
 
@@ -727,134 +954,195 @@ Example:
 
 "Cancel John's account."
 
-If multiple Johns exist:
+If multiple valid candidates exist:
 
 John A
 John B
 John C
 
-Noema should not select one based solely on model probability.
+Noema should not select one solely because a model assigns it the highest probability.
 
 Instead:
 
 AMBIGUOUS
-   ↓
+    ↓
 Clarification
+    ↓
+Explicit Resolution
+    ↓
+Trust Evaluation
+    ↓
+Execution
 
-The product must make safe clarification a natural execution path.
+The product must make safe clarification a normal execution path.
 
 ⸻
 
-29. Product and Enterprise Truth
+33. Interaction
+
+Interaction is the participant-facing mechanism through which Intent is expressed, clarified, confirmed, modified, observed, or completed.
+
+It may occur through:
+
+* natural language;
+* chat;
+* voice;
+* structured UI;
+* forms;
+* buttons;
+* API;
+* webhook;
+* event;
+* approval interface;
+* notification.
+
+The semantic product model remains interface-independent.
+
+Interaction ≠ Intent
+Interaction ≠ Action
+Interaction ≠ Execution
+
+Interaction participates in the lifecycle without bypassing it.
+
+⸻
+
+34. Product and Enterprise Truth
 
 Noema reasons over enterprise truth without redefining it.
 
 The enterprise remains authoritative for Business State.
 
-Enterprise
-   ↓
-Canonical Data
-   ↓
-Noema Context
-   ↓
-Trust
-   ↓
-Execution
-   ↓
-Enterprise
+Enterprise System
+      ↓
+Canonical State
+      ↓
+Integration
+      ↓
+Context / Evidence
+      ↓
+Noema
+      ↓
+Action
+      ↓
+Enterprise System
 
-Noema may maintain execution state around enterprise operations without becoming the owner of the underlying business facts.
+Noema may maintain execution state around the operation.
 
-⸻
-
-30. Product and Context
-
-Context allows Noema to interpret and execute Intent.
-
-Context may include:
-
-* user identity
-* organizational scope
-* enterprise data
-* historical interactions
-* relevant policies
-* capabilities
-* previous execution state
-* external evidence
-
-Context must remain purpose-bound.
-
-More context is not automatically better.
+It does not become authoritative merely because it has observed or initiated the operation.
 
 ⸻
 
-31. Product and Evidence
+35. Integrations
 
-Evidence establishes what Noema can legitimately rely upon.
+Integrations provide the controlled boundary between Noema and external enterprise systems.
 
-Examples:
+They translate between:
 
-Identity Provider
-→ user identity
-Ledger
-→ account balance
-Payment System
-→ payment status
-User Confirmation
-→ explicit approval
+Noema Semantic Model
 
-Different evidence sources have different authority and relevance.
+and:
+
+Enterprise Implementation Model
+
+Integrations may provide:
+
+* capabilities;
+* reads;
+* writes;
+* events;
+* authentication;
+* authorization;
+* schema mappings;
+* consistency semantics;
+* error semantics;
+* execution guarantees.
+
+Implementation details such as endpoint paths, serialization, and transport should not leak into the Intent model.
 
 ⸻
 
-32. Product and Policy
+36. Policy
 
-Policy determines the boundaries within which Noema can operate.
+Policy establishes the boundaries within which Noema may operate.
 
 Policy may govern:
 
-* authorization
-* risk
-* confirmation
-* approval
-* data access
-* execution limits
-* retries
-* compensation
-* escalation
-* retention
+* authorization;
+* risk;
+* confirmation;
+* approval;
+* data access;
+* execution limits;
+* retries;
+* compensation;
+* escalation;
+* retention;
+* organizational boundaries.
 
-Noema should not infer enterprise Policy from model preference.
+Critical execution behavior must be explicit and auditable.
 
-⸻
-
-33. Product and Permissions
-
-Permissions remain enterprise-controlled.
-
-Noema may evaluate permissions or consume authorization decisions.
-
-It should not silently expand a principal’s authority.
-
-For example:
-
-User
-  ↓
-Noema
-  ↓
-"Can this principal perform this Action?"
-
-must produce an authorization decision grounded in enterprise authority.
+Noema must not infer Policy merely from model behavior or historical usage.
 
 ⸻
 
-34. Product and Data Boundaries
+37. Authorization
 
-Noema should retrieve and process only the information required for the Intent and Action.
+Authorization remains grounded in enterprise authority.
+
+A participant requesting an Action does not thereby establish authority to execute it.
+
+Conceptually:
+
+Principal
+    ↓
+Authentication
+    ↓
+Authorization
+    ↓
+Policy
+    ↓
+Action
+
+Noema may consume enterprise authorization decisions or evaluate authorization according to explicit enterprise-controlled policy.
+
+It must not silently expand a principal’s authority.
+
+⸻
+
+38. Risk
+
+Risk is relevant to the execution decision.
+
+Different Actions may have materially different consequences.
+
+Examples include:
+
+* financial writes;
+* account changes;
+* access changes;
+* sensitive data operations;
+* organizational actions.
+
+Risk requirements should be Policy-defined.
+
+Higher-risk operations may require:
+
+* stronger evidence;
+* explicit confirmation;
+* additional authorization;
+* approval;
+* human intervention;
+* stronger verification.
+
+⸻
+
+39. Data Boundaries
+
+Noema should retrieve and process only the information required for the relevant Intent and Action.
 
 For example:
 
-Refund Payment
+refund_payment
 
 may require:
 
@@ -865,111 +1153,140 @@ payment.currency
 
 It should not automatically retrieve unrelated customer information.
 
+The product therefore preserves:
+
+Least Privilege
++
+Purpose Limitation
++
+Data Minimization
+
 ⸻
 
-35. Product and Auditability
+40. Auditability
 
 Consequential execution should be reconstructable.
 
-The product should preserve sufficient information to answer:
+Noema should preserve sufficient information to establish:
 
-* What did the participant request?
-* What Intent was resolved?
-* What evidence was used?
-* What Policy applied?
-* What Trust decision was made?
-* Which Action was selected?
-* What was executed?
-* What enterprise systems were affected?
-* What was the outcome?
-* Who approved or intervened?
+* what was requested;
+* what Intent was resolved;
+* what Context was used;
+* what Evidence was relied upon;
+* what Policy applied;
+* what Trust decision was made;
+* what Action was selected;
+* what Action Contract governed execution;
+* what enterprise capability was invoked;
+* what occurred during execution;
+* what verification established;
+* what Outcome resulted;
+* who confirmed, approved, or intervened.
+
+Auditability concerns the execution journey, not merely application logs.
 
 ⸻
 
-36. Product and Observability
+41. Observability
 
-Operational observability should cover the execution lifecycle.
+Product observability should cover the execution lifecycle.
 
 Relevant signals include:
 
-Intent latency
-Resolution latency
-Trust latency
-Execution latency
-Failure rate
-Clarification rate
-Escalation rate
-Retry rate
-Unknown outcomes
-Policy rejection rate
-Human intervention rate
+* Intent resolution latency;
+* clarification rate;
+* ambiguity rate;
+* Trust decision latency;
+* policy rejection rate;
+* authorization failure rate;
+* Action execution latency;
+* execution failure rate;
+* unknown outcome rate;
+* retry rate;
+* compensation rate;
+* escalation rate;
+* human intervention rate;
+* verification failure rate.
 
-Product observability should measure execution quality, not merely model performance.
+Product observability should measure execution quality, not merely model performance or conversational engagement.
 
 ⸻
 
-37. Product Metrics
+42. Product Metrics
 
-Important product metrics may include:
+Metrics should be organized around the execution lifecycle.
 
-Intent Resolution
+Intent
 
-* resolution success rate
-* clarification rate
-* ambiguity rate
-* time to resolution
+* resolution success rate;
+* clarification rate;
+* ambiguity rate;
+* time to resolution.
 
 Trust
 
-* rejection rate
-* escalation rate
-* confirmation rate
-* policy evaluation failures
+* rejection rate;
+* escalation rate;
+* confirmation rate;
+* authorization failure rate;
+* policy evaluation failures.
 
 Execution
 
-* execution success rate
-* failure rate
-* unknown outcome rate
-* retry rate
-* compensation rate
+* execution success rate;
+* failure rate;
+* unknown outcome rate;
+* retry rate;
+* compensation rate;
+* verification success rate.
+
+Operations
+
+* human intervention rate;
+* mean time to intervention;
+* mean time to recovery;
+* unresolved execution rate.
 
 Business Value
 
-* time saved
-* workflows eliminated
-* manual interventions reduced
-* execution completion rate
-* operational cost reduction
+* time saved;
+* manual handling reduced;
+* workflows completed;
+* operational cost reduction;
+* response-time reduction;
+* customer handling reduction.
 
-The central metric should be trusted intent completion, not conversational engagement.
-
-⸻
-
-38. Product Quality
-
-Noema product quality should be evaluated across multiple dimensions.
-
-Correctness
-Safety
-Reliability
-Determinism
-Latency
-Observability
-Explainability
-Enterprise Compatibility
-
-A product that executes quickly but incorrectly is not successful.
-
-A product that never executes because it cannot establish trust is also incomplete.
+The central product measure is trusted Intent completion, not conversational engagement.
 
 ⸻
 
-39. Product Failure Model
+43. Product Quality
 
-Failures should be classified rather than collapsed into generic errors.
+Noema product quality should be evaluated across:
 
-Examples:
+* correctness;
+* safety;
+* determinism;
+* reliability;
+* latency;
+* observability;
+* explainability;
+* recoverability;
+* enterprise compatibility.
+
+Speed without correctness is insufficient.
+
+Automation without Trust is insufficient.
+
+A system that cannot safely execute consequential Intent is incomplete even if its conversational performance is strong.
+
+⸻
+
+44. Product Failure Model
+
+Failures should remain semantically distinguishable.
+
+Relevant categories include:
 
 Intent Failure
 Trust Failure
@@ -982,49 +1299,71 @@ Verification Failure
 Unknown Outcome
 Human Intervention Required
 
-Each failure category may require a different recovery path.
+Different failure states may require different recovery paths.
 
 ⸻
 
-40. Product Recovery
+45. Product Recovery
 
 Recovery may involve:
 
 Retry
 Clarify
 Replan
+Reconcile
 Compensate
 Escalate
 Intervene
 Cancel
 Reject
-Reconcile
 
-Recovery should be deterministic according to the relevant execution and Policy semantics.
+Recovery must be governed by:
 
-⸻
+* Action semantics;
+* Integration semantics;
+* Policy;
+* authorization;
+* current enterprise state;
+* execution state.
 
-41. Product State
-
-Noema’s product state can be understood as:
-
-Intent State
-      +
-Trust State
-      +
-Execution State
-      +
-Interaction State
-      +
-Intervention State
-
-These states should remain separately modeled even when they participate in one product workflow.
+Noema must not convert failure into uncontrolled retry or uncontrolled autonomy.
 
 ⸻
 
-42. Product Lifecycle
+46. Human Intervention and Recovery
 
-A typical product lifecycle is:
+Human intervention may become necessary when deterministic execution cannot safely proceed.
+
+Example:
+
+Execution
+    ↓
+External Conflict
+    ↓
+Noema
+    ↓
+Human Intervention
+    ↓
+Resolution
+    ↓
+Resume / Replan / Reject
+
+The intervention should preserve:
+
+* principal;
+* authority;
+* Intent;
+* Action;
+* execution state;
+* evidence;
+* reason for intervention;
+* resulting decision.
+
+⸻
+
+47. Product Lifecycle
+
+A canonical lifecycle is:
 
 REQUEST
    ↓
@@ -1032,7 +1371,11 @@ UNDERSTAND
    ↓
 RESOLVE
    ↓
-TRUST
+ESTABLISH CONTEXT
+   ↓
+EVALUATE TRUST
+   ↓
+SELECT ACTION
    ↓
 PLAN
    ↓
@@ -1049,16 +1392,20 @@ ESCALATE
 REJECT
 PAUSE
 RETRY
+REPLAN
 COMPENSATE
 CANCEL
+INTERVENE
+
+The lifecycle must preserve the distinction between these states.
 
 ⸻
 
-43. Product Extensibility
+48. Product Extensibility
 
-Noema should be extensible through enterprise capabilities rather than requiring bespoke product logic for every workflow.
+Noema should be extensible through enterprise capabilities rather than requiring bespoke product logic for every new workflow.
 
-New enterprise capability:
+A new capability may follow:
 
 Enterprise System
       ↓
@@ -1067,115 +1414,53 @@ Integration
 Capability
       ↓
 Action Contract
+      ↓
+Enterprise Action Graph
+      ↓
+Noema
 
-can become available to Noema without changing the fundamental Intent → Trust → Execution model.
+The stable product lifecycle remains:
+
+Intent
+   ↓
+Trust
+   ↓
+Action
+   ↓
+Execution
+   ↓
+Outcome
+
+New capabilities should therefore extend the execution substrate rather than redefine the product.
 
 ⸻
 
-44. Product Configuration
+49. Product Configuration
 
 Enterprise configuration may define:
 
-* systems
-* capabilities
-* policies
-* permissions
-* approval requirements
-* risk thresholds
-* organizational boundaries
-* identity mappings
-* execution constraints
+* systems;
+* capabilities;
+* policies;
+* permissions;
+* approval requirements;
+* risk thresholds;
+* organizational boundaries;
+* identity mappings;
+* execution constraints;
+* integration mappings.
 
-Configuration should be explicit and auditable.
+Configuration should be explicit, versioned where necessary, and auditable.
 
-Critical execution behavior should not depend on hidden model behavior.
-
-⸻
-
-45. Product and AI Models
-
-AI models are components within Noema.
-
-They may assist with:
-
-* language understanding
-* intent extraction
-* entity resolution candidates
-* plan generation
-* context interpretation
-* response generation
-
-They do not own:
-
-* authorization
-* Policy
-* Trust decisions
-* canonical enterprise state
-* execution outcome
-* final execution authority
-
-The model proposes.
-
-Noema governs.
+Critical execution behavior must not depend on hidden model behavior.
 
 ⸻
 
-46. Product and Determinism
+50. Product and Existing Workflows
 
-The product must preserve deterministic behavior after probabilistic interpretation.
+Noema does not necessarily replace deterministic enterprise workflows.
 
-Conceptually:
-
-Probabilistic Layer
-        │
-        ▼
-Candidate Intent
-        │
-        ▼
-Deterministic Noema Runtime
-        │
-        ├── Evidence
-        ├── Policy
-        ├── Authorization
-        ├── Preconditions
-        └── Risk
-                │
-                ▼
-          Execute / Clarify /
-          Escalate / Reject
-
-This separation is central to Noema’s product identity.
-
-⸻
-
-47. Product and Enterprise Adoption
-
-Enterprise adoption should not require replacing existing systems.
-
-Noema should sit above existing infrastructure.
-
-Existing Enterprise Systems
-        │
-        ├── CRM
-        ├── ERP
-        ├── HRIS
-        ├── Billing
-        ├── Payments
-        ├── Databases
-        └── Internal APIs
-                │
-                ▼
-              Noema
-
-The product value comes from orchestrating existing capabilities through a common intent and trust layer.
-
-⸻
-
-48. Product and Existing Workflows
-
-Noema does not necessarily replace deterministic workflows.
-
-Instead, it can operate above them.
+It may operate above them.
 
 For example:
 
@@ -1187,46 +1472,47 @@ Existing Enterprise Workflow
   ↓
 Enterprise Systems
 
-Noema determines when and why a workflow should be invoked while respecting the workflow’s established controls.
+Noema determines when and why an existing capability or workflow should be invoked while preserving its established controls.
+
+This allows Noema to add an intent-driven access layer without requiring replacement of the underlying enterprise execution infrastructure.
 
 ⸻
 
-49. Product and Specialized Applications
+51. Product and Specialized Applications
 
-Noema does not imply that every specialized application disappears.
+Noema does not imply that specialized applications disappear.
 
 Specialized applications may remain necessary for:
 
-* complex configuration
-* expert workflows
-* high-density operational interfaces
-* administration
-* reporting
-* system management
-
-Noema changes how users access capabilities when direct application navigation is unnecessary.
+* complex configuration;
+* expert workflows;
+* high-density operational interfaces;
+* administration;
+* reporting;
+* system management.
 
 The product thesis is therefore not:
 
 No Apps
 
-but:
+It is:
 
-Intent becomes a universal access layer to enterprise capabilities.
+Intent becomes a common access layer
+to enterprise capabilities
+when direct application navigation
+is unnecessary.
 
 ⸻
 
-50. Product and User Experience
+52. Product Experience
 
-The user experience should make enterprise operations feel:
+The product experience should make enterprise operations feel:
 
-* direct
-* contextual
-* safe
-* observable
-* recoverable
-
-The user should not need to understand internal orchestration.
+* direct;
+* contextual;
+* safe;
+* observable;
+* recoverable.
 
 For example:
 
@@ -1234,35 +1520,51 @@ User:
 "Replace my expired corporate card."
 Noema:
 "I found your expired corporate card ending in 4821.
-Replacement requires manager approval. Should I submit the request?"
+Replacement requires manager approval.
+Should I submit the request?"
 
-The complexity remains inside the execution system.
+The underlying complexity remains within Noema’s execution system.
+
+The user should receive the information necessary to act, confirm, clarify, or understand the current state without being required to understand the internal orchestration.
 
 ⸻
 
-51. Product and Transparency
+53. Transparency
 
-Noema should expose the information necessary for users to understand meaningful execution decisions.
+Noema should expose information necessary to understand meaningful execution decisions.
 
 For example:
 
 Requested
-→ Approval Required
-→ Approved
-→ Submitted
-→ Completed
+   ↓
+Approval Required
+   ↓
+Approved
+   ↓
+Submitted
+   ↓
+Verified
+   ↓
+Completed
 
-Transparency should communicate state and reasons without exposing private model reasoning or unnecessary internal implementation details.
+Transparency should communicate:
+
+* state;
+* relevant reason;
+* required intervention;
+* meaningful constraints;
+* established outcome.
+
+It should not expose hidden model reasoning or unnecessary internal implementation details.
 
 ⸻
 
-52. Product and Trust Boundary
+54. Product Trust Boundary
 
-Noema’s fundamental trust boundary is:
+The fundamental product trust boundary is:
 
 Model Output
-     │
-     ▼
+     ↓
 Noema Governance
      │
      ├── Identity
@@ -1271,9 +1573,9 @@ Noema Governance
      ├── Policy
      ├── Risk
      ├── Preconditions
+     ├── Action Contract
      └── Validation
-             │
-             ▼
+             ↓
          Execution
 
 Nothing should move directly from:
@@ -1284,61 +1586,46 @@ to:
 
 Enterprise Write
 
-without passing through the appropriate controls.
+without passing through the applicable controls.
 
 ⸻
 
-53. Product and Enterprise Action Graph
+55. Product Learning
 
-The Enterprise Action Graph becomes a major product asset because it allows Noema to understand not only individual APIs but the relationships between:
+Noema may learn from historical execution data.
 
-Intent
-  ↓
-Capability
-  ↓
-Action
-  ↓
-Resource
-  ↓
-State
-  ↓
-Outcome
+Useful signals include:
 
-Over time, this graph can encode:
+* common Intent patterns;
+* recurring ambiguities;
+* common clarification paths;
+* execution failures;
+* successful resolution patterns;
+* integration behavior;
+* intervention patterns;
+* recovery patterns.
 
-* available capabilities
-* dependencies
-* execution paths
-* policy requirements
-* failure patterns
-* recovery strategies
-* enterprise semantics
+Learning may improve:
 
-This can become a significant source of product defensibility.
+* candidate generation;
+* resolution efficiency;
+* clarification quality;
+* planning;
+* operational efficiency.
 
-⸻
+Historical behavior must not silently redefine:
 
-54. Product Learning
+* authorization;
+* Policy;
+* enterprise authority;
+* Action Contracts;
+* canonical Business State.
 
-Noema may learn from historical execution without allowing historical behavior to silently override Policy or authority.
-
-Useful learning signals include:
-
-* common Intent patterns
-* recurring ambiguities
-* common clarification paths
-* execution failures
-* successful resolution patterns
-* integration behavior
-* human intervention patterns
-
-Learned behavior should improve candidate generation and system efficiency.
-
-It must not silently redefine authorization or enterprise truth.
+The product learns within its governance boundary.
 
 ⸻
 
-55. Product Moat
+56. Product Moat
 
 Potential durable product assets include:
 
@@ -1358,64 +1645,77 @@ Integration Knowledge
       +
 Historical Execution Data
 
-The moat should therefore emerge from the accumulated execution knowledge and enterprise semantic infrastructure rather than from the underlying language model alone.
+The resulting product advantage should therefore accumulate around enterprise execution knowledge and semantic infrastructure rather than depend solely on the underlying AI model.
+
+The relevant asset is not merely:
+
+"What can the model say?"
+
+but:
+
+"What can Noema safely understand,
+authorize, execute, verify, and learn
+across enterprise systems?"
 
 ⸻
 
-56. Product Deployment
+57. Product Deployment
 
-Noema may be deployed in environments where enterprise data and execution require strict isolation.
+Noema may operate in environments requiring strict isolation.
 
 Deployment concerns may include:
 
-* tenant isolation
-* organizational isolation
-* network boundaries
-* credential management
-* data residency
-* audit requirements
-* private connectivity
-* enterprise identity
+* tenant isolation;
+* organizational isolation;
+* network boundaries;
+* credential management;
+* data residency;
+* audit requirements;
+* private connectivity;
+* enterprise identity;
+* environment separation.
 
-The product architecture must preserve these boundaries independently of the interaction modality.
+These boundaries must remain independent of the interaction modality.
 
 ⸻
 
-57. Product Multi-Tenancy
+58. Product Multi-Tenancy
 
 Noema must preserve tenant boundaries across:
 
-* Intent
-* Context
-* Data
-* Evidence
-* Integrations
-* Policies
-* Actions
-* Execution
-* Audit
+* Intent;
+* Context;
+* Evidence;
+* Data;
+* Integrations;
+* Policies;
+* Actions;
+* Execution;
+* Audit.
 
 A resource identifier without tenant scope is insufficient where identifiers may overlap.
 
+Tenant scope must therefore participate in the relevant execution context and authorization boundary.
+
 ⸻
 
-58. Product Evolution
+59. Product Evolution
 
-The Product Model should remain stable while individual interfaces, models, integrations, and enterprise capabilities evolve.
+The Product Model should remain stable while individual interfaces, models, Integrations, and enterprise capabilities evolve.
 
 For example:
 
 Interface
    ↓
 changes
-Model
+AI Model
    ↓
 changes
 Enterprise API
    ↓
 changes
 
-while:
+while the semantic core remains:
 
 Intent
    ↓
@@ -1424,62 +1724,70 @@ Trust
 Action
    ↓
 Execution
+   ↓
+Outcome
 
-remains the stable semantic core.
+This separation is essential to preventing implementation changes from redefining the product itself.
 
 ⸻
 
-59. Product Architecture
+60. Product Architecture
 
 Conceptually:
 
-                    PARTICIPANTS
-                         │
-                         ▼
-                  INTERACTION LAYER
-                         │
-                         ▼
-                   INTENT LAYER
-                         │
-              ┌──────────┴──────────┐
-              ▼                     ▼
-           CONTEXT                 DATA
-              │                     │
-              └──────────┬──────────┘
-                         ▼
-                    TRUST ENGINE
-                         │
-              ┌──────────┴──────────┐
-              ▼                     ▼
-          ACTION MODEL            POLICY
-              │                     │
-              └──────────┬──────────┘
-                         ▼
-                     PLANNING
-                         │
-                         ▼
-                     EXECUTION
-                         │
-                         ▼
-                  INTEGRATION LAYER
-                         │
-          ┌──────────────┼──────────────┐
-          ▼              ▼              ▼
-         CRM           Billing          ERP
-          │              │              │
-          └──────────────┼──────────────┘
-                         ▼
-                 ENTERPRISE STATE
-                         │
-                         ▼
-                    VERIFICATION
-                         │
-                         ▼
-                      OUTCOME
+                         PARTICIPANTS
+                              │
+                              ▼
+                       INTERACTION LAYER
+                              │
+                              ▼
+                         INTENT LAYER
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+                 CONTEXT              EVIDENCE
+                    │                   │
+                    └─────────┬─────────┘
+                              ▼
+                        TRUST ENGINE
+                              │
+                 ┌────────────┼────────────┐
+                 ▼            ▼            ▼
+              POLICY       ACTION       IDENTITY /
+                           MODEL        AUTHORIZATION
+                 │            │
+                 └─────┬──────┘
+                       ▼
+                    PLANNING
+                       │
+                       ▼
+                   EXECUTION
+                       │
+                       ▼
+                INTEGRATION LAYER
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+         CRM         Billing       ERP
+          │            │            │
+          └────────────┼────────────┘
+                       ▼
+                ENTERPRISE STATE
+                       │
+                       ▼
+                  VERIFICATION
+                       │
+                       ▼
+                    OUTCOME
+                       │
+                       ▼
+                  INTERACTION
+
+The Enterprise Action Graph spans the capability, resource, state, dependency, policy, and execution relationships that inform this architecture.
 
 ⸻
 
-60. Product Model
+61. Product Model
 
 Conceptually:
 
@@ -1489,15 +1797,20 @@ Product {
     intents
     context
     evidence
+    identity
+    authorization
     trust
     policy
     actions
+    action_contracts
     plans
     executions
+    verification
     outcomes
     interventions
     integrations
     enterprise_systems
+    enterprise_action_graph
     audit
 }
 
@@ -1505,27 +1818,30 @@ This is a semantic model rather than a requirement for a literal database schema
 
 ⸻
 
-61. Product Relationships
+62. Product Relationships
 
 Product
 │
 ├── receives → Interaction
 ├── creates → Intent
 ├── resolves → Intent
+├── assembles → Context
+├── evaluates → Evidence
 ├── evaluates → Trust
+├── enforces → Policy
+├── verifies → Authorization
 ├── selects → Action
 ├── constructs → Plan
 ├── executes → Action
-├── observes → Outcome
+├── verifies → Outcome
 ├── integrates_with → Enterprise System
-├── enforces → Policy
 ├── records → Execution State
 ├── supports → Human Intervention
 └── exposes → Interfaces
 
 ⸻
 
-62. Product Invariants
+63. Product Invariants
 
 Invariant 1
 
@@ -1537,93 +1853,9 @@ Intent is the primary semantic entry point into the product.
 
 Invariant 3
 
-Noema must not allow model output to directly bypass Trust and Execution controls.
+Interaction is distinct from Intent, Action, Execution, and Outcome.
 
 Invariant 4
-
-The model may be probabilistic; consequential Noema decisions must follow deterministic governance.
-
-Invariant 5
-
-Ambiguity is a valid state and must not be silently converted into certainty.
-
-Invariant 6
-
-Trust is a product primitive, not merely a security feature.
-
-Invariant 7
-
-Authorization must be grounded in enterprise authority.
-
-Invariant 8
-
-Noema owns execution truth within its domain but does not automatically own enterprise Business State.
-
-Invariant 9
-
-Enterprise Systems remain authoritative for their respective Business State.
-
-Invariant 10
-
-Actions must correspond to actual enterprise capabilities.
-
-Invariant 11
-
-Execution success must not be inferred solely from Action submission.
-
-Invariant 12
-
-Consequential outcomes should be verified against authoritative enterprise state where required.
-
-Invariant 13
-
-Interaction modality must not change the underlying semantic execution model.
-
-Invariant 14
-
-Human intervention is a first-class execution path.
-
-Invariant 15
-
-Automation is governed by Policy rather than treated as an unconditional objective.
-
-Invariant 16
-
-Product state must distinguish Intent, Trust, Interaction, and Execution state.
-
-Invariant 17
-
-Noema must preserve tenant, organizational, authorization, and data boundaries.
-
-Invariant 18
-
-Noema should minimize enterprise data required for an execution.
-
-Invariant 19
-
-Consequential execution must remain auditable and reconstructable.
-
-Invariant 20
-
-Failure and unknown outcomes must remain explicitly distinguishable.
-
-Invariant 21
-
-Recovery must follow explicit execution and Policy semantics.
-
-Invariant 22
-
-Enterprise workflows may remain authoritative execution mechanisms behind Noema.
-
-Invariant 23
-
-Noema should expose enterprise capabilities without requiring replacement of existing systems.
-
-Invariant 24
-
-Learned behavior may improve interpretation and execution efficiency but must not silently redefine Policy, authorization, or enterprise truth.
-
-Invariant 25
 
 The stable product abstraction is:
 
@@ -1637,27 +1869,154 @@ Execution
   ↓
 Outcome
 
+Invariant 5
+
+Model output must not directly bypass Noema governance and execution controls.
+
+Invariant 6
+
+The model may be probabilistic; consequential execution decisions must follow explicit deterministic governance.
+
+Invariant 7
+
+Ambiguity is a valid state and must not be silently converted into certainty.
+
+Invariant 8
+
+Model confidence does not constitute authorization, Trust, confirmation, or execution authority.
+
+Invariant 9
+
+Trust is a product primitive, not merely a security feature.
+
+Invariant 10
+
+Authorization must be grounded in applicable enterprise authority.
+
+Invariant 11
+
+Noema owns execution state within its domain but does not automatically own enterprise Business State.
+
+Invariant 12
+
+Enterprise Systems remain authoritative for their respective Business State.
+
+Invariant 13
+
+Actions must correspond to actual enterprise capabilities.
+
+Invariant 14
+
+Actions must execute through explicit Action Contracts.
+
+Invariant 15
+
+Noema must not invent executable enterprise capabilities merely because a model can describe them.
+
+Invariant 16
+
+Execution acceptance must not automatically be interpreted as verified Business State transition.
+
+Invariant 17
+
+Consequential outcomes should be verified against authoritative enterprise state where required.
+
+Invariant 18
+
+Unknown outcomes must remain explicitly distinguishable from success and failure.
+
+Invariant 19
+
+Interaction modality must not change the underlying semantic execution model.
+
+Invariant 20
+
+Human intervention is a first-class execution path.
+
+Invariant 21
+
+Automation is governed by Policy rather than treated as an unconditional objective.
+
+Invariant 22
+
+Product state must distinguish Intent, Interaction, Trust, Action, Execution, Intervention, and Outcome state.
+
+Invariant 23
+
+Noema must preserve tenant, organizational, authorization, environment, and data boundaries.
+
+Invariant 24
+
+Noema should minimize enterprise data required for an execution.
+
+Invariant 25
+
+Consequential execution must remain auditable and reconstructable.
+
+Invariant 26
+
+Failure states must remain semantically distinguishable.
+
+Invariant 27
+
+Recovery must follow explicit Action, Integration, and Policy semantics.
+
+Invariant 28
+
+Enterprise workflows may remain authoritative execution mechanisms behind Noema.
+
+Invariant 29
+
+Noema should expose enterprise capabilities without requiring replacement of existing systems.
+
+Invariant 30
+
+Integrations must preserve enterprise authority rather than becoming substitute Systems of Record.
+
+Invariant 31
+
+Learned behavior may improve interpretation and execution efficiency but must not silently redefine Policy, authorization, Action Contracts, or enterprise truth.
+
+Invariant 32
+
+Confirmation must be bound to the relevant Intent or Action and must remain subject to freshness and Policy requirements.
+
+Invariant 33
+
+Consequential execution must not rely on unresolved material uncertainty.
+
+Invariant 34
+
+Noema must preserve sufficient provenance to establish how consequential decisions and execution outcomes were reached.
+
+Invariant 35
+
+The Product Model must remain independent of any particular interface, AI model, enterprise vendor, or transport mechanism.
+
 ⸻
 
-63. Final Definition
+64. Final Definition
 
-The Noema Product Model defines Noema as an intent-driven enterprise execution system that transforms human or machine intent into governed, authorized, observable, and verifiable Actions against existing enterprise capabilities.
+The Noema Product Model defines Noema as an intent-driven enterprise execution system that transforms human or machine Intent into governed, authorized, observable, and verifiable Actions against existing enterprise capabilities.
 
 The fundamental product loop is:
 
 PARTICIPANT
      │
      ▼
-  INTERACTION
+ INTERACTION
      │
      ▼
    INTENT
      │
      ▼
-  RESOLUTION
+ RESOLUTION
      │
      ▼
-    TRUST
+CONTEXT + EVIDENCE
+     │
+     ▼
+   TRUST
      │
      ▼
    ACTION
@@ -1666,20 +2025,40 @@ PARTICIPANT
   EXECUTION
      │
      ▼
-ENTERPRISE SYSTEM
+ENTERPRISE CAPABILITY
      │
      ▼
-  BUSINESS STATE
+ BUSINESS STATE
      │
      ▼
  VERIFICATION
      │
      ▼
-   OUTCOME
+  OUTCOME
      │
      ▼
 PARTICIPANT
 
-And the architectural rule is:
+The architectural boundary is:
 
-Noema is the execution layer between intent and enterprise capability. It interprets intent, establishes trust, selects and executes authorized Actions, and records the resulting execution journey—without silently becoming the authority for the enterprise Business State it operates upon.
+Model
+   ↓
+Noema Semantic + Trust Boundary
+   ↓
+Action Contract
+   ↓
+Execution
+   ↓
+Enterprise Capability
+   ↓
+Enterprise Business State
+
+The governing principle is:
+
+Noema is the execution layer between intent and enterprise capability. It resolves Intent, establishes Trust, selects authorized Actions, executes them through explicit contracts, verifies consequential Outcomes, and maintains the execution journey—without silently becoming the authority for the enterprise Business State on which it operates.
+
+Therefore:
+
+Noema is not fundamentally a conversational product.
+
+Noema is the enterprise execution layer through which intent becomes governed, verifiable action.
