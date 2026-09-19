@@ -1,7 +1,7 @@
 Evidence
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Trust
 Canonical Path: trust/evidence.md
 
@@ -17,13 +17,15 @@ Evidence answers:
 
 Evidence is therefore one of the foundations of Noema’s deterministic Trust model.
 
+Evidence does not mean that a proposition is inherently true. It means that there is a sufficiently attributable and appropriate basis for establishing that proposition for a particular decision.
+
 ⸻
 
-2. The Core Principle
+2. Core Principle
 
 Noema should not treat a proposition as established merely because a Model considers it likely.
 
-Instead:
+The canonical distinction is:
 
 Claim
   ↓
@@ -31,9 +33,13 @@ Evidence
   ↓
 Validation
   ↓
-Established Fact
+Established Claim
   ↓
 Trust Decision
+
+The Model may propose a claim.
+
+Evidence establishes whether that claim can be relied upon.
 
 The distinction between inference and evidence is fundamental.
 
@@ -45,25 +51,23 @@ Evidence supports a proposition.
 
 It is not automatically the proposition itself.
 
-For example:
+Example:
 
 Evidence:
 CRM record says User#123 owns Account#456
-
-supports:
-
 Claim:
 User#123 owns Account#456
 
 The evidence may itself be:
 
-stale
-incorrect
-incomplete
-revoked
-conflicting
+* stale
+* incorrect
+* incomplete
+* revoked
+* conflicting
+* outside its applicable scope
 
-Therefore Noema must consider the authority, freshness, provenance, and applicability of evidence.
+Therefore Noema must consider the authority, freshness, provenance, scope, applicability, and integrity of evidence before relying upon it.
 
 ⸻
 
@@ -71,56 +75,51 @@ Therefore Noema must consider the authority, freshness, provenance, and applicab
 
 Evidence participates across multiple parts of the system:
 
-                    Actor Expression
-                           │
-                           ▼
-                    Model Interpretation
-                           │
-                           ▼
-                     Candidate Intent
-                           │
-                           ▼
-                       Evidence
-                           │
-                           ▼
-                     Resolution
-                           │
-                           ▼
-                         Trust
-                           │
-                           ▼
-                       Execution
+Actor Expression
+       ↓
+Model Interpretation
+       ↓
+Candidate Intent
+       ↓
+Evidence
+       ↓
+Resolution
+       ↓
+Trust
+       ↓
+Execution
 
-Evidence can establish:
+Evidence can establish or constrain:
 
-Actor identity
-Resource identity
-relationships
-permissions
-current state
-constraints
-policy applicability
-capability availability
-Intent parameters
-confirmation
-delegation
-execution prerequisites
+* Actor identity
+* Resource identity
+* entity relationships
+* permissions
+* ownership
+* current state
+* constraints
+* policy applicability
+* capability availability
+* Intent parameters
+* confirmation
+* delegation
+* execution prerequisites
+
+Evidence is therefore not limited to authorization. It participates in establishing the semantic and operational conditions under which an Intent may proceed.
 
 ⸻
 
-5. Evidence vs Context
+5. Evidence Semantics
 
-These concepts must remain distinct.
+5.1 Evidence vs. Context
 
-Context
+Context and evidence must remain distinct.
 
-Information available around an Intent.
+Context is information available around an Intent.
 
-Evidence
+Evidence is information actually relied upon to establish or justify a claim or decision.
 
-Information that is actually relied upon to establish or justify a claim or decision.
-
-For example:
+Example:
 
 Context:
 User is chatting from a mobile device.
@@ -131,11 +130,13 @@ User owns Account#123
 
 unless an authoritative mechanism establishes that relationship.
 
+Information being available does not make it evidence.
+
 ⸻
 
-6. Evidence vs Model Inference
+5.2 Evidence vs. Model Inference
 
-Suppose the user says:
+Suppose the Actor says:
 
 “Transfer the money to Sarah.”
 
@@ -145,7 +146,7 @@ Sarah = Sarah#123
 
 That is an inference.
 
-Suppose the user’s verified contacts contain:
+Suppose a verified contact directory contains:
 
 Sarah → Contact#123
 
@@ -153,11 +154,11 @@ That is evidence.
 
 The Model may propose the mapping.
 
-The evidence establishes whether it is acceptable.
+Evidence establishes whether the mapping is acceptable for the decision.
 
 ⸻
 
-7. Evidence vs Confidence
+5.3 Evidence vs. Confidence
 
 Confidence describes the strength of a Model’s belief.
 
@@ -165,43 +166,91 @@ Evidence describes the basis for establishing a proposition.
 
 These are not interchangeable.
 
+Example:
+
 Model confidence:
 0.98
 Evidence:
-Contact directory explicitly maps "Sarah" → Contact#123
+Verified contact directory maps "Sarah" → Contact#123
 
-The second is materially stronger for Trust.
+A high Model confidence score does not become authoritative merely because the number is high.
 
-A 99.9% Model confidence score does not become authoritative merely because the number is high.
+Evidence must remain attributable to a source and applicable to the claim being established.
 
 ⸻
 
-8. Evidence Must Be Attributable
+5.4 Evidence vs. Actor Claims
+
+The Actor’s statement is evidence of what the Actor said.
+
+It is not automatically authoritative evidence that every proposition contained within the statement is true.
+
+Example:
+
+“Transfer money from my account to John’s account.”
+
+This establishes:
+
+Actor wants TransferFunds
+
+It does not necessarily establish:
+
+John's account = Account#456
+
+The latter requires appropriate evidence.
+
+⸻
+
+5.5 Evidence vs. Extraction
+
+Model extraction and evidence validation are separate operations.
+
+The Model may extract:
+
+Claim A
+Claim B
+Intent C
+
+But:
+
+Extraction ≠ Validation
+
+The Model can identify a proposition without establishing that the proposition is true or sufficiently supported for Trust.
+
+⸻
+
+6. Evidence Provenance
+
+Evidence must be attributable.
 
 Noema should be able to answer:
 
-Where did this evidence come from?
+“Where did this evidence come from?”
 
-Examples:
+Possible sources include:
 
-CRM
-Identity Provider
-Authorization Service
-Database
-Policy Registry
-User confirmation
-Signed credential
-External API
-System event
-Execution result
+* CRM
+* Identity Provider
+* Authorization Service
+* Database
+* Ledger
+* Policy Registry
+* User confirmation
+* Signed credential
+* External API
+* System event
+* Enterprise SaaS
+* Payment provider
+* Shipping provider
+* Government registry
 
 Evidence without provenance is difficult to trust.
 
 ⸻
 
-9. Evidence Provenance
+6.1 Conceptual Evidence Structure
 
-A useful conceptual structure is:
+A useful conceptual representation is:
 
 Evidence {
     source
@@ -211,90 +260,214 @@ Evidence {
     valid_from
     valid_until
     authority
+    scope
     provenance
     version
 }
 
 This is conceptual rather than a mandated implementation schema.
 
+The required semantics are attribution, applicability, and sufficient information to evaluate whether the evidence may be relied upon.
+
 ⸻
 
-10. Evidence Sources
+6.2 Provenance
 
-Evidence may originate from:
+Provenance should identify, where material:
 
-10.1 Authoritative System State
+* source
+* origin
+* observation time
+* validity period
+* version
+* authentication status
+* derivation
+* scope
+* applicable context
 
-Database
-CRM
-Ledger
-Identity Provider
-Directory
+For derived evidence, provenance should preserve the underlying evidence chain.
 
-10.2 Explicit Actor Input
+⸻
 
-User clarification
-User confirmation
-User-provided parameter
+7. Evidence Sources
 
-10.3 Delegated Authority
+Evidence may originate from several categories.
 
-Signed delegation
-Access token
-Service credential
-Authorization grant
+7.1 Authoritative System State
 
-10.4 System Events
+Examples:
+
+* Database
+* CRM
+* Ledger
+* Identity Provider
+* Directory
+* Authorization Service
+
+⸻
+
+7.2 Explicit Actor Input
+
+Examples:
+
+* user clarification
+* user confirmation
+* user-provided parameter
+* explicit declaration
+
+Actor-provided evidence must still be evaluated according to consequence and domain.
+
+⸻
+
+7.3 Delegated Authority
+
+Examples:
+
+* signed delegation
+* access token
+* service credential
+* authorization grant
+* delegated permission
+
+⸻
+
+7.4 System Events
+
+Examples:
 
 PaymentCompleted
 AccountCreated
 RoleRevoked
 DeploymentFinished
 
-10.5 External Systems
-
-Payment provider
-Shipping provider
-Government registry
-Enterprise SaaS
-
-10.6 Derived Evidence
-
-Evidence may sometimes be derived from multiple authoritative facts.
-
-But derived evidence should preserve its provenance.
+Events can provide temporal evidence about state transitions.
 
 ⸻
 
-11. Evidence Hierarchy
+7.5 External Systems
+
+Examples:
+
+* payment provider
+* shipping provider
+* government registry
+* enterprise SaaS
+* external identity system
+
+External assertions should remain attributable to their source.
+
+⸻
+
+7.6 Derived Evidence
+
+Evidence may be derived from multiple authoritative facts.
+
+Example:
+
+User#123
+    member_of → Organization#ABC
+Organization#ABC
+    owns → Project#456
+Rule:
+Organization members may view owned projects.
+
+This may establish:
+
+User#123 may view Project#456
+
+The resulting conclusion should preserve the underlying evidence chain.
+
+⸻
+
+8. Evidence Authority
 
 Not all evidence has equal authority.
 
-A conceptual hierarchy is:
+Authority is contextual.
 
-Direct authoritative state
-        ↓
-Signed / authenticated assertion
-        ↓
-Explicit Actor confirmation
-        ↓
-Trusted system observation
-        ↓
-Derived evidence
-        ↓
-Model inference
-        ↓
-Unverified assumption
+A source may be authoritative for one proposition but not another.
 
-The exact ordering can vary by domain.
+For example:
 
-The important principle is:
+Ledger
+    authoritative_for → AccountBalance
+CRM
+    authoritative_for → CustomerProfile
+Identity Provider
+    authoritative_for → Authentication
 
-Evidence strength is contextual and must not be reduced to Model confidence.
+Noema should avoid treating a source as universally authoritative.
+
+The relevant question is:
+
+Is this source authoritative for this type of claim?
 
 ⸻
 
-12. Direct Evidence
+8.1 Source Authority
+
+A useful conceptual relationship is:
+
+Source
+   ↓
+authoritative_for
+   ↓
+Claim Type
+
+This is stronger than:
+
+Source = trusted
+
+because authority is specific to what the source is responsible for establishing.
+
+⸻
+
+8.2 Evidence Scope
+
+Evidence must preserve scope.
+
+Example:
+
+User#123 is Admin
+
+may actually mean:
+
+User#123 is Admin
+Scope:
+Organization#ABC
+
+It does not necessarily establish:
+
+User#123 is Admin everywhere
+
+⸻
+
+8.3 Evidence Context
+
+A fact may only be valid within a particular context.
+
+Example:
+
+User#123
+Role:
+Reviewer
+Context:
+Project#ABC
+
+This does not necessarily establish:
+
+User#123
+Role:
+Reviewer
+Global Scope
+
+Scope and context are therefore part of evidence semantics.
+
+⸻
+
+9. Evidence Types
+
+9.1 Direct Evidence
 
 Direct evidence establishes a proposition explicitly.
 
@@ -309,9 +482,9 @@ User#123 has administrator role.
 
 ⸻
 
-13. Derived Evidence
+9.2 Derived Evidence
 
-Evidence can be derived.
+Derived evidence results from applying explicit rules to other evidence.
 
 Example:
 
@@ -322,15 +495,15 @@ Organization#ABC
 Rule:
 Organization members may view owned projects.
 
-This can establish:
+Result:
 
 User#123 may view Project#456
 
-But the resulting authorization decision should preserve the underlying chain.
+The derived conclusion should preserve its source evidence and rule.
 
 ⸻
 
-14. Evidence Chains
+9.3 Evidence Chains
 
 A Trust decision may depend on multiple evidence items.
 
@@ -347,13 +520,13 @@ Organization members may view projects.
 Decision:
 ALLOWED
 
-The chain matters because removing one link may invalidate the conclusion.
+The chain matters because removing one material link may invalidate the conclusion.
 
 ⸻
 
-15. Evidence Graph
+9.4 Evidence Graph
 
-Noema’s ontology naturally permits evidence to be represented as relationships:
+Noema’s ontology permits evidence to be represented through relationships:
 
 Evidence
    │
@@ -361,17 +534,20 @@ Evidence
    ├── about → Entity
    ├── sourced_from → Source
    ├── valid_during → Context
+   ├── derived_from → Evidence
    └── used_by → Decision
 
-This creates a traceable relationship between:
+This creates a traceable relationship:
 
 Claim
-→ Evidence
-→ Decision
+  ↓
+Evidence
+  ↓
+Decision
 
 ⸻
 
-16. Evidence for Intent Resolution
+10. Evidence for Intent Resolution
 
 Evidence is not limited to Trust.
 
@@ -381,9 +557,7 @@ Example:
 
 Actor:
 "Renew my card."
-
 Known cards:
-
 Card#123
 Card#456
 
@@ -392,17 +566,21 @@ Evidence:
 Card#123.expiry = 2026-08-30
 Card#456.expiry = 2027-04-12
 
-If the user’s context specifies:
+If the Actor adds:
 
 “The one expiring this month.”
 
-the evidence can resolve:
+Evidence can establish:
 
 Card#123
 
+The Model may identify candidate resources.
+
+Evidence establishes the canonical resource where sufficient evidence exists.
+
 ⸻
 
-17. Evidence for Entity Resolution
+11. Evidence for Entity Resolution
 
 Natural language often references entities indirectly.
 
@@ -414,17 +592,18 @@ Noema may require evidence establishing:
 
 wife → Contact#456
 
-Possible evidence:
+Possible evidence includes:
 
-verified relationship
-contact record
-explicit prior declaration
+* verified relationship
+* contact record
+* explicit prior declaration
+* authoritative directory
 
-The Model’s guess is not sufficient for a consequential Action.
+The Model’s guess alone is not sufficient for a consequential Action.
 
 ⸻
 
-18. Evidence for Resource Resolution
+12. Evidence for Resource Resolution
 
 Example:
 
@@ -440,20 +619,49 @@ The canonical Resource becomes:
 
 Environment#staging
 
-rather than relying on a textual guess.
+rather than relying on an unverified textual guess.
 
 ⸻
 
-19. Evidence for Authorization
+13. Evidence for Intent Parameters
+
+Evidence may establish specific Intent fields.
+
+Example:
+
+Intent:
+TransferFunds
+
+Required parameters:
+
+source
+destination
+amount
+currency
+
+Evidence may establish:
+
+amount = ₦500,000
+currency = NGN
+source = Account#123
+
+If destination remains unresolved, the Intent remains partially unresolved.
+
+Noema should not invent the missing value.
+
+⸻
+
+14. Evidence for Authorization
 
 Authorization may consume evidence such as:
 
-Actor role
-Resource ownership
-Tenant membership
-Delegation
-ACL
-Permission
+* Actor role
+* Resource ownership
+* Tenant membership
+* Delegation
+* ACL
+* Permission
+* Relationship
 
 Example:
 
@@ -465,9 +673,11 @@ supports:
 Authorization:
 ALLOWED
 
+The Model should not determine authorization through semantic intuition.
+
 ⸻
 
-20. Evidence for Policy
+15. Evidence for Policy
 
 Evidence can establish whether a Policy applies.
 
@@ -477,13 +687,16 @@ Transaction.amount = ₦20,000,000
 
 Policy:
 
-Transactions > ₦10,000,000 require secondary approval.
+Transactions > ₦10,000,000
+require secondary approval.
 
-The transaction amount is evidence supporting Policy evaluation.
+The transaction amount is evidence for Policy evaluation.
+
+The Model may identify the relevant transaction or policy category, but policy applicability should be determined through explicit rules.
 
 ⸻
 
-21. Evidence for Capability
+16. Evidence for Capability
 
 Evidence can establish available capabilities.
 
@@ -493,11 +706,26 @@ PaymentProvider#X
 supports:
 RefundPayment
 
-The capability registry is evidence that the Action can be performed through that provider.
+The capability registry is evidence that the Action is supported through that provider.
+
+If:
+
+PaymentProvider#X
+Currency = NGN
+
+but the declared capability only supports:
+
+Currency = USD
+
+then the capability may be:
+
+UNSUPPORTED
+
+No Model guess should convert an unsupported operation into a supported one.
 
 ⸻
 
-22. Evidence for Constraints
+17. Evidence for Constraints
 
 Evidence may establish constraints.
 
@@ -509,13 +737,13 @@ Constraint:
 
 Frozen accounts cannot transfer funds.
 
-The account state is evidence for the constraint evaluation.
+The account state is evidence for evaluating the constraint.
 
 ⸻
 
-23. Evidence for Confirmation
+18. Evidence for Confirmation
 
-Explicit confirmation is a special form of Actor-provided evidence.
+Explicit Actor confirmation is a special form of Actor-provided evidence.
 
 Example:
 
@@ -524,15 +752,15 @@ Transfer ₦5,000,000 from Account A to Account B. Confirm?
 Actor:
 Yes.
 
-The Yes supports:
+This supports:
 
-Actor confirmed canonical Intent#123.
+Actor confirmed Intent#123.
 
-The confirmation should be tied to the exact Intent version being confirmed.
+The confirmation must be bound to the exact semantic object being confirmed.
 
 ⸻
 
-24. Confirmation Must Be Bound to an Intent
+18.1 Confirmation Must Be Bound to an Intent Version
 
 This is critical.
 
@@ -541,24 +769,26 @@ Suppose:
 Intent v1:
 Transfer ₦5,000 to Account A
 
-Actor says:
+Actor:
 
 Yes.
 
-Then Noema changes it to:
+Noema must not then modify the Intent to:
 
 Intent v2:
 Transfer ₦5,000,000 to Account B
 
-The original confirmation must not be reused.
+and reuse the original confirmation.
 
-Confirmation evidence must be bound to the specific semantic object that was confirmed.
+Confirmation evidence belongs to the specific Intent version it confirms.
+
+A material semantic change requires new confirmation where confirmation is required.
 
 ⸻
 
-25. Evidence Freshness
+19. Evidence Freshness
 
-Evidence can expire.
+Evidence can become stale.
 
 Example:
 
@@ -571,7 +801,7 @@ Authorization evaluated.
 
 Evidence from 09:00 may no longer establish current authorization.
 
-Therefore evidence may need:
+Evidence may therefore require:
 
 observed_at
 valid_from
@@ -580,12 +810,9 @@ version
 
 ⸻
 
-26. Evidence Validity
+20. Evidence Validity
 
-Evidence may have a validity interval:
-
-valid_from
-valid_until
+Evidence may have a validity interval.
 
 Example:
 
@@ -601,24 +828,24 @@ Noema should not rely on expired authority.
 
 ⸻
 
-27. Evidence Revocation
+21. Evidence Revocation
 
 Some evidence can be actively revoked.
 
 Examples:
 
-access token
-delegation
-permission
-credential
-approval
-session
+* access token
+* delegation
+* permission
+* credential
+* approval
+* session
 
-The system should be able to establish revocation where the domain requires it.
+Where the domain requires it, Noema must be able to establish whether evidence has been revoked.
 
 ⸻
 
-28. Evidence Versioning
+22. Evidence Versioning
 
 Evidence may change over time.
 
@@ -628,11 +855,13 @@ Project#123.owner
 v1 → User#A
 v2 → User#B
 
-Historical Trust decisions should preserve which version was relied upon.
+Historical Trust decisions should preserve the version of the evidence relied upon.
+
+This allows a historical decision to remain interpretable even after the underlying business state changes.
 
 ⸻
 
-29. Evidence Conflicts
+23. Evidence Conflicts
 
 Different sources may disagree.
 
@@ -649,52 +878,64 @@ The conflict itself becomes a Trust-relevant condition:
 
 CONFLICTING_EVIDENCE
 
-Possible resolution:
+Possible resolution mechanisms include:
 
-authoritative source hierarchy
-source reconciliation
-human clarification
-domain-specific resolution
+* authoritative source hierarchy
+* source reconciliation
+* domain-specific resolution
+* human clarification
+
+The applicable mechanism depends on the domain.
 
 ⸻
 
-30. Evidence Conflict Is Not Ambiguity
+24. Evidence Conflict vs. Ambiguity
 
-These concepts differ.
+These concepts are distinct.
 
 Ambiguity
 
 The Actor’s Intent has multiple plausible interpretations.
 
+Example:
+
+“Delete the account.”
+
+Which account?
+
 Evidence Conflict
 
-Authoritative or purportedly authoritative sources disagree about the underlying facts.
+Sources disagree about an underlying fact.
 
 Example:
 
-Ambiguity:
-"Delete the account."
-Which account?
-Conflict:
-Two systems disagree about who owns the account.
+CRM:
+Owner = User#A
+Billing:
+Owner = User#B
+
+Ambiguity concerns unresolved meaning.
+
+Evidence conflict concerns disagreement about the facts supporting meaning or Trust.
 
 They require different handling.
 
 ⸻
 
-31. Evidence Completeness
+25. Evidence Completeness
 
 A decision may require multiple pieces of evidence.
 
 Example:
 
 To transfer funds:
-Actor identity
-Source account
-Destination account
-Balance
-Authorization
-Transfer limits
+
+* Actor identity
+* Source account
+* Destination account
+* Balance
+* Authorization
+* Transfer limits
 
 If one material piece is missing:
 
@@ -705,32 +946,36 @@ Noema should not fill the gap with an assumption.
 
 ⸻
 
-32. Evidence Sufficiency
+26. Evidence Sufficiency
 
 Evidence does not need to be exhaustive.
 
 It needs to be sufficient for the decision being made.
 
-For example, viewing a public product description may require little evidence.
+For example:
 
-Transferring ₦10 million requires considerably stronger evidence.
+View public product description
 
-Therefore:
+may require relatively little evidence.
 
-Evidence requirements should be proportional to the consequence of the Intent.
+Whereas:
+
+Transfer ₦10,000,000
+
+requires substantially stronger evidence.
+
+Therefore evidence requirements should be proportional to the consequence of the Intent.
 
 ⸻
 
-33. Evidence and Risk
-
-High-risk Actions should require stronger evidence.
+27. Evidence and Risk
 
 Conceptually:
 
 Risk ↑
-Evidence requirement ↑
+Evidence Requirement ↑
 
-For example:
+Examples:
 
 Read public information
     → minimal verification
@@ -739,29 +984,31 @@ Delete account
 Transfer large funds
     → identity + authorization + confirmation + policy checks
 
+The precise threshold is domain- and policy-dependent.
+
 ⸻
 
-34. Evidence and Consequence
+28. Evidence and Consequence
 
 Evidence requirements should correspond to potential impact.
 
 Consequential categories include:
 
-financial
-destructive
-security
-privacy
-legal
-production infrastructure
-external communication
+* financial
+* destructive
+* security
+* privacy
+* legal
+* production infrastructure
+* external communication
 
 The greater the consequence, the less acceptable unsupported inference becomes.
 
 ⸻
 
-35. Evidence and Determinism
+29. Evidence and Determinism
 
-Evidence is one of the mechanisms that converts probabilistic interpretation into deterministic commitment.
+Evidence is one of the mechanisms by which Noema converts probabilistic interpretation into deterministic commitment.
 
 Model hypothesis
       ↓
@@ -771,21 +1018,25 @@ Evidence validation
       ↓
 Resolved Intent
 
-Without evidence, Noema may need to remain uncertain.
+Without sufficient evidence, Noema may need to remain uncertain.
+
+This is consistent with the deterministic Trust principle.
 
 ⸻
 
-36. Evidence Does Not Eliminate Uncertainty
+30. Evidence Does Not Eliminate Uncertainty
 
-Evidence can still be:
+Evidence can remain:
 
-incomplete
-conflicting
-stale
-low-authority
-ambiguous
+* incomplete
+* conflicting
+* stale
+* low-authority
+* ambiguous
+* outside scope
+* unverifiable
 
-Therefore Noema must be capable of representing:
+Therefore Noema must be capable of representing explicit unresolved states such as:
 
 UNKNOWN
 UNVERIFIED
@@ -796,9 +1047,9 @@ rather than forcing a binary answer.
 
 ⸻
 
-37. Evidence Status
+31. Evidence Status
 
-A useful conceptual state model:
+A useful conceptual state model is:
 
 UNVERIFIED
     ↓
@@ -808,7 +1059,7 @@ VALIDATED
     ↓
 SUFFICIENT
 
-Possible failure paths:
+Possible failure paths include:
 
 OBSERVED
    ↓
@@ -820,21 +1071,21 @@ OBSERVED
    ↓
 REVOKED
 
-These are conceptual states, not necessarily required implementation enums.
+These are conceptual states rather than mandatory implementation enums.
 
 ⸻
 
-38. Evidence Observation vs Validation
+32. Observation vs. Validation
 
-These must remain distinct.
+Observation and validation must remain distinct.
 
 Observation
 
-A source reported this fact.
+A source reported a fact.
 
 Validation
 
-Noema established that the evidence is sufficiently trustworthy for the intended decision.
+Noema established that the evidence is sufficiently trustworthy and applicable for the intended decision.
 
 Example:
 
@@ -849,656 +1100,35 @@ Validation:
 
 Source authenticated.
 Claim current.
-Claim applicable to Tenant A.
+Claim applies to Tenant A.
+Claim is authoritative for this claim type.
 
-Only then should the claim be used for a high-impact Trust decision.
-
-⸻
-
-39. Evidence Authority
-
-Authority is contextual.
-
-A source may be authoritative for one proposition but not another.
-
-Example:
-
-Ledger:
-authoritative for account balance
-CRM:
-authoritative for customer profile
-Identity Provider:
-authoritative for authentication
-
-Noema should avoid treating a source as universally authoritative.
+Only then should the claim be relied upon for a high-impact Trust decision.
 
 ⸻
 
-40. Source Authority
-
-A useful conceptual relationship:
-
-Source
-   ↓
-authoritative_for
-   ↓
-Claim Type
-
-For example:
-
-Ledger
-   ↓
-authoritative_for
-   ↓
-AccountBalance
-
-This is stronger than a generic:
-
-Ledger = trusted
-
-⸻
-
-41. Evidence Scope
-
-Evidence should have a scope.
-
-Example:
-
-User#123 is Admin
-
-may mean:
-
-Admin within Organization#ABC
-
-not:
-
-Admin everywhere.
-
-Evidence must therefore preserve relevant scope.
-
-⸻
-
-42. Evidence Context
-
-A fact may only be valid within a context.
-
-Example:
-
-User#123
-has role:
-Reviewer
-Context:
-Project#ABC
-
-That does not necessarily establish:
-
-User#123
-has role:
-Reviewer
-
-globally.
-
-⸻
-
-43. Evidence and Tenant Isolation
-
-Evidence must respect tenant boundaries.
-
-A claim from Tenant A should not automatically establish a claim within Tenant B.
-
-This is especially important for:
-
-identity
-authorization
-ownership
-configuration
-policy
-resources
-
-⸻
-
-44. Evidence and Delegation
-
-Delegation is itself evidence of authority.
-
-Example:
-
-Principal:
-User#123
-Delegated Actor:
-Agent#456
-Authority:
-RefundPayment
-Scope:
-Tenant#ABC
-Expiry:
-2026-08-25T17:00Z
-
-This evidence establishes whether the Agent can act on the Principal’s behalf.
-
-⸻
-
-45. Evidence and Provenance Chains
-
-A delegated decision might require:
-
-Credential
-   ↓
-Identity
-   ↓
-Delegation
-   ↓
-Authorization
-   ↓
-Intent
-
-The Trust decision should preserve enough provenance to understand that chain.
-
-⸻
-
-46. Evidence and External Assertions
-
-External systems can make assertions.
-
-Example:
-
-Shipping Provider:
-Package#123 delivered.
-
-Noema may use this as evidence for:
-
-Order#456 can be refunded.
-
-But it should preserve:
-
-source = ShippingProvider
-claim = delivered
-observed_at = ...
-
-rather than treating the assertion as an unqualified fact.
-
-⸻
-
-47. Evidence and Events
-
-Events can provide temporal evidence.
-
-Example:
-
-PaymentCompleted
-at 14:03
-
-This can establish:
-
-Payment#123 was completed at 14:03.
-
-Events are particularly useful when determining state transitions.
-
-⸻
-
-48. Evidence and Business State
-
-Noema should consume business state as evidence rather than duplicate ownership of that state.
-
-For example:
-
-Business System:
-Order.status = shipped
-
-Noema can use this to evaluate:
-
-Intent:
-CancelOrder(Order#123)
-
-Policy:
-
-Shipped orders cannot be cancelled.
-
-The business system remains authoritative for the Order.
-
-⸻
-
-49. Evidence and Intent State
-
-Noema may own the state of an Intent:
-
-Intent#123
-status = awaiting_confirmation
-
-This itself can become evidence for later decisions.
-
-For example:
-
-Evidence:
-Intent#123 was explicitly confirmed by Actor#456.
-
-⸻
-
-50. Evidence and Identity
-
-Identity evidence establishes who is acting.
-
-Examples:
-
-authenticated session
-signed token
-verified credential
-service identity
-delegated identity
-
-Noema should distinguish:
-
-claimed identity
-
-from:
-
-verified identity
-
-⸻
-
-51. Evidence and Actor Claims
-
-Actors can provide evidence through statements.
-
-Example:
-
-“My account number is 123456.”
-
-This is an Actor assertion.
-
-It may be useful for resolution.
-
-But for high-risk Actions it may require independent verification.
-
-The system should not automatically elevate:
-
-Actor assertion
-
-to:
-
-authoritative fact
-
-⸻
-
-52. Evidence and User Intent
-
-The Actor’s expression is evidence of what the Actor said.
-
-It is not necessarily evidence that every proposition inside the expression is true.
-
-Example:
-
-“Transfer money from my account to John’s account.”
-
-This establishes:
-
-Actor wants TransferFunds.
-
-It does not establish:
-
-John's account is Account#456.
-
-That requires additional evidence.
-
-⸻
-
-53. Evidence and Natural-Language Claims
-
-Natural language can contain multiple claims:
-
-“Send $500 to John because he owns the company account.”
-
-This contains:
-
-Intent:
-Send $500
-Entity:
-John
-Claim:
-John owns the company account
-
-Noema must not treat the entire sentence as equally authoritative.
-
-The Intent may come directly from the Actor.
-
-The ownership claim may require external evidence.
-
-⸻
-
-54. Evidence and Semantic Parsing
-
-The Model may extract:
-
-Claim A
-Claim B
-Intent C
-
-but extraction is not validation.
-
-This distinction should remain explicit:
-
-Extraction
-   ≠
-Validation
-
-⸻
-
-55. Evidence and Model Grounding
-
-Models can be grounded with evidence.
-
-A useful architecture is:
-
-User Input
-    ↓
-Model
-    ↓
-Candidate Claims
-    ↓
-Evidence Retrieval
-    ↓
-Evidence Validation
-    ↓
-Canonical Intent
-
-The Model becomes more reliable without becoming the authority.
-
-⸻
-
-56. Evidence Retrieval
-
-Evidence may need to be actively retrieved.
-
-Examples:
-
-lookup account
-lookup permissions
-lookup policy
-lookup resource
-lookup current state
-lookup capability
-
-Retrieval is an implementation mechanism.
-
-The canonical requirement is:
-
-Material claims must be supported by appropriate evidence before they are treated as established.
-
-⸻
-
-57. Evidence Retrieval Must Be Scoped
-
-Noema should retrieve only evidence relevant to the current Intent and Context.
-
-Example:
-
-Intent:
-Refund Order#123
-
-Relevant:
-
-Order status
-Payment status
-Refund policy
-Actor authorization
-
-Irrelevant information should not become part of the Trust basis merely because it was available.
-
-⸻
-
-58. Evidence and Privacy
-
-Evidence may contain sensitive information.
-
-Therefore evidence handling must respect:
-
-access controls
-data minimization
-tenant isolation
-retention requirements
-privacy policies
-
-Trust does not imply unrestricted access to evidence.
-
-⸻
-
-59. Evidence Minimization
-
-Noema should use the minimum evidence required to establish the decision.
-
-For example, authorization may require:
-
-User#123 has permission X
-
-It may not require exposing the user’s entire profile.
-
-This reduces unnecessary data exposure.
-
-⸻
-
-60. Evidence Disclosure
-
-The Actor may not always be entitled to see the evidence behind a Trust decision.
-
-For example:
-
-Internal authorization rule:
-Confidential
-
-The system may communicate:
-
-“You are not authorized to perform this action.”
-
-without exposing the internal policy.
-
-⸻
-
-61. Evidence and Security
-
-Evidence itself can be attacked.
-
-Threats include:
-
-forged evidence
-stale evidence
-tampered evidence
-spoofed source
-replayed credentials
-cross-tenant evidence
-injected documents
-malicious claims
-
-Therefore high-trust evidence may require cryptographic or system-level verification.
-
-⸻
-
-62. Evidence Authenticity
-
-Where appropriate, Noema should establish:
-
-Who produced the evidence?
-Was it altered?
-Is the source authentic?
-Is the evidence intended for this system?
-
-The mechanism could involve:
-
-signatures
-authenticated APIs
-trusted channels
-versioned records
-
-The canonical requirement is provenance and authenticity appropriate to consequence.
-
-⸻
-
-63. Evidence Replay
-
-Evidence may be valid when first issued but invalid later.
-
-Example:
-
-Authorization token:
-issued 09:00
-revoked 09:30
-
-Replaying the token at 10:00 must not necessarily establish current authority.
-
-Evidence must therefore account for revocation and freshness.
-
-⸻
-
-64. Evidence and Temporal Ordering
-
-Some decisions depend on ordering.
-
-Example:
-
-PaymentCreated
-PaymentSettled
-PaymentRefunded
-
-If the Actor asks:
-
-“Refund the payment.”
-
-Noema may need to establish the current state and event history.
-
-Evidence ordering can matter.
-
-⸻
-
-65. Evidence and Causality
-
-For complex workflows, evidence may establish causal relationships.
-
-Example:
-
-PaymentCompleted
-    ↓
-OrderEligibleForFulfillment
-    ↓
-OrderShipped
-
-The causal chain can support downstream decisions.
-
-Noema should preserve causal relationships where material to Trust.
-
-⸻
-
-66. Evidence and Composite Intents
-
-A composite Intent may require separate evidence for each component.
-
-Example:
-
-RefundPayment(Payment#123)
-AND
-CloseAccount(Account#456)
-
-Evidence needed for the refund may differ from evidence needed for account closure.
-
-Noema should not assume that evidence sufficient for one child Intent automatically establishes the other.
-
-⸻
-
-67. Evidence and Partial Resolution
-
-Some evidence may resolve only part of an Intent.
-
-Example:
-
-"Transfer $500 to John."
-
-Evidence establishes:
-
-Amount = $500
-
-but not:
-
-John = Account#456
-
-The Intent remains partially unresolved.
-
-Noema should preserve this state instead of pretending the Intent is complete.
-
-⸻
-
-68. Evidence and Clarification
-
-When evidence is insufficient, Noema can ask the Actor for information.
-
-Example:
-
-Noema:
-Which John do you mean?
-
-The Actor’s response becomes additional evidence.
-
-This creates an evidence acquisition loop:
-
-Intent
- ↓
-Missing evidence
- ↓
-Clarification
- ↓
-Actor response
- ↓
-New evidence
- ↓
-Resolution
-
-⸻
-
-69. Evidence and Explicitness
-
-Evidence should be as explicit as the consequence requires.
-
-Low consequence:
-
-Implicit contextual evidence may be sufficient.
-
-High consequence:
-
-Explicit confirmation or authoritative verification may be required.
-
-Noema should not use one universal evidence threshold.
-
-⸻
-
-70. Evidence Threshold
-
-Conceptually:
-
-Required Evidence Strength
-        ∝
-Potential Consequence
-
-This should guide Trust design.
-
-⸻
-
-71. Evidence Quality Dimensions
-
-Evidence quality can be evaluated across:
-
-Authority
-Authenticity
-Freshness
-Specificity
-Completeness
-Scope
-Consistency
-Provenance
-Applicability
-Integrity
+33. Evidence Quality
+
+Evidence quality may be evaluated across several dimensions:
+
+* Authority
+* Authenticity
+* Freshness
+* Specificity
+* Completeness
+* Scope
+* Consistency
+* Provenance
+* Applicability
+* Integrity
 
 Not every decision requires every dimension.
 
+The relevant dimensions depend on the claim and consequence.
+
 ⸻
 
-72. Evidence Weighting
+34. Evidence Weighting
 
 Noema should be cautious about representing evidence as arbitrary numerical scores.
 
@@ -1525,9 +1155,9 @@ Deterministic rules can then evaluate those properties.
 
 ⸻
 
-73. Evidence vs Evidence Score
+35. Evidence Score vs. Evidence
 
-An evidence score can be useful operationally.
+An evidence score may be operationally useful.
 
 But:
 
@@ -1537,20 +1167,22 @@ For example:
 
 0.93 evidence confidence
 
-does not tell us:
+does not establish:
 
-who produced the evidence
-what it establishes
-whether it is current
-whether it applies
+* who produced the evidence
+* what it establishes
+* whether it is current
+* whether it applies
+* whether it is within scope
+* whether it is authentic
 
-Those properties matter more.
+Those properties are more important to Trust.
 
 ⸻
 
-74. Evidence Aggregation
+36. Evidence Aggregation
 
-Multiple evidence items can collectively establish a claim.
+Multiple evidence items may collectively establish a claim.
 
 Example:
 
@@ -1561,21 +1193,23 @@ User owns Account#123.
 Evidence C:
 Account#123 is active.
 
-Together:
+Together, explicit rules may establish:
 
 User#123 may initiate a transfer from Account#123.
 
-Aggregation should be governed by explicit rules.
+Evidence aggregation must be governed by explicit semantics and rules.
+
+The system should not treat a collection of weak or unrelated facts as authoritative merely because they are numerous.
 
 ⸻
 
-75. Evidence Invalidation
+37. Evidence Invalidation
 
 A Trust decision may become invalid if its underlying evidence becomes invalid.
 
 Example:
 
-Authorization decision:
+Authorization Decision:
 ALLOWED
 Underlying permission:
 revoked
@@ -1584,45 +1218,593 @@ For long-running workflows, Noema may need to re-evaluate Trust before the final
 
 ⸻
 
-76. Evidence at Execution Time
+38. Evidence Retrieval
 
-For high-impact Actions:
+Evidence may need to be actively retrieved.
 
-Intent resolved
-      ↓
-Evidence collected
-      ↓
-Trust decision
-      ↓
-Execution delayed
+Examples:
 
-If the delay is significant, the system may need to revalidate material evidence.
+lookup account
+lookup permissions
+lookup policy
+lookup resource
+lookup current state
+lookup capability
+
+Retrieval is an implementation mechanism.
+
+The canonical requirement is:
+
+Material claims must be supported by appropriate evidence before they are treated as established.
 
 ⸻
 
-77. Evidence and Long-Running Intents
+39. Evidence Retrieval Must Be Scoped
 
-An Intent can remain active for hours or days.
+Noema should retrieve evidence relevant to the current Intent and Context.
 
 Example:
 
-"Deploy this release after approval."
+Intent:
+Refund Order#123
+
+Relevant evidence may include:
+
+* Order status
+* Payment status
+* Refund policy
+* Actor authorization
+
+Irrelevant information should not become part of the Trust basis merely because it was available.
+
+⸻
+
+40. Evidence Acquisition and Clarification
+
+When evidence is insufficient, Noema may ask the Actor for information.
+
+Example:
+
+Noema:
+Which John do you mean?
+Actor:
+John Smith.
+
+The Actor’s response becomes additional evidence.
+
+This creates an evidence acquisition loop:
+
+Intent
+  ↓
+Missing Evidence
+  ↓
+Clarification
+  ↓
+Actor Response
+  ↓
+New Evidence
+  ↓
+Resolution
+
+Clarification is therefore an evidence acquisition mechanism.
+
+⸻
+
+41. Evidence and Partial Resolution
+
+Evidence may resolve only part of an Intent.
+
+Example:
+
+“Transfer $500 to John.”
+
+Evidence establishes:
+
+Amount = $500
+
+but not:
+
+John = Account#456
+
+The Intent remains partially unresolved.
+
+Noema should preserve this state instead of pretending the Intent is complete.
+
+⸻
+
+42. Evidence and Natural-Language Claims
+
+Natural language can contain multiple claims.
+
+Example:
+
+“Send $500 to John because he owns the company account.”
+
+This contains:
+
+Intent:
+Send $500
+Entity:
+John
+Claim:
+John owns the company account
+
+The Intent may be directly expressed by the Actor.
+
+The ownership claim may require independent evidence.
+
+Noema must not treat every proposition in an Actor expression as equally authoritative.
+
+⸻
+
+43. Evidence and Model Grounding
+
+Models can be grounded with evidence.
+
+A useful architecture is:
+
+User Input
+    ↓
+Model
+    ↓
+Candidate Claims
+    ↓
+Evidence Retrieval
+    ↓
+Evidence Validation
+    ↓
+Canonical Intent
+
+The Model becomes more reliable without becoming the authority.
+
+⸻
+
+44. Evidence and Delegation
+
+Delegation is itself evidence of authority.
+
+Example:
+
+Principal:
+User#123
+Delegated Actor:
+Agent#456
+Authority:
+RefundPayment
+Scope:
+Tenant#ABC
+Expiry:
+2026-08-25T17:00Z
+
+This evidence establishes whether the Agent can act on behalf of the Principal.
+
+⸻
+
+44.1 Delegation Provenance
+
+A delegated decision may require:
+
+Credential
+   ↓
+Identity
+   ↓
+Delegation
+   ↓
+Authorization
+   ↓
+Intent
+
+The Trust decision should preserve enough provenance to understand that chain.
+
+⸻
+
+45. Evidence and Tenant Isolation
+
+Evidence must respect tenant boundaries.
+
+A claim from Tenant A should not automatically establish a claim within Tenant B.
+
+This is especially important for:
+
+* identity
+* authorization
+* ownership
+* configuration
+* policy
+* resources
+* delegation
+
+Tenant scope is part of evidence applicability.
+
+⸻
+
+46. Evidence and External Assertions
+
+External systems can make assertions.
+
+Example:
+
+Shipping Provider:
+Package#123 delivered.
+
+Noema may use this as evidence for:
+
+Order#456 can be refunded.
+
+But the evidence should preserve:
+
+source = ShippingProvider
+claim = delivered
+observed_at = ...
+
+rather than treating the external assertion as an unqualified fact.
+
+⸻
+
+47. Evidence and Events
+
+Events can provide temporal evidence.
+
+Example:
+
+PaymentCompleted
+at 14:03
+
+This may establish:
+
+Payment#123 was completed at 14:03.
+
+Events are particularly useful when determining state transitions and temporal conditions.
+
+⸻
+
+48. Evidence and Temporal Ordering
+
+Some decisions depend on event ordering.
+
+Example:
+
+PaymentCreated
+PaymentSettled
+PaymentRefunded
+
+If the Actor asks:
+
+“Refund the payment.”
+
+Noema may need to establish current state and relevant event history.
+
+Evidence ordering can therefore matter.
+
+⸻
+
+49. Evidence and Causality
+
+For complex workflows, evidence may establish causal relationships.
+
+Example:
+
+PaymentCompleted
+      ↓
+OrderEligibleForFulfillment
+      ↓
+OrderShipped
+
+The causal chain may support downstream decisions.
+
+Noema should preserve causal relationships where they are material to Trust.
+
+⸻
+
+50. Evidence and Business State
+
+Noema should consume Business State as evidence rather than duplicate ownership of that state.
+
+Example:
+
+Business System:
+Order.status = shipped
+
+Noema can use this to evaluate:
+
+Intent:
+CancelOrder(Order#123)
+
+against:
+
+Policy:
+Shipped orders cannot be cancelled.
+
+The business system remains authoritative for the Order.
+
+⸻
+
+51. Evidence and Intent State
+
+Noema may own the state of an Intent.
+
+Example:
+
+Intent#123
+status = awaiting_confirmation
+
+This state can itself become evidence for subsequent decisions.
+
+Example:
+
+Evidence:
+Intent#123 was explicitly confirmed by Actor#456.
+
+This does not transfer ownership of Business State to Noema. It establishes the state of the Noema-controlled Intent lifecycle.
+
+⸻
+
+52. Evidence and Identity
+
+Identity evidence establishes who is acting.
+
+Examples:
+
+* authenticated session
+* signed token
+* verified credential
+* service identity
+* delegated identity
+
+Noema should distinguish:
+
+Claimed Identity
+
+from:
+
+Verified Identity
+
+The distinction becomes increasingly important as consequence increases.
+
+⸻
+
+53. Evidence and Actor Assertions
+
+Actors can provide evidence through statements.
+
+Example:
+
+“My account number is 123456.”
+
+This is an Actor assertion.
+
+It may be useful for resolution.
+
+For high-risk Actions, however, it may require independent verification.
+
+Noema should not automatically elevate:
+
+Actor assertion
+
+into:
+
+Authoritative fact
+
+⸻
+
+54. Evidence and Composite Intents
+
+A composite Intent may require separate evidence for each component.
+
+Example:
+
+RefundPayment(Payment#123)
+AND
+CloseAccount(Account#456)
+
+Evidence required for the refund may differ from evidence required for account closure.
+
+Noema should not assume that evidence sufficient for one child Intent automatically establishes the other.
+
+Each consequential child Intent must satisfy its own evidence requirements.
+
+⸻
+
+55. Evidence and Risk-Proportional Explicitness
+
+Evidence should be as explicit as the consequence requires.
+
+Low consequence:
+
+Implicit contextual evidence
+
+may be sufficient.
+
+High consequence:
+
+Explicit confirmation
+
+or:
+
+Authoritative verification
+
+may be required.
+
+Noema should not use one universal evidence threshold for every Intent.
+
+⸻
+
+56. Evidence Threshold
+
+Conceptually:
+
+Required Evidence Strength
+        ∝
+Potential Consequence
+
+This is a Trust design principle.
+
+The exact threshold is determined by applicable policy, risk, authorization, capability, and domain requirements.
+
+⸻
+
+57. Evidence Security
+
+Evidence itself can be attacked.
+
+Threats include:
+
+* forged evidence
+* stale evidence
+* tampered evidence
+* spoofed sources
+* replayed credentials
+* cross-tenant evidence
+* injected documents
+* malicious claims
+
+High-trust evidence may therefore require cryptographic or system-level verification.
+
+⸻
+
+58. Evidence Authenticity
+
+Where appropriate, Noema should establish:
+
+* Who produced the evidence?
+* Was it altered?
+* Is the source authentic?
+* Is the evidence intended for this system?
+* Is the evidence within the expected scope?
+
+Possible mechanisms include:
+
+* signatures
+* authenticated APIs
+* trusted channels
+* versioned records
+* credential verification
+
+The canonical requirement is authenticity and provenance appropriate to the consequence.
+
+⸻
+
+59. Evidence Replay
+
+Evidence may be valid when first issued but invalid later.
+
+Example:
+
+Authorization token:
+issued 09:00
+revoked 09:30
+
+Replaying the token at 10:00 must not necessarily establish current authority.
+
+Evidence evaluation must therefore account for:
+
+* revocation
+* freshness
+* validity interval
+* intended scope
+* temporal applicability
+
+⸻
+
+60. Evidence and Privacy
+
+Evidence may contain sensitive information.
+
+Evidence handling must therefore respect:
+
+* access controls
+* data minimization
+* tenant isolation
+* retention requirements
+* privacy policies
+
+Trust does not imply unrestricted access to evidence.
+
+⸻
+
+61. Evidence Minimization
+
+Noema should use the minimum evidence required to establish the decision.
+
+Example:
+
+Authorization may require:
+
+User#123 has permission X
+
+It may not require exposing the user’s entire profile.
+
+Evidence minimization reduces unnecessary data exposure while preserving sufficient Trust basis.
+
+⸻
+
+62. Evidence Disclosure
+
+The Actor may not always be entitled to see the evidence behind a Trust decision.
+
+For example:
+
+Internal authorization rule:
+Confidential
+
+The system may communicate:
+
+“You are not authorized to perform this action.”
+
+without exposing the internal policy or confidential evidence.
+
+Explainability must therefore respect evidence confidentiality.
+
+⸻
+
+63. Evidence and Long-Running Intents
+
+An Intent may remain active for hours or days.
+
+Example:
+
+“Deploy this release after approval.”
 
 Evidence collected Monday may no longer be valid Tuesday.
 
 Noema should distinguish:
 
-evidence at resolution
+Evidence at Resolution
 
 from:
 
-evidence at execution
+Evidence at Execution
 
 where relevant.
 
 ⸻
 
-78. Evidence and Trust Re-Evaluation
+64. Evidence at Execution Time
+
+For high-impact Actions:
+
+Intent Resolved
+      ↓
+Evidence Collected
+      ↓
+Trust Decision
+      ↓
+Execution Delayed
+
+If the delay is significant, Noema may need to revalidate material evidence.
+
+This is particularly important for:
+
+* authorization
+* resource state
+* policy applicability
+* capability
+* confirmation
+* constraints
+
+⸻
+
+65. Evidence and Trust Re-Evaluation
 
 A long-running Intent may require:
 
@@ -1632,7 +1814,7 @@ Initial Trust
     ↓
 Waiting
     ↓
-State change
+State Change
     ↓
 Revalidation
     ↓
@@ -1644,9 +1826,51 @@ This prevents stale evidence from authorizing consequential side effects.
 
 ⸻
 
-79. Evidence and Auditability
+66. Evidence Invalidation Before Execution
 
-Every material Trust decision should ideally be traceable to evidence.
+A previously valid Trust decision may require re-evaluation when material evidence changes.
+
+Example:
+
+Initial:
+Permission = Valid
+Trust = ALLOWED
+Before execution:
+Permission = Revoked
+
+The system must apply the relevant Trust and execution semantics rather than assuming the original decision remains valid indefinitely.
+
+⸻
+
+67. Evidence and Execution Contracts
+
+Evidence should support the canonical Execution Contract.
+
+Conceptually:
+
+Evidence
+   ↓
+Resolution
+   ↓
+Authorization
+   ↓
+Policy
+   ↓
+Capability
+   ↓
+Trust Decision
+   ↓
+Execution Contract
+
+The Execution Contract should contain references or provenance sufficient to establish the basis of the consequential decision.
+
+The Consumer should not need to reconstruct the evidence chain from natural language.
+
+⸻
+
+68. Evidence and Auditability
+
+Every material Trust decision should ideally be traceable to the evidence that supported it.
 
 Example:
 
@@ -1661,7 +1885,7 @@ This creates an auditable decision graph.
 
 ⸻
 
-80. Evidence and Reproducibility
+69. Evidence and Reproducibility
 
 A deterministic decision can only be meaningfully reproduced if its material evidence can be identified.
 
@@ -1675,29 +1899,36 @@ Source Versions
 
 should be preserved where practical.
 
+Reproducibility does not require that Business State remain unchanged.
+
+It requires that the decision’s relevant historical inputs and evidence references be identifiable.
+
 ⸻
 
-81. Evidence Retention
+70. Evidence Retention
 
 Evidence retention should depend on:
 
-legal requirements
-audit requirements
-privacy requirements
-security requirements
-business requirements
+* legal requirements
+* audit requirements
+* privacy requirements
+* security requirements
+* business requirements
 
 Noema should not retain evidence indefinitely by default.
 
+Where Noema references evidence owned by another system, retention semantics should respect that system’s ownership and applicable requirements.
+
 ⸻
 
-82. Evidence Ownership
+71. Evidence Ownership
 
 Noema may reference evidence owned by another system.
 
-For example:
+Example:
 
-Ledger owns balance state.
+Ledger owns:
+Account balance
 
 Noema should preserve a reference to the authoritative evidence rather than necessarily copying the entire record.
 
@@ -1707,22 +1938,26 @@ Noema owns Trust decisions, not every piece of Business State.
 
 ⸻
 
-83. Evidence and the Canonical Repository
+72. Evidence and the Canonical Repository
 
-The Ontology should define what kinds of things can act as evidence.
+The Ontology should define what kinds of things can act as evidence and how evidence relates to canonical entities and claims.
 
 The Trust layer defines:
 
-how evidence is evaluated
-how evidence supports decisions
-how evidence conflicts are handled
-how evidence is preserved
+* how evidence is evaluated
+* how evidence supports decisions
+* how evidence conflicts are handled
+* how evidence is validated
+* how evidence freshness is considered
+* how evidence is preserved for material decisions
 
 This separation keeps the repository coherent.
 
 ⸻
 
-84. Evidence Relationship to Other Trust Concepts
+73. Evidence Relationship to Other Trust Concepts
+
+Evidence interacts with the principal Trust concepts:
 
 Ambiguity
     ↓
@@ -1732,48 +1967,442 @@ Authorization
 uses evidence to establish permission
 Determinism
     ↓
-requires decisions to be grounded in evidence
+requires consequential decisions to be grounded in evidence
 Policy
     ↓
 uses evidence to evaluate applicable rules
+Capability
+    ↓
+uses evidence to establish whether an Action is supported
+Risk
+    ↓
+influences the required evidence threshold
 Trust
     ↓
-aggregates evidence-backed decisions
+aggregates evidence-backed determinations
+
+Evidence is therefore a foundational input to Trust rather than merely an audit artifact.
 
 ⸻
 
-85. Canonical Evidence Flow
+74. Evidence and Deterministic Failure
 
-                Claim / Intent
-                      │
-                      ▼
-               Evidence Required
-                      │
-                      ▼
-               Evidence Sources
-                      │
-                      ▼
-                Evidence Retrieved
-                      │
-                      ▼
-                 Validate Evidence
-                      │
-             ┌────────┴────────┐
-             │                 │
+Missing or insufficient evidence must produce an explicit system state rather than an invented assumption.
+
+Possible outcomes include:
+
+UNKNOWN
+UNVERIFIED
+INSUFFICIENT
+CONFLICTING
+STALE
+REVOKED
+
+These are valid system outcomes.
+
+They indicate that Noema has not established the required proposition.
+
+⸻
+
+75. Evidence and Clarification
+
+When evidence is insufficient because the Actor can provide the missing information, clarification is an appropriate next transition.
+
+Example:
+
+Noema:
+Which account do you mean?
+Actor:
+My savings account.
+
+The new Actor response becomes additional evidence.
+
+The system may then resolve:
+
+Account#Savings
+
+subject to the available authoritative evidence.
+
+⸻
+
+76. Evidence and Fail-Closed Trust
+
+For consequential Actions:
+
+Required Evidence
+        ↓
+Unavailable
+        ↓
+Do Not Establish Claim
+        ↓
+Do Not Authorize Execution
+
+Unknown must not silently become allowed.
+
+This is particularly important for:
+
+* financial Actions
+* destructive Actions
+* security Actions
+* privacy-sensitive Actions
+* external communications
+* production changes
+
+⸻
+
+77. Evidence and Graceful Degradation
+
+Failing closed does not mean producing a useless system.
+
+Noema can transition into recoverable states:
+
+AMBIGUOUS
+    ↓
+Clarification
+UNVERIFIED
+    ↓
+Request verification
+INSUFFICIENT
+    ↓
+Retrieve additional evidence
+CONFLICTING
+    ↓
+Resolve source conflict
+
+The system remains useful without guessing.
+
+⸻
+
+78. Evidence and Consequential Execution
+
+The more consequential the Action, the less acceptable unsupported inference becomes.
+
+The canonical principle is:
+
+Consequence ↑
+     ↓
+Required Evidence Strength ↑
+
+This does not require every Action to have the same verification process.
+
+Evidence requirements should be determined by the consequence, domain, risk, policy, and applicable Trust rules.
+
+⸻
+
+79. Canonical Evidence Flow
+
+                 Claim / Intent
+                       │
+                       ▼
+                Evidence Required
+                       │
+                       ▼
+                 Evidence Sources
+                       │
+                       ▼
+                 Evidence Retrieved
+                       │
+                       ▼
+                  Validate Evidence
+                       │
+              ┌────────┴────────┐
+              │                 │
           Sufficient        Insufficient
-             │                 │
-             ▼                 ▼
+              │                 │
+              ▼                 ▼
        Establish Claim      Clarify /
-             │              Retrieve More
-             ▼
+              │              Retrieve More
+              ▼
         Trust Evaluation
-             │
-             ▼
-          Decision
+              │
+              ▼
+           Decision
+
+The flow is intentionally compatible with Noema’s deterministic Trust model.
 
 ⸻
 
-86. Canonical Invariants
+80. Evidence Decision Model
+
+Conceptually:
+
+Evidence Evaluation =
+    f(
+        Source,
+        Claim,
+        Authority,
+        Authenticity,
+        Freshness,
+        Validity,
+        Scope,
+        Applicability,
+        Integrity,
+        Context
+    )
+
+The exact implementation is an architectural concern.
+
+The semantic requirement is that consequential claims be evaluated against explicit evidence properties rather than Model confidence alone.
+
+⸻
+
+81. Evidence and Canonical Intent
+
+Evidence may establish fields of a typed Intent.
+
+Conceptually:
+
+TransferFunds {
+    actor: Actor
+    source: Account
+    destination: Account
+    amount: Money
+    constraints: [...]
+}
+
+The Model may populate candidate fields.
+
+Evidence and deterministic Resolution establish whether those fields can become canonical.
+
+Trust evaluates the resulting Intent.
+
+Execution receives the established semantic object.
+
+⸻
+
+82. Evidence and Identity Resolution
+
+Natural-language identity references should converge on canonical identifiers when sufficiently supported.
+
+Example:
+
+"my savings account"
+        ↓
+Evidence
+        ↓
+Account#123
+
+Once established:
+
+Account#123
+
+should be carried through the execution pipeline.
+
+The executor should not need to resolve:
+
+“my savings account”
+
+again.
+
+⸻
+
+83. Evidence and Retry
+
+Retries must not silently create new semantic interpretations.
+
+Given:
+
+Intent#789
+
+a retry should use the same canonical Intent unless the system explicitly creates a new Intent version.
+
+The Model should not reinterpret the original Actor expression on every retry and thereby create a different evidence or semantic basis.
+
+⸻
+
+84. Evidence and Composite Execution
+
+A composite Intent may contain multiple Trust domains.
+
+Example:
+
+RefundPayment(Payment#123)
+AND
+CloseAccount(Account#456)
+
+Each child may require separate:
+
+* evidence
+* authorization
+* policy
+* capability
+* risk evaluation
+* confirmation
+
+The parent Intent must not hide those distinctions.
+
+⸻
+
+85. Evidence and Partial Failure
+
+Suppose:
+
+RefundPayment → Evidence Sufficient → Allowed
+CloseAccount → Evidence Insufficient → Not Authorized
+
+Noema must not automatically treat the composite operation as fully authorized.
+
+Composite execution semantics must explicitly define whether:
+
+* partial execution
+* rollback
+* compensation
+* precondition failure
+
+is permitted.
+
+Evidence sufficiency must be evaluated according to the semantics of each consequential child Intent.
+
+⸻
+
+86. Evidence and Business-State Authority
+
+Noema should not manufacture Business State merely because required evidence is unavailable.
+
+For example:
+
+Business System:
+Order.status = shipped
+
+Noema may consume this as evidence.
+
+It should not create its own competing claim:
+
+Noema:
+Order.status = shipped
+
+unless that is explicitly part of Noema’s own state model.
+
+The authoritative Business State remains owned by the domain system.
+
+⸻
+
+87. Evidence and Versioned Decisions
+
+Rules, policies, capabilities, and evidence can change.
+
+Therefore material Trust decisions should identify relevant versions.
+
+Example:
+
+Policy:
+expense-approval-v4
+Authorization:
+role-model-v7
+Capability:
+refund-v2
+Evidence:
+ResourceVersion-42
+PermissionVersion-9
+
+A historical decision should remain interpretable in relation to the versions that supported it.
+
+⸻
+
+88. Evidence and Changed State
+
+A previously established claim may no longer hold when authoritative state changes.
+
+Example:
+
+10:00
+User is authorized.
+11:00
+Authorization revoked.
+11:01
+Same Intent evaluated.
+
+The new decision may legitimately differ because the evidence state changed.
+
+This does not constitute inconsistency if the relevant inputs are different.
+
+⸻
+
+89. Evidence and Decision Snapshots
+
+For consequential decisions, Noema should conceptually be able to construct a decision snapshot:
+
+Decision Snapshot
+├── Intent
+├── Actor
+├── Resources
+├── Context
+├── Evidence
+├── Authorization
+├── Policies
+├── Capabilities
+├── Constraints
+└── Decision
+
+The exact storage mechanism is an implementation concern.
+
+The semantic requirement is sufficient traceability to understand the basis of the decision.
+
+⸻
+
+90. Evidence and Explainability
+
+Explainability should expose the decision basis rather than hidden Model reasoning.
+
+Example:
+
+“The request was blocked because the Actor does not have project.delete permission for this project.”
+
+This can be supported by:
+
+Intent
++
+Evidence
++
+Authorization Rule
++
+Decision
+
+Noema does not need to expose an internal Model chain-of-thought.
+
+⸻
+
+91. Evidence and Trust Boundary
+
+The Model may say:
+
+“This appears to be Account#123.”
+
+Evidence may establish:
+
+Account#123
+
+Noema may then establish:
+
+Resolved Intent
+
+Trust may establish:
+
+ALLOWED
+
+The Consumer receives:
+
+Canonical Execution Contract
+
+The progression is:
+
+Model hypothesis
+      ↓
+Evidence
+      ↓
+Established claim
+      ↓
+Canonical Intent
+      ↓
+Trust Decision
+      ↓
+Execution
+
+This preserves the deterministic boundary.
+
+⸻
+
+92. Canonical Invariants
 
 Invariant 1
 
@@ -1823,26 +2452,60 @@ Invariant 12
 
 Evidence used for consequential execution should be appropriately fresh.
 
+Invariant 13
+
+Evidence authority is claim-specific and should not be treated as universally transferable across domains.
+
+Invariant 14
+
+Evidence scope must be preserved; evidence valid in one tenant, resource, context, or authority domain must not silently establish claims outside that scope.
+
+Invariant 15
+
+Observation of evidence and validation of evidence are distinct operations.
+
+Invariant 16
+
+Derived evidence must preserve the provenance of the evidence and rules from which it was derived.
+
+Invariant 17
+
+Evidence used for a consequential decision must be sufficient for that decision, not merely available.
+
+Invariant 18
+
+Actor assertions may establish what the Actor said without automatically establishing the truth of the proposition asserted.
+
+Invariant 19
+
+Evidence invalidation may require Trust re-evaluation before consequential execution.
+
+Invariant 20
+
+Evidence references and relevant source versions should be preserved where required for auditability and reproducibility.
+
 ⸻
 
-87. The Fundamental Distinction
+93. Fundamental Distinction
 
 The most important distinction is:
 
 Model:
 "This is probably true."
 Evidence:
-"This source establishes this claim."
+"This source establishes or supports this claim."
 Noema:
 "This claim is sufficiently established for this decision."
 
 These are three different states.
 
+They must not be collapsed into one another.
+
 ⸻
 
-88. Final Definition
+94. Final Definition
 
-Evidence is the attributable, contextual, and appropriately authoritative basis by which Noema establishes claims about Actors, Intents, Resources, state, permissions, policies, capabilities, and other conditions required for deterministic Trust decisions.
+Evidence is the attributable, contextual, appropriately authoritative, and sufficiently valid basis by which Noema establishes claims about Actors, Intents, Resources, state, permissions, policies, capabilities, constraints, and other conditions required for deterministic Trust decisions.
 
 The shortest canonical formulation is:
 

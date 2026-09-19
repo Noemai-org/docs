@@ -1,7 +1,7 @@
 Ambiguity
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Trust
 Canonical Path: trust/ambiguity.md
 
@@ -19,35 +19,54 @@ The critical question is:
 
 Would choosing between the remaining interpretations materially change the Intent, its execution, its risk, or its Outcome?
 
-If yes, the Intent is ambiguous.
+If yes, the Intent contains material ambiguity.
+
+Ambiguity is evaluated at the boundary between interpretation and deterministic execution.
+
+The canonical relationship is:
+
+Model Interpretation
+        ↓
+Candidate Intent
+        ↓
+Ambiguity Evaluation
+        ↓
+Material Ambiguity?
+     ┌──┴──┐
+    Yes    No
+     │      │
+     ▼      ▼
+ Clarify  Continue
 
 ⸻
 
-2. Why Ambiguity Belongs in Trust
+2. Architectural Position
 
-Ambiguity is fundamentally a semantic property, but in Noema it becomes a Trust boundary because unresolved ambiguity must prevent uncontrolled execution.
+Ambiguity is a semantic condition that becomes a Trust concern when unresolved ambiguity could cause Noema to commit to the wrong execution path.
 
-The Model may produce the most probable interpretation.
+The Model may produce a probable interpretation.
 
-Noema must determine whether that probability is sufficient to permit commitment.
+Noema must determine whether the available evidence establishes a sufficiently determinate Intent for the Action under consideration.
 
 Therefore:
 
-Model
-  ↓
+Natural Language
+       ↓
+Model Interpretation
+       ↓
 Candidate Intent
-  ↓
+       ↓
+Intent Resolution
+       ↓
 Ambiguity Evaluation
-  ↓
-┌───────────────────────┐
-│ Material ambiguity?   │
-└───────────┬───────────┘
-            │
-       ┌────┴────┐
-      Yes        No
-       │          │
-       ▼          ▼
- Clarification  Proceed
+       ↓
+Trust
+       ↓
+Action
+
+Ambiguity does not itself authorize or reject an Action.
+
+It determines whether the Intent is sufficiently resolved for the applicable Trust evaluation to continue.
 
 ⸻
 
@@ -57,11 +76,11 @@ These concepts must remain separate.
 
 Model uncertainty
 
-“The Model is not very confident about its interpretation.”
+The Model is not highly confident about its interpretation.
 
 Ambiguity
 
-“More than one materially different interpretation remains plausible.”
+More than one materially different interpretation remains viable given the available evidence.
 
 A Model may be uncertain while the Intent is unambiguous.
 
@@ -84,12 +103,10 @@ User:
 Two eligible cards exist.
 Model confidence:
 0.99
-
 Result:
-
 AMBIGUOUS
 
-High confidence does not eliminate competing interpretations.
+High model confidence does not eliminate competing interpretations.
 
 ⸻
 
@@ -110,7 +127,11 @@ AMBIGUOUS
     ↓
 CLARIFICATION
 
-unless deterministic evidence establishes that B is not actually viable.
+unless authoritative or otherwise sufficient deterministic evidence establishes that B is not actually viable.
+
+The governing principle is:
+
+Probability may assist interpretation. It does not by itself establish semantic resolution.
 
 ⸻
 
@@ -120,7 +141,7 @@ Not every ambiguity matters.
 
 Consider:
 
-“Send me the report.”
+"Send me the report."
 
 Suppose the system can produce the report in:
 
@@ -128,11 +149,11 @@ PDF
 HTML
 Markdown
 
-If the delivery mechanism and Outcome are otherwise identical, the format difference may not be material.
+If the delivery mechanism, semantic content, Action, and expected Outcome are otherwise identical, the implementation-level format difference may be immaterial.
 
 Now consider:
 
-“Send the payment.”
+"Send the payment."
 
 where there are:
 
@@ -143,12 +164,12 @@ Choosing the wrong payment materially changes the Action and Outcome.
 
 Therefore:
 
-format ambiguity
+Implementation ambiguity
     → potentially immaterial
-resource ambiguity
+Semantic or resource ambiguity
     → potentially material
 
-Materiality must be evaluated in context.
+Materiality must be evaluated in the context of the Intent, Action, Policy, and potential Outcome.
 
 ⸻
 
@@ -156,26 +177,27 @@ Materiality must be evaluated in context.
 
 Noema should treat ambiguity as material when selecting between candidate interpretations could change one or more of:
 
-Actor objective
-Resource
-Entity
-recipient
-amount
-scope
-authorization
-Constraint
-Policy applicability
-Action
-execution target
-side effects
-risk
-Expected Outcome
+* Actor objective
+* Resource
+* Entity
+* Principal
+* Recipient
+* Amount
+* Scope
+* Authorization target
+* Constraint
+* Policy applicability
+* Action
+* Execution target
+* Side effects
+* Risk
+* Expected Outcome
 
 A useful test is:
 
-If Noema chooses the wrong candidate, could a reasonable Actor say “that is not what I asked you to do”?
+If Noema chooses the wrong candidate, could a reasonable Actor say, “That is not what I asked you to do”?
 
-If yes, treat the ambiguity as material unless stronger evidence resolves it.
+If yes, the ambiguity should be treated as material unless sufficient evidence resolves it.
 
 ⸻
 
@@ -183,23 +205,25 @@ If yes, treat the ambiguity as material unless stronger evidence resolves it.
 
 Ambiguity may arise from:
 
-language
-references
-entities
-Resources
-scope
-quantifiers
-temporal expressions
-spatial expressions
-constraints
-preferences
-Actor identity
-Context
-domain state
-multiple Capabilities
-multiple Actions
-conflicting instructions
-composite Intents
+* language
+* references
+* entities
+* Resources
+* scope
+* quantifiers
+* temporal expressions
+* spatial expressions
+* constraints
+* preferences
+* Principal identity
+* Context
+* enterprise state
+* multiple Capabilities
+* multiple Actions
+* conflicting interpretations
+* composite Intents
+
+Ambiguity may occur in any Intent component whose alternative interpretations could materially affect execution.
 
 ⸻
 
@@ -209,15 +233,17 @@ Natural language itself can support multiple meanings.
 
 Example:
 
-“Book the cheapest flight.”
+"Book the cheapest flight."
 
 “Cheapest” could mean:
 
-lowest ticket price
-lowest total trip cost
-lowest price among acceptable flights
+* lowest ticket price
+* lowest total trip cost
+* lowest price among otherwise acceptable flights
 
-If the canonical domain semantics do not establish which meaning applies, the Intent remains unresolved.
+If canonical domain semantics, Context, or Policy do not establish which meaning applies, the Intent remains unresolved.
+
+Noema must not silently invent a semantic definition merely to make the Intent executable.
 
 ⸻
 
@@ -227,16 +253,18 @@ A reference may correspond to multiple Entities or Resources.
 
 Example:
 
-“Cancel that subscription.”
+"Cancel that subscription."
 
 Possible Resources:
 
 Subscription#123
 Subscription#456
 
-If Context does not establish which one:
+If Context and available evidence do not establish which Resource is intended:
 
-AMBIGUOUS
+AMBIGUOUS_RESOURCE
+
+and the applicable Trust state should prevent consequential execution until the ambiguity is resolved.
 
 ⸻
 
@@ -244,7 +272,7 @@ AMBIGUOUS
 
 Example:
 
-“Send it to John.”
+"Send it to John."
 
 Possible recipients:
 
@@ -254,7 +282,9 @@ John#789
 
 If multiple candidates remain materially plausible:
 
-AMBIGUOUS
+AMBIGUOUS_ENTITY
+
+Noema should preserve the candidate set rather than selecting one through probability alone.
 
 ⸻
 
@@ -262,7 +292,7 @@ AMBIGUOUS
 
 Example:
 
-“Delete the project.”
+"Delete the project."
 
 Possible Resources:
 
@@ -270,9 +300,11 @@ Project#A
 Project#B
 Project#C
 
-If no deterministic grounding rule identifies one:
+If no deterministic grounding rule identifies one Resource:
 
-AMBIGUOUS
+AMBIGUOUS_RESOURCE
+
+The existence of a Capability to delete projects does not resolve which project the Actor intended.
 
 ⸻
 
@@ -280,16 +312,18 @@ AMBIGUOUS
 
 Example:
 
-“Delete the inactive projects.”
+"Delete the inactive projects."
 
 Possible interpretations:
 
-delete one inactive project
-delete all inactive projects
-delete projects in the current workspace
-delete inactive projects across all workspaces
+* delete one inactive project
+* delete all inactive projects
+* delete inactive projects in the current workspace
+* delete inactive projects across all workspaces
 
 If scope materially changes the Outcome, clarification is required.
+
+Scope is therefore part of semantic resolution, not merely an execution detail.
 
 ⸻
 
@@ -297,27 +331,27 @@ If scope materially changes the Outcome, clarification is required.
 
 Terms such as:
 
-a
-one
-any
-all
-each
-every
-some
-none
+* a
+* one
+* any
+* all
+* each
+* every
+* some
+* none
 
 can materially affect execution.
 
 Example:
 
-“Close an account.”
+"Close an account."
 
 This could mean:
 
-close any eligible account
-close one particular account
+* close any eligible account
+* close one particular account
 
-The distinction must be resolved before execution.
+The distinction must be resolved before consequential execution.
 
 ⸻
 
@@ -325,17 +359,17 @@ The distinction must be resolved before execution.
 
 Example:
 
-“Schedule it for Friday.”
+"Schedule it for Friday."
 
 Possible meanings may differ because of:
 
-timezone
-current date
-business calendar
-regional calendar
-"this Friday" vs "next Friday"
+* timezone
+* current date
+* business calendar
+* regional calendar
+* “this Friday” versus “next Friday”
 
-If the temporal difference affects execution, Noema must resolve it deterministically or clarify.
+If the temporal difference affects execution, Noema must resolve the temporal interpretation through deterministic evidence or clarification.
 
 ⸻
 
@@ -343,7 +377,7 @@ If the temporal difference affects execution, Noema must resolve it deterministi
 
 Example:
 
-“Send it to the Lagos office.”
+"Send it to the Lagos office."
 
 If the organization has multiple Lagos locations:
 
@@ -351,7 +385,7 @@ Lagos HQ
 Lagos Island
 Ikeja
 
-the location is ambiguous if the destination materially affects the Outcome.
+the destination is ambiguous if selecting between them materially affects the Outcome.
 
 ⸻
 
@@ -359,18 +393,18 @@ the location is ambiguous if the destination materially affects the Outcome.
 
 Example:
 
-“Find me a cheap hotel.”
+"Find me a cheap hotel."
 
 “Cheap” is not necessarily a deterministic constraint.
 
-Potential interpretations:
+Potential interpretations include:
 
-< ₦100,000/night
-lowest available price
-below user's normal spending
-lowest price within acceptable quality
+* below a defined price
+* lowest available price
+* below the Actor’s normal spending level
+* lowest price within an acceptable quality range
 
-If no canonical definition exists, Noema should not invent one silently.
+If no canonical definition exists, Noema should not silently invent one.
 
 ⸻
 
@@ -378,7 +412,7 @@ If no canonical definition exists, Noema should not invent one silently.
 
 Example:
 
-“I’d prefer an earlier flight.”
+"I'd prefer an earlier flight."
 
 Earlier than:
 
@@ -390,36 +424,36 @@ earlier than 18:00
 
 the preference may resolve.
 
-If not, clarification may be necessary depending on the Action.
+If the reference point remains materially undefined, clarification may be required depending on the Action and its consequences.
 
 ⸻
 
 18. Contextual Ambiguity
 
-Context can sometimes resolve ambiguity.
+Context can reduce or resolve ambiguity.
 
 Example:
 
 User:
-Create a project called Noema.
+"Create a project called Noema."
 User:
-Add Sarah to it.
+"Add Sarah to it."
 
-“It” refers to:
+“It” may resolve to:
 
 Project#Noema
 
 because the preceding Context establishes the referent.
 
-Context can therefore reduce ambiguity.
+Context is therefore evidence for semantic resolution.
 
-But Context should not be assumed merely because it is available.
+However, Context must satisfy the applicable evidence requirements before it is treated as determinative.
 
 ⸻
 
 19. Context Must Not Manufacture Certainty
 
-The existence of Context does not make an interpretation correct.
+The existence of Context does not automatically make an interpretation correct.
 
 Example:
 
@@ -428,9 +462,15 @@ User discussed Project A.
 Current request:
 "Delete the project."
 
-If Project A and Project B are both active and materially plausible, Noema should not automatically assume Project A merely because it was mentioned previously.
+If Project A and Project B are both materially plausible, Noema should not automatically select Project A merely because it was mentioned previously.
 
-Context is evidence, not permission to guess.
+Context is evidence.
+
+It is not permission to guess.
+
+The relevant question remains:
+
+Does the available Context deterministically distinguish the candidate interpretations?
 
 ⸻
 
@@ -441,15 +481,17 @@ An Intent may be partially resolved.
 Example:
 
 Objective:
-RenewCard          ✓
-Actor:
-User#123           ✓
+RenewCard                    ✓
+Principal:
+User#123                     ✓
 Resource:
-Card#123 | Card#456   ✗
+Card#123 | Card#456          ✗
 Outcome:
-Card becomes active ✓
+Card becomes active          ✓
 
-The Intent is still materially ambiguous because the unresolved Resource affects execution.
+The Intent remains materially ambiguous because the unresolved Resource affects execution.
+
+The presence of resolved components does not eliminate an unresolved material component.
 
 ⸻
 
@@ -461,7 +503,7 @@ Example:
 
 Intent:
 RenewCard
-Actor:
+Principal:
 User#123
 Resource:
 AMBIGUOUS
@@ -470,18 +512,19 @@ AMBIGUOUS
 Outcome:
 Card becomes active
 
-Noema should not discard the resolved Objective or Outcome merely because the Resource requires clarification.
+Noema should not discard the resolved Objective, Principal, or Outcome merely because the Resource requires clarification.
+
+Partial resolution is a legitimate intermediate semantic state.
 
 ⸻
 
 22. Ambiguity vs Missing Information
 
-These are different.
+These are different conditions.
 
-Missing
+Missing information
 
-“Transfer money.”
-
+"Transfer money."
 Amount:
 UNKNOWN
 Destination:
@@ -489,15 +532,23 @@ UNKNOWN
 
 No competing interpretation necessarily exists.
 
-Ambiguous
+Required information is simply absent.
 
-“Transfer $500 to my account.”
+Ambiguity
 
+"Transfer $500 to my account."
 Destination:
 Savings#1
 Checking#2
 
-The required information exists conceptually but has multiple plausible values.
+The required semantic dimension exists conceptually but has multiple plausible values.
+
+Therefore:
+
+Missing
+    → acquire required information
+Ambiguous
+    → distinguish competing interpretations
 
 ⸻
 
@@ -530,7 +581,7 @@ Ambiguous
 
 24. Ambiguity vs Conflict
 
-Conflict occurs when supplied facts or constraints cannot simultaneously hold.
+Conflict occurs when supplied facts, instructions, or constraints cannot simultaneously hold.
 
 Example:
 
@@ -539,7 +590,7 @@ Example:
 
 This is not simply ambiguity.
 
-It is a contradiction requiring conflict resolution or clarification.
+It is a contradiction requiring conflict resolution or clarification under the applicable semantics and Policy.
 
 ⸻
 
@@ -547,14 +598,18 @@ It is a contradiction requiring conflict resolution or clarification.
 
 Example:
 
-“Teleport me to London.”
+"Teleport me to London."
 
 The meaning may be completely clear.
+
+Therefore:
 
 Ambiguity:
 No
 Capability:
 Unavailable
+
+A resolved Intent is not necessarily executable.
 
 Therefore:
 
@@ -566,7 +621,7 @@ Resolved ≠ Executable
 
 Example:
 
-“Delete the production database.”
+"Delete the production database."
 
 The target may be perfectly clear.
 
@@ -578,13 +633,17 @@ But:
 Policy:
 Not authorized
 
-This is a Trust decision, not ambiguity.
+This is a Trust and authorization condition, not ambiguity.
+
+Noema must not manufacture ambiguity to explain an authorization failure.
+
+Likewise, authorization must not be used to resolve a genuine semantic ambiguity.
 
 ⸻
 
 27. Candidate Set
 
-When ambiguity exists, Noema should represent the candidate interpretations explicitly.
+When material ambiguity exists, Noema should represent the candidate interpretations explicitly where practical.
 
 Conceptually:
 
@@ -606,13 +665,15 @@ Candidates:
 
 This is preferable to collapsing the value into an arbitrary selection.
 
+The candidate set should remain traceable to the evidence that produced it.
+
 ⸻
 
 28. Ambiguity Must Be Typed
 
-Noema should know what is ambiguous.
+Noema should identify what semantic dimension is ambiguous.
 
-For example:
+Examples:
 
 AMBIGUOUS_RESOURCE
 AMBIGUOUS_ENTITY
@@ -621,36 +682,40 @@ AMBIGUOUS_TIME
 AMBIGUOUS_DESTINATION
 AMBIGUOUS_CONSTRAINT
 AMBIGUOUS_OBJECTIVE
+AMBIGUOUS_PRINCIPAL
+AMBIGUOUS_ACTION
 
-This allows clarification to target the actual semantic problem.
+Typed ambiguity allows clarification and Trust evaluation to target the actual semantic problem.
 
 ⸻
 
 29. Ambiguity Severity
 
-Not all ambiguity has equal consequence.
+Not all material ambiguity has the same consequence.
 
 A useful conceptual classification is:
 
-Low
-Medium
-High
-Critical
+LOW
+MEDIUM
+HIGH
+CRITICAL
 
-based on potential consequences.
+based on potential consequence.
 
 For example:
 
 Output format
-    → Low
+    → potentially Low
 Meeting time
-    → Medium
+    → potentially Medium
 Bank account
-    → High
+    → potentially High
 Production database
-    → Critical
+    → potentially Critical
 
-Severity should influence whether Noema requires explicit clarification and how much evidence is necessary.
+Severity is contextual.
+
+It should influence the evidence and confirmation requirements applicable to the Action, but severity must not replace the underlying semantic materiality determination.
 
 ⸻
 
@@ -664,17 +729,21 @@ Example:
 
 "Send this document to John."
 
-Sending to the wrong John may be:
+Sending the wrong document to the wrong John may be relatively low consequence for a public document.
 
-low risk
+The same ambiguity may be substantially higher consequence for:
 
-for a public document but:
+ConfidentialAcquisitionAgreement
 
-critical risk
+Trust should therefore evaluate:
 
-for confidential financial information.
+Ambiguity
++
+Potential Consequence
++
+Applicable Policy
 
-Trust therefore needs to evaluate ambiguity in conjunction with consequence.
+rather than ambiguity in isolation.
 
 ⸻
 
@@ -686,15 +755,19 @@ confidence > 0.8 → execute
 
 because ambiguity is not reducible to a single probability.
 
-Instead, progression should depend on:
+Progression should instead depend on:
 
-semantic completeness
-candidate multiplicity
-materiality
-evidence quality
-risk
-Policy
-required certainty
+* semantic completeness
+* candidate multiplicity
+* materiality
+* evidence quality
+* evidence authority
+* risk
+* Policy
+* required certainty
+* Action requirements
+
+The deterministic Trust boundary must evaluate the relevant conditions rather than map model probability directly to authorization.
 
 ⸻
 
@@ -714,7 +787,7 @@ Card#456 is cancelled.
 
 Intent:
 
-“Renew my active card.”
+"Renew my active card."
 
 Candidate set becomes:
 
@@ -735,24 +808,26 @@ Suppose:
 Card#123 → 98%
 Card#456 → 2%
 
-The Model’s distribution does not itself prove:
+The Model’s distribution does not itself establish:
 
 Card#456 = impossible
 
-Unless Noema has deterministic evidence that removes Card#456, material ambiguity remains.
+Unless sufficient evidence eliminates Card#456, material ambiguity remains.
+
+Model confidence may be retained as interpretive metadata, but it cannot independently convert competing candidates into a single authorized Intent.
 
 ⸻
 
 34. Explicit Clarification
 
-The strongest mechanism for resolving ambiguity is often direct Actor clarification.
+Direct Actor clarification is often the strongest mechanism for resolving material ambiguity.
 
 Example:
 
 Noema:
-Which card do you want to renew?
+"Which card do you want to renew?"
 Actor:
-The Visa ending in 1234.
+"The Visa ending in 1234."
 
 Candidate set:
 
@@ -762,7 +837,7 @@ Resolution:
 
 RESOLVED
 
-The clarification itself becomes provenance.
+The clarification and Actor response become part of the provenance of the resulting Intent resolution.
 
 ⸻
 
@@ -772,13 +847,16 @@ Noema should ask only about the ambiguous semantic dimension.
 
 Bad:
 
-“Could you provide more information about what you want to do?”
+"Could you provide more information about what you want to do?"
 
 Good:
 
-“Which card do you want to renew: Visa ending in 1234 or Mastercard ending in 5678?”
+"Which card do you want to renew:
+Visa ending in 1234 or Mastercard ending in 5678?"
 
-The latter minimizes Actor effort while preserving deterministic resolution.
+The second form minimizes Actor effort while resolving the specific semantic ambiguity.
+
+This follows the principle of minimum necessary interaction.
 
 ⸻
 
@@ -792,7 +870,7 @@ Intent#123
     ↓
 AMBIGUOUS
     ↓
-CLARIFICATION_REQUESTED
+CLARIFICATION_REQUIRED
     ↓
 Actor response
     ↓
@@ -800,17 +878,21 @@ RESOLUTION
 
 The original Intent identity should remain stable.
 
+The clarification should be associated with the unresolved semantic dimension rather than creating an unrelated new Intent.
+
 ⸻
 
 37. Ambiguity Must Be Auditable
 
 Noema should be able to explain:
 
-Why was this Intent considered ambiguous?
-Which candidates existed?
-What evidence supported each?
-Why was clarification required?
-What resolved it?
+* Why was this Intent considered ambiguous?
+* Which candidates existed?
+* What evidence supported each candidate?
+* Why was the ambiguity material?
+* Why was clarification required?
+* What evidence resolved it?
+* When was the resolution established?
 
 Example:
 
@@ -840,11 +922,18 @@ Ambiguity {
     severity
     detected_at
     resolution
+    resolved_at
 }
 
 The exact implementation may differ.
 
-The semantic requirements should remain.
+The semantic requirements remain:
+
+* identify the ambiguous dimension
+* preserve relevant candidates
+* preserve supporting evidence
+* preserve materiality
+* preserve resolution history
 
 ⸻
 
@@ -864,19 +953,19 @@ AMBIGUOUS
     ↓
 AUTHORIZED
 
-This should be a hard invariant.
+This is a hard architectural invariant.
+
+Ambiguity resolution precedes authorization of an Action whose execution depends on that unresolved semantic dimension.
 
 ⸻
 
 40. Ambiguity and Executability
 
-A materially ambiguous Intent is not executable.
+A materially ambiguous Intent is not executable for an Action that depends on the ambiguous dimension.
 
 Ambiguous
     ≠
 Executable
-
-Even if a Capability exists.
 
 Example:
 
@@ -889,11 +978,13 @@ Project A | Project B ✗
 
 Capability availability does not resolve target ambiguity.
 
+The Action cannot proceed until the target is deterministically established.
+
 ⸻
 
 41. Ambiguity and Policy
 
-Policy may sometimes constrain the candidate set.
+Policy may constrain the candidate set.
 
 Example:
 
@@ -905,13 +996,17 @@ Project B
 Policy:
 Actor may only delete Project A
 
-If that Policy is authoritative and semantically applicable, it may eliminate Project B.
+If that Policy is authoritative and semantically applicable to the Intent, it may eliminate Project B.
 
-The result can become:
+The resulting candidate set can become:
 
 Project A
 
-However, Policy should not be used as an excuse to rewrite an otherwise clear Actor Intent.
+However, Policy must not be used merely as a mechanism to select an interpretation that is convenient or executable.
+
+Policy constrains what is permitted.
+
+It does not redefine what the Actor meant.
 
 ⸻
 
@@ -923,13 +1018,13 @@ If the Intent is:
 
 DeleteProject(ProjectA)
 
-then Trust can evaluate:
+Trust can evaluate:
 
 May Actor delete ProjectA?
 
-It should not first choose whichever project the Actor is authorized to delete simply because that makes execution possible.
+Noema should not first choose whichever Project the Actor is authorized to delete simply because that makes execution possible.
 
-That would be intent substitution.
+That would constitute Intent substitution.
 
 ⸻
 
@@ -954,11 +1049,13 @@ Project A
 
 simply because A is executable.
 
-The correct result remains:
+The correct semantic state remains:
 
-AMBIGUOUS
+AMBIGUOUS_RESOURCE
 
-followed by clarification.
+followed by clarification or another authoritative resolution mechanism.
+
+Authorization cannot be used as a semantic guessing mechanism.
 
 ⸻
 
@@ -968,24 +1065,26 @@ Ambiguity becomes particularly important when Actions have irreversible or high-
 
 Examples:
 
-delete
-transfer
-publish
-send
-cancel
-terminate
-deploy
-revoke
+* delete
+* transfer
+* publish
+* send
+* cancel
+* terminate
+* deploy
+* revoke
 
-For these operations, Noema should apply stricter ambiguity requirements.
+For these operations, Noema should apply the applicable stronger semantic and Trust requirements.
+
+The more consequential the Action, the less tolerance there should be for unresolved material ambiguity.
 
 ⸻
 
 45. Irreversibility
 
-A useful principle is:
+A useful architectural principle is:
 
-The more irreversible the potential Action, the less tolerance Noema should have for unresolved ambiguity.
+The more irreversible the potential Action, the less tolerance Noema should have for unresolved material ambiguity.
 
 Example:
 
@@ -995,31 +1094,39 @@ should require stronger semantic resolution than:
 
 "Show me the account."
 
+The difference is not that the latter can ignore ambiguity.
+
+Rather, the consequence of an incorrect interpretation determines the required Trust boundary.
+
 ⸻
 
 46. Ambiguity and Side Effects
 
-Noema should evaluate ambiguity before side effects begin.
+Noema should evaluate material ambiguity before consequential side effects begin.
 
 Preferred:
 
 Interpret
-  ↓
+   ↓
 Resolve
-  ↓
-Evaluate ambiguity
-  ↓
+   ↓
+Evaluate Ambiguity
+   ↓
 Trust
-  ↓
-Execute
+   ↓
+Action
+   ↓
+Execution
 
 Not:
 
 Interpret
-  ↓
-Start execution
-  ↓
-Discover ambiguity
+   ↓
+Start Execution
+   ↓
+Discover Ambiguity
+
+Material semantic uncertainty must be resolved before the Action crosses its execution boundary.
 
 ⸻
 
@@ -1038,10 +1145,16 @@ Recipient = John#123 | John#456
 
 The parent should not be treated as fully resolved.
 
+Conceptually:
+
 Composite:
 PARTIALLY_RESOLVED
 
-and clarification should target the recipient.
+Clarification should target the ambiguous child component.
+
+Whether other resolved children may execute independently depends on the Composite Intent’s execution semantics, Action dependencies, Policy, and Trust requirements.
+
+Ambiguity in one child must not automatically authorize or invalidate unrelated children.
 
 ⸻
 
@@ -1054,13 +1167,15 @@ Example:
 Source Account:
 Checking | Savings
 
-then:
+Then:
 
 "Transfer the balance from it to my other account."
 
-The destination interpretation may depend on which source is selected.
+The destination interpretation may depend on which source account is selected.
 
 Therefore ambiguity propagation must be dependency-aware.
+
+Noema should preserve dependency relationships rather than resolving downstream references independently from an unresolved upstream component.
 
 ⸻
 
@@ -1073,7 +1188,7 @@ Parent
 ├── Child B
 └── Child C
 
-Noema should know whether ambiguity in one child affects:
+Noema should determine whether ambiguity in one child affects:
 
 only Child B
 
@@ -1081,7 +1196,15 @@ or:
 
 the entire Composite Intent
 
-This depends on the relationships and execution semantics.
+This depends on the relationships, dependencies, atomicity requirements, and execution semantics of the Composite Intent.
+
+The semantic state should therefore distinguish:
+
+Child-level ambiguity
+
+from:
+
+Composite-level ambiguity
 
 ⸻
 
@@ -1097,12 +1220,15 @@ Noema should preserve the fact that Card#456 was previously a candidate.
 
 This matters for:
 
-audit
-debugging
-Trust analysis
-Model evaluation
-system improvement
-Actor disputes
+* audit
+* debugging
+* Trust analysis
+* Model evaluation
+* system improvement
+* Actor disputes
+* reconstruction of execution decisions
+
+Resolution should add evidence, not erase the history of the ambiguity.
 
 ⸻
 
@@ -1118,7 +1244,9 @@ should not be treated as:
 
 SYSTEM ERROR
 
-It is a legitimate Intent state requiring additional information.
+It is a legitimate semantic state requiring resolution.
+
+A clarification path is a normal execution path, not an exception path.
 
 ⸻
 
@@ -1126,11 +1254,12 @@ It is a legitimate Intent state requiring additional information.
 
 Noema should represent ambiguity explicitly rather than encoding it through:
 
-null
-empty string
-low confidence
-exception
-generic failure
+* null
+* empty string
+* low confidence
+* exception
+* generic failure
+* arbitrary default selection
 
 Conceptually:
 
@@ -1152,18 +1281,23 @@ Ambiguity Detected
        ↓
 Materiality Evaluation
        │
-   ┌───┴────┐
-   │        │
-Non-material Material
-   │        │
-   ▼        ▼
- Proceed   Clarify
-            │
-            ▼
-         New Evidence
-            │
-            ▼
-          Resolve
+   ┌───┴────────┐
+   │            │
+Non-material   Material
+   │            │
+   ▼            ▼
+Proceed       Clarify
+                │
+                ▼
+             New Evidence
+                │
+                ▼
+              Resolve
+                │
+                ▼
+          Trust Evaluation
+
+Ambiguity resolution therefore produces stronger semantic grounding for the subsequent Trust decision.
 
 ⸻
 
@@ -1171,7 +1305,7 @@ Non-material Material
 
 User:
 
-“Create a report.”
+"Create a report."
 
 Suppose the report system internally has two equivalent rendering engines:
 
@@ -1180,9 +1314,9 @@ Renderer B
 
 The Actor does not care which implementation is used.
 
-This is implementation ambiguity, not Intent ambiguity.
+This is implementation-level ambiguity, not necessarily Intent ambiguity.
 
-Noema may proceed.
+Noema may proceed if the Action, Outcome, Policy, and relevant execution semantics are invariant across the alternatives.
 
 ⸻
 
@@ -1190,14 +1324,14 @@ Noema may proceed.
 
 User:
 
-“Transfer ₦100,000 to John.”
+"Transfer ₦100,000 to John."
 
 Recipients:
 
 John#123
 John#456
 
-Both are eligible.
+Both are eligible and materially plausible.
 
 The ambiguity changes the destination of money.
 
@@ -1212,14 +1346,14 @@ MATERIAL
 
 User:
 
-“Send the invoice to Sarah.”
+"Send the invoice to Sarah."
 
-Current conversation:
+Current Context:
 
 Sarah = Sarah#123
 Invoice = Invoice#456
 
-No competing candidates remain.
+No competing candidate remains after applying the available authoritative Context.
 
 Result:
 
@@ -1231,7 +1365,7 @@ RESOLVED
 
 User:
 
-“Send the invoice to Sarah.”
+"Send the invoice to Sarah."
 
 Address book:
 
@@ -1246,7 +1380,9 @@ AMBIGUOUS_ENTITY
 
 Noema asks:
 
-“Which Sarah do you mean?”
+"Which Sarah do you mean?"
+
+The clarification targets the unresolved semantic dimension.
 
 ⸻
 
@@ -1254,7 +1390,7 @@ Noema asks:
 
 User:
 
-“Cancel my account.”
+"Cancel my account."
 
 Model:
 
@@ -1270,7 +1406,7 @@ Neither Context nor authoritative evidence distinguishes them.
 
 Result:
 
-AMBIGUOUS
+AMBIGUOUS_RESOURCE
 
 The 94% confidence score does not authorize execution.
 
@@ -1280,90 +1416,92 @@ The 94% confidence score does not authorize execution.
 
 User:
 
-“Send the document to John.”
+"Send the document to John."
 
 If the document is:
 
 PublicPressRelease
 
-minor recipient ambiguity may have lower consequence.
+the consequence of recipient ambiguity may be relatively limited.
 
 If the document is:
 
 ConfidentialAcquisitionAgreement
 
-the same ambiguity becomes substantially higher risk.
+the same unresolved recipient ambiguity carries substantially greater consequence.
 
 Trust should therefore consider:
 
 Ambiguity
 +
 Potential Consequence
++
+Policy
++
+Action Requirements
 
 rather than ambiguity in isolation.
 
 ⸻
 
-60. Trust Decision
+60. Relationship to Trust
 
-A useful conceptual model is:
+Ambiguity is an input to Trust, not the entirety of Trust.
+
+Conceptually:
 
 TrustDecision =
     f(
         IntentResolution,
         Ambiguity,
-        ActorAuthority,
+        Principal,
+        Authorization,
+        Evidence,
         Policy,
         Risk,
-        Capability,
+        Action,
         Context
     )
 
-Ambiguity is therefore one input into the Trust decision, not the entirety of Trust.
+A resolved Intent may still fail Trust because of:
+
+* missing authorization
+* insufficient evidence
+* Policy prohibition
+* stale enterprise state
+* failed preconditions
+* organizational boundary violations
+* unavailable required data
+
+Conversely, the absence of ambiguity does not imply:
+
+EXECUTE
+
+It only means that semantic multiplicity is not blocking the relevant decision.
 
 ⸻
 
-61. Canonical Invariants
+61. Ambiguity and Trust Decisions
 
-Invariant 1
+Material unresolved ambiguity generally prevents an Action from entering:
 
-Material ambiguity must block execution.
+EXECUTE
 
-Invariant 2
+The resulting Trust path may be:
 
-Model confidence alone cannot eliminate material ambiguity.
+AMBIGUOUS
+    ↓
+CLARIFY
 
-Invariant 3
+or, depending on the circumstances:
 
-Ambiguity must identify the semantic dimension that is unresolved.
+AMBIGUOUS
+    ↓
+ESCALATE
 
-Invariant 4
+if automated clarification cannot safely resolve the condition.
 
-Ambiguity should preserve candidate interpretations where possible.
-
-Invariant 5
-
-Context may resolve ambiguity only when it provides sufficient evidence.
-
-Invariant 6
-
-Policy must not be used to substitute an authorized interpretation for the Actor’s actual Intent.
-
-Invariant 7
-
-Ambiguity must be evaluated before consequential side effects.
-
-Invariant 8
-
-Clarification should target the smallest unresolved material dimension.
-
-Invariant 9
-
-Resolved information must be preserved even when another component remains ambiguous.
-
-Invariant 10
-
-Ambiguity must be distinguishable from uncertainty, incompleteness, invalidity, contradiction, unsupported capability, and authorization failure.
+If evidence establishes that the Intent is invalid, unauthorized, unsupported, or otherwise prohibited, the corresponding Trust decision should be represented under that actual condition rather than incorrectly labeled as ambiguity.
 
 ⸻
 
@@ -1395,7 +1533,7 @@ Ambiguity sits at the boundary between probabilistic interpretation and determin
              │                   │
              └─────────┬─────────┘
                        ▼
-                Canonical Intent
+                Resolved Intent
                        │
                        ▼
                   Trust Engine
@@ -1403,11 +1541,113 @@ Ambiguity sits at the boundary between probabilistic interpretation and determin
                        ▼
                     Action
 
+The Ambiguity component does not replace Trust.
+
+It establishes whether semantic resolution is sufficient for Trust to evaluate the Action.
+
 ⸻
 
-63. Final Definition
+63. Canonical Invariants
 
-Ambiguity is a first-class Trust condition in which Noema cannot deterministically establish a single materially consequential interpretation of an Intent from the evidence available. When material ambiguity remains, Noema must not convert probabilistic preference into executable commitment; it must resolve the ambiguity through authoritative evidence or obtain clarification from the Actor.
+Invariant 1
+
+Material ambiguity must block execution of an Action that depends on the unresolved semantic dimension.
+
+Invariant 2
+
+Model confidence alone cannot eliminate material ambiguity.
+
+Invariant 3
+
+Ambiguity must identify the semantic dimension that is unresolved.
+
+Invariant 4
+
+Ambiguity should preserve candidate interpretations where practical.
+
+Invariant 5
+
+Context may resolve ambiguity only when it provides sufficient evidence to distinguish the candidates.
+
+Invariant 6
+
+Policy may constrain or eliminate candidates when the Policy is authoritative and semantically applicable, but must not substitute an authorized interpretation for the Actor’s actual Intent.
+
+Invariant 7
+
+Ambiguity must be evaluated before consequential side effects.
+
+Invariant 8
+
+Clarification should target the smallest unresolved material semantic dimension.
+
+Invariant 9
+
+Resolved information must be preserved even when another component remains ambiguous.
+
+Invariant 10
+
+Ambiguity must be distinguishable from uncertainty, incompleteness, invalidity, contradiction, unsupported capability, and authorization failure.
+
+Invariant 11
+
+Authorization must not be used as a mechanism for guessing between materially ambiguous interpretations.
+
+Invariant 12
+
+Noema must not resolve ambiguity toward the interpretation that is merely most convenient, most executable, or most permissive.
+
+Invariant 13
+
+Ambiguity resolution must preserve sufficient provenance to reconstruct the candidate set, evidence, and resolution.
+
+Invariant 14
+
+Ambiguity in one Action or Intent component must not automatically authorize another Action or component.
+
+Invariant 15
+
+Ambiguity propagation must respect semantic dependencies between Intent components.
+
+Invariant 16
+
+The consequence and reversibility of an Action may require stronger evidence and clarification requirements for resolving material ambiguity.
+
+Invariant 17
+
+An Intent may be semantically resolved while remaining non-executable for independent Trust, Policy, authorization, or Capability reasons.
+
+Invariant 18
+
+Ambiguity is a legitimate semantic state and must not be represented as a generic system failure.
+
+⸻
+
+64. Final Definition
+
+Ambiguity is a first-class Trust condition in which Noema cannot deterministically establish a single materially consequential interpretation of an Intent from the evidence currently available.
+
+When material ambiguity remains, Noema must not convert probabilistic preference into executable commitment.
+
+It must either:
+
+* resolve the ambiguity through sufficient authoritative evidence,
+* obtain clarification from the Actor,
+* or escalate when the ambiguity cannot safely be resolved through the normal automated path.
+
+The fundamental relationship is:
+
+Probabilistic Interpretation
+          ↓
+Candidate Intent
+          ↓
+Ambiguity Evaluation
+          ↓
+Semantic Resolution
+          ↓
+Trust
+          ↓
+Action
 
 The shortest canonical formulation is:
 

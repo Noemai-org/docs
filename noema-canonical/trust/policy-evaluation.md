@@ -1,7 +1,7 @@
 Policy Evaluation
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Trust
 Canonical Path: trust/policy-evaluation.md
 
@@ -9,32 +9,44 @@ Canonical Path: trust/policy-evaluation.md
 
 1. Definition
 
-Policy Evaluation is the deterministic process by which Noema determines whether a resolved Intent satisfies the Policies applicable to the Actor, Resources, Context, Action, and intended Outcome.
+Policy Evaluation is the deterministic process by which Noema determines which Policies apply to a resolved Intent and whether the Intent satisfies the conditions imposed by those Policies.
 
 Policy Evaluation answers:
 
-“Given what this Actor intends to do, and the applicable rules, is the Intent permitted to proceed?”
+“Given the established Intent, the relevant Actor, Resources, Context, Evidence, and applicable Policies, under what conditions may this Intent proceed?”
 
 Policy Evaluation is distinct from:
 
-Intent Resolution
-Authorization
-Capability
-Execution
+* Intent Resolution
+* Evidence
+* Authorization
+* Capability
+* Constraints
+* Risk
+* Execution
+* Trust
 
-but participates in the final Trust decision.
+but contributes directly to the final Trust decision.
+
+Policy Evaluation does not determine what the Actor meant.
+
+It determines the conditions under which an already-established Intent may proceed.
 
 ⸻
 
 2. The Core Principle
 
-Policies constrain what may happen; they do not determine what the Actor meant.
+Policies constrain what may happen.
 
-The Model may help interpret:
+They do not determine what the Actor intended.
+
+For example, the Actor may express:
 
 “Move $5,000 from savings to checking.”
 
-Policy Evaluation should operate on the resolved semantic representation:
+The Model may interpret that expression.
+
+Noema should resolve it into a semantic representation such as:
 
 TransferFunds(
     actor = User#123,
@@ -43,13 +55,27 @@ TransferFunds(
     amount = $5,000
 )
 
-not on the original natural-language expression.
+Policy Evaluation should operate on that resolved semantic representation rather than on the original natural-language expression.
+
+The fundamental sequence is:
+
+Actor Expression
+      ↓
+Interpretation
+      ↓
+Intent Resolution
+      ↓
+Resolved Intent
+      ↓
+Policy Applicability
+      ↓
+Policy Evaluation
 
 ⸻
 
-3. Policy Evaluation in the Trust Pipeline
+3. Policy Evaluation in the Trust Model
 
-Conceptually:
+Policy Evaluation participates in the broader Trust pipeline:
 
 Actor Expression
       ↓
@@ -65,78 +91,159 @@ Policy Evaluation
       ↓
 Capability
       ↓
-Constraints / Risk
+Constraints
+      ↓
+Risk
       ↓
 Trust Decision
       ↓
+Execution Boundary
+      ↓
 Execution
+      ↓
+Outcome
 
-Policy Evaluation is therefore downstream of semantic resolution.
+These components have different responsibilities.
+
+Intent
+"What does the Actor want?"
+Evidence
+"What claims are sufficiently established?"
+Authorization
+"May this Actor perform this Action?"
+Policy
+"Under what conditions may it happen?"
+Capability
+"Can the intended Action be performed?"
+Constraints
+"What conditions restrict the resolved Intent?"
+Risk
+"What consequence-sensitive requirements apply?"
+Trust
+"Is the Intent sufficiently established, permitted,
+and ready to cross the execution boundary?"
+
+Noema should not collapse these questions into one generic decision.
 
 ⸻
 
-4. Policy vs Authorization
+4. Policy Evaluation Is Downstream of Resolution
 
-These concepts must remain distinct.
+Policy Evaluation should operate on established semantic objects.
+
+It should not be responsible for resolving:
+
+* ambiguous Actors
+* ambiguous Resources
+* ambiguous Actions
+* unresolved parameters
+* uncertain relationships
+* natural-language references
+
+For example:
+
+Actor:
+"Transfer money to John."
+
+If John has not been resolved to a canonical Resource or Account, Policy Evaluation should not invent the identity.
+
+Instead:
+
+Destination = UNKNOWN
+        ↓
+Policy-relevant input incomplete
+        ↓
+UNRESOLVED
+
+Resolution precedes Policy Evaluation where the Policy depends on the unresolved value.
+
+⸻
+
+5. Policy vs Authorization
+
+Policy and Authorization are related but distinct.
 
 Authorization
 
-Is this Actor permitted to perform this Action on this Resource?
+Authorization answers:
+
+“May this Actor perform this Action on this Resource?”
+
+Example:
+
+User#123
+may perform:
+TransferFunds
+on:
+Account#456
 
 Policy
 
-Under what conditions may this Action occur?
+Policy answers:
+
+“Under what conditions may this Action occur?”
+
+Example:
+
+Transfers above ₦10,000,000
+require secondary approval.
+
+An Actor may therefore be authorized while the particular Intent remains blocked by Policy.
 
 Example:
 
 Authorization:
-User#123 may approve expenses.
+ALLOW
 Policy:
-Expenses above ₦10,000,000 require two approvers.
+REQUIRE_APPROVAL
 
-The Actor may be authorized while the particular Intent is still blocked by Policy.
+The resulting Trust state is not executable yet.
 
 ⸻
 
-5. Policy vs Capability
+6. Policy vs Capability
 
 Capability answers:
 
-Can this system or consumer perform this Action?
+“Can the system or consumer perform this Action?”
 
 Policy answers:
 
-Is this Action allowed under the applicable rules?
+“Is this Action permitted under the applicable rules, and under what conditions?”
 
 Example:
 
 Capability:
-Payment provider supports refunds.
+PaymentProvider#X supports RefundPayment.
 Policy:
 Refunds after 30 days require manager approval.
+
+The existence of a Capability does not establish permission.
 
 Capability does not override Policy.
 
 ⸻
 
-6. Policy vs Constraint
+7. Policy vs Constraints
 
-A Constraint restricts an Intent or its parameters.
+Constraints restrict an Intent, its parameters, or the conditions under which it may proceed.
 
 Example:
 
 Constraint:
-Transfer amount must be ≤ account limit.
-
-Policy may determine:
-
+Transfer amount must not exceed account limit.
+Policy:
 Transfers above ₦5,000,000 require approval.
 
-The distinction is useful even where implementation mechanisms overlap.
+These may overlap operationally, but they have distinct semantic roles.
+
+A Constraint describes a restriction.
+
+A Policy defines a governing rule under which an Intent may or may not proceed.
 
 ⸻
 
-7. Policy Is Not Model Judgment
+8. Policy Is Not Model Judgment
 
 Noema must not reduce Policy Evaluation to:
 
@@ -151,70 +258,105 @@ Applicable Policies
       ↓
 Policy Rules
       ↓
+Authoritative Inputs
+      ↓
 Deterministic Evaluation
       ↓
 Policy Result
 
-The Model may help identify candidate policies.
+A Model may assist with:
 
-The Policy Engine determines their result.
+* discovering candidate Policies
+* extracting structured parameters
+* identifying potentially relevant Policy domains
 
-⸻
+But Model output does not itself establish the Policy result.
 
-8. Policy Applicability
-
-Not every Policy applies to every Intent.
-
-Policy Evaluation should first establish:
-
-Which Policies govern this Intent?
-
-Applicability may depend on:
-
-Actor
-Action
-Resource
-Resource type
-Tenant
-Jurisdiction
-Context
-Amount
-Risk
-Time
-Outcome
+The Policy Evaluation mechanism determines the result.
 
 ⸻
 
-9. Example of Policy Applicability
+9. Policy Applicability
 
-Suppose:
+Before evaluating a Policy, Noema must establish whether that Policy applies to the Intent.
 
-Policy A:
+Policy applicability may depend on:
+
+* Actor
+* Actor type
+* Action
+* Resource
+* Resource type
+* Tenant
+* Organization
+* Jurisdiction
+* Context
+* Amount
+* Risk
+* Time
+* Environment
+* Intended Outcome
+* Business state
+
+The conceptual sequence is:
+
+Resolved Intent
+      ↓
+Determine Policy Scope
+      ↓
+Determine Applicability
+      ↓
+Evaluate Applicable Policies
+
+A Policy that does not apply must not be treated as though it were evaluated and satisfied.
+
+⸻
+
+10. Policy Applicability vs Policy Satisfaction
+
+These are distinct states.
+
+A Policy may be:
+
+NOT_APPLICABLE
+
+because it does not govern the Intent.
+
+A Policy may instead be:
+
+SATISFIED
+
+because it applies and all of its conditions are satisfied.
+
+For example:
+
+Policy:
 International transfers require additional verification.
-Policy B:
-Domestic transfers require no additional verification.
-
 Intent:
-
 TransferFunds(
-    source = Nigeria,
-    destination = Nigeria
+    source_country = Nigeria,
+    destination_country = Nigeria
 )
+Result:
+NOT_APPLICABLE
 
-Policy A does not apply.
+This is different from:
 
+Policy:
+International transfers require additional verification.
 Intent:
-
 TransferFunds(
-    source = Nigeria,
-    destination = United Kingdom
+    source_country = Nigeria,
+    destination_country = United Kingdom
 )
-
-Policy A applies.
+Verification:
+completed
+Result:
+SATISFIED
 
 ⸻
 
-10. Policy Evaluation Inputs
+11. Policy Evaluation Inputs
 
 Conceptually:
 
@@ -229,13 +371,15 @@ PolicyEvaluation {
     ApplicablePolicies
 }
 
-The exact implementation is not canonical.
+The exact implementation schema is not canonical.
 
 The semantic requirement is that Policy Evaluation operate over established inputs rather than raw language.
 
+Where a Policy depends on a fact, that fact should be supported by appropriate Evidence.
+
 ⸻
 
-11. Policy Evaluation as a Deterministic Function
+12. Policy Evaluation as a Deterministic Function
 
 Conceptually:
 
@@ -248,15 +392,29 @@ PolicyResult =
         ApplicablePolicies
     )
 
-Given the same relevant inputs, Policy Evaluation should produce the same result.
+Given the same material inputs, Policy versions, and evaluation semantics, Policy Evaluation should produce the same result.
+
+If the result changes, Noema should be able to identify which relevant input changed.
+
+Possible changes include:
+
+* Intent version
+* Actor state
+* Resource state
+* Evidence
+* Context
+* Policy version
+* Policy applicability
+* Approval state
+* Risk state
 
 ⸻
 
-12. Policy Outcomes
+13. Policy Results
 
-Policy Evaluation should produce explicit outcomes.
+Policy Evaluation should produce explicit semantic results.
 
-At minimum, conceptually:
+Useful conceptual results include:
 
 ALLOW
 DENY
@@ -265,16 +423,35 @@ REQUIRE_CONFIRMATION
 REQUIRE_VERIFICATION
 NOT_APPLICABLE
 UNRESOLVED
+CONFLICTING
 
-The exact enum is implementation-specific.
+The exact implementation enum is not canonical.
 
-The important principle is:
+The important principle is that Policy Evaluation should not collapse materially different conditions into a simple binary:
 
-Policy evaluation must not collapse every result into a binary yes/no when additional conditions are required.
+YES / NO
+
+For example:
+
+REQUIRE_APPROVAL
+
+is not equivalent to:
+
+DENY
+
+and:
+
+UNRESOLVED
+
+is not equivalent to:
+
+ALLOW
 
 ⸻
 
-13. Allow
+14. Allow
+
+ALLOW means the applicable Policy requirements represented by the evaluation have been satisfied.
 
 Example:
 
@@ -283,13 +460,19 @@ ViewProject(Project#123)
 Policy:
 Project members may view projects.
 Evidence:
-User#123 is a member.
+User#123 is a member of Project#123.
 Result:
 ALLOW
 
+ALLOW does not necessarily mean the overall Trust decision is ALLOW.
+
+Authorization, Capability, Constraints, Risk, and other Trust requirements may still need to be satisfied.
+
 ⸻
 
-14. Deny
+15. Deny
+
+DENY means an applicable Policy prohibits the Intent from proceeding under the evaluated conditions.
 
 Example:
 
@@ -302,9 +485,11 @@ Developer
 Result:
 DENY
 
+A DENY Policy result should prevent the Intent from crossing the execution boundary unless an explicit and authorized Policy mechanism changes the governing conditions.
+
 ⸻
 
-15. Require Approval
+16. Require Approval
 
 Example:
 
@@ -315,13 +500,15 @@ Transfers > ₦10,000,000 require secondary approval.
 Result:
 REQUIRE_APPROVAL
 
-This is not necessarily a denial.
+This does not necessarily mean the Intent is prohibited.
 
-It means the Intent has not yet satisfied the Policy’s execution conditions.
+It means the Intent has not yet satisfied a Policy requirement necessary for execution.
+
+The required approval becomes additional evidence when obtained.
 
 ⸻
 
-16. Require Confirmation
+17. Require Confirmation
 
 Example:
 
@@ -332,13 +519,20 @@ Account deletion requires explicit Actor confirmation.
 Result:
 REQUIRE_CONFIRMATION
 
-The Intent may already be resolved and authorized.
+The Intent may already be:
 
-It simply requires additional evidence.
+* resolved
+* authorized
+* policy-applicable
+* otherwise valid
+
+but still require explicit confirmation.
+
+Confirmation must be bound to the exact Intent version being confirmed.
 
 ⸻
 
-17. Require Verification
+18. Require Verification
 
 Example:
 
@@ -349,13 +543,13 @@ Payout destination changes require verified identity.
 Result:
 REQUIRE_VERIFICATION
 
-The Actor may have sufficient authorization but insufficient verification.
+The Actor may have sufficient authorization while still lacking the verification required by Policy.
 
 ⸻
 
-18. Not Applicable
+19. Not Applicable
 
-A Policy may be evaluated and determined irrelevant.
+A Policy may be evaluated and determined not to govern the Intent.
 
 Example:
 
@@ -363,22 +557,18 @@ Policy:
 International transfer verification.
 Intent:
 Domestic transfer.
-
 Result:
-
 NOT_APPLICABLE
 
-This is different from:
+NOT_APPLICABLE does not mean the Policy was satisfied.
 
-ALLOW
-
-because the Policy did not govern the Intent.
+It means the Policy does not govern the evaluated Intent.
 
 ⸻
 
-19. Unresolved
+20. Unresolved
 
-Policy Evaluation may depend on missing information.
+Policy Evaluation may depend on information that has not yet been established.
 
 Example:
 
@@ -387,17 +577,53 @@ Transfers above ₦10,000,000 require approval.
 Intent:
 Transfer "a large amount."
 
-Amount has not been resolved.
+The amount is unresolved.
+
+Noema cannot determine whether the threshold has been crossed.
 
 Result:
 
 UNRESOLVED
 
-Noema should not assume whether the threshold is crossed.
+The appropriate next step may be:
+
+* clarification
+* evidence retrieval
+* Intent resolution
+* additional verification
+
+rather than an implicit ALLOW.
 
 ⸻
 
-20. Policy Composition
+21. Conflicting Policy Inputs
+
+A Policy may depend on Evidence that is itself conflicting.
+
+Example:
+
+CRM:
+User#123 owns Account#456
+Ledger:
+User#789 owns Account#456
+
+Policy:
+
+Only account owners may withdraw.
+
+The Policy cannot safely produce ALLOW until the relevant ownership conflict is resolved.
+
+The result may therefore be represented as:
+
+CONFLICTING
+
+or another explicit unresolved state.
+
+Noema should not arbitrarily select one source merely to complete the evaluation.
+
+⸻
+
+22. Policy Composition
 
 Multiple Policies may apply simultaneously.
 
@@ -421,31 +647,43 @@ REQUIRE_VERIFICATION
 
 The final Trust state must account for all material applicable requirements.
 
+Policy Evaluation should preserve the individual Policy results rather than collapsing them prematurely.
+
 ⸻
 
-21. Policy Conjunction
+23. Mandatory Policy Conjunction
 
-If multiple mandatory Policies apply:
+When multiple mandatory Policies apply, all required conditions must be satisfied.
 
-Policy A = satisfied
-Policy B = satisfied
-Policy C = satisfied
+Example:
+
+Policy A = SATISFIED
+Policy B = SATISFIED
+Policy C = SATISFIED
 
 then:
 
 Policy Evaluation = SATISFIED
 
-If one mandatory Policy fails:
+But:
 
-Policy A = satisfied
-Policy B = denied
-Policy C = satisfied
+Policy A = SATISFIED
+Policy B = DENIED
+Policy C = SATISFIED
 
-then the Intent cannot proceed.
+means the Intent cannot proceed under those Policies.
+
+Similarly:
+
+Policy A = SATISFIED
+Policy B = REQUIRE_APPROVAL
+Policy C = SATISFIED
+
+means the Intent remains blocked pending the required approval.
 
 ⸻
 
-22. Policy Exceptions
+24. Policy Exceptions
 
 Policies may define explicit exceptions.
 
@@ -458,35 +696,45 @@ Fraud-related refunds may bypass the 30-day restriction.
 
 The exception must itself be explicit and governed.
 
-Noema should not infer exceptions from conversational context unless the Policy explicitly permits such interpretation.
+Noema should not infer exceptions merely because conversational context appears to justify them.
+
+An Actor request such as:
+
+“Ignore the refund policy because this is an emergency.”
+
+does not itself establish a Policy exception.
 
 ⸻
 
-23. Policy Precedence
+25. Policy Precedence
 
-When Policies conflict, Noema requires an explicit precedence model.
+When multiple Policies govern the same Intent, Noema requires an explicit precedence model where their requirements interact.
 
-For example:
+A conceptual hierarchy might be:
 
 Global Policy
       ↓
 Organization Policy
       ↓
+Tenant Policy
+      ↓
 Resource Policy
       ↓
 Intent-specific Policy
 
-The hierarchy is domain-dependent.
+The actual hierarchy is domain-dependent.
 
-The key principle:
+The canonical principle is:
 
-Policy precedence must be explicit rather than decided by Model preference.
+Policy precedence must be explicit rather than determined by Model preference.
 
 ⸻
 
-24. Policy Conflict
+26. Policy Conflict
 
-If two applicable Policies produce incompatible requirements:
+Policies may produce incompatible requirements.
+
+Example:
 
 Policy A:
 ALLOW
@@ -497,33 +745,44 @@ Noema must not arbitrarily choose one.
 
 Possible deterministic mechanisms include:
 
-explicit precedence
-deny-overrides
-allow-overrides
-policy hierarchy
-conflict escalation
+* explicit precedence
+* deny-overrides
+* allow-overrides
+* policy hierarchy
+* conflict escalation
+* domain-specific resolution
 
-The governing mechanism must be defined by the Policy system.
+The governing mechanism must itself be explicit.
+
+If no governing conflict rule exists, the appropriate state may be:
+
+UNRESOLVED
+
+rather than an arbitrary decision.
 
 ⸻
 
-25. Deny-by-Default
+27. Deny-by-Default for Consequential Operations
 
 For consequential operations:
 
-If a required Policy cannot be established as satisfied, Noema should not assume that the Intent is permitted.
+If a required Policy condition cannot be established as satisfied, Noema should not assume that the Intent is permitted.
 
 Conceptually:
 
-Unknown
-  ↓
-Not allowed to execute
+Required condition
+      ↓
+UNKNOWN
+      ↓
+NOT EXECUTABLE
 
-This follows directly from Noema’s deterministic Trust principle.
+This does not mean every unknown Policy must globally become DENY.
+
+It means uncertainty must not silently become permission for a consequential execution.
 
 ⸻
 
-26. Policy Conditions
+28. Policy Conditions
 
 Policies should be expressible in terms of canonical concepts.
 
@@ -536,11 +795,13 @@ AND
 THEN
     SecondaryApprovalRequired
 
-The Policy operates on structured Intent properties.
+The Policy operates on structured semantic properties of the Intent and its relevant context.
 
 ⸻
 
-27. Policy Conditions Must Be Typed
+29. Policy Conditions Must Be Typed
+
+Policy conditions should use typed values where possible.
 
 Prefer:
 
@@ -552,9 +813,23 @@ over:
 
 Typed conditions reduce semantic ambiguity and improve deterministic evaluation.
 
+Other typed values may include:
+
+* currency
+* duration
+* timestamp
+* Actor
+* Resource
+* Resource type
+* jurisdiction
+* environment
+* role
+* risk level
+* status
+
 ⸻
 
-28. Policy Parameters
+30. Policy Parameters
 
 Policies may contain parameters.
 
@@ -563,15 +838,17 @@ Example:
 max_transfer_amount = ₦5,000,000
 approval_threshold = ₦10,000,000
 
-Policy evaluation should resolve parameters from authoritative configuration.
+Policy parameters should come from an authoritative configuration mechanism.
+
+They should not be silently invented or modified by Model output.
 
 ⸻
 
-29. Policy Versioning
+31. Policy Versioning
 
-Policies change.
+Policies change over time.
 
-Therefore Policy Evaluation should identify which Policy version was used.
+Therefore a material Policy Evaluation should identify the Policy version used.
 
 Example:
 
@@ -581,13 +858,21 @@ rather than merely:
 
 refund-policy
 
-This makes decisions auditable and reproducible.
+This supports:
+
+* auditability
+* reproducibility
+* historical analysis
+* debugging
+* deterministic re-evaluation
+
+A Policy version is part of the semantic basis of the decision.
 
 ⸻
 
-30. Policy Activation
+32. Policy Activation
 
-A Policy may have an effective time.
+Policies may have an effective time.
 
 Example:
 
@@ -598,75 +883,83 @@ Before that time:
 
 v1
 
-After:
+After that time:
 
 v2
 
-Time must therefore be treated as an explicit evaluation input where relevant.
+Time must therefore be treated as an explicit evaluation input when Policy validity depends on it.
 
 ⸻
 
-31. Policy Expiration
+33. Policy Expiration
 
-Policies may also expire.
+Policies may expire.
 
 Example:
 
-Promotional refund policy:
-valid until 2026-12-31
+PromotionalRefundPolicy:
+valid_until = 2026-12-31
 
-After expiration, it must not silently remain applicable.
+After expiration, the Policy must not silently remain applicable.
+
+The applicable Policy set must be determined using the relevant evaluation time.
 
 ⸻
 
-32. Policy Scope
+34. Policy Scope
 
-Policies should explicitly define scope where relevant.
+Policies should explicitly define their scope where relevant.
 
-Examples:
+Possible scopes include:
 
-Tenant
-Organization
-Region
-Resource
-Resource type
-Actor class
-Action
+* Tenant
+* Organization
+* Region
+* Jurisdiction
+* Resource
+* Resource type
+* Actor class
+* Action
+* Environment
+* Channel
 
-A policy applying to:
+A Policy applying to:
 
 Tenant#A
 
-should not automatically govern:
+must not automatically govern:
 
 Tenant#B
 
 ⸻
 
-33. Policy Context
+35. Policy Context
 
-Policy evaluation may depend on Context.
+Policy Evaluation may depend on Context.
 
-Examples:
+Examples include:
 
-time
-location
-environment
-transaction channel
-device trust
-risk level
-business state
-incident status
+* time
+* location
+* environment
+* transaction channel
+* device trust
+* risk level
+* business state
+* incident status
 
 Example:
 
+Policy:
 Production deployments are prohibited during incident freeze.
+Context:
+IncidentFreeze = ACTIVE
 
-The current incident state becomes an evaluation input.
+The current Context becomes an input to Policy Evaluation.
 
 ⸻
 
-34. Policy and Context Changes
+36. Policy and Context Changes
 
 If relevant Context changes before execution, the Policy result may change.
 
@@ -685,11 +978,13 @@ DENY
 
 This remains deterministic because the evaluation input changed.
 
+The previous result does not automatically remain valid merely because it was previously ALLOW.
+
 ⸻
 
-35. Policy and Evidence
+37. Policy and Evidence
 
-Policy Evaluation depends on evidence.
+Policy Evaluation depends on Evidence when Policy conditions concern facts external to the Policy itself.
 
 Example:
 
@@ -698,19 +993,23 @@ Only account owners may transfer funds.
 Evidence:
 User#123 owns Account#456.
 
-The Policy can then be evaluated.
+The Policy can then evaluate the condition.
 
-Without the evidence:
+Without that Evidence:
 
-Ownership = unknown
+Ownership = UNKNOWN
 
 there is insufficient basis for an ALLOW decision.
 
+Evidence establishes the relevant fact.
+
+Policy determines what that fact means under the governing rule.
+
 ⸻
 
-36. Policy and Authorization
+38. Policy and Authorization
 
-Authorization and Policy may both consume the same evidence.
+Authorization and Policy may consume the same Evidence while answering different questions.
 
 Example:
 
@@ -725,15 +1024,13 @@ Policy:
 
 Expenses above ₦10M require FinanceManager approval.
 
-Same evidence.
-
-Different semantic roles.
+The same Evidence supports different semantic evaluations.
 
 ⸻
 
-37. Policy and Capability
+39. Policy and Capability
 
-A Policy may restrict use of a Capability.
+A Policy may constrain use of an available Capability.
 
 Example:
 
@@ -744,123 +1041,141 @@ DeleteUser may only be used in non-production environments.
 
 The Capability exists.
 
-The Policy constrains when it may be exercised.
+The Policy determines when that Capability may be exercised.
 
 ⸻
 
-38. Policy and Constraints
+40. Policy and Constraints
 
-A Policy may impose Constraints.
+A Policy may impose a Constraint.
 
 Example:
 
 Policy:
 Transfers above ₦5M require approval.
 
-The resulting constraint may be:
+The resulting Policy requirement may be represented as:
 
 ApprovalRequired = true
 
-This should remain traceable to the governing Policy.
+The resulting condition should remain traceable to the governing Policy.
 
 ⸻
 
-39. Policy and Risk
+41. Policy and Risk
 
-Policy requirements may vary with Risk.
+Policy requirements may vary according to Risk.
 
 Example:
 
 Risk:
-High
+HIGH
 Policy:
 High-risk actions require explicit confirmation.
 
-Risk assessment may therefore become an input to Policy Evaluation.
+Risk may therefore become an input to Policy Evaluation.
+
+Conversely, Policy may itself define conditions that contribute to Risk.
+
+The two concepts should remain semantically distinct even where they interact.
 
 ⸻
 
-40. Policy and Intent Composition
+42. Policy and Intent Composition
 
 Composite Intents may trigger multiple Policies.
 
 Example:
 
-"Refund the payment and close the account."
+RefundPayment(Payment#123)
+AND
+CloseAccount(Account#456)
 
-Policies:
+Applicable Policies may include:
 
 RefundPolicy
 AccountClosurePolicy
 
 Each child Intent should be evaluated against its applicable Policies.
 
+Evidence sufficient for one child Intent does not automatically satisfy the Policies of another.
+
 ⸻
 
-41. Policy Dependencies
+43. Policy Dependencies
 
-Some Policies depend on other decisions.
+Some Policies depend on other conditions or decisions.
 
 Example:
 
 Policy A:
 Only verified users may transfer funds.
 Policy B:
-Users requesting international transfers must complete verification.
+International transfers require verification.
 
-Policy Evaluation may therefore produce a dependency chain:
+A dependency chain may therefore exist:
 
 Verification
-    ↓
+      ↓
 Policy B satisfied
-    ↓
-Transfer permitted
+      ↓
+Transfer Policy satisfied
 
 Dependencies should be explicit.
 
+Noema should not rely on an implicit reasoning chain hidden inside Model output.
+
 ⸻
 
-42. Policy Preconditions
+44. Policy Preconditions
 
-A Policy may require preconditions.
+A Policy may define preconditions.
 
 Example:
 
 To refund:
-Order.status = paid
+Order.status = PAID
 
 If:
 
-Order.status = pending
+Order.status = PENDING
 
-the Policy fails.
+the condition fails.
 
 If:
 
-Order.status = unknown
+Order.status = UNKNOWN
 
-the Policy is unresolved.
+the Policy may be unresolved.
+
+The distinction is important:
+
+FALSE
+
+is not the same as:
+
+UNKNOWN
 
 ⸻
 
-43. Policy Postconditions
+45. Policy Postconditions
 
-Policies may also define conditions that must hold after execution.
+Policies may also define conditions expected after execution.
 
 Example:
 
 After AccountClosure:
-Account must be inactive.
+Account.status = INACTIVE
 
 Postconditions are useful for validating execution outcomes.
 
-They are distinct from pre-execution Trust decisions.
+They are distinct from pre-execution Policy conditions and do not themselves prove that execution succeeded.
 
 ⸻
 
-44. Policy vs Outcome
+46. Policy vs Execution Outcome
 
-Policy Evaluation predicts whether an Intent may proceed.
+Policy Evaluation predicts whether an Intent may proceed under applicable rules.
 
 Execution determines what actually happened.
 
@@ -877,9 +1192,20 @@ FAILED.
 
 Policy satisfaction does not guarantee the intended Outcome.
 
+Similarly:
+
+Policy:
+ALLOW.
+Execution:
+SUCCESS.
+
+does not mean the Policy caused the successful outcome.
+
+The semantic layers remain distinct.
+
 ⸻
 
-45. Policy Evaluation and Execution
+47. Policy Evaluation and Execution
 
 The typical sequence is:
 
@@ -892,12 +1218,16 @@ Trust
 Create Execution Contract
   ↓
 Execute
+  ↓
+Observe Outcome
 
-The executor should not reinterpret Policy.
+The execution consumer should receive the established Policy requirements.
+
+It should not reinterpret Policy from the original natural-language request.
 
 ⸻
 
-46. Policy Enforcement
+48. Policy Enforcement
 
 A Policy Evaluation result must be enforceable.
 
@@ -911,29 +1241,43 @@ If:
 
 Policy = REQUIRE_APPROVAL
 
-execution should remain blocked until the required evidence exists.
+execution should remain blocked until the required condition is satisfied.
+
+If:
+
+Policy = REQUIRE_VERIFICATION
+
+the execution path must not treat ordinary authorization as sufficient.
+
+Policy Evaluation therefore produces requirements that must be respected at the execution boundary.
 
 ⸻
 
-47. Policy Decision vs Policy Enforcement
+49. Policy Decision vs Policy Enforcement
 
-These should remain conceptually distinct.
+These concepts remain distinct.
 
 Evaluation
 
-What does the Policy require?
+Determines:
+
+“What does the Policy require?”
 
 Enforcement
 
-Ensure the requirement is actually respected.
+Ensures:
 
-Noema may perform evaluation while the execution consumer participates in enforcement.
+“Is that requirement actually respected?”
+
+Noema may perform Policy Evaluation while an execution consumer participates in enforcement.
+
+The execution consumer must not reinterpret the Policy.
 
 ⸻
 
-48. Policy Evaluation and Consumer-Side Execution
+50. Policy Evaluation and Consumer-Side Execution
 
-The execution contract should communicate Policy requirements explicitly.
+An Execution Contract may communicate Policy requirements explicitly.
 
 Example:
 
@@ -944,20 +1288,25 @@ ExecutionContract {
     required_approvals: 2
 }
 
-The consumer should not need to rediscover the Policy from natural language.
+The consumer should not need to rediscover the governing Policy from natural language.
+
+Policy requirements should cross the execution boundary as structured semantics.
 
 ⸻
 
-49. Policy Decision Provenance
+51. Policy Decision Provenance
 
-A Policy result should be traceable to:
+A material Policy result should be traceable to:
 
-Policy
-Policy version
-Policy scope
-Conditions
-Evidence
-Evaluation result
+* Policy identity
+* Policy version
+* Policy scope
+* Applicability conditions
+* Policy conditions
+* Evidence references
+* Evaluation context
+* Evaluation time
+* Evaluation result
 
 Example:
 
@@ -970,60 +1319,72 @@ amount = ₦20M
 Result:
 REQUIRE_APPROVAL
 
+The provenance chain should allow a later reviewer to understand why the Policy produced that result.
+
 ⸻
 
-50. Policy Evaluation Must Be Explainable
+52. Policy Evaluation Must Be Explainable
 
 A useful explanation should answer:
 
-Which Policy applied?
-Why did it apply?
-Which conditions were evaluated?
-Which conditions were satisfied?
-Which failed?
-What must happen next?
+* Which Policy applied?
+* Why did it apply?
+* Which version was used?
+* Which conditions were evaluated?
+* Which conditions were satisfied?
+* Which conditions failed?
+* What evidence supported those conditions?
+* What must happen next?
 
 Example:
 
 “This transfer requires secondary approval because the amount exceeds the ₦10,000,000 approval threshold.”
 
+The explanation should derive from the structured Policy evaluation.
+
 ⸻
 
-51. Policy Explanation Must Not Require Model Reasoning
+53. Policy Explanation Must Not Depend on Model Reasoning
 
-The explanation should come from structured Policy evaluation data.
-
-It should not require:
+The system should not require:
 
 "Ask the Model why it decided this."
 
-The Policy Engine already knows:
+The Policy Evaluation mechanism should already know:
 
-policy
-condition
-evidence
-result
+Policy
+Condition
+Evidence
+Scope
+Version
+Result
+Requirement
+
+A Model may render the explanation into natural language, but it should not be the authoritative source of the explanation.
 
 ⸻
 
-52. Policy Evaluation and Determinism
+54. Policy Evaluation and Determinism
 
 Policy Evaluation is one of the strongest deterministic components of Noema.
+
+Conceptually:
 
 Intent
 + Evidence
 + Applicable Policy Version
++ Scope
 + Context
         ↓
 Deterministic Evaluation
         ↓
 Policy Result
 
-The same inputs should produce the same result.
+Given the same material inputs and evaluation semantics, the same Policy result should be produced.
 
 ⸻
 
-53. Policy Evaluation and Ambiguity
+55. Policy Evaluation and Ambiguity
 
 If a Policy-relevant value is ambiguous, Policy Evaluation cannot safely complete.
 
@@ -1034,24 +1395,24 @@ Transfers > ₦10M require approval.
 Intent:
 "Transfer a large amount."
 
-Amount unresolved.
+Amount is unresolved.
 
 Result:
 
 UNRESOLVED
 
-The system should clarify before making a final Trust decision.
+Noema should resolve the ambiguity before making a final Trust decision.
 
 ⸻
 
-54. Policy Evaluation and Missing Evidence
+56. Policy Evaluation and Missing Evidence
 
 Example:
 
 Policy:
 Only account owners may withdraw.
 Evidence:
-Account owner unknown.
+Account owner = UNKNOWN.
 
 Result:
 
@@ -1061,9 +1422,11 @@ not:
 
 ALLOW
 
+Noema should retrieve appropriate Evidence or request clarification where possible.
+
 ⸻
 
-55. Policy Evaluation and Conflicting Evidence
+57. Policy Evaluation and Conflicting Evidence
 
 Example:
 
@@ -1072,43 +1435,42 @@ User#123 owns Account#456
 Ledger:
 User#789 owns Account#456
 
-The Policy:
+Policy:
 
 Only owners may withdraw.
 
-cannot be deterministically evaluated until ownership is reconciled.
+The Policy cannot be deterministically evaluated until the material conflict is resolved.
 
-Result:
-
-CONFLICTING_EVIDENCE
-
-or equivalent unresolved state.
+The result should therefore preserve the unresolved condition rather than selecting a source arbitrarily.
 
 ⸻
 
-56. Policy Evaluation and Natural Language Policies
+58. Policy Evaluation and Natural-Language Policies
 
 Natural-language Policy definitions may be useful for humans.
 
 However, consequential Policy Evaluation should ultimately operate over structured semantics.
 
-For example:
+Human Policy:
 
-Human policy:
-"Large transfers should receive additional approval."
+“Large transfers should receive additional approval.”
 
-should be formalized into something like:
+should be formalized into something conceptually like:
 
-IF amount > threshold
-THEN approval_required
+IF
+    amount > threshold
+THEN
+    approval_required
 
 The exact Policy language may evolve.
 
-The canonical requirement is machine-evaluable semantics.
+The canonical requirement is:
+
+Consequential Policies must have machine-evaluable semantics.
 
 ⸻
 
-57. Policy Language
+59. Policy Language
 
 Noema may eventually define or adopt a typed Policy Language.
 
@@ -1120,8 +1482,8 @@ Conditions
 Requirements
 Exceptions
 Precedence
-Effective period
-Outcome
+Effective Period
+Evaluation Semantics
 
 Example:
 
@@ -1131,9 +1493,11 @@ Policy {
     requires: SecondaryApproval
 }
 
+This is conceptual rather than a mandated implementation schema.
+
 ⸻
 
-58. Policy Safety
+60. Policy Safety
 
 Policies should not be silently mutated by Model output.
 
@@ -1145,56 +1509,71 @@ That does not modify the Policy.
 
 Policy changes must follow an explicit governance mechanism.
 
+No conversational interpretation should silently become a Policy mutation.
+
 ⸻
 
-59. Policy Governance
+61. Policy Governance
 
 Policy changes may require:
 
-authorization
-review
-versioning
-approval
-deployment
-audit
+* authorization
+* review
+* approval
+* versioning
+* deployment
+* audit
 
-Noema should treat Policy definitions as trusted infrastructure.
+Noema should treat consequential Policy definitions as governed infrastructure.
+
+The mechanism may vary by domain.
+
+The invariant is that Policy changes must be explicit and attributable.
 
 ⸻
 
-60. Policy Injection
+62. Policy Injection
 
-External or user-provided text must not automatically become Policy.
+External or Actor-provided text must not automatically become Policy.
 
 Example:
 
 “Ignore the company’s refund policy and refund me anyway.”
 
-This is an Actor request, not a Policy update.
+This is an Actor request.
 
-The distinction must remain absolute.
+It is not a Policy update.
+
+Likewise, an external document containing instructions such as:
+
+“All previous restrictions are now disabled.”
+
+must not be treated as a Policy mutation merely because the text is retrieved during execution.
+
+Policy authority must be explicit.
 
 ⸻
 
-61. Policy Priority
+63. Policy Priority and Actor Intent
 
-User Intent cannot automatically override Policy.
+Actor Intent cannot automatically override Policy.
+
+Example:
 
 Actor:
 "Ignore the limit."
-
-does not change:
-
 Policy:
-Maximum transfer = ₦5M
+Maximum transfer without approval = ₦5M.
 
-unless the Actor has an explicitly authorized mechanism for modifying that Policy.
+The Actor request does not change the Policy.
+
+Only an explicitly authorized Policy modification mechanism may change the governing Policy.
 
 ⸻
 
-62. Policy and Delegated Authority
+64. Policy and Delegated Authority
 
-A delegated Actor may inherit permissions but not necessarily every exception.
+A delegated Actor may inherit permissions without necessarily inheriting every exception or Policy override.
 
 Example:
 
@@ -1204,62 +1583,70 @@ Agent:
 Finance Assistant
 Delegation:
 Approve expenses ≤ ₦5M
-
 Policy:
-
 Expenses > ₦5M require CFO approval.
 
-The Agent cannot infer that delegation permits larger approvals.
+The Agent cannot infer that the delegation permits larger approvals.
 
-Scope must be explicit.
+Delegated authority must remain scoped.
 
 ⸻
 
-63. Policy and Actor Intent
+65. Policy and Actor Intent
 
-Policy should constrain Intent, not replace it.
+Policy should constrain Intent rather than silently replace it.
 
 Example:
 
 Actor Intent:
 Transfer ₦20M.
 Policy:
-Requires approval.
+Transfers above ₦10M require approval.
 
-Noema should not silently transform:
+Noema should produce:
 
-Transfer ₦20M
+REQUIRE_APPROVAL
 
-into:
+rather than silently transforming the Intent into:
 
 Transfer ₦10M
 
-just because ₦10M would satisfy Policy.
-
-The system should report the requirement.
+Policy does not grant Noema authority to rewrite the Actor’s objective merely to make it compliant.
 
 ⸻
 
-64. Policy and Intent Modification
+66. Policy and Intent Modification
 
-If Policy requires modification:
+If Policy requires modification of the Intent, the modification must remain explicit.
+
+Example:
 
 Actor:
 "Transfer ₦20M."
 Policy:
 Maximum without approval = ₦10M.
 
-Noema should produce:
+Noema should not silently change:
+
+₦20M
+
+to:
+
+₦10M
+
+Instead:
 
 REQUIRE_APPROVAL
 
-rather than silently changing the amount.
+or an explicit clarification should occur.
+
+If the Actor later changes the amount, that creates a new Intent version.
 
 ⸻
 
-65. Policy and Clarification
+67. Policy and Clarification
 
-Policy Evaluation may produce a clarification requirement.
+Policy Evaluation may reveal that an Intent lacks a Policy-relevant parameter.
 
 Example:
 
@@ -1274,9 +1661,11 @@ Noema should clarify:
 
 “Which country is the destination?”
 
+The resulting Actor response becomes additional Evidence or Intent information and may produce a new resolved Intent version.
+
 ⸻
 
-66. Policy Evaluation and Trust State
+68. Policy Evaluation and Trust State
 
 Policy results contribute to Trust.
 
@@ -1287,6 +1676,7 @@ Policy = ALLOW
 Capability = AVAILABLE
 Constraints = SATISFIED
 Evidence = SUFFICIENT
+Risk = ACCEPTABLE
         ↓
 Trust = ALLOW
 
@@ -1299,69 +1689,134 @@ means:
 
 Trust = NOT_EXECUTABLE_YET
 
+Policy Evaluation therefore contributes to Trust but does not replace the Trust Engine.
+
 ⸻
 
-67. Policy Evaluation Is Not the Entire Trust Decision
+69. Policy Evaluation Is Not the Entire Trust Decision
 
-This distinction is important.
+An Intent can satisfy every Policy and still fail the overall Trust decision because:
+
+* authorization is denied
+* capability is unavailable
+* evidence is insufficient
+* a constraint is violated
+* risk requirements are not satisfied
+* required confirmation is absent
+* execution prerequisites are missing
+
+Therefore:
 
 Policy Evaluation
-        ↓
+      ↓
 Policy Result
-        ↓
+      ↓
 Trust Engine
-        ↓
+      ↓
 Final Trust Decision
 
-An Intent can satisfy every Policy but still fail because:
-
-authorization denied
-capability unavailable
-evidence insufficient
-constraint violated
-risk threshold exceeded
+Policy Evaluation answers only its own semantic question.
 
 ⸻
 
-68. Policy Result Algebra
+70. Policy Result Composition
 
-Conceptually, Policy results can be treated as states with ordering:
+A composite Intent may produce multiple Policy results.
 
+Example:
+
+Child Intent A:
+RefundPayment
+Policy:
+ALLOW
+Child Intent B:
+CloseAccount
+Policy:
+REQUIRE_CONFIRMATION
+
+The composite Intent cannot be treated as fully executable merely because one child Intent is allowed.
+
+The Trust Engine must account for all material child Policy results.
+
+⸻
+
+71. Policy Result State Model
+
+Conceptually, Policy results may be understood as distinct semantic states:
+
+NOT_APPLICABLE
+      ↓
 SATISFIED
+      ↓
 REQUIRES_CONDITION
+      ↓
 UNRESOLVED
+      ↓
 DENIED
 
-The exact model is implementation-specific.
+This is not necessarily a strict implementation ordering.
 
-But the Trust Engine must understand the difference between:
+The important distinction is between:
 
-not applicable
-satisfied
-not yet satisfied
-impossible
-unknown
+* not applicable
+* satisfied
+* conditionally blocked
+* unresolved
+* conflicting
+* denied
 
-⸻
-
-69. Policy Evaluation and Re-Evaluation
-
-Policies may need re-evaluation when:
-
-Intent changes
-Actor changes
-Resource changes
-Context changes
-Evidence expires
-Policy version changes
-Approval state changes
-Execution is delayed
-
-A Policy result should therefore be associated with the Intent version and relevant evaluation inputs.
+These states should not be collapsed.
 
 ⸻
 
-70. Policy Evaluation and Long-Running Workflows
+72. Policy Evaluation and Re-Evaluation
+
+Policies may need re-evaluation when material inputs change.
+
+Relevant changes include:
+
+* Intent changes
+* Intent version changes
+* Actor state changes
+* Resource state changes
+* Evidence changes
+* Evidence expiration
+* Policy version changes
+* Policy scope changes
+* Context changes
+* Approval state changes
+* Risk state changes
+* Execution delay
+
+A Policy result should therefore be associated with the material evaluation inputs on which it depends.
+
+⸻
+
+73. Policy Evaluation and Intent Versioning
+
+If the Intent changes materially, the prior Policy result should not automatically be reused.
+
+Example:
+
+Intent v1:
+Transfer ₦5M.
+Policy:
+ALLOW.
+
+Actor changes the Intent:
+
+Intent v2:
+Transfer ₦20M.
+
+The Policy must be evaluated against Intent v2.
+
+The Policy result for v1 is not automatically valid for v2.
+
+⸻
+
+74. Policy Evaluation and Long-Running Workflows
+
+An Intent may remain active for hours or days.
 
 Example:
 
@@ -1372,44 +1827,82 @@ Security freeze activated.
 Day 3:
 Deployment executes.
 
-The original approval may no longer be sufficient.
+The Policy environment has changed.
 
-Noema may require Policy re-evaluation immediately before execution.
+Noema may therefore require Policy re-evaluation immediately before execution.
+
+This is particularly important for consequential Actions.
 
 ⸻
 
-71. Policy Evaluation and Caching
+75. Policy Evaluation at Execution Time
+
+For high-impact Actions:
+
+Intent Resolved
+      ↓
+Policy Evaluated
+      ↓
+Trust Granted
+      ↓
+Execution Delayed
+      ↓
+Relevant State Changes
+      ↓
+Policy Re-Evaluation
+      ↓
+Final Trust
+      ↓
+Execution
+
+The Policy result at resolution time is not necessarily sufficient at execution time.
+
+The required freshness depends on the consequence and materiality of the Policy conditions.
+
+⸻
+
+76. Policy Evaluation and Caching
 
 Policy results may be cached where safe.
 
-However, cache validity must account for:
+However, cache validity must account for relevant inputs such as:
 
-Policy version
-Intent version
-Actor state
-Resource state
-Context
-Evidence freshness
+* Policy version
+* Policy scope
+* Intent version
+* Actor state
+* Resource state
+* Context
+* Evidence freshness
+* Approval state
+* Risk state
+* evaluation time
 
-A stale Policy decision must not be reused simply because it is convenient.
+A stale Policy result must not authorize execution merely because it is convenient to reuse.
 
 ⸻
 
-72. Policy Evaluation and Idempotency
+77. Policy Evaluation and Idempotency
 
-Policy evaluation itself should be safe to repeat.
+Policy Evaluation itself should be safe to repeat.
 
 Evaluating:
 
 Intent#123
 
-twice should not change the Policy state merely because evaluation happened twice.
+twice should not alter Policy state merely because evaluation happened twice.
 
-The Policy Engine should be side-effect free where practical.
+Where practical:
+
+Policy Evaluation
+
+should be side-effect free.
+
+Side effects belong to explicit Actions and execution.
 
 ⸻
 
-73. Policy Evaluation Should Prefer Pure Functions
+78. Policy Evaluation Should Prefer Pure Semantics
 
 A strong architectural model is:
 
@@ -1425,76 +1918,133 @@ Policy Evaluation
   ↓
 hidden side effects
 
-Side effects belong to explicit Actions and execution.
+This makes Policy Evaluation:
+
+* deterministic
+* testable
+* reproducible
+* auditable
+* repeatable
+
+External state may still need to be retrieved, but retrieval should support the evaluation rather than hide execution side effects inside it.
 
 ⸻
 
-74. Policy Evaluation and External Calls
+79. Policy Evaluation and External Calls
 
-Policy Evaluation may need external state.
-
-Those calls should retrieve evidence rather than allow arbitrary external systems to implicitly decide the Policy.
+Policy Evaluation may need authoritative external state.
 
 For example:
 
 Policy Engine
-    ↓
+      ↓
 Authorization Service
-    ↓
+      ↓
 Evidence
-    ↓
+      ↓
 Policy Evaluation
 
-rather than:
+The external service provides evidence or an explicitly defined semantic result.
+
+Noema should avoid a structure where:
 
 Policy Engine
-    ↓
-"Authorization service said yes"
-    ↓
-execute
+      ↓
+"External service said yes."
+      ↓
+Execute
 
-without understanding the underlying decision semantics.
+without preserving what the external assertion establishes, its provenance, scope, validity, and applicability.
 
 ⸻
 
-75. Policy Evaluation and Failure
+80. Policy Evaluation and Failure
 
-If the Policy Engine cannot retrieve required authoritative state:
+If the Policy Evaluation process cannot retrieve required authoritative state:
 
-Policy:
-unknown
+Required Policy input:
+UNKNOWN
 
-The correct result for a consequential Action is generally:
+then the consequential Action should generally remain:
 
-UNRESOLVED / NOT_EXECUTABLE
+UNRESOLVED
 
-not:
+or:
+
+NOT_EXECUTABLE
+
+rather than silently becoming:
 
 ALLOW
 
+Infrastructure failure is not Policy satisfaction.
+
 ⸻
 
-76. Policy Availability vs Policy Result
+81. Policy Availability vs Policy Result
 
-These are different:
+These are different conditions.
 
-Policy:
-not applicable
-
-versus:
+Policy Not Applicable
 
 Policy:
-could not be evaluated because the Policy service is unavailable.
+International transfer verification.
+Intent:
+Domestic transfer.
+Result:
+NOT_APPLICABLE
 
-The first is a valid semantic result.
+Policy Cannot Be Evaluated
 
-The second is an infrastructure failure.
+Policy:
+International transfer verification.
+Required policy service:
+UNAVAILABLE
+Result:
+UNRESOLVED / EVALUATION_FAILURE
+
+The first is a valid semantic Policy result.
+
+The second is an inability to complete evaluation.
 
 Noema should not confuse them.
 
 ⸻
 
-77. Policy Evaluation and Observability
+82. Policy Evaluation and Infrastructure Failure
+
+Policy Evaluation may depend on:
+
+* Policy Registry
+* Configuration Store
+* Authorization Service
+* Business State
+* Identity Provider
+* Risk Service
+* Evidence Sources
+
+Failure to retrieve required information should be represented as an explicit evaluation condition.
+
+Noema should not convert:
+
+service unavailable
+
+into:
+
+condition satisfied
+
+The system must distinguish:
+
+FALSE
+UNKNOWN
+UNAVAILABLE
+NOT_APPLICABLE
+
+where those distinctions materially affect Trust.
+
+⸻
+
+83. Policy Evaluation and Observability
 
 Policy evaluations should be observable.
 
@@ -1502,66 +2052,583 @@ Useful metadata includes:
 
 policy_id
 policy_version
+policy_scope
 intent_id
+intent_version
 evaluation_id
+evaluation_time
 result
 conditions
-evidence references
-timestamp
-scope
+evidence_references
+context
 
-This enables audit and debugging.
+This enables:
+
+* audit
+* debugging
+* reproducibility
+* operational analysis
+* Trust reconstruction
 
 ⸻
 
-78. Policy Evaluation and Audit
+84. Policy Evaluation and Audit
 
 A future auditor should be able to determine:
 
-What Policy applied?
-Which version?
-What was the Intent?
-What evidence was used?
-What conditions were evaluated?
-What was the result?
+* What Policy applied?
+* Which version?
+* What was the Intent?
+* Which scope applied?
+* What Evidence was used?
+* What conditions were evaluated?
+* What Context was relevant?
+* What was the result?
+* What requirements remained?
+* Was the Policy re-evaluated before execution?
 
 This is part of trustworthy execution.
 
 ⸻
 
-79. Canonical Policy Evaluation Flow
+85. Policy Evaluation and Reproducibility
 
-              Resolved Intent
-                    │
-                    ▼
-            Determine Scope
-                    │
-                    ▼
-          Find Applicable Policies
-                    │
-                    ▼
-          Load Policy Versions
-                    │
-                    ▼
-          Gather Required Evidence
-                    │
-                    ▼
-             Evaluate Conditions
-                    │
-          ┌─────────┼─────────┐
-          │         │         │
-        Satisfied  Blocked   Unknown
-          │         │         │
-          ▼         ▼         ▼
-        ALLOW      DENY     Resolve /
-                            Clarify
-          │
-          ▼
-       Trust Engine
+A Policy decision can only be meaningfully reproduced if the material evaluation basis can be reconstructed.
+
+Therefore:
+
+Policy Decision
+      ↓
+Policy Reference
+      ↓
+Policy Version
+      ↓
+Intent Version
+      ↓
+Evidence References
+      ↓
+Relevant Context
+
+should be preserved where practical.
+
+The goal is not necessarily to duplicate every external source record.
+
+The goal is to preserve enough provenance to understand what the Policy Engine evaluated.
 
 ⸻
 
-80. Canonical Invariants
+86. Policy Evaluation and Evidence Freshness
+
+Evidence used by Policy Evaluation may become stale.
+
+Example:
+
+09:00:
+User is Administrator.
+10:00:
+Role revoked.
+10:30:
+Policy Evaluation occurs.
+
+Evidence from 09:00 should not automatically establish current authority.
+
+Policy Evaluation must respect the freshness and validity requirements of the underlying Evidence.
+
+⸻
+
+87. Policy Evaluation and Policy Freshness
+
+Policy definitions themselves may change.
+
+Example:
+
+Policy v1:
+Transfers above ₦10M require approval.
+Policy v2:
+Transfers above ₦5M require approval.
+
+An evaluation based on v1 must not silently be represented as an evaluation under v2.
+
+Policy version is therefore part of the decision provenance.
+
+⸻
+
+88. Policy Evaluation and Tenant Isolation
+
+Policy scope must respect tenant boundaries.
+
+A Policy governing:
+
+Tenant#A
+
+must not automatically apply to:
+
+Tenant#B
+
+Likewise, Policy parameters, Evidence, Actor roles, and Resource state from one tenant must not silently satisfy Policy conditions in another tenant.
+
+Tenant isolation is part of Policy applicability and Trust correctness.
+
+⸻
+
+89. Policy Evaluation and Jurisdiction
+
+Where Policies depend on jurisdiction, jurisdiction must be established through appropriate Evidence or Context.
+
+Example:
+
+Policy:
+Transfers involving Jurisdiction#X require additional verification.
+
+Noema must establish the relevant jurisdiction before applying the Policy.
+
+It should not infer a jurisdiction merely from incomplete or ambiguous textual context when the consequence is material.
+
+⸻
+
+90. Policy Evaluation and Business State
+
+Business systems remain authoritative for their own state.
+
+Example:
+
+Business System:
+Order.status = SHIPPED
+
+Policy:
+
+Shipped orders cannot be cancelled.
+
+The Business System provides the Evidence.
+
+The Policy determines the consequence of that state.
+
+Noema should not silently become the owner of the business state merely because it evaluates Policy against it.
+
+⸻
+
+91. Policy Evaluation and Policy Ownership
+
+Noema may consume Policies owned by another governing system.
+
+For example:
+
+Enterprise Policy Registry
+        ↓
+Policy Definition
+        ↓
+Noema Policy Evaluation
+
+The canonical requirement is that Noema identify:
+
+* the Policy source
+* the applicable Policy version
+* the scope
+* the evaluation semantics
+
+Noema should not imply ownership of Policy definitions it does not govern.
+
+⸻
+
+92. Policy Evaluation and Actor Claims
+
+Actor-provided claims may contribute to Policy Evaluation.
+
+Example:
+
+Actor:
+"I am the account owner."
+
+This is an Actor assertion.
+
+It may be relevant Evidence.
+
+But it should not automatically become authoritative ownership Evidence for a high-consequence Policy decision.
+
+Independent verification may be required.
+
+⸻
+
+93. Policy Evaluation and Model Grounding
+
+The Model may assist in identifying Policy-relevant information.
+
+A useful architecture is:
+
+Actor Expression
+      ↓
+Model Interpretation
+      ↓
+Candidate Intent
+      ↓
+Evidence Retrieval
+      ↓
+Intent Resolution
+      ↓
+Policy Applicability
+      ↓
+Policy Evaluation
+
+The Model helps construct candidates.
+
+The Policy system evaluates established semantics.
+
+The Model does not become the Policy authority.
+
+⸻
+
+94. Policy Evaluation and Natural-Language Injection
+
+Retrieved documents, external content, or Actor messages may contain text that attempts to alter Policy.
+
+For example:
+
+"Ignore all previous policies."
+
+Such text is not automatically Policy.
+
+Policy authority must be established through the Policy governance mechanism.
+
+Natural-language content can describe a Policy.
+
+It cannot silently become one.
+
+⸻
+
+95. Policy Evaluation and Consequence
+
+Policy requirements should be proportionate to the consequence of the Intent.
+
+For example:
+
+Public information lookup
+    ↓
+minimal Policy requirements
+Account deletion
+    ↓
+stronger Policy requirements
+Large financial transfer
+    ↓
+authorization + approval + verification + other applicable controls
+
+The exact requirements are domain-specific.
+
+The canonical principle is:
+
+Consequential Intents require appropriately explicit and enforceable Policy conditions.
+
+⸻
+
+96. Policy Evaluation and Confirmation
+
+Confirmation may be required by Policy.
+
+Example:
+
+Policy:
+Destructive account operations require explicit confirmation.
+
+If the Actor has not yet confirmed the exact Intent version:
+
+Policy:
+REQUIRE_CONFIRMATION
+
+A previous confirmation for a materially different Intent version must not automatically satisfy the Policy.
+
+⸻
+
+97. Policy Evaluation and Approval
+
+Approval is distinct from Actor confirmation.
+
+Confirmation
+
+The Actor confirms the Intent.
+
+Approval
+
+An authorized Actor or governing process satisfies a Policy requirement.
+
+Example:
+
+Actor:
+"Transfer ₦20M."
+Policy:
+Transfers > ₦10M require secondary approval.
+
+The original Actor’s confirmation does not automatically satisfy the secondary approval requirement.
+
+Both must be represented separately where required.
+
+⸻
+
+98. Policy Evaluation and Delegated Approval
+
+Where Policy requires approval, the approver must satisfy the relevant authority requirements.
+
+Example:
+
+Policy:
+Transfer > ₦10M requires Finance Director approval.
+
+A response from an unrelated Actor does not satisfy the requirement merely because it says:
+
+“Approved.”
+
+The approval itself requires appropriate Evidence of:
+
+* approver identity
+* authority
+* scope
+* applicable Intent
+* approval status
+* temporal validity
+
+⸻
+
+99. Policy Evaluation and Approval Binding
+
+Approval should be bound to the semantic object being approved.
+
+Example:
+
+Intent v1:
+Transfer ₦20M from Account A to Account B.
+
+Approval:
+
+Approved.
+
+If Noema later changes the Intent to:
+
+Intent v2:
+Transfer ₦20M from Account A to Account C.
+
+the approval for v1 must not automatically authorize v2.
+
+Approval is Evidence about a particular semantic version.
+
+⸻
+
+100. Policy Evaluation and Partial Satisfaction
+
+A Policy may have multiple requirements.
+
+Example:
+
+Policy:
+International transfer requires:
+1. Verified identity
+2. Secondary approval
+3. Destination screening
+
+Current state:
+
+Verified identity = satisfied
+Secondary approval = satisfied
+Destination screening = missing
+
+The Policy is not fully satisfied.
+
+The missing condition should remain explicit.
+
+⸻
+
+101. Policy Evaluation and Partial Resolution
+
+Some Policy-relevant values may be resolved while others remain unresolved.
+
+Example:
+
+Intent:
+Transfer $500 to John.
+Resolved:
+Amount = $500
+Unresolved:
+Destination Account = UNKNOWN
+
+Policy Evaluation may therefore be partially possible but not complete.
+
+Noema should preserve the unresolved component rather than inventing a value.
+
+⸻
+
+102. Policy Evaluation and Clarification Loop
+
+A Policy Evaluation may reveal missing information.
+
+The resulting flow may be:
+
+Resolved Intent
+      ↓
+Policy Evaluation
+      ↓
+Missing Policy Input
+      ↓
+Clarification / Evidence Retrieval
+      ↓
+New Evidence / Intent Information
+      ↓
+Re-resolution if necessary
+      ↓
+Policy Re-evaluation
+
+This loop is valid provided each new semantic state is explicitly represented.
+
+⸻
+
+103. Policy Evaluation and Trust Revalidation
+
+A Trust decision may become invalid when its Policy basis changes.
+
+Example:
+
+Policy:
+ALLOW
+Later:
+Policy version changes.
+Execution:
+not yet started.
+
+Noema may need to re-evaluate the Policy before execution.
+
+Similarly:
+
+Policy:
+ALLOW
+Evidence:
+permission revoked.
+
+The prior Trust state may no longer be executable.
+
+⸻
+
+104. Policy Evaluation and Execution Boundary
+
+The execution boundary is where Noema’s semantic and Trust decisions become permitted external side effects.
+
+Before crossing that boundary, relevant Policy requirements should be:
+
+* satisfied
+* explicitly waived through authorized mechanisms where applicable
+* or represented as conditions that prevent execution
+
+The executor should not independently reinterpret whether the Actor was permitted to proceed.
+
+⸻
+
+105. Policy Evaluation and Outcome
+
+Policy Evaluation concerns whether an Intent may proceed.
+
+Outcome concerns what happened after execution.
+
+These must remain distinct.
+
+Policy:
+ALLOW
+Trust:
+ALLOW
+Execution:
+SUCCESS
+
+is one possible sequence.
+
+Another is:
+
+Policy:
+ALLOW
+Trust:
+ALLOW
+Execution:
+FAILED
+
+The second does not retroactively mean the Policy was DENY.
+
+The execution result belongs to the Outcome layer.
+
+⸻
+
+106. Canonical Policy Evaluation Flow
+
+                    Resolved Intent
+                          │
+                          ▼
+                   Determine Scope
+                          │
+                          ▼
+                Determine Applicability
+                          │
+                          ▼
+                 Identify Policy Versions
+                          │
+                          ▼
+                 Gather Required Evidence
+                          │
+                          ▼
+                  Validate Inputs
+                          │
+                          ▼
+                  Evaluate Conditions
+                          │
+            ┌─────────────┼─────────────┐
+            │             │             │
+            ▼             ▼             ▼
+        Satisfied       Blocked       Unknown
+            │             │             │
+            ▼             ▼             ▼
+          ALLOW          DENY      Resolve /
+                                   Clarify /
+                                   Retrieve
+            │
+            ▼
+       Policy Result
+            │
+            ▼
+       Trust Engine
+            │
+            ▼
+    Execution Boundary
+
+⸻
+
+107. Canonical Trust Relationship
+
+The Trust architecture can therefore be represented as:
+
+                    Resolved Intent
+                          │
+                          ▼
+                       Evidence
+                          │
+             ┌────────────┼────────────┐
+             ▼            ▼            ▼
+       Authorization   Policy       Capability
+             │        Evaluation        │
+             │            │             │
+             └────────────┼─────────────┘
+                          ▼
+                     Constraints
+                          │
+                          ▼
+                         Risk
+                          │
+                          ▼
+                    Trust Decision
+                          │
+                          ▼
+                 Execution Contract
+                          │
+                          ▼
+                     Execution
+
+Policy Evaluation is one deterministic component of this system.
+
+It is neither the whole Trust model nor an alternative name for Trust.
+
+⸻
+
+108. Canonical Invariants
 
 Invariant 1
 
@@ -1569,11 +2636,11 @@ Policy Evaluation operates on resolved semantic objects, not raw natural languag
 
 Invariant 2
 
-Policies must be explicit and machine-evaluable for consequential decisions.
+Consequential Policies must be explicit and machine-evaluable.
 
 Invariant 3
 
-Policy Evaluation is deterministic given the same relevant inputs and Policy versions.
+Policy Evaluation should be deterministic given the same relevant inputs, Policy versions, scope, and evaluation semantics.
 
 Invariant 4
 
@@ -1585,64 +2652,151 @@ Policy must remain distinct from Capability.
 
 Invariant 6
 
-A Model cannot override or silently modify Policy.
+Policy must remain distinct from Constraints and Risk even where they interact.
 
 Invariant 7
 
-Missing Policy-relevant evidence must not produce an implicit ALLOW.
+A Model cannot override or silently modify Policy.
 
 Invariant 8
 
-Conflicting Policies require explicit precedence or conflict-resolution semantics.
+Missing Policy-relevant Evidence must not produce an implicit ALLOW.
 
 Invariant 9
 
-Policy decisions must identify the applicable Policy version where material.
+Conflicting Policies require explicit precedence or conflict-resolution semantics.
 
 Invariant 10
 
-Policy requirements must be proportional to the consequence of the Intent.
+Policy decisions must identify the applicable Policy version where material.
 
 Invariant 11
 
-Policy requirements must not silently mutate the Actor’s Intent.
+Policy applicability must be established before Policy satisfaction is evaluated.
 
 Invariant 12
 
-Policy results must remain distinguishable from execution Outcomes.
+Policy scope must be respected, including tenant, organization, resource, jurisdiction, and Actor boundaries where applicable.
 
 Invariant 13
 
-Policy Evaluation should be repeatable and preferably side-effect free.
+Policy requirements must be proportionate to the consequence of the Intent.
 
 Invariant 14
 
+Policy requirements must not silently mutate the Actor’s Intent.
+
+Invariant 15
+
+Policy results must remain distinguishable from execution Outcomes.
+
+Invariant 16
+
+Policy Evaluation should be repeatable and preferably side-effect free.
+
+Invariant 17
+
 Stale Policy decisions must not authorize execution when relevant Policy inputs have changed.
+
+Invariant 18
+
+NOT_APPLICABLE must remain distinct from ALLOW.
+
+Invariant 19
+
+UNRESOLVED must remain distinct from DENY.
+
+Invariant 20
+
+Infrastructure failure must not silently become Policy satisfaction.
+
+Invariant 21
+
+Approval and confirmation must remain distinct where Policy treats them differently.
+
+Invariant 22
+
+Approval, confirmation, and verification must be bound to the relevant Intent version and scope.
+
+Invariant 23
+
+Policy Evaluation must preserve sufficient provenance to reconstruct material decisions.
+
+Invariant 24
+
+Policy changes must follow an explicit governance mechanism.
+
+Invariant 25
+
+Actor-provided instructions cannot silently become Policy.
+
+Invariant 26
+
+A Policy result at Intent Resolution time does not necessarily remain valid until Execution.
+
+Invariant 27
+
+Long-running or delayed Intents may require Policy re-evaluation before execution.
+
+Invariant 28
+
+Policy Evaluation must not silently become the owner of external Business State.
+
+Invariant 29
+
+A Policy result contributes to Trust but does not itself constitute the final Trust decision.
+
+Invariant 30
+
+Noema must not replace an unresolved Policy condition with an invented assumption.
 
 ⸻
 
-81. The Fundamental Distinction
+109. The Fundamental Distinction
 
 The essential distinction is:
 
 Intent:
 "What does the Actor want?"
+Evidence:
+"What claims are sufficiently established?"
 Authorization:
 "May this Actor perform this Action?"
-Capability:
-"Can the system perform it?"
 Policy:
 "Under what conditions may it happen?"
+Capability:
+"Can the intended Action be performed?"
+Constraints:
+"What conditions restrict the Intent?"
+Risk:
+"What consequence-sensitive requirements apply?"
 Trust:
-"Is this Intent ready and permitted to cross the execution boundary?"
+"Is the Intent sufficiently established, permitted,
+and ready to cross the execution boundary?"
+Execution:
+"What actually happened?"
 
-Policy Evaluation answers only its part of that chain.
+Policy Evaluation answers only:
+
+Under what governing rules may this established Intent proceed?
+
+It does not answer what the Actor meant.
+
+It does not establish business facts.
+
+It does not establish authorization by itself.
+
+It does not establish capability.
+
+It does not determine execution success.
+
+It does not constitute the final Trust decision.
 
 ⸻
 
-82. Final Definition
+110. Final Definition
 
-Policy Evaluation is the deterministic evaluation of applicable, versioned, and scoped Policies against a resolved Intent and its authoritative evidence, producing explicit requirements or decisions that contribute to Noema’s final Trust decision.
+Policy Evaluation is the deterministic evaluation of applicable, versioned, scoped, and governed Policies against a resolved Intent and the authoritative Evidence and Context relevant to those Policies, producing explicit requirements or decisions that contribute to Noema’s final Trust decision.
 
 The shortest canonical formulation is:
 

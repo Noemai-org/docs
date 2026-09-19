@@ -1,43 +1,41 @@
-Validation
+Trust Model
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Trust
-Canonical Path: trust/validation.md
+Canonical Path: trust/trust-model.md
 
 ⸻
 
 1. Definition
 
-Validation is the deterministic process by which Noema verifies that a resolved Intent satisfies the structural, semantic, authorization, policy, capability, constraint, and contextual conditions required for its next lifecycle transition.
+The Trust Model defines the formal structure by which Noema represents, evaluates, and transitions the trust state of an Intent before it may cross the execution boundary.
 
-Validation answers:
+The Trust Model answers:
 
-Is this Intent valid for what Noema is about to do with it?
+What does Noema need to know, establish, and satisfy before an Intent can be considered eligible for execution?
 
-This is distinct from asking:
+The Trust Engine implements this model.
 
-What does the user mean?
+The Trust Model defines what the Engine means.
 
-That is Intent resolution.
-
-And distinct from:
-
-May this Intent execute?
-
-That is Trust evaluation.
+Trust therefore operates after Intent Resolution and Validation, while remaining distinct from both.
 
 ⸻
 
-2. Validation’s Position in Noema
+2. Trust’s Position in Noema
 
 The canonical relationship is:
 
-User Expression
+Actor Expression
        ↓
-Intent Interpretation
+Interpretation
        ↓
-Intent Resolution
+Intent Candidate
+       ↓
+Resolution
+       ↓
+Resolved Intent
        ↓
 Validation
        ↓
@@ -49,1070 +47,1680 @@ Execution
        ↓
 Outcome
 
-Validation therefore sits between semantic resolution and Trust evaluation.
+The semantic boundaries are:
 
-However, validation may also occur continuously as the Intent moves through its lifecycle.
-
-⸻
-
-3. Validation vs Resolution
-
-These must remain separate.
-
-Resolution asks:
-
-"What does the user mean?"
-
-Validation asks:
-
-"Is the resulting Intent structurally and semantically valid?"
-
-Example:
-
-"Transfer ₦50,000 to John."
-
-Resolution determines:
-
-Action = transfer
-Amount = ₦50,000
-Recipient = John
-
-Validation determines whether:
-
-Amount is valid
-Recipient is valid
-Currency is supported
-Required fields exist
-Action supports these parameters
-
-⸻
-
-4. Validation vs Trust
-
-Validation and Trust are related but not equivalent.
-
-Validation asks:
-
-Is this Intent valid?
-
-Trust asks:
-
-Given this valid Intent and its surrounding conditions, may it cross the execution boundary?
+Resolution
+"What does the Actor mean?"
+Validation
+"Is the resulting Intent structurally and semantically valid/applicable?"
+Trust
+"Given this valid Intent and its governing conditions, may it cross the execution boundary?"
+Execution
+"Perform the Action."
+Outcome
+"What actually happened?"
 
 Therefore:
 
 Valid ≠ Trusted
 
-An Intent can be valid but blocked:
+and:
 
-Valid Intent
-     ↓
-Authorization denied
-     ↓
-BLOCKED
+Trusted ≠ Executed
 
-⸻
+and:
 
-5. Validation vs Model Confidence
-
-Model confidence is not validation.
-
-A model may produce:
-
-confidence = 0.98
-
-while the Intent is structurally invalid.
-
-Therefore:
-
-Model confidence
-      ≠
-Validation
-
-Validation must be deterministic.
+Executed ≠ Successful
 
 ⸻
 
-6. Validation Principles
+3. The Core Idea
 
-Validation in Noema follows several principles:
+Trust in Noema is not:
 
-Deterministic
-Explicit
-Schema-aware
-Context-aware
-Fail-closed
-Traceable
-Composable
-Re-evaluable
+* a probability
+* a model confidence score
+* a single scalar
+* a feeling
+* a heuristic
 
-⸻
-
-7. Structural Validation
-
-Structural validation establishes that an Intent conforms to the expected Intent representation.
-
-Example:
-
-Intent {
-    action: transfer
-    actor: user_123
-    resource: account_456
-    amount: 50000
-}
-
-Validation checks:
-
-action exists
-actor exists
-required fields exist
-types are correct
-references are well formed
-
-⸻
-
-8. Required Fields
-
-Each Action may define required fields.
-
-Example:
-
-Transfer {
-    source
-    destination
-    amount
-    currency
-}
-
-An Intent such as:
-
-Transfer {
-    destination
-    amount
-}
-
-is incomplete.
-
-It should not proceed to execution.
-
-Depending on whether the missing information can be obtained through clarification:
-
-WAITING_FOR_CLARIFICATION
-
-may be appropriate.
-
-⸻
-
-9. Type Validation
-
-Values must conform to their canonical types.
-
-Examples:
-
-amount → Money
-actor → Actor reference
-resource → Resource reference
-timestamp → Timestamp
-quantity → Quantity
-
-Invalid:
-
-amount = "a lot"
-
-if the Action requires a concrete monetary amount.
-
-⸻
-
-10. Domain Validation
-
-A value may be structurally valid but semantically invalid within the domain.
-
-Example:
-
-currency = "XYZ"
-
-may be a syntactically valid string but unsupported by the payment capability.
-
-Therefore validation may include domain rules.
-
-⸻
-
-11. Referential Validation
-
-References must resolve to valid entities where resolution is required.
-
-Example:
-
-recipient = customer_123
-
-Validation may establish:
-
-customer_123 exists
-
-If multiple entities match an unresolved reference:
-
-"John"
-
-then the Intent may remain ambiguous.
-
-This is not something Validation should resolve through guessing.
-
-⸻
-
-12. Capability Validation
-
-The requested Action must correspond to an available capability.
-
-Example:
-
-Intent:
-refund payment
-
-Validation may establish:
-
-refund capability exists
-required parameters supported
-consumer supports operation
-
-Capability availability may subsequently be evaluated again by Trust.
-
-⸻
-
-13. Constraint Validation
-
-Validation checks explicit constraints attached to the Intent or Action.
-
-Examples:
-
-amount > 0
-amount <= maximum
-source != destination
-resource belongs to Actor
-
-A violated hard constraint should prevent the Intent from becoming executable.
-
-⸻
-
-14. Policy Validation
-
-Policies may impose requirements on the Intent.
-
-Example:
-
-Policy:
-Transfers above ₦5M require approval.
-
-The Intent:
-
-Transfer ₦10M
-
-may be valid.
-
-The Policy does not necessarily invalidate the Intent.
-
-Instead:
-
-Intent valid
-      ↓
-approval required
-      ↓
-WAITING_FOR_APPROVAL
-
-This distinction is important.
-
-⸻
-
-15. Authorization Validation
-
-Authorization establishes whether the Actor is eligible to perform the requested Action.
-
-However, authorization may be evaluated as part of Trust rather than basic validation.
-
-The canonical distinction is:
-
-Validation:
-"Is the authorization reference/result well-formed and applicable?"
-Trust:
-"Does authorization permit this execution?"
-
-This prevents Validation from becoming a duplicate Trust Engine.
-
-⸻
-
-16. Context Validation
-
-An Intent may be valid only within certain contexts.
-
-Example:
-
-Action:
-close incident
-Context:
-incident must be OPEN
-
-If:
-
-incident.state = RESOLVED
-
-the Intent may be invalid or no longer applicable.
-
-⸻
-
-17. Temporal Validation
-
-Time-sensitive values must be valid relative to the current context.
-
-Examples:
-
-approval has expired
-authorization is not yet active
-requested execution window has passed
-resource reservation expired
-
-Temporal validity may affect Trust even if the Intent’s static structure remains valid.
-
-⸻
-
-18. Freshness Validation
-
-Evidence and context may become stale.
-
-Example:
-
-Account balance:
-₦100,000
-
-retrieved 30 minutes ago.
-
-If the Action depends on the current balance, that evidence may no longer be sufficient.
-
-Validation should therefore distinguish:
-
-Evidence exists
-
-from:
-
-Evidence is sufficiently fresh
-
-⸻
-
-19. Cross-Field Validation
-
-Some validation rules depend on relationships between fields.
-
-Example:
-
-source_account = A
-destination_account = B
-
-Validation may require:
-
-A != B
-
-Another example:
-
-amount = 1,000,000
-currency = NGN
-
-must satisfy domain-specific monetary rules together.
-
-⸻
-
-20. Cross-Entity Validation
-
-Some rules depend on multiple entities.
-
-Example:
-
-Actor
-Resource
-Action
-
-may need to satisfy:
-
-Actor owns Resource
-
-or:
-
-Actor manages Resource
-
-or:
-
-Actor is authorized for Resource
-
-These relationships must be explicitly represented.
-
-⸻
-
-21. Validation Result
-
-Validation should produce a structured result rather than a simple boolean.
+Trust is a structured decision over explicit conditions.
 
 Conceptually:
 
-ValidationResult {
-    valid
-    errors
-    warnings
-    requirements
-    evidence
-}
+                 Resolved Intent
+                       │
+                       ▼
+                  Validation
+                       │
+                       ▼
+                Trust Evaluation
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+       Evidence   Authorization   Context
+          │            │            │
+          └────────────┼────────────┘
+                       ▼
+                 Policy Evaluation
+                       │
+                       ▼
+                  Risk Evaluation
+                       │
+                       ▼
+                Constraint Check
+                       │
+                       ▼
+               Capability Check
+                       │
+                       ▼
+                Freshness Check
+                       │
+                       ▼
+                 Trust Decision
+                       │
+             ┌─────────┴─────────┐
+             ▼                   ▼
+           READY              NOT READY
 
-For example:
+Validation establishes whether the Intent is valid for progression.
 
-valid = false
-errors:
-    [
-        MISSING_DESTINATION
-    ]
-requirements:
-    [
-        DESTINATION_REQUIRED
-    ]
-
-⸻
-
-22. Validation States
-
-A useful conceptual result taxonomy is:
-
-VALID
-INVALID
-INCOMPLETE
-UNKNOWN
-
-VALID
-
-All required validation conditions are satisfied.
-
-INVALID
-
-A deterministic rule has been violated.
-
-INCOMPLETE
-
-Required information is missing but potentially recoverable.
-
-UNKNOWN
-
-Validation depends on unavailable external information.
+Trust establishes whether the applicable conditions for execution eligibility have been satisfied.
 
 ⸻
 
-23. UNKNOWN Must Not Become VALID
+4. Trust Is a Property of an Intent Instance
 
-This is a foundational invariant.
+Trust does not exist in isolation.
 
-If Noema cannot establish:
+There is no meaningful:
 
-recipient exists
+Trust = 0.9
 
-because the relevant system is unavailable, it must not conclude:
+without specifying:
 
-recipient exists = true
-
-Instead:
-
-UNKNOWN
-
-and the Intent cannot become READY if that information is mandatory.
-
-⸻
-
-24. Validation Errors
-
-Validation errors should be structured.
-
-Example:
-
-{
-    code: "INVALID_AMOUNT",
-    field: "amount",
-    message: "Amount must be greater than zero"
-}
-
-The human-readable message is secondary.
-
-The machine-readable code is canonical.
-
-⸻
-
-25. Validation Warnings
-
-Warnings may identify conditions that do not prevent progression.
-
-Example:
-
-WARNING:
-requested execution time is near expiration
-
-Warnings must not silently become blocking conditions.
-
-⸻
-
-26. Validation Requirements
-
-Validation may generate requirements.
-
-Example:
-
-Intent:
-Transfer money
-Validation:
-VALID
-Trust:
-WAITING_FOR_APPROVAL
-
-The distinction is:
-
-Validation:
-the Intent is well formed
-Trust:
-the Intent requires additional governance before execution
-
-⸻
-
-27. Validation Pipeline
-
-A conceptual validation pipeline is:
-
-Resolved Intent
-      ↓
-Schema Validation
-      ↓
-Type Validation
-      ↓
-Reference Validation
-      ↓
-Domain Validation
-      ↓
-Constraint Validation
-      ↓
-Context Validation
-      ↓
-Temporal/Freshness Validation
-      ↓
-Validation Result
-
-The exact ordering may vary where dependencies require it.
-
-⸻
-
-28. Short-Circuiting
-
-Some validation failures are definitive.
-
-Example:
-
-amount = -500
-
-If negative amounts are categorically invalid:
-
-INVALID_AMOUNT
-
-No further validation of downstream execution semantics is necessary.
-
-However, where multiple independent errors are useful, Noema may collect them in one evaluation.
-
-The implementation should optimize for deterministic and useful diagnostics.
-
-⸻
-
-29. Validation and Clarification
-
-If validation discovers missing information that can be supplied by the Actor:
-
-INCOMPLETE
-
-may transition to:
-
-WAITING_FOR_CLARIFICATION
-
-Example:
-
-"Send the invoice."
-
-Validation:
-
-recipient missing
-
-Noema should request clarification.
-
-It should not invent a recipient.
-
-⸻
-
-30. Validation and Blocking
-
-If validation discovers an impossible or prohibited condition:
-
-INVALID
-
-may result in:
-
-BLOCKED
-
-Example:
-
-amount = -₦5,000
-
-There is no useful clarification that can make the current Intent valid without changing the Intent itself.
-
-⸻
-
-31. Validation and Revalidation
-
-Validation is not necessarily one-time.
-
-An Intent may need revalidation when:
-
-Intent changes
-context changes
-resource changes
-policy changes
-evidence changes
-capability changes
-time advances
-
-⸻
-
-32. Validation Dependency Graph
-
-A future implementation may represent validation dependencies explicitly.
-
-Example:
-
-Amount Validation
-      │
-      └── Currency
-Recipient Validation
-      │
-      └── Customer Registry
-Authorization Validation
-      │
-      ├── Actor
-      └── Resource
-
-This allows Noema to selectively revalidate affected predicates.
-
-⸻
-
-33. Validation Provenance
-
-Every validation result should be traceable to:
-
-rule
-input
-evidence
-version
-timestamp
-result
-
-Example:
-
-Rule:
-TRANSFER_AMOUNT_POSITIVE
-Input:
-amount = -500
-Result:
-INVALID
-
-This makes validation auditable.
-
-⸻
-
-34. Validation Rule Versioning
-
-Validation rules can evolve.
-
-Therefore a validation result should conceptually identify:
-
-rule_id
-rule_version
-
-This is important for reconstructing historical decisions.
-
-⸻
-
-35. Validation and Determinism
-
-Given the same:
-
-Intent
-Context
-Evidence
-Validation Rules
-Rule Versions
-
-validation must produce the same result.
+* Trust of what?
+* For whom?
+* Under which conditions?
+* At what time?
+* Based on which evidence?
+* Under which policies?
+* For which version of the Intent?
 
 Therefore:
 
-Validation(I, X, E, R) = deterministic result
+Trust is evaluated against a specific Intent, Actor, Context, and set of governing conditions.
 
 ⸻
 
-36. Validation and LLMs
+5. Trust Tuple
 
-LLMs may assist in producing or normalizing an Intent.
+A useful conceptual representation is:
 
-They should not be the authoritative validator for consequential conditions.
+Trust =
+(
+    Intent,
+    Actor,
+    Context,
+    Evidence,
+    Authorization,
+    Policy,
+    Risk,
+    Capability,
+    Constraints,
+    Time
+)
 
-The architecture should be:
+The tuple represents the conditions under which the Trust decision is meaningful.
 
-LLM
- ↓
-Candidate Intent
- ↓
-Deterministic Validation
- ↓
-Trust
-
-not:
-
-LLM
- ↓
-"I think this Intent is valid."
- ↓
-Execution
+The tuple does not imply that every dimension is applicable to every Intent.
 
 ⸻
 
-37. Validation and Natural Language
+6. Trust Is Relational
 
-Natural language is inherently flexible.
-
-Validation operates on the canonical Intent representation produced after interpretation.
-
-Example:
-
-User:
-"Send John the usual amount."
-        ↓
-Model interpretation
-        ↓
-Intent:
-{
-    action: TRANSFER,
-    recipient: JOHN,
-    amount: ?
-}
-
-Validation detects:
-
-amount = missing
-
-It should not infer the amount unless an explicit deterministic rule or contextual reference establishes it.
-
-⸻
-
-38. Validation and Defaults
-
-Defaults require particular caution.
-
-A default may be applied only when the canonical Intent semantics explicitly permit it.
+Trust is not an intrinsic property of an Action.
 
 For example:
 
-currency = NGN
+Transfer ₦1,000
 
-may be a valid deterministic default in a system where the account’s currency is authoritative.
+may be:
 
-But:
+READY
 
-recipient = most_recent_contact
+for one Actor and:
 
-should not be inferred merely because it seems likely.
+BLOCKED
+
+for another.
+
+Likewise:
+
+Deploy application
+
+may be:
+
+READY
+
+in staging but:
+
+WAITING_FOR_APPROVAL
+
+in production.
+
+Therefore:
+
+Trust is relational and contextual.
 
 ⸻
 
-39. Validation and Evidence
+7. Trust Dimensions
 
-Validation may consume evidence.
+The canonical Trust Model consists of:
+
+* Resolution
+* Evidence
+* Authorization
+* Policy
+* Risk
+* Capability
+* Constraints
+* Context
+* Freshness
+
+Not every Intent requires every dimension at equal strength.
+
+The applicable requirements are determined by the semantics and governance surrounding the Intent.
+
+Validation may inspect some of the same underlying facts. This does not make Validation and Trust equivalent.
+
+The distinction is:
+
+Validation
+    ↓
+Establish validity and applicability
+Trust
+    ↓
+Establish execution eligibility
+
+⸻
+
+8. Resolution
+
+Before Trust can be meaningfully evaluated, the Intent must be sufficiently resolved.
+
+Raw Expression
+      ↓
+Intent Candidate
+      ↓
+Resolution
+      ↓
+Resolved Intent
+
+If material ambiguity remains:
+
+Trust ≠ READY
+
+Trust does not resolve semantic ambiguity by guessing.
+
+⸻
+
+9. Validation Boundary
+
+Validation is a distinct canonical layer immediately preceding Trust.
+
+Validation establishes that the canonical Intent is:
+
+* structurally complete
+* type-correct
+* referentially valid where required
+* semantically applicable
+* consistent with applicable validation rules
+* sufficiently known for its next lifecycle transition
+
+Conceptually:
+
+Resolved Intent
+      ↓
+Validation
+      │
+      ├── INCOMPLETE
+      ├── INVALID
+      ├── UNKNOWN
+      └── VALID
+              ↓
+        Trust Evaluation
+
+Trust must not become a duplicate validation engine.
+
+The Trust Engine consumes the validated Intent and evaluates the conditions governing execution eligibility.
+
+⸻
+
+10. Validation Does Not Equal Trust
+
+A valid Intent may still be:
+
+BLOCKED
+
+or:
+
+WAITING
 
 Example:
 
-recipient_id = customer_123
-
-Evidence:
-
-Customer Registry:
-customer_123 exists
-
-The validation result can therefore be:
-
+Intent:
+Transfer ₦10M
+Validation:
 VALID
+Policy:
+Secondary approval required
+Trust:
+WAITING_FOR_APPROVAL
 
-The evidence should be referenced rather than copied into the validation result unnecessarily.
+Therefore:
+
+Valid Intent
+    ≠
+Trusted Intent
+
+Validation establishes applicability.
+
+Trust establishes execution eligibility.
 
 ⸻
 
-40. Validation and Trust Evidence
+11. Evidence
 
-The same evidence may support both Validation and Trust, but the semantics differ.
+Evidence establishes facts relevant to the Trust decision.
 
-Example:
+Examples:
+
+* Actor identity
+* Resource identity
+* Resource state
+* Authorization record
+* Approval
+* Confirmation
+* Policy state
+* External system state
+
+Evidence must be relevant to the specific Trust evaluation.
+
+Evidence may also have been used during Validation.
+
+The same evidence may support different semantic claims.
+
+For example:
 
 Customer Registry
 
-may establish:
+may establish during Validation:
 
-Validation:
 recipient exists
 
 while:
 
 Authorization Registry
 
-establishes:
+may establish during Trust:
 
-Trust:
-Actor may transfer to recipient
-
-⸻
-
-41. Validation and External Systems
-
-External systems may provide authoritative facts.
-
-Noema should distinguish:
-
-Noema-owned validation
-
-from:
-
-External authoritative validation
-
-For example:
-
-Payment provider:
-payment exists
-
-Noema may consume that fact without claiming ownership of the provider’s business logic.
+Actor may perform this Action
 
 ⸻
 
-42. Consumer-Side Validation
+12. Authorization
 
-The execution consumer may perform additional validation.
-
-This is expected.
-
-For example:
-
-Noema:
-Intent valid + trusted
-Payment Service:
-Account balance changed since evaluation
-
-The consumer can reject execution.
-
-This does not mean Noema’s earlier validation was incorrect.
-
-It means:
-
-Business state can change between Trust evaluation and execution.
-
-⸻
-
-43. Validation and Race Conditions
-
-Consequential execution can encounter TOCTOU conditions:
-
-Time T1:
-Validation
-Time T2:
-Trust
-Time T3:
-Execution
-
-A condition may change between these stages.
-
-Therefore Noema should not assume that validation guarantees execution success.
-
-Where required, execution consumers should perform final authoritative checks.
-
-⸻
-
-44. Validation Contract
+Authorization establishes whether the Actor has authority to perform the Action.
 
 Conceptually:
 
-Validate(
-    Intent,
-    Context,
-    Evidence,
-    Rules
-) → ValidationResult
+Actor
+   +
+Action
+   +
+Resource
+   +
+Scope
+   ↓
+Authorization
 
-The result should be deterministic and inspectable.
+Authorization is necessary for many consequential Actions, but authorization alone does not establish Trust.
 
-⸻
+Therefore:
 
-45. Validation Result Example
+Authorized ≠ Trusted
 
-{
-    "status": "INCOMPLETE",
-    "errors": [],
-    "requirements": [
-        {
-            "code": "DESTINATION_REQUIRED",
-            "field": "destination"
-        }
-    ]
-}
+Validation may verify that an authorization reference or result is well-formed and applicable.
 
-This result can drive:
-
-INCOMPLETE
-    ↓
-WAITING_FOR_CLARIFICATION
+Trust evaluates whether the applicable authorization condition permits this particular execution.
 
 ⸻
 
-46. Invalid Example
+13. Policy
 
-{
-    "status": "INVALID",
-    "errors": [
-        {
-            "code": "INVALID_AMOUNT",
-            "field": "amount"
-        }
-    ]
-}
+Policy establishes the rules under which an Intent may proceed.
 
-The resulting Trust state may be:
+A Policy may produce:
 
-BLOCKED
+ALLOW
+DENY
+REQUIRE_APPROVAL
+REQUIRE_CONFIRMATION
+REQUIRE_ADDITIONAL_EVIDENCE
 
-if the invalidity prevents execution.
-
-⸻
-
-47. Unknown Example
-
-{
-    "status": "UNKNOWN",
-    "requirements": [
-        {
-            "code": "RECIPIENT_LOOKUP_REQUIRED"
-        }
-    ]
-}
-
-The resulting Trust state should not be READY.
-
-⸻
-
-48. Validation and Trust State Machine
-
-The relationship is:
-
-Intent
-  ↓
-Validation
-  │
-  ├── INCOMPLETE → WAITING
-  ├── INVALID    → BLOCKED
-  ├── UNKNOWN    → WAITING / NOT READY
-  └── VALID      → Trust Evaluation
-                         │
-                         ├── WAITING
-                         ├── BLOCKED
-                         └── READY
-
-This separation gives Noema a clean semantic boundary.
-
-⸻
-
-49. Validation Does Not Make Decisions About Intent Meaning
-
-Validation must not silently modify the Intent to make it valid.
+The Trust Model incorporates the result rather than collapsing Policy into Authorization.
 
 For example:
 
-Input:
-Transfer to John
+Policy:
+Transfers above ₦5M require approval.
+Intent:
+Transfer ₦10M
+Validation:
+VALID
+Trust:
+WAITING_FOR_APPROVAL
 
-If there are three Johns:
+The Policy requirement does not necessarily make the Intent invalid.
+
+⸻
+
+14. Risk
+
+Risk describes the potential consequence of executing the Intent.
+
+Conceptually:
+
+Intent
+   +
+Context
+   +
+Potential Consequence
+   ↓
+Risk
+
+Risk may influence:
+
+* required evidence
+* approval requirements
+* confirmation requirements
+* execution limits
+* autonomy level
+
+Risk does not necessarily mean denial.
+
+⸻
+
+15. Capability
+
+Capability establishes whether the required Action can actually be performed by the execution consumer.
+
+Required Action
+      ↓
+Capability
+      ↓
+Available?
+
+Capability is a prerequisite for execution but does not establish authorization or Trust.
+
+A capability may be:
+
+AVAILABLE
+UNAVAILABLE
+UNKNOWN
+
+If a required capability is temporarily unavailable, the appropriate Trust state may be:
+
+WAITING_FOR_CAPABILITY
+
+⸻
+
+16. Constraints
+
+Constraints define explicit boundaries on execution.
+
+Examples:
+
+amount ≤ ₦5M
+resource must belong to Actor
+execution only during business hours
+maximum 3 retries
+destination must be within approved region
+
+Validation may establish that an Intent’s explicit constraints are structurally and semantically well-formed.
+
+Trust establishes whether the applicable execution constraints are currently satisfied.
+
+Therefore:
+
+Constraint Validity
+    ≠
+Constraint Satisfaction
+
+⸻
+
+17. Context
+
+Trust may depend on Context.
+
+Context can include:
+
+* environment
+* time
+* location
+* workflow state
+* organizational state
+* resource state
+* incident state
+* transaction state
+
+Context must only include information relevant to the Trust decision.
+
+For example:
+
+Normal Context:
+Transfer allowed.
+Incident Context:
+Transfers frozen.
+
+The Intent itself has not changed.
+
+The Trust result has.
+
+⸻
+
+18. Freshness
+
+Trust depends not only on whether evidence exists, but whether it remains valid.
+
+Therefore:
+
+Evidence Exists
+
+is insufficient.
+
+Noema may need:
+
+Evidence Exists
+AND
+Evidence Is Fresh
+
+Freshness may also be relevant to Validation.
+
+The semantic distinction remains:
 
 Validation:
-AMBIGUOUS / INCOMPLETE
-
-It must not mutate:
-
-recipient = John_2
-
-because John_2 appears statistically likely.
+Is the Intent sufficiently established for its current lifecycle transition?
+Trust:
+Is the evidence sufficiently current for execution eligibility?
 
 ⸻
 
-50. Validation Does Not Authorize
+19. Trust Preconditions
 
-Validation cannot turn:
+A Trust evaluation can be represented conceptually as:
 
-"valid transfer"
+Preconditions =
+{
+    resolution,
+    evidence,
+    authorization,
+    policy,
+    risk,
+    capability,
+    constraints,
+    context,
+    freshness
+}
 
-into:
-
-"authorized transfer"
-
-Authorization remains an independent Trust concern.
+Each applicable precondition can have an explicit state.
 
 ⸻
 
-51. Validation Does Not Execute
+20. Condition States
 
-Validation has no side effects on the target business system.
+A Trust condition should not merely be:
 
-Its purpose is to determine:
+true / false
 
-Can this Intent proceed to the next stage?
+because many conditions are temporarily unresolved.
+
+A useful conceptual state set is:
+
+SATISFIED
+UNSATISFIED
+UNKNOWN
+REQUIRED
+NOT_APPLICABLE
+EXPIRED
+
+For example:
+
+Authorization = SATISFIED
+Evidence      = EXPIRED
+Approval      = REQUIRED
+Capability    = SATISFIED
+
+⸻
+
+21. Trust State
+
+The overall Trust state is derived from its conditions.
+
+Conceptually:
+
+TrustState =
+{
+    READY
+    WAITING
+    BLOCKED
+}
+
+with more specific reasons attached.
+
+The broader lifecycle is represented by the Trust State Machine.
+
+The semantic distinction is more important than the exact enum.
+
+⸻
+
+22. READY
+
+An Intent is READY when:
+
+all mandatory conditions
+        ↓
+SATISFIED
+
+and no blocking condition exists.
+
+Conceptually:
+
+∀ c ∈ RequiredConditions:
+    c = SATISFIED
+AND
+No blocking condition exists
+
+Therefore:
+
+Trust = READY
+
+READY means:
+
+Noema has established that the Intent is eligible to cross the execution boundary, subject to the execution contract and consumer-side authority.
+
+READY does not mean execution has occurred.
+
+⸻
+
+23. WAITING
+
+An Intent is WAITING when execution may become permitted, but one or more requirements have not yet been satisfied.
+
+Examples:
+
+WAITING_FOR_CLARIFICATION
+WAITING_FOR_APPROVAL
+WAITING_FOR_CONFIRMATION
+WAITING_FOR_EVIDENCE
+WAITING_FOR_AUTHORIZATION
+WAITING_FOR_CAPABILITY
+WAITING_FOR_RESOURCE
+
+Waiting is recoverable.
+
+⸻
+
+24. BLOCKED
+
+An Intent is BLOCKED when a condition explicitly prohibits execution.
+
+Examples:
+
+Authorization denied
+Policy denied
+Constraint violated
+Risk exceeds permitted threshold
+Action prohibited
+Actor outside permitted scope
+
+Blocking is not equivalent to uncertainty.
+
+⸻
+
+25. UNKNOWN
+
+Unknown is an important internal condition.
+
+Example:
+
+Authorization service unavailable.
+
+The correct interpretation is:
+
+Authorization = UNKNOWN
 
 not:
 
-Perform the Action.
+Authorization = ALLOWED
+
+For consequential Actions:
+
+UNKNOWN → NOT READY
+
+Unknown may ultimately lead to:
+
+WAITING
+
+when the condition is recoverable, or to another explicitly defined non-ready state where appropriate.
 
 ⸻
 
-52. Validation Does Not Guarantee Success
+26. Trust Ordering
 
-Even:
+Trust is not a numerical scale.
 
+A conceptual lifecycle is:
+
+UNKNOWN
+    ↓
+WAITING
+    ↓
+READY
+
+and:
+
+UNSATISFIED
+    ↓
+BLOCKED
+
+These are semantic states, not confidence values.
+
+⸻
+
+27. Trust Is Not Monotonic
+
+Trust may increase:
+
+WAITING_FOR_APPROVAL
+        ↓
+READY
+
+But it may also decrease:
+
+READY
+  ↓
+BLOCKED
+
+if a governing condition changes.
+
+Example:
+
+Policy updated
+
+may invalidate a previously trusted Intent.
+
+Therefore READY is not permanent.
+
+⸻
+
+28. Trust Evaluation Function
+
+Conceptually:
+
+T = F(
+    I,
+    A,
+    E,
+    P,
+    R,
+    C,
+    K,
+    X,
+    F
+)
+
+Where:
+
+I = Intent
+A = Actor / Authorization
+E = Evidence
+P = Policy
+R = Risk
+C = Capability
+K = Constraints
+X = Context
+F = Freshness
+
+The output is a deterministic Trust Decision.
+
+The function operates on the canonical Intent after Resolution and Validation.
+
+⸻
+
+29. Determinism
+
+Given the same:
+
+* Intent
+* Actor
+* Evidence
+* Policy versions
+* Risk rules
+* Capabilities
+* Constraints
+* Context
+* Freshness
+
+the Trust Model must produce the same result.
+
+This is a core invariant.
+
+⸻
+
+30. Model Confidence Is Outside the Trust Model
+
+The Model may provide:
+
+confidence = 0.92
+
+but that is not a Trust input by default.
+
+Instead:
+
+Model
+ ↓
+Intent Candidate
+ ↓
+Resolution
+ ↓
+Validation
+ ↓
+Trust Model
+
+If Model uncertainty results in unresolved semantics, the Intent remains unresolved or incomplete.
+
+Model confidence cannot directly transition an Intent to READY.
+
+⸻
+
+31. Trust vs Semantic Confidence
+
+These concepts must remain separate:
+
+Concept	Question
+Model confidence	How confident is the Model?
+Intent resolution	Is the meaning sufficiently established?
+Validation	Is the canonical Intent valid and applicable?
+Trust	May the Intent cross the execution boundary?
+
+A high-confidence Model interpretation can still produce:
+
+Validation = INVALID
+
+or:
+
+Trust = BLOCKED
+
+⸻
+
+32. Trust Requirements
+
+Every Intent that reaches the execution boundary must have an associated set of applicable Trust requirements.
+
+Conceptually:
+
+TrustRequirements {
+    evidence
+    authorization
+    policy
+    risk_controls
+    capabilities
+    constraints
+    confirmations
+    approvals
+}
+
+The applicable requirements depend on the Intent and governing rules.
+
+⸻
+
+33. Requirement Satisfaction
+
+Each requirement transitions independently.
+
+Example:
+
+Evidence:
+SATISFIED
+Authorization:
+SATISFIED
+Policy:
+SATISFIED
+Approval:
+REQUIRED
+Capability:
+SATISFIED
+
+Overall:
+
+WAITING_FOR_APPROVAL
+
+⸻
+
+34. Requirement Provenance
+
+Each satisfied requirement should be traceable to the evidence or rule that established it.
+
+Example:
+
+Requirement:
+Secondary approval
+Satisfied by:
+Approval#A123
+Approved by:
+Actor#456
+For:
+Intent#789
+Intent Version:
+3
+
+⸻
+
+35. Trust Evaluation Record
+
+A Trust evaluation should conceptually produce:
+
+TrustEvaluation {
+    id
+    intent
+    intent_version
+    evaluated_at
+    conditions
+    requirements
+    evidence
+    policy_results
+    authorization_result
+    risk_result
+    capability_result
+    constraint_results
+    status
+    reasons
+}
+
+The exact schema is implementation-specific.
+
+⸻
+
+36. Trust Decision vs Trust Evaluation
+
+These should be conceptually distinct.
+
+Evaluation asks:
+
+What did Noema inspect?
+
+Decision asks:
+
+What did Noema conclude?
+
+Example:
+
+Evaluation
+    ↓
+17 conditions examined
+    ↓
+Decision
+    ↓
+WAITING_FOR_APPROVAL
+
+⸻
+
+37. Trust Decision Reasons
+
+Every non-ready decision should expose deterministic reasons.
+
+Example:
+
+status:
+BLOCKED
+reasons:
+[
+    AUTHORIZATION_DENIED,
+    POLICY_PROHIBITS_ACTION
+]
+
+The reasons should be machine-readable.
+
+⸻
+
+38. Trust Decision Requirements
+
+Waiting states should identify what is needed next.
+
+Example:
+
+status:
+WAITING_FOR_APPROVAL
+requirements:
+[
+    SECONDARY_APPROVAL
+]
+
+This allows Noema to transition the Intent rather than merely returning an error.
+
+⸻
+
+39. Trust and Clarification
+
+If the missing requirement is semantic:
+
+missing recipient
+
+Trust should transition toward clarification rather than authorization or execution.
+
+Intent
+ ↓
+AMBIGUOUS
+ ↓
+CLARIFICATION
+ ↓
+RESOLVED
+ ↓
+VALIDATION
+ ↓
+TRUST EVALUATION
+
+⸻
+
+40. Trust and Approval
+
+If the missing requirement is governance-related:
+
+approval required
+
+then:
+
+Intent
+ ↓
+VALIDATION
+ ↓
+TRUST EVALUATION
+ ↓
+WAITING_FOR_APPROVAL
+ ↓
+Approval
+ ↓
+RE-EVALUATION
+
+⸻
+
+41. Trust and Confirmation
+
+Confirmation is distinct from approval.
+
+Confirmation:
+
+The Actor confirms the Action.
+
+Approval:
+
+An authorized Actor grants permission for the Action.
+
+The Trust Model must preserve this distinction.
+
+⸻
+
+42. Trust and Authorization
+
+Authorization answers:
+
+May this Actor perform this Action?
+
+Trust answers:
+
+Have all applicable conditions for this particular Intent been satisfied?
+
+Therefore:
+
+Authorized ≠ Trusted
+
+⸻
+
+43. Trust and Policy
+
+Policy answers:
+
+Under what organizational or system rules may this happen?
+
+Trust incorporates those rules into execution readiness.
+
+Therefore:
+
+PolicySatisfied ≠ TrustReady
+
+⸻
+
+44. Trust and Risk
+
+Risk answers:
+
+What is the consequence profile?
+
+Trust answers:
+
+Given that consequence profile and its controls, may this proceed?
+
+Therefore:
+
+RiskAcceptable ≠ TrustReady
+
+⸻
+
+45. Trust and Capability
+
+Capability answers:
+
+Can this Action be performed?
+
+Trust answers:
+
+May this Action be performed now?
+
+Therefore:
+
+CapabilityAvailable ≠ TrustReady
+
+⸻
+
+46. Trust and Constraints
+
+Constraints answer:
+
+What boundaries must this Intent obey?
+
+Trust answers:
+
+Are those boundaries currently satisfied?
+
+⸻
+
+47. Trust and Context
+
+Context may modify the result of every other dimension.
+
+For example:
+
+Normal Context:
+Transfer allowed.
+Incident Context:
+Transfers frozen.
+
+The Intent itself has not changed.
+
+The Trust result has.
+
+⸻
+
+48. Trust and Time
+
+Trust decisions have temporal semantics.
+
+Conceptually:
+
+TrustDecision(
+    Intent,
+    Conditions,
+    AtTime=t
+)
+
+A decision at t1 does not necessarily remain valid at t2.
+
+⸻
+
+49. Trust Validity
+
+Some Trust decisions may have an explicit validity period:
+
+valid_from
+valid_until
+
+This is particularly important for:
+
+* authorization
+* approvals
+* temporary policies
+* resource state
+* risk conditions
+* evidence freshness
+
+⸻
+
+50. Trust Re-Evaluation
+
+Trust must be re-evaluated when a material input changes.
+
+Examples:
+
+* Intent changes
+* Actor changes
+* Authorization changes
+* Policy changes
+* Evidence expires
+* Context changes
+* Risk changes
+* Capability changes
+* Constraint changes
+
+⸻
+
+51. Material Change
+
+Not every event requires complete re-evaluation.
+
+A future implementation may define dependency relationships:
+
+Policy P1
+    ↓
+Intent I7
+Authorization A2
+    ↓
+Intent I7
+
+If P1 changes:
+
+I7 → re-evaluate
+
+This can make Trust evaluation efficient without compromising correctness.
+
+⸻
+
+52. Trust and Intent Version
+
+Trust belongs to an Intent version.
+
+Intent v1
+   ↓
+Trust v1
+
+If the Intent materially changes:
+
+Intent v2
+   ↓
+new Validation
+   ↓
+new Trust evaluation
+
+Trust must not silently carry over.
+
+⸻
+
+53. Trust and Composite Intent
+
+For:
+
+Intent = A + B + C
+
+Trust should evaluate:
+
+Trust(A)
+Trust(B)
+Trust(C)
+
+and then derive:
+
+Trust(Intent)
+
+using deterministic composition semantics.
+
+⸻
+
+54. Composite Trust
+
+For an atomic composite workflow:
+
+A = READY
+B = READY
+C = BLOCKED
+
+then:
+
+Trust(ABC) = BLOCKED
+
+unless the Intent explicitly allows partial execution.
+
+⸻
+
+55. Trust and Partial Autonomy
+
+A composite Intent may permit different autonomy levels.
+
+Example:
+
+A:
+autonomous
+B:
+confirmation required
+C:
+human approval required
+
+The Trust Model should preserve these distinctions rather than reducing everything to a single confidence score.
+
+⸻
+
+56. Trust and Autonomy Level
+
+A useful conceptual dimension is:
+
+AUTONOMOUS
+CONFIRMATION_REQUIRED
+APPROVAL_REQUIRED
+BLOCKED
+
+This should not necessarily replace Trust state.
+
+For example:
+
+Trust:
+READY
+Autonomy:
+APPROVAL_REQUIRED
+
+may be meaningful.
+
+⸻
+
+57. Trust vs Autonomy
+
+This distinction matters.
+
+An Intent can be:
+
+Trusted enough to proceed
+
+but:
+
+not trusted enough for autonomous execution
+
+Therefore Noema may eventually distinguish:
+
+Execution Eligibility
+
+from:
+
+Autonomy Eligibility
+
+The exact representation should be resolved when autonomy semantics are formalized.
+
+⸻
+
+58. Trust and Execution Contract
+
+A READY Trust decision enables an Execution Contract.
+
+Conceptually:
+
+Resolved Intent
+       ↓
+Validation
+       ↓
+Trust Model
+       ↓
+READY
+       ↓
+Execution Contract
+
+The contract should inherit the relevant scope, constraints, and conditions established by Trust.
+
+⸻
+
+59. Trust and Execution Boundary
+
+The canonical boundary is:
+
+Before Trust:
+Interpretation, Resolution, Validation, and Evaluation
+After Trust:
+Execution
+
+The Trust Model therefore represents the final semantic/governance gate before side effects.
+
+The execution consumer remains authoritative over actual business-state validity.
+
+⸻
+
+60. Fail-Closed Semantics
+
+The Trust Model must distinguish:
+
+SATISFIED
+
+from:
+
+UNKNOWN
+
+Unknown mandatory conditions cannot satisfy Trust.
+
+Therefore:
+
+UNKNOWN → NOT READY
+
+for consequential execution.
+
+⸻
+
+61. Fail-Closed Does Not Mean Deny Everything
+
+Noema should not convert uncertainty into permanent denial.
+
+Instead:
+
+UNKNOWN
+   ↓
+WAITING
+   ↓
+Requirement satisfied
+   ↓
+RE-EVALUATE
+
+This preserves usability while maintaining safety.
+
+⸻
+
+62. Trust and External State
+
+Trust does not guarantee that the external system will accept execution.
+
+For example:
+
+Trust = READY
+
+does not mean:
+
+Database transaction = guaranteed
+
+It means:
+
+Noema has established that the Intent satisfies the applicable conditions under Noema’s control for crossing the execution boundary.
+
+The consumer remains authoritative over business-state validity.
+
+⸻
+
+63. Trust and Outcome
+
+Trust precedes execution.
+
+Outcome follows execution.
+
+Trust
+ ↓
+Execution
+ ↓
+Outcome
+
+Therefore:
+
+READY ≠ SUCCESS
+
+⸻
+
+64. Trust and Auditability
+
+A Trust decision should be reconstructible without asking the Model to remember what it did.
+
+The system should preserve:
+
+* Intent version
+* Validation result and rule versions where relevant
+* Evidence references
+* Policy versions
+* Authorization result
+* Risk evaluation
+* Constraints
+* Context
+* Decision
+* Decision reasons
+* Timestamp
+
+⸻
+
+65. Trust and Explainability
+
+The Trust Model should make explanations possible through structured provenance.
+
+The system should be able to answer:
+
+Why was this allowed?
+
+and:
+
+Why was this blocked?
+
+without requiring an LLM to fabricate the rationale.
+
+⸻
+
+66. Trust and Security
+
+The Trust Model is part of Noema’s security boundary, but it is not synonymous with security.
+
+Security concerns include:
+
+* authentication
+* authorization
+* identity
+* credential management
+* transport security
+* data protection
+
+Trust integrates authorization and relevant security evidence into a broader execution decision.
+
+⸻
+
+67. Trust and Governance
+
+Trust is also broader than governance.
+
+Governance concerns:
+
+* policy
+* approval
+* organizational controls
+* risk thresholds
+* compliance
+
+Trust integrates these controls into an executable decision.
+
+⸻
+
+68. Trust as a Cross-Domain Model
+
+Trust therefore sits across several canonical domains:
+
+Intent
+Actor
+Evidence
+Authorization
+Policy
+Risk
+Capability
+Constraint
+Context
+Outcome
+
+It should not redefine these domains.
+
+It composes them.
+
+⸻
+
+69. Canonical Formula
+
+A useful canonical formulation is:
+
+TrustReady(I) =
+    Resolved(I)
+    ∧
+    ValidationSufficient(I)
+    ∧
+    EvidenceSufficient(I)
+    ∧
+    Authorized(I)
+    ∧
+    PolicySatisfied(I)
+    ∧
+    RiskAcceptable(I)
+    ∧
+    CapabilityAvailable(I)
+    ∧
+    ConstraintsSatisfied(I)
+    ∧
+    ContextValid(I)
+    ∧
+    EvidenceFresh(I)
+
+subject to the requirements applicable to that Intent.
+
+This formula is conceptual, not an implementation requirement.
+
+⸻
+
+70. ValidationSufficient
+
+ValidationSufficient(I) means that the Intent has successfully passed the applicable Validation layer for the transition being considered.
+
+Conceptually:
+
+Validation
+    ↓
 VALID
-+
-TRUST = READY
+    ↓
+Trust may evaluate
 
-does not guarantee:
+Where Validation produces:
 
-EXECUTION = SUCCESS
+INCOMPLETE
+INVALID
+UNKNOWN
 
-The external system remains authoritative over actual business-state mutation.
+the Intent cannot become READY unless the applicable condition is resolved.
+
+This preserves the distinction between:
+
+Validation
+
+and:
+
+Trust
+
+without requiring the Trust Engine to duplicate Validation.
 
 ⸻
 
-53. Validation Invariants
+71. Important Qualification
+
+The formula above is conceptual.
+
+Not every Intent requires:
+
+* authorization
+* approval
+* risk evaluation
+* fresh external evidence
+* a capability check
+* every listed constraint
+
+The Trust Model determines the applicable requirements based on the Intent and governing rules.
+
+⸻
+
+72. Trust Is Extensible
+
+New Trust dimensions may be introduced if Noema develops new classes of consequential Actions.
+
+However, extensions must preserve the fundamental property:
+
+Trust is derived from explicit, inspectable conditions rather than probabilistic Model judgment.
+
+Extensions must also preserve the semantic separation between:
+
+Resolution
+Validation
+Trust
+Execution
+Outcome
+
+⸻
+
+73. Canonical Lifecycle Relationship
+
+The complete conceptual architecture is:
+
+                 Actor Expression
+                       │
+                       ▼
+                 Interpretation
+                       │
+                       ▼
+                Intent Candidate
+                       │
+                       ▼
+                   Resolution
+                       │
+                       ▼
+                Resolved Intent
+                       │
+                       ▼
+                  Validation
+                       │
+         ┌─────────────┼─────────────┐
+         ▼             ▼             ▼
+    INCOMPLETE       INVALID       VALID
+         │             │             │
+         ▼             ▼             ▼
+    Clarification    BLOCKED   Trust Evaluation
+                                       │
+                           ┌───────────┼───────────┐
+                           ▼           ▼           ▼
+                        WAITING     BLOCKED      READY
+                                                   │
+                                                   ▼
+                                           Execution Contract
+                                                   │
+                                                   ▼
+                                              Execution
+                                                   │
+                                                   ▼
+                                               Outcome
+
+This is the canonical relationship between the layers.
+
+⸻
+
+74. Canonical Invariants
 
 Invariant 1
 
-Validation is deterministic.
+Trust is a structured decision, not a scalar confidence score.
 
 Invariant 2
 
-Validation operates on canonical Intent semantics.
+Trust is evaluated against a specific Intent instance and version.
 
 Invariant 3
 
-Validation must not guess missing information.
+Trust is contextual.
 
 Invariant 4
 
-Unknown information must not be treated as valid.
+Trust is deterministic.
 
 Invariant 5
 
-Validation does not equal authorization.
+Model confidence does not equal Trust.
 
 Invariant 6
 
@@ -1120,106 +1728,136 @@ Validation does not equal Trust.
 
 Invariant 7
 
-Validation does not execute Actions.
+Unknown mandatory conditions cannot produce READY.
 
 Invariant 8
 
-Validation results must be explainable through structured reasons.
+Authorization does not imply Trust.
 
 Invariant 9
 
-Validation rules must be versionable.
+Policy satisfaction does not imply Trust.
 
 Invariant 10
 
-Material changes may require revalidation.
+Capability availability does not imply Trust.
 
 Invariant 11
 
-Validation must preserve the distinction between incomplete and invalid.
+Risk acceptance does not imply Trust.
 
 Invariant 12
 
-Validation must not silently mutate Intent semantics.
+Trust can decrease when governing conditions change.
 
 Invariant 13
 
-External systems may perform additional authoritative validation.
+Material Intent changes require Trust re-evaluation.
 
 Invariant 14
 
-A valid Intent may still be blocked by Trust.
+Trust decisions must be traceable to their inputs.
+
+Invariant 15
+
+Trust requirements must be explicit.
+
+Invariant 16
+
+Waiting and blocking are semantically different states.
+
+Invariant 17
+
+Trust must fail closed for consequential Actions when mandatory evaluation cannot be established.
+
+Invariant 18
+
+Trust does not guarantee external business-state success.
+
+Invariant 19
+
+Trust precedes execution; Outcome follows execution.
+
+Invariant 20
+
+A Trust decision must not silently mutate the Intent semantics.
 
 ⸻
 
-54. Canonical Validation Flow
+75. The Canonical Distinction
 
-                Resolved Intent
-                       │
-                       ▼
-              Structural Validation
-                       │
-                       ▼
-                 Type Validation
-                       │
-                       ▼
-               Reference Validation
-                       │
-                       ▼
-                 Domain Validation
-                       │
-                       ▼
-              Constraint Validation
-                       │
-                       ▼
-                Context Validation
-                       │
-                       ▼
-             Temporal / Freshness
-                       │
-                       ▼
-                Validation Result
-                       │
-         ┌─────────────┼─────────────┐
-         ▼             ▼             ▼
-    INCOMPLETE       INVALID        VALID
-         │             │             │
-         ▼             ▼             ▼
-      WAITING        BLOCKED     TRUST ENGINE
-                                      │
-                                      ▼
-                              Trust State Machine
+Noema should preserve this complete chain:
 
-⸻
-
-55. The Canonical Distinction
-
-Noema should preserve this chain:
-
-Interpretation
-"What might the user mean?"
+Model
+"What might the Actor mean?"
+        ↓
+Intent
+"What does the Actor mean?"
         ↓
 Resolution
-"What does the user mean?"
+"Is that meaning sufficiently established?"
         ↓
 Validation
-"Is that Intent well-formed and applicable?"
+"Is the resulting Intent well-formed and applicable?"
+        ↓
+Evidence
+"What facts support the execution decision?"
+        ↓
+Authorization
+"May the Actor perform the Action?"
+        ↓
+Policy
+"Under what rules may it happen?"
+        ↓
+Risk
+"What controls are required?"
+        ↓
+Capability
+"Can it be performed?"
+        ↓
+Constraints
+"What limits must hold?"
+        ↓
+Context
+"Is it valid here and now?"
         ↓
 Trust
-"May that Intent proceed?"
+"May this Intent cross the execution boundary?"
         ↓
 Execution
-"Perform it."
+"Perform the Action."
         ↓
 Outcome
-"What happened?"
+"What actually happened?"
+
+The critical architectural distinction is:
+
+Resolution
+    ↓
+Meaning established
+Validation
+    ↓
+Intent valid and applicable
+Trust
+    ↓
+Execution eligibility established
+Execution
+    ↓
+Action performed
+Outcome
+    ↓
+Actual result
 
 ⸻
 
-56. Final Definition
+76. Final Definition
 
-Validation is Noema’s deterministic verification layer for establishing that an Intent is structurally complete, semantically applicable, and consistent with the rules and information required for its next lifecycle transition.
+The Trust Model is Noema’s formal model for determining whether a resolved and validated Intent satisfies the explicit, applicable conditions required to cross the execution boundary.
 
-The core invariant is:
+It composes evidence, authorization, policy, risk, capability, constraints, context, freshness, and other governing conditions without redefining those domains.
 
-Noema does not validate an Intent by believing the Model. It validates the canonical Intent by checking explicit rules, references, constraints, evidence, and context.
+The Trust Model does not interpret the Actor’s meaning, does not silently repair an invalid Intent, does not execute the Action, and does not guarantee the external outcome.
+
+Its core invariant is:
+
+Noema does not treat an Intent as trusted because the Model believes it is probably safe. Noema treats an Intent as READY only when deterministic evaluation establishes that all mandatory Trust conditions applicable to that Intent are satisfied.
