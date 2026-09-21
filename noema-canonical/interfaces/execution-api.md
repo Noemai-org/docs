@@ -1988,7 +1988,18 @@ The Execution API must not silently convert uncertainty into success or failure.
 
 ⸻
 
-103. Final Definition
+103. Canonical Architecture Invariants
+
+The Execution API strictly adheres to the core Noema invariants:
+
+*   **Fail-Closed on Unknown:** If execution state cannot be reliably determined (e.g., timeout without explicit failure), the system must treat the state as UNKNOWN rather than defaulting to FAILED or SUCCEEDED.
+*   **Explicit Execution Contracts:** Executions must be governed by explicit contracts defining the boundaries of what is permitted.
+*   **Intent State Separate from Execution State:** The Execution API does not determine Intent or semantic meaning; it solely coordinates the state of an already-resolved Action.
+*   **Bounded Autonomy:** Executors operate only within the explicit bounds defined by the upstream execution plan and trust decisions.
+
+⸻
+
+104. Final Definition
 
 The Execution API is Noema’s execution coordination boundary. It provides the interfaces through which authorized Actions are dispatched, executed, observed, retried, reconciled, cancelled, or compensated while preserving explicit execution identity, attempt history, evidence, uncertainty, and recovery semantics.
 

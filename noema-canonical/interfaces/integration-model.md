@@ -1348,7 +1348,18 @@ form the primary external boundaries.
 
 ⸻
 
-71. Final Definition
+71. Canonical Architecture Invariants
+
+The Integration Model strictly adheres to the core Noema invariants:
+
+*   **Fail-Closed on Unknown:** If an external provider's response cannot be mapped to a known semantic outcome, the integration must fail closed and yield an UNKNOWN state.
+*   **No Hidden Authority:** Providers cannot redefine Noema's canonical semantics or force an execution outcome without satisfying the deterministic postconditions.
+*   **Enterprise Systems Remain Authoritative:** The enterprise system remains the system of record for business state; the integration merely bridges Noema's execution to that authoritative domain.
+*   **Capability/Permission Separation:** The presence of an integration does not imply permission to use it. Capability is mapped by the integration, but permission is determined upstream by the Trust Engine.
+
+⸻
+
+72. Final Definition
 
 The Integration Model defines the canonical boundary between Noema’s semantic execution system and external enterprise systems. It specifies how capabilities are exposed, Actions are mapped to provider operations, requests and responses are translated, external events are normalized, provider failures are represented, and external state becomes evidence without allowing provider-specific semantics to redefine Noema’s canonical model.
 

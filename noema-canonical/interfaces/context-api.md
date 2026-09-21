@@ -1638,7 +1638,18 @@ Context semantics (Grounding) must remain consistent across Intent, Trust, and E
 
 ⸻
 
-83. Final Definition
+83. Canonical Architecture Invariants
+
+The Context API strictly adheres to the core Noema invariants:
+
+*   **Fail-Closed on Unknown:** If context required for a decision cannot be reliably established or trusted, the system must fail closed. Missing context must not default to 'allow'.
+*   **No Hidden Authority:** Contextual claims supplied by an external entity are treated as observations, not authoritative truths, until verified against policy.
+*   **Deterministic Trust Evaluation:** All contextual evidence is evaluated deterministically by the Trust Engine without probabilistic guessing.
+*   **Consumer-Side Authoritative Validation:** The source system of the context remains authoritative for its business state; Noema only holds a temporal observation of that state.
+
+⸻
+
+84. Final Definition
 
 The Context API is Noema’s interface for managing the contextual information surrounding Intent and execution. It provides structured, scoped, provenance-aware context to the Intent, Trust, and Execution layers while preserving the distinction between contextual observation and authoritative enterprise state.
 
