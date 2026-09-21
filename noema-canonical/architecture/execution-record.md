@@ -1,7 +1,7 @@
 Execution Record
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Architecture
 Canonical Path: architecture/execution-record.md
 
@@ -9,47 +9,73 @@ Canonical Path: architecture/execution-record.md
 
 1. Definition
 
-An Execution Record is the canonical Noema record of an execution attempt after an Intent has crossed the execution boundary.
+The Execution Record is the canonical Noema record of an execution attempt and its observed execution lifecycle after an Intent crosses the execution boundary.
 
-It records what Noema authorized for execution, what execution consumer accepted, what actually occurred, and what outcome was reported.
+It records:
 
-The Execution Record exists to preserve the distinction between:
+* what Intent and Action gave rise to the execution,
+* which Trust decision established execution eligibility,
+* which Execution Contract governed the attempt,
+* which Capability and Execution Consumer were involved,
+* what execution events occurred,
+* what the consumer reported,
+* what evidence supports those reports, and
+* what execution state resulted.
 
-* Intent
-* Trust
-* Execution authorization
-* Execution
-* Outcome
+The Execution Record preserves the distinction between:
 
-Therefore:
+Intent
+   ↓
+Trust
+   ↓
+Execution Authorization
+   ↓
+Execution
+   ↓
+Observed Result
+   ↓
+Outcome Verification
+   ↓
+Outcome
 
-An Execution Record records execution history; it does not define Intent meaning or establish Trust by itself.
+The Execution Record does not:
+
+* define Intent meaning,
+* establish Trust,
+* create authorization,
+* execute Actions,
+* own authoritative business state, or
+* independently determine business outcome.
+
+Its responsibility is to provide the canonical, attributable record of what occurred at the execution layer.
 
 ⸻
 
 2. Purpose
 
-The Execution Record provides a durable, auditable representation of an execution attempt.
+The Execution Record provides a durable and auditable representation of execution.
 
-It allows Noema to answer:
+It allows Noema to reconstruct:
 
-* Which Intent produced this execution?
-* Which Intent version was executed?
-* Which Execution Contract governed it?
-* Which Trust decision authorized it?
-* Which capability was invoked?
-* Which execution consumer accepted it?
-* When did execution begin?
-* What happened during execution?
-* What outcome was reported?
-* Was execution successful, failed, partial, or unknown?
-* What evidence supports the reported outcome?
+* which Intent produced the execution,
+* which Intent version was involved,
+* which Action was executed,
+* which Execution Contract governed it,
+* which Trust evaluation established execution eligibility,
+* which Capability was invoked,
+* which Execution Consumer accepted or performed the operation,
+* when execution was requested, accepted, started, and completed,
+* what execution events occurred,
+* what result the consumer reported,
+* what failures occurred,
+* whether the result was complete, partial, failed, or unknown, and
+* what evidence supports the recorded result.
 
-The record should be sufficient to reconstruct the execution lifecycle without requiring hidden model reasoning.
+The record must be sufficient to reconstruct the execution lifecycle without requiring access to hidden model reasoning.
 
 ⸻
 
-3. Position in the Noema Lifecycle
+3. Position in Noema
 
 The canonical relationship is:
 
@@ -59,13 +85,19 @@ Validation
    ↓
 Trust Evaluation
    ↓
-Execution Eligibility
+Execution Planning
+   ↓
+Plan Validation
    ↓
 Execution Contract
+   ↓
+Durable Workflow
    ↓
 Execution Consumer
    ↓
 Execution Record
+   ↓
+Outcome Verification
    ↓
 Outcome
 
@@ -73,18 +105,20 @@ The Execution Record therefore belongs to the execution layer.
 
 It does not replace:
 
-* Intent state
-* Trust state
-* Execution Contract
-* Business-system state
+* Intent,
+* Trust,
+* Execution Plan,
+* Execution Contract,
+* Workflow state, or
+* authoritative business-system state.
 
 ⸻
 
 4. Execution Record vs Intent
 
-An Intent describes what the Actor wants to accomplish.
+An Intent represents what the Actor wants to accomplish.
 
-An Execution Record describes an attempt to perform the Action selected for that Intent.
+An Execution Record represents an execution attempt resulting from an approved execution path for that Intent.
 
 Therefore:
 
@@ -95,41 +129,67 @@ Execution Record
 
 One Intent may produce:
 
-* zero execution records
-* one execution record
-* multiple execution records
+* no Execution Record,
+* one Execution Record, or
+* multiple Execution Records.
 
-depending on the execution model.
+A composite Intent may produce multiple component executions.
 
-For example, a composite Intent may result in several independently executed Actions.
+The relationship between the Intent and those executions must remain explicit.
 
 ⸻
 
-5. Execution Record vs Execution Contract
+5. Execution Record vs Execution Plan
 
-The Execution Contract defines what may be executed.
+The Execution Plan defines the intended execution structure.
 
-The Execution Record records what was actually attempted.
+The Execution Record records what happened when that structure was executed.
 
-Conceptually:
+Therefore:
+
+Execution Plan
+      ↓
+Defines intended execution
+      ↓
+Execution
+      ↓
+Execution Record
+      ↓
+Records observed execution
+
+The Execution Record must reference the applicable Plan and Plan version where the Plan is part of the execution lifecycle.
+
+It must not reconstruct the historical Plan from current definitions.
+
+⸻
+
+6. Execution Record vs Execution Contract
+
+The Execution Contract establishes the execution boundary and defines the terms under which an Action may be performed.
+
+The Execution Record records the execution attempt governed by that Contract.
+
+Therefore:
 
 Execution Contract
-        ↓
-Defines permitted execution
-        ↓
-Execution
-        ↓
+      ↓
+Defines execution boundary
+      ↓
+Execution Consumer
+      ↓
 Execution Record
-        ↓
-Records actual execution
+      ↓
+Records observed execution
 
-The Execution Record should reference the governing Execution Contract rather than silently becoming the contract itself.
+The Execution Record must reference the governing Contract and Contract version.
+
+It must not silently become a substitute for the Contract.
 
 ⸻
 
-6. Execution Record vs Business State
+7. Execution Record vs Business State
 
-The Execution Record is not the authoritative source of business truth.
+The Execution Record is not authoritative business state.
 
 For example:
 
@@ -138,46 +198,37 @@ payment request accepted
 Payment System:
 payment status = pending
 
-The execution record may report what the consumer observed or returned.
-
-The external system remains authoritative for the underlying business state.
+The Execution Record may accurately record that the consumer accepted the request while the Payment System remains authoritative for the payment’s business state.
 
 Therefore:
 
-Execution history is not equivalent to business truth.
+Execution history ≠ Business truth
+
+The authoritative enterprise system remains the source of truth for the business state it owns.
 
 ⸻
 
-7. Core Principle
+8. Core Principle
 
-An Execution Record must distinguish between:
+The Execution Record must distinguish between:
 
-what Noema intended to execute
+What Noema authorized for execution
 
 and:
 
-what the external execution system actually reported.
+What the execution system actually reported
 
-This distinction is essential because execution occurs across system boundaries.
+Execution occurs across system boundaries and therefore cannot be assumed to produce a successful or authoritative business outcome merely because execution was authorized.
 
-A trusted Intent can produce an execution attempt that:
-
-* succeeds
-* fails
-* partially succeeds
-* is rejected by the consumer
-* times out
-* produces an unknown outcome
-
-Therefore:
+Consequently:
 
 READY ≠ EXECUTED
 EXECUTED ≠ SUCCESS
-SUCCESS REPORT ≠ NECESSARILY BUSINESS TRUTH
+SUCCESS REPORT ≠ NECESSARILY VERIFIED BUSINESS OUTCOME
 
 ⸻
 
-8. Canonical Execution Record
+9. Canonical Execution Record
 
 Conceptually:
 
@@ -185,11 +236,14 @@ ExecutionRecord {
     execution_id
     intent_id
     intent_version
+    plan_id
+    plan_version
     action_id
     action_version
     execution_contract_id
     execution_contract_version
     trust_evaluation_id
+    trust_evaluation_version
     capability_id
     capability_version
     consumer_id
@@ -200,136 +254,144 @@ ExecutionRecord {
     completed_at
     input_reference
     target_reference
+    idempotency_key
+    parent_execution_id
+    retry_of
+    attempt_number
     result
     failure
     evidence
     provenance
 }
 
-The exact schema is defined elsewhere.
+The exact schema is defined by the relevant data model.
 
-The canonical principle is that the record must preserve enough identity and provenance to connect execution back to the Intent and authorization chain.
+The architectural requirement is that the record preserve sufficient identity, versioning, and provenance to reconstruct the execution lifecycle.
 
 ⸻
 
-9. Execution Identity
+10. Execution Identity
 
-Every execution attempt must have a unique execution identifier.
-
-Conceptually:
+Every execution attempt must have a unique:
 
 execution_id
 
-The identifier provides stable reference to the execution attempt.
+The identifier represents the Noema execution attempt.
 
-It must not be confused with:
+It must remain distinct from:
 
 intent_id
 action_id
+plan_id
 execution_contract_id
+workflow_id
 business_transaction_id
+consumer_transaction_id
 
-These identifiers represent different objects.
+These identifiers refer to different objects or systems.
 
 ⸻
 
-10. Intent Reference
+11. Intent Reference
 
-The Execution Record should reference the Intent that caused the execution.
+The Execution Record must reference the Intent that produced the execution.
 
 At minimum:
 
 intent_id
 intent_version
 
-This preserves the exact semantic version against which the execution was authorized.
+The historical Intent version must remain reconstructible.
 
-A later modification to the Intent must not silently rewrite the historical execution record.
+A later modification to the Intent must not rewrite historical execution.
 
 ⸻
 
-11. Action Reference
+12. Plan Reference
 
-The record should identify the Action that was executed.
+Where execution was produced from an Execution Plan, the record should preserve:
+
+plan_id
+plan_version
+
+This establishes:
+
+Intent
+   ↓
+Plan
+   ↓
+Execution
+
+The historical Plan version must remain reconstructible.
+
+⸻
+
+13. Action Reference
+
+The Execution Record must identify the Action being executed.
 
 Conceptually:
 
 action_id
 action_version
 
-This establishes what executable operation the execution consumer received.
-
-The Action should be defined through the canonical Action model rather than being reconstructed from free-form text.
+The Action must be represented through the canonical Action model rather than reconstructed from free-form model output.
 
 ⸻
 
-12. Execution Contract Reference
+14. Execution Contract Reference
 
-The record should reference the Execution Contract governing the attempt.
-
-Conceptually:
+The record must identify the governing Execution Contract:
 
 execution_contract_id
 execution_contract_version
 
-This allows Noema to establish:
-
-Intent
-   ↓
-Trust
-   ↓
-Contract
-   ↓
-Execution
-
-The historical contract version must remain reconstructible.
+This establishes the execution boundary under which the attempt occurred.
 
 ⸻
 
-13. Trust Evaluation Reference
+15. Trust Evaluation Reference
 
-The Execution Record should identify the Trust evaluation that established execution eligibility.
+The Execution Record must identify the Trust evaluation that established execution eligibility.
 
 Conceptually:
 
 trust_evaluation_id
+trust_evaluation_version
 
-This establishes the authorization provenance of the execution attempt.
-
-The record should not merely state:
+The record should not reduce this provenance to:
 
 trusted = true
 
-without preserving which Trust decision established that condition.
+without preserving which Trust decision established that state.
+
+The Execution Record records the authorization provenance; it does not independently establish authorization.
 
 ⸻
 
-14. Capability Reference
+16. Capability Reference
 
-The Execution Record should identify the capability through which execution occurred.
+The record should identify the Capability through which the Action was executed.
 
 Conceptually:
 
 capability_id
 capability_version
 
-This distinguishes:
+This preserves the distinction:
 
 Action
-
-from:
-
+"What operation does the plan require?"
 Capability
+"What system capability performs it?"
 
-The Action describes what Noema intends to cause.
-
-The Capability identifies the system operation through which that Action is performed.
+Capability does not itself establish permission.
 
 ⸻
 
-15. Consumer Identity
+17. Consumer Identity
 
-The execution consumer should be identifiable.
+The Execution Consumer must be identifiable.
 
 Conceptually:
 
@@ -337,57 +399,61 @@ consumer_id
 
 The consumer may be:
 
-* a payment service
-* CRM
-* banking system
-* workflow engine
-* enterprise API
-* internal execution service
-* another authorized execution system
+* a payment service,
+* CRM,
+* banking system,
+* enterprise API,
+* internal execution service,
+* workflow activity, or
+* another authorized execution system.
 
-The record should identify the consumer responsible for accepting and reporting the execution.
+The record should identify the system responsible for accepting, performing, and/or reporting the execution according to the applicable contract.
 
 ⸻
 
-16. Execution State
+18. Execution State
 
-The Execution Record should have an explicit execution state.
+Execution state represents the observed lifecycle of an execution attempt.
 
 A conceptual state model is:
 
+REQUESTED
+    ↓
 ACCEPTED
-   ↓
+    ↓
 STARTED
-   ↓
+    ↓
 COMPLETED
 
-with failure paths such as:
+with alternative paths:
 
-ACCEPTED
-   ↓
+REQUESTED
+    ↓
 REJECTED
 STARTED
-   ↓
+    ↓
 FAILED
 STARTED
-   ↓
+    ↓
 UNKNOWN
 
-Partial execution may also require an explicit state.
+and, where explicitly permitted:
 
-For example:
-
+STARTED
+    ↓
 PARTIALLY_COMPLETED
 
-The exact execution state machine should remain separate from the Trust State Machine.
+The exact state machine may be specified separately.
+
+Execution State must remain distinct from Trust State, Plan State, Workflow State, and Outcome State.
 
 ⸻
 
-17. Accepted
+19. Accepted
 
-ACCEPTED means the execution consumer has accepted the Execution Contract or execution request.
+ACCEPTED means the Execution Consumer has accepted the execution request or applicable Execution Contract according to the consumer’s semantics.
 
-It does not mean that the Action has completed.
+It does not mean that execution has completed.
 
 Therefore:
 
@@ -395,37 +461,29 @@ ACCEPTED ≠ COMPLETED
 
 ⸻
 
-18. Started
+20. Started
 
-STARTED means execution has actually begun.
+STARTED means that execution has actually begun according to the applicable execution semantics.
 
-This distinction is useful because an execution request may be accepted without the underlying operation having started.
-
-For example:
-
-Noema → Consumer
-Consumer accepts request
-        ↓
-ACCEPTED
-Consumer begins operation
-        ↓
-STARTED
+This distinction is important because a consumer may accept an execution request without immediately beginning the underlying operation.
 
 ⸻
 
-19. Completed
+21. Completed
 
-COMPLETED means the execution consumer has reported successful completion according to its execution semantics.
+COMPLETED means the Execution Consumer has reported successful completion according to the execution contract.
 
-The record should retain the evidence supporting that result.
+The record should retain the evidence supporting that report.
 
-However, where an external system is authoritative for business state, the completion report should not automatically be treated as a universal assertion of business truth.
+Completion of execution does not automatically establish authoritative business state.
+
+Where required, business-state verification occurs through the Outcome or verification layer.
 
 ⸻
 
-20. Failed
+22. Failed
 
-FAILED means the execution consumer has reported that the execution did not successfully complete.
+FAILED means that failure of the execution has been established according to the applicable execution semantics.
 
 Failure should be structured.
 
@@ -439,58 +497,59 @@ VALIDATION_FAILED
 AUTHORIZATION_REJECTED
 EXECUTION_ERROR
 
-The exact taxonomy should remain extensible.
+The taxonomy should remain extensible.
 
 ⸻
 
-21. Partial Completion
+23. Partially Completed
 
-Some Actions may produce partial results.
+Composite execution may produce component-level results.
 
-Example:
+For example:
 
-Composite Intent
-    ├── Transfer A → COMPLETED
-    ├── Transfer B → FAILED
-    └── Transfer C → COMPLETED
+Action A → COMPLETED
+Action B → FAILED
+Action C → COMPLETED
 
-The Execution Record must not collapse this into a misleading binary result.
+Where partial execution is permitted by the applicable Intent, Plan, and Contract, the Execution Record must preserve the component-level results.
 
-Where partial execution is permitted by the Intent and contract, the execution record should preserve component-level outcomes.
+It must not collapse them into a misleading binary result.
 
 ⸻
 
-22. Unknown Outcome
+24. Unknown
 
-An execution may produce an outcome that Noema cannot establish.
+An execution may produce a result whose final state cannot be established.
 
-Example:
+For example:
 
 Request sent
-     ↓
+    ↓
 Consumer timeout
-     ↓
-No response
+    ↓
+No definitive response
 
-Noema cannot safely conclude:
+Noema cannot safely infer either:
 
 FAILED
 
-because the external system may have completed the operation despite the missing response.
+or:
 
-Therefore:
+COMPLETED
+
+without sufficient evidence.
+
+The execution may therefore enter:
 
 UNKNOWN
 
-may be required.
-
-This is especially important for non-idempotent Actions.
+This is especially important for non-idempotent operations.
 
 ⸻
 
-23. Unknown Is Not Failure
+25. Unknown Is Not Failure
 
-The distinction is:
+The distinction is fundamental:
 
 FAILED
 
@@ -498,52 +557,43 @@ means failure has been established.
 
 UNKNOWN
 
-means the final outcome cannot be established.
+means the final execution state has not been established.
 
-These states must not be conflated.
+An UNKNOWN execution may require:
 
-An unknown execution may require:
+* reconciliation,
+* authoritative status lookup,
+* human intervention,
+* retry analysis, or
+* consumer-side recovery.
 
-* reconciliation
-* status lookup
-* human intervention
-* retry analysis
-* consumer-side recovery
+Unknown must never be silently converted into failure or success.
 
 ⸻
 
-24. Execution Timestamps
+26. Execution Timestamps
 
-The record should preserve meaningful execution timestamps.
-
-Conceptually:
+The record should preserve observed execution timestamps, including where applicable:
 
 requested_at
 accepted_at
 started_at
 completed_at
+rejected_at
+
+Timestamps must represent observed lifecycle events rather than inferred events.
 
 Not every execution will contain every timestamp.
 
-For example:
-
-requested_at
-accepted_at
-rejected_at
-
-may exist for a request that never started.
-
-Timestamps should represent observed lifecycle events rather than inferred times.
-
 ⸻
 
-25. Input Reference
+27. Input References
 
-Execution inputs should be traceable.
+Execution inputs must be traceable to the applicable Execution Contract and Action.
 
-The Execution Record may contain or reference the canonical inputs supplied through the Execution Contract.
+The record may contain or reference the canonical inputs.
 
-Where sensitive information is involved, the record should use appropriate references, redaction, or protected storage rather than unnecessarily duplicating sensitive payloads.
+Sensitive information should be referenced, protected, redacted, or otherwise minimized where possible.
 
 The principle is:
 
@@ -551,24 +601,24 @@ Auditability must not require uncontrolled duplication of sensitive data.
 
 ⸻
 
-26. Target Reference
+28. Target References
 
-The execution target should be identifiable where applicable.
+Where applicable, the execution target should be identifiable.
 
-For example:
+Examples:
 
 customer_123
 account_456
 ticket_789
 payment_321
 
-The reference should use the canonical identifier appropriate to the target system.
+References should use canonical identifiers appropriate to the target system.
 
-Noema should not invent authoritative business identifiers.
+Noema must not invent authoritative business identifiers.
 
 ⸻
 
-27. Result
+29. Result
 
 The Execution Record may contain a structured execution result.
 
@@ -581,15 +631,15 @@ result {
     observed_at
 }
 
-The result should describe what the execution consumer reported.
+The result describes what the Execution Consumer reported.
 
-It should not silently become an authoritative representation of external business state.
+It does not automatically become authoritative business state.
 
 ⸻
 
-28. Failure Information
+30. Failure Information
 
-Failures should be structured rather than represented only as free-form text.
+Failures should be represented structurally rather than only as free-form text.
 
 Conceptually:
 
@@ -601,110 +651,114 @@ failure {
     source
 }
 
-The human-readable message is useful for diagnostics.
-
 The machine-readable failure code should be canonical.
 
-⸻
-
-29. Provenance
-
-Every Execution Record should preserve provenance sufficient to reconstruct how the execution occurred.
-
-Relevant provenance may include:
-
-* Intent
-* Intent version
-* Validation result
-* Trust evaluation
-* Execution Contract
-* Action
-* Capability
-* Consumer
-* execution events
-* result evidence
-* timestamps
-* relevant external references
-
-The record should not require access to hidden model reasoning to establish execution provenance.
+Human-readable messages may provide diagnostic context.
 
 ⸻
 
-30. Execution Event History
+31. Execution Evidence
 
-An Execution Record may be backed by an event history.
+Execution results may be supported by evidence such as:
 
-Conceptually:
+* consumer responses,
+* external transaction references,
+* API acknowledgements,
+* enterprise events,
+* status queries,
+* reconciliation results, or
+* other authoritative observations.
 
-T0
-execution.requested
-T1
-execution.accepted
-T2
-execution.started
-T3
-execution.completed
+The Execution Record should reference relevant evidence sufficient to establish what was observed.
 
-Or:
+The evidence may remain owned by the external system.
 
-T0
-execution.requested
-T1
-execution.accepted
-T2
-execution.failed
+⸻
+
+32. Provenance
+
+Every Execution Record must preserve provenance sufficient to reconstruct how execution occurred.
+
+Relevant provenance includes:
+
+* Intent and Intent version,
+* Execution Plan and Plan version,
+* Trust evaluation,
+* Action and Action version,
+* Execution Contract and Contract version,
+* Capability and Capability version,
+* Execution Consumer,
+* workflow identity where applicable,
+* execution events,
+* timestamps,
+* external references,
+* result evidence, and
+* relevant execution implementation versions.
+
+The record must not depend on hidden model reasoning to establish execution provenance.
+
+⸻
+
+33. Execution Event History
+
+An Execution Record may be represented through an append-only event history.
+
+For example:
+
+T0 execution.requested
+T1 execution.accepted
+T2 execution.started
+T3 execution.completed
+
+or:
+
+T0 execution.requested
+T1 execution.accepted
+T2 execution.failed
 
 The event history provides a reconstructible execution timeline.
 
 ⸻
 
-31. Immutability
+34. Immutability
 
-Historical execution facts should be append-only or otherwise protected from silent modification.
+Historical execution facts must not be silently rewritten.
 
 For example:
 
 execution.started
 
-should not later be rewritten to:
+must not later be rewritten to:
 
 execution.accepted
 
-without preserving the original history.
+without preserving the historical event.
 
-Corrections should themselves be represented as explicit events or amendments.
+Corrections must be represented through explicit events, amendments, or other auditable mechanisms.
 
 ⸻
 
-32. Idempotency
+35. Idempotency
 
-Consequential execution requires explicit treatment of idempotency.
+Consequential execution must explicitly address idempotency.
 
-An Execution Record should be able to identify the relevant idempotency key where applicable.
-
-Conceptually:
+Where applicable, the Execution Record should preserve:
 
 idempotency_key
 
-This helps prevent accidental duplication when retries occur.
+This allows Noema and execution consumers to distinguish a repeated request from a genuinely new execution.
 
-The Execution Record should distinguish:
-
-new execution attempt
-
-from:
-
-retry of an existing execution
+Idempotency semantics belong to the Action, Contract, and Consumer boundary and must not be inferred solely from the existence of an Execution Record.
 
 ⸻
 
-33. Retries
+36. Retries
 
 A failed or unknown execution may result in a retry.
 
 Retries must not erase the original execution attempt.
 
-Conceptually:
+For example:
 
 Execution E1
     ↓
@@ -716,108 +770,91 @@ Execution E2
 
 The relationship should remain explicit.
 
-For example:
+Possible relationships include:
 
 parent_execution_id
 retry_of
 attempt_number
 
-may be used.
-
-The exact schema remains an implementation concern.
+The exact representation is an implementation concern.
 
 ⸻
 
-34. Execution Record and Trust
+37. Execution Record and Trust
 
-Trust establishes eligibility.
+Trust answers:
 
-Execution records what happened after eligibility was established.
+May this Intent proceed toward execution?
+
+The Execution Record answers:
+
+What happened when execution was attempted?
 
 Therefore:
 
 Trust
-  ↓
-"May this execute?"
-
-while:
-
+   ↓
+Execution eligibility
 Execution Record
-  ↓
-"What happened when execution was attempted?"
+   ↓
+Observed execution history
 
-A failed execution does not automatically prove that the preceding Trust decision was incorrect.
-
-⸻
-
-35. Execution Record and Validation
-
-Validation establishes whether the Intent satisfies required structural and semantic conditions.
-
-The Execution Record should therefore be able to trace back to the validated Intent.
-
-However:
-
-VALID
-+
-TRUST = READY
-
-does not guarantee:
-
-EXECUTION = SUCCESS
-
-Execution occurs against changing external systems.
+A failed execution does not, by itself, establish that the preceding Trust decision was incorrect.
 
 ⸻
 
-36. Execution Record and Consumer Validation
+38. Consumer-Side Validation
 
-The execution consumer may perform additional validation.
+An Execution Consumer may perform final authoritative checks.
 
-Example:
+For example:
 
 Noema:
 Intent valid
-Trust ready
-Execution Contract valid
+Trust satisfied
+Contract valid
 Consumer:
-account balance no longer sufficient
+Account no longer eligible
 
 The consumer may reject the operation.
 
-The Execution Record should record the rejection without rewriting Noema’s earlier validation history.
+The Execution Record must preserve the rejection without rewriting the earlier validation or Trust history.
 
-This preserves temporal causality.
+This preserves temporal causality between Noema’s decision and the later execution environment.
 
 ⸻
 
-37. Execution Boundary
+39. Execution Boundary
 
-The creation or activation of an Execution Record should correspond to an explicit execution boundary.
+An Execution Record corresponds to an explicit crossing of the execution boundary.
 
 Conceptually:
 
-READY
-   ↓
-Execution Contract accepted
-   ↓
-Execution Record created
-   ↓
-EXECUTING
+PLAN_READY
+    ↓
+CONTRACT_ACCEPTED
+    ↓
+EXECUTION
+    ↓
+Execution Record
 
-The precise point at which an Execution Record is created may vary by implementation, but the transition must be explicit.
+The exact point at which the record is created may vary by implementation.
+
+The transition itself must remain explicit and attributable.
 
 ⸻
 
-38. No Execution Without an Execution Contract
+40. No Execution Without an Execution Contract
 
-Noema should not create an authoritative execution attempt from arbitrary model output.
+Consequential execution must not originate from arbitrary model output.
 
 The canonical path is:
 
 Intent
    ↓
 Trust
+   ↓
+Execution Plan
    ↓
 Action
    ↓
@@ -827,74 +864,55 @@ Execution Consumer
    ↓
 Execution Record
 
-The record should therefore identify the contract governing the execution.
+The Execution Record must identify the governing Contract.
 
 ⸻
 
-39. Business Transaction References
+41. External Transaction References
 
 An external system may provide its own transaction identifier.
 
 For example:
 
 consumer_transaction_id
+business_transaction_id
 
-This should be retained when available.
+These identifiers should be retained where relevant.
 
-It must remain distinct from:
+They must remain distinct from:
 
 execution_id
 
-because:
-
-* Noema owns the execution record
-* the external system owns the business transaction
+because Noema owns the execution record while the external system owns its business transaction.
 
 ⸻
 
-40. External Evidence
+42. Outcome Verification
 
-Execution results may be supported by external evidence.
-
-Examples:
-
-Payment API response
-CRM update confirmation
-Banking transaction reference
-Workflow completion event
-
-The Execution Record should reference such evidence where necessary to establish what the consumer reported.
-
-The evidence itself may remain owned by the external system.
-
-⸻
-
-41. Outcome Verification
-
-Execution completion and outcome verification should remain conceptually distinct where necessary.
+Execution completion and business outcome verification are distinct concepts.
 
 For example:
 
 Execution:
 API returned success
 Verification:
-Customer record reflects requested change
+Authoritative customer record reflects the requested change
 
 For consequential Actions, Noema may require postcondition verification.
 
-The Execution Record should preserve the distinction between:
+The Execution Record should therefore preserve the distinction between:
 
-execution result
+Observed execution result
 
 and:
 
-verified business outcome
+Verified business outcome
 
 ⸻
 
-42. Execution Record and Outcome
+43. Execution Record and Outcome
 
-The canonical chain is:
+The canonical relationship is:
 
 Execution
    ↓
@@ -904,19 +922,19 @@ Verification
    ↓
 Outcome
 
-The Execution Record captures the execution and observed result.
+The Execution Record captures execution and its observed results.
 
-The Outcome model may provide the higher-level representation of what ultimately happened.
+The Outcome model represents what ultimately resulted according to the applicable evidence and verification semantics.
 
-The exact separation should remain explicit in the architecture.
+Neither should silently replace the authoritative business system.
 
 ⸻
 
-43. Composite Execution
+44. Composite Execution
 
-A composite Intent may produce multiple execution records.
+A composite Intent may produce multiple Execution Records.
 
-Example:
+For example:
 
 Intent I1
    │
@@ -924,146 +942,138 @@ Intent I1
    ├── Action B → Execution E2
    └── Action C → Execution E3
 
-The relationship between the parent Intent and component executions must be explicit.
+The parent-child relationship must remain explicit.
 
-This allows Noema to reconstruct both:
+This permits Noema to reconstruct:
 
-* aggregate execution state
-* component-level execution state
+* aggregate execution state, and
+* component-level execution state.
 
 ⸻
 
-44. Atomic Execution
+45. Atomicity
 
-If a composite Action is defined as atomic, the Execution Record should reflect the atomic execution semantics.
+Atomicity must be explicitly defined by the Action and Execution Contract.
 
 Noema must not infer atomicity merely because multiple operations appear related.
 
-Atomicity must be established by the Action and Execution Contract.
+If an Action is atomic, the Execution Record must reflect its atomic execution semantics.
 
-⸻
-
-45. Partial Execution
-
-If partial execution is permitted:
-
-A → COMPLETED
-B → FAILED
-C → COMPLETED
-
-the Execution Record should preserve each component result.
-
-If partial execution is not permitted, Noema must not silently continue executing independent components after an atomicity failure.
-
-Execution semantics must follow the contract.
+If it is not atomic, component-level execution results may be recorded independently.
 
 ⸻
 
 46. Human Intervention
 
-An execution may require human intervention.
+An execution may require human intervention because of:
 
-Examples:
-
-* execution outcome unknown
-* external system disagreement
-* reconciliation required
-* unexpected business state
-* policy requires manual handling
-
-The Execution Record should preserve the intervention event.
+* unknown execution state,
+* external-system disagreement,
+* reconciliation requirements,
+* unexpected business state, or
+* explicit policy requirements.
 
 For example:
 
 EXECUTING
-   ↓
+    ↓
 UNKNOWN
-   ↓
+    ↓
 HUMAN_INTERVENTION_REQUIRED
 
-The exact state may belong to the execution or intervention model, but the relationship must remain observable.
+The intervention event must remain observable and attributable.
 
 ⸻
 
-47. Execution Record and Audit
+47. Auditability
 
-Execution records are a core component of Noema’s auditability.
+Execution Records are a core component of Noema’s audit architecture.
 
-An audit trail should be able to establish:
+An audit trail should be capable of establishing:
 
-Who initiated the Intent?
-        ↓
-What Intent was resolved?
-        ↓
-What was validated?
-        ↓
-What Trust decision was made?
-        ↓
-What Action was selected?
-        ↓
-What Contract authorized it?
-        ↓
-Which Consumer executed it?
-        ↓
-What happened?
-        ↓
-What outcome was observed?
+Actor
+  ↓
+Intent
+  ↓
+Resolved Intent
+  ↓
+Validation
+  ↓
+Trust Decision
+  ↓
+Execution Plan
+  ↓
+Action
+  ↓
+Execution Contract
+  ↓
+Execution Consumer
+  ↓
+Execution Events
+  ↓
+Observed Result
+  ↓
+Verification
+  ↓
+Outcome
 
-The Execution Record is the execution-layer link in this chain.
+The Execution Record is the canonical execution-layer link in this chain.
 
 ⸻
 
 48. Security and Sensitive Data
 
-Execution records may contain sensitive information.
+Execution Records may contain sensitive information.
 
-Therefore implementations should minimize unnecessary duplication of:
+Implementations should therefore minimize unnecessary duplication of:
 
-* credentials
-* authentication material
-* secrets
-* financial data
-* personal data
-* protected business information
+* credentials,
+* authentication material,
+* secrets,
+* financial information,
+* personal data, and
+* protected business information.
 
-The Execution Record should retain references and hashes where sufficient rather than storing raw sensitive payloads unnecessarily.
+References, hashes, protected storage, or redaction should be used where sufficient.
 
-Security requirements should be defined by the applicable security architecture and data-governance specifications.
+Security and data-governance requirements belong to the applicable security architecture and governance specifications.
 
 ⸻
 
 49. Retention
 
-Execution Records should have explicit retention semantics.
+Execution Records require explicit retention semantics.
 
-Retention may depend on:
+Retention may depend upon:
 
-* regulatory requirements
-* audit requirements
-* business requirements
-* data sensitivity
-* contractual requirements
-* operational needs
+* regulatory requirements,
+* audit requirements,
+* business requirements,
+* data sensitivity,
+* contractual requirements, and
+* operational requirements.
 
-Retention policy must not silently destroy the provenance required to reconstruct consequential execution.
+Retention policy must preserve the provenance necessary to reconstruct consequential execution for the applicable retention period.
 
-The exact retention periods are implementation and policy concerns rather than part of this foundational definition.
+Exact retention periods are implementation and policy concerns.
 
 ⸻
 
 50. Versioning
 
-Execution Records should preserve the versions of the objects that materially governed execution.
+Execution Records must preserve the versions of objects that materially governed execution.
 
-At minimum, where applicable:
+Where applicable:
 
 intent_version
+plan_version
 action_version
 execution_contract_version
 capability_version
 trust_evaluation_version
+workflow_implementation_version
 
-This allows historical execution to be reconstructed even as Noema evolves.
+Historical execution must remain reconstructible even as Noema evolves.
 
 ⸻
 
@@ -1081,108 +1091,11 @@ relevant evidence
 
 Noema should be able to reconstruct the execution lifecycle.
 
-Historical reconstruction must not depend on the current version of a mutable definition.
+Historical reconstruction must not depend on the current versions of mutable definitions.
 
 ⸻
 
-52. Execution Record Contract
-
-Conceptually:
-
-RecordExecution(
-    Intent,
-    ExecutionContract,
-    Consumer,
-    ExecutionEvents,
-    Result
-) → ExecutionRecord
-
-The exact implementation may differ.
-
-The canonical requirement is that execution records be structured, inspectable, and attributable.
-
-⸻
-
-53. Canonical Example
-
-Intent:
-Transfer ₦500,000 to customer_123
-Validation:
-VALID
-Trust:
-READY
-Action:
-TRANSFER_FUNDS
-Execution Contract:
-EC-123
-Consumer:
-Payment Service
-Execution:
-E-456
-State:
-STARTED
-Consumer Result:
-transaction_reference = TX-789
-Verification:
-payment provider reports transaction completed
-Execution State:
-COMPLETED
-
-The record connects the execution back to the governing Intent and Contract without becoming the source of truth for the payment system.
-
-⸻
-
-54. Failure Example
-
-Intent:
-Send invoice to customer_123
-Validation:
-VALID
-Trust:
-READY
-Execution Contract:
-EC-321
-Consumer:
-Email Service
-Execution:
-E-654
-State:
-FAILED
-Failure:
-EMAIL_PROVIDER_UNAVAILABLE
-
-The failure should not alter the historical fact that the Intent was valid and trusted at the time execution began.
-
-⸻
-
-55. Unknown Outcome Example
-
-Intent:
-Transfer ₦5,000,000
-Trust:
-READY
-Execution:
-E-777
-Consumer:
-Banking Service
-Request:
-accepted
-Response:
-timeout
-Outcome:
-UNKNOWN
-
-Noema should not infer:
-
-FAILED
-
-unless the authoritative system establishes failure.
-
-A reconciliation step may therefore be required.
-
-⸻
-
-56. Execution Record Lifecycle
+52. Execution Record Lifecycle
 
 A conceptual lifecycle is:
 
@@ -1206,31 +1119,187 @@ STARTED
     ↓
 UNKNOWN
 
-and where permitted:
+and where explicitly permitted:
 
 STARTED
     ↓
 PARTIALLY_COMPLETED
 
-The final implementation may use a more granular state model.
+The final state model may be more granular.
 
 ⸻
 
-57. State Transition Principles
+53. State Transition Principles
 
 Execution state transitions must be:
 
-* explicit
-* attributable
-* timestamped
-* deterministic with respect to observed events
-* auditable
+* explicit,
+* attributable,
+* timestamped,
+* based on observed execution events,
+* auditable, and
+* reconstructible.
 
-A model’s interpretation of an execution response must not silently rewrite an authoritative consumer event.
+A model interpretation must not silently overwrite an authoritative consumer event.
 
 ⸻
 
-58. Execution Record Invariants
+54. Execution Record and Durable Workflow
+
+Where durable workflow orchestration is used:
+
+Execution Plan
+      ↓
+Durable Workflow
+      ↓
+Activity
+      ↓
+Execution Consumer
+      ↓
+Execution Record
+
+The Workflow provides durable orchestration.
+
+The Execution Record provides the canonical semantic record of the execution attempt.
+
+Workflow history and Execution Records may correlate, but they are not identical artifacts.
+
+A workflow history does not replace the Noema Execution Record.
+
+⸻
+
+55. Unknown Execution and Reconciliation
+
+When execution produces an unknown result:
+
+Execution
+    ↓
+UNKNOWN
+    ↓
+Reconciliation
+    ↓
+Authoritative System
+    ↓
+Confirmed Result
+
+Reconciliation must obtain sufficient evidence before changing the semantic execution or outcome state.
+
+Absence of a response is not itself evidence of failure.
+
+⸻
+
+56. Execution Record Does Not Create Authority
+
+The existence of an Execution Record does not establish that execution was authorized.
+
+Likewise:
+
+Execution Record exists
+
+does not imply:
+
+Trust = GRANTED
+
+and:
+
+Execution Record = COMPLETED
+
+does not imply:
+
+Business State = VERIFIED
+
+Authority originates from the appropriate Trust and authorization mechanisms.
+
+Business truth originates from the authoritative business system.
+
+⸻
+
+57. Canonical Example
+
+Intent:
+Transfer ₦500,000 to customer_123
+Validation:
+VALID
+Trust:
+READY
+Plan:
+P-123
+Action:
+TRANSFER_FUNDS
+Execution Contract:
+EC-123
+Consumer:
+Payment Service
+Execution:
+E-456
+State:
+STARTED
+Consumer Result:
+transaction_reference = TX-789
+Verification:
+Payment provider reports transaction completed
+Execution State:
+COMPLETED
+
+The Execution Record connects the execution to the governing Intent, Plan, Trust decision, Action, Contract, Capability, and Consumer.
+
+It does not become the authoritative source of payment-system state.
+
+⸻
+
+58. Failure Example
+
+Intent:
+Send invoice to customer_123
+Validation:
+VALID
+Trust:
+READY
+Execution Contract:
+EC-321
+Consumer:
+Email Service
+Execution:
+E-654
+State:
+FAILED
+Failure:
+EMAIL_PROVIDER_UNAVAILABLE
+
+The failure records the execution result.
+
+It does not rewrite the historical fact that the Intent was valid and trusted when execution began.
+
+⸻
+
+59. Unknown Outcome Example
+
+Intent:
+Transfer ₦5,000,000
+Trust:
+READY
+Execution:
+E-777
+Consumer:
+Banking Service
+Request:
+ACCEPTED
+Response:
+TIMEOUT
+Execution State:
+UNKNOWN
+
+Noema must not infer:
+
+FAILED
+
+unless the authoritative system establishes failure.
+
+A reconciliation process may therefore be required.
+
+⸻
+
+60. Execution Record Invariants
 
 Invariant 1
 
@@ -1238,11 +1307,11 @@ Every Execution Record represents a specific execution attempt or explicitly def
 
 Invariant 2
 
-Every execution must be traceable to an Intent.
+Every consequential execution must be traceable to an Intent.
 
 Invariant 3
 
-Every consequential execution must be traceable to an Execution Contract.
+Every consequential execution must be traceable to an applicable Execution Contract.
 
 Invariant 4
 
@@ -1250,7 +1319,7 @@ Execution Records do not replace authoritative business state.
 
 Invariant 5
 
-Execution state must remain distinct from Trust state.
+Execution State is distinct from Trust State.
 
 Invariant 6
 
@@ -1274,27 +1343,39 @@ Execution results must have provenance.
 
 Invariant 11
 
-Partial execution must be explicit.
+Partial execution must be explicit where permitted.
 
 Invariant 12
 
-Noema must not infer permission for partial execution.
+Consumer-side validation may reject execution after Noema has established Trust.
 
 Invariant 13
 
-Consumer-side validation may reject an execution after Noema has established Trust.
+Execution success does not automatically establish authoritative business truth.
 
 Invariant 14
 
-Execution success does not automatically establish authoritative business truth.
+Sensitive execution data must not be duplicated unnecessarily.
 
 Invariant 15
 
-Sensitive execution data must not be duplicated unnecessarily.
+Execution must remain attributable to the Plan, Contract, and Trust decision under which it was initiated.
+
+Invariant 16
+
+An Execution Record must not itself create authority.
+
+Invariant 17
+
+External transaction identifiers must remain distinct from Noema execution identifiers.
+
+Invariant 18
+
+Historical execution facts must not be silently rewritten.
 
 ⸻
 
-59. Canonical Relationship
+61. Canonical Relationship
 
 The complete execution relationship is:
 
@@ -1316,7 +1397,13 @@ The complete execution relationship is:
                         │
                         ▼
                  ┌──────────────┐
-                 │Action/Contract│
+                 │ Execution    │
+                 │    Plan      │
+                 └──────┬───────┘
+                        │
+                        ▼
+                 ┌──────────────┐
+                 │   Contract   │
                  └──────┬───────┘
                         │
                         ▼
@@ -1326,8 +1413,8 @@ The complete execution relationship is:
                         │
                         ▼
                  ┌──────────────┐
-                 │Execution     │
-                 │   Record     │
+                 │  Execution   │
+                 │    Record    │
                  └──────┬───────┘
                         │
                         ▼
@@ -1340,28 +1427,75 @@ The complete execution relationship is:
                  │   Outcome    │
                  └──────────────┘
 
-This separation preserves the Noema boundary between understanding, Trust, execution, and business truth.
+This preserves the Noema boundary between:
+
+understanding
+Trust
+planning
+execution
+business truth
 
 ⸻
 
-60. Canonical Mental Model
+62. Canonical Mental Model
 
 The Execution Record can be reduced to five questions:
 
 1. What Intent caused this execution?
-2. What Action and Contract governed it?
-3. Which consumer performed or accepted it?
-4. What actually happened during execution?
-5. What evidence supports the reported result?
+2. What Plan, Action, and Contract governed it?
+3. Which Capability and Consumer performed or accepted it?
+4. What happened during execution?
+5. What evidence supports the observed result?
 
 These questions define the minimum conceptual responsibility of the Execution Record.
 
 ⸻
 
-61. Final Definition
+63. Final Definition
 
-An Execution Record is Noema’s structured, auditable representation of an execution attempt and its observed execution lifecycle, linked to the Intent, Trust decision, Action, Execution Contract, capability, consumer, and resulting evidence.
+The Execution Record is Noema’s structured, durable, and auditable representation of an execution attempt and its observed execution lifecycle.
 
-The core invariant is:
+It links execution to the governing:
 
-Noema records what was authorized and what execution reported; it does not confuse execution history with authoritative business truth.
+* Intent,
+* Intent version,
+* Execution Plan,
+* Action,
+* Trust evaluation,
+* Capability,
+* Execution Contract,
+* Execution Consumer,
+* execution events, and
+* evidence.
+
+It records what was attempted and what execution reported.
+
+It does not establish Intent meaning, create Trust, grant authority, or replace authoritative business state.
+
+The central invariant is:
+
+Noema records the authorized execution path and the observed execution history; it does not confuse execution history with authoritative business truth.
+
+The canonical relationship is therefore:
+
+Intent
+   ↓
+Validation
+   ↓
+Trust
+   ↓
+Execution Plan
+   ↓
+Execution Contract
+   ↓
+Durable Workflow
+   ↓
+Execution Consumer
+   ↓
+Execution Record
+   ↓
+Outcome Verification
+   ↓
+Outcome
+
+This establishes the Execution Record as the historical and auditable execution artifact between execution and outcome, without allowing it to become a substitute for Trust, Contracts, Workflow state, or authoritative enterprise state.

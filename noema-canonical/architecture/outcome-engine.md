@@ -1,7 +1,7 @@
 Outcome Engine
 
 Status: Foundational
-Version: 0.1
+Version: 0.2
 Domain: Architecture
 Canonical Path: architecture/outcome-engine.md
 
@@ -9,32 +9,71 @@ Canonical Path: architecture/outcome-engine.md
 
 1. Definition
 
-The Outcome Engine is the Noema architectural component responsible for determining, recording, and interpreting what happened after an Intent was submitted for execution.
+The Outcome Engine is the canonical Noema architectural component responsible for determining, recording, and interpreting what happened after an Intent has crossed the execution boundary.
 
-The Outcome Engine establishes the boundary between:
+It establishes the semantic boundary between:
 
 * execution activity
 * observed execution results
-* business-state changes
 * expected outcomes
 * actual outcomes
-* success, failure, partial completion, and unknown results
+* business-state changes
+* verified business outcomes
+* success
+* failure
+* partial completion
+* cancellation
+* unresolved or unknown results
 
-Its purpose is not to execute Actions.
+The Outcome Engine does not execute Actions.
 
-Its purpose is to establish:
+Its responsibility begins with the evidence produced by execution and determines what outcome, if any, Noema can establish from that evidence.
 
-What happened as a result of attempting to execute this Intent?
+Therefore:
 
-The Outcome Engine therefore operates after, and in coordination with, the Execution layer.
+Execution is an activity. Outcome is an established interpretation of what that activity produced.
+
+The Outcome Engine operates after, and in coordination with, the Execution layer.
 
 ⸻
 
-2. Core Principle
+2. Purpose
+
+The purpose of the Outcome Engine is to establish a durable, auditable representation of what happened as a result of attempting to execute an Intent.
+
+It allows Noema to answer:
+
+* What execution occurred?
+* What outcome was expected?
+* What evidence was produced?
+* Which system supplied that evidence?
+* Was the expected result achieved?
+* Was the result verified?
+* Was the result partial?
+* Did execution fail?
+* Is the outcome still pending?
+* Is the outcome unknown?
+* Was reconciliation required?
+* Did the outcome subsequently become known?
+* Which rules established the outcome?
+
+The Outcome Engine therefore provides the architectural boundary between execution history and outcome determination.
+
+⸻
+
+3. Core Principle
+
+The foundational principle is:
 
 Execution is not outcome.
 
-A system may accept an Action without successfully producing the intended business result.
+An execution request may be accepted without producing the intended business result.
+
+An API may return successfully while the underlying business state remains unresolved.
+
+A consumer may report success while an authoritative business system later reports failure.
+
+A request may time out after the external system has already performed the Action.
 
 Therefore:
 
@@ -44,23 +83,30 @@ Execution Contract
       ↓
 Execution
       ↓
-Observed Result
+Execution Record
+      ↓
+Observed Evidence
       ↓
 Outcome Determination
+      ↓
+Outcome
 
 Noema must not infer successful completion merely because:
 
 * an execution request was sent
-* a consumer accepted a contract
-* an API returned successfully
-* a workflow reached its final step
-* an external system returned an ambiguous response
+* an execution request was accepted
+* an Action began
+* a consumer returned successfully
+* an API returned a positive response
+* a workflow reached a terminal step
+* a model interpreted a response as positive
+* an external response is ambiguous
 
-The outcome must be established from explicit evidence.
+The Outcome Engine establishes an outcome only from defined evidence and outcome rules.
 
 ⸻
 
-3. Outcome Engine Position
+4. Position in the Noema Lifecycle
 
 The canonical architectural relationship is:
 
@@ -82,15 +128,25 @@ Outcome Engine
    ↓
 Outcome
 
-The Outcome Engine consumes execution evidence and determines the resulting outcome state.
+The Outcome Engine therefore belongs to the post-execution determination layer.
 
-It does not replace the authoritative system of record.
+It consumes execution records and relevant evidence.
+
+It does not replace:
+
+* Intent
+* Validation
+* Trust
+* Execution Planning
+* Execution Contract
+* Execution
+* authoritative external business state
 
 ⸻
 
-4. What the Outcome Engine Owns
+5. What the Outcome Engine Owns
 
-The Outcome Engine owns Noema’s representation of execution outcome.
+The Outcome Engine owns Noema’s representation of an execution outcome.
 
 This includes:
 
@@ -100,55 +156,67 @@ This includes:
 * outcome evidence
 * outcome provenance
 * outcome verification
+* postcondition evaluation
 * partial completion state
 * failure classification
 * unknown outcome state
+* cancellation state
 * outcome timestamps
-* relationship between execution and outcome
+* outcome transitions
 * outcome history
+* reconciliation state where applicable
 
-Noema does not thereby become the authoritative owner of the underlying business state.
+This does not make Noema the authoritative owner of the underlying business state.
 
 For example:
 
 Payment System
-    ↓
+      ↓
 Authoritative payment state
 Noema
-    ↓
-Observed and recorded outcome
+      ↓
+Observed evidence
+      ↓
+Outcome determination
 
-Noema records what it established happened.
+Noema records and interprets what it establishes from the authoritative system.
 
-The external system remains authoritative for its domain state.
+The external system remains authoritative for its own business domain.
 
 ⸻
 
-5. Outcome vs Execution
+6. Outcome vs Execution
 
 Execution answers:
 
-Did the execution attempt occur?
+Did an execution attempt occur, and what did the execution consumer report?
 
 Outcome answers:
 
-What resulted from that execution?
+What result can Noema establish from that execution and the available evidence?
 
-These are different questions.
+These are distinct questions.
 
-Example:
+For example:
 
 Execution:
 API request accepted
 Outcome:
-Payment status remains unknown
+PENDING
 
-Another example:
+or:
 
 Execution:
 Transfer request submitted
 Outcome:
-Transfer completed
+COMPLETED
+
+or:
+
+Execution:
+Request timed out
+Outcome:
+UNKNOWN
 
 Therefore:
 
@@ -156,76 +224,76 @@ EXECUTED ≠ SUCCESSFUL
 
 ⸻
 
-6. Outcome vs Intent
+7. Outcome vs Intent
 
 The intended result and actual result must remain distinct.
 
 Example:
 
 Intent:
-
-Transfer ₦100,000 to Account B.
-
+Transfer ₦100,000 to Account B
 Expected Outcome:
-
 Account B receives ₦100,000
-
-Observed Outcome:
-
+Observed Result:
 Transfer rejected by payment system
 
-Noema must preserve both.
+Noema must preserve both the expected result and the observed result.
 
-It must not rewrite the Intent merely because execution produced a different result.
+An unsuccessful outcome must not rewrite the historical meaning of the Intent.
 
 ⸻
 
-7. Expected Outcome
+8. Expected Outcome
 
 An Intent or Action Contract may define an expected outcome.
 
 Conceptually:
 
+ExpectedOutcome {
+    state_change
+    affected_resource
+    expected_value
+    expected_conditions
+    postconditions
+    verification_requirements
+}
+
+The Expected Outcome describes what successful execution is intended to produce.
+
+It is not evidence that the result occurred.
+
+Therefore:
+
 Expected Outcome
-├── state change
-├── affected resource
-├── expected value
-├── expected conditions
-├── postconditions
-└── verification requirements
-
-The expected outcome establishes what successful execution should produce.
-
-It is not itself evidence that the result occurred.
+        ≠
+Observed Outcome
 
 ⸻
 
-8. Observed Outcome
+9. Observed Outcome
 
-An observed outcome is derived from evidence available after execution.
+An observed outcome is derived from evidence available after or during execution.
 
-Evidence may include:
+Relevant evidence may include:
 
 * execution response
-* external system response
+* execution consumer response
+* authoritative external-system response
 * resource state
 * transaction identifier
 * event confirmation
-* postcondition check
+* postcondition verification
 * consumer acknowledgment
-* authoritative system query
+* authoritative status lookup
+* reconciliation result
 
-The Outcome Engine should distinguish:
-
-Expected
-     ≠
-Observed
+The Outcome Engine must distinguish between what was expected and what was actually established.
 
 ⸻
 
-9. Outcome Verification
+10. Outcome Verification
 
-Where an Action Contract specifies postconditions, the Outcome Engine should verify them.
+Where an Action or Execution Contract defines postconditions, the Outcome Engine may be required to verify them.
 
 Conceptually:
 
@@ -237,33 +305,32 @@ Observe Relevant State
    ↓
 Compare
    ↓
-Outcome
+Outcome Determination
 
 Example:
 
-Expected:
+Action:
+Activate Card
+Expected Postcondition:
+Card.status = ACTIVE
 
-Card status = ACTIVE
+The Outcome Engine observes the relevant authoritative state.
 
-Observed:
+If:
 
-Card status = ACTIVE
+Card.status = ACTIVE
 
-Result:
+the expected outcome may be established as:
 
 COMPLETED
 
-If the observed state does not satisfy the postcondition:
+If the observed state does not satisfy the postcondition, successful completion has not been established.
 
-Execution occurred
-but
-Expected outcome not established
-
-The result must not be represented as successful merely because execution returned without an error.
+Execution returning without an error is therefore not sufficient where postcondition verification is required.
 
 ⸻
 
-10. Outcome States
+11. Outcome States
 
 The canonical conceptual outcome states are:
 
@@ -276,7 +343,7 @@ CANCELLED
 
 Implementations may introduce more granular subtypes.
 
-For example:
+Examples include:
 
 FAILED_BY_CONSUMER
 FAILED_BY_EXTERNAL_SYSTEM
@@ -285,13 +352,13 @@ UNKNOWN_EXTERNAL_STATE
 PARTIAL_EXECUTION
 CANCELLED_BY_ACTOR
 
-The exact taxonomy may evolve.
+The exact taxonomy may evolve while preserving the underlying semantic distinctions.
 
 ⸻
 
-11. PENDING
+12. PENDING
 
-PENDING means execution has begun or has been accepted, but the final outcome has not yet been established.
+PENDING means that execution has been accepted or begun, but the final outcome has not yet been established.
 
 Example:
 
@@ -301,67 +368,70 @@ External processing ongoing
       ↓
 PENDING
 
-Pending is not failure.
+PENDING is neither success nor failure.
 
-It is also not success.
+It represents an unresolved but potentially progressing execution.
 
 ⸻
 
-12. COMPLETED
+13. COMPLETED
 
-COMPLETED means Noema has sufficient evidence that the expected execution outcome was achieved.
+COMPLETED means that Noema has sufficient evidence to establish that the expected execution outcome was achieved.
 
 Conceptually:
 
 Execution
    ↓
+Evidence
+   ↓
 Expected conditions satisfied
    ↓
 COMPLETED
 
-Completion should be supported by explicit evidence.
+Completion should be supported by explicit evidence appropriate to the Action and its Execution Contract.
 
 ⸻
 
-13. FAILED
+14. FAILED
 
-FAILED means the requested execution did not produce the intended result and the failure has been established.
+FAILED means that the requested execution did not successfully produce the intended result and that failure has been established.
 
-Examples:
+Examples include:
 
 * Action rejected
-* Required precondition failed
-* External system rejected operation
-* Execution consumer reported failure
-* Postcondition was definitively violated
+* required precondition failed
+* external system rejected the operation
+* execution consumer reported failure
+* postcondition was definitively violated
+* authoritative business system established failure
 
-A failure should include structured reasons where available.
-
-⸻
-
-14. PARTIALLY_COMPLETED
-
-Some Actions may contain multiple independently executable components.
-
-Example:
-
-A → completed
-B → failed
-C → completed
-
-If the Intent explicitly permits partial execution:
-
-Outcome = PARTIALLY_COMPLETED
-
-Noema must not infer permission for partial completion.
-
-Partial execution semantics must be defined by the Intent or Action Contract.
+Failure should include structured reasons where available.
 
 ⸻
 
-15. UNKNOWN
+15. PARTIALLY_COMPLETED
 
-UNKNOWN means Noema cannot establish whether the intended outcome occurred.
+Some Actions contain multiple independently executable components.
+
+For example:
+
+Component A → COMPLETED
+Component B → FAILED
+Component C → COMPLETED
+
+If the Intent or Action Contract explicitly permits partial execution, the aggregate outcome may be:
+
+PARTIALLY_COMPLETED
+
+Noema must not infer that partial completion is permitted merely because an Action contains multiple components.
+
+Partial execution semantics must be established explicitly.
+
+⸻
+
+16. UNKNOWN
+
+UNKNOWN means that Noema cannot establish whether the intended outcome occurred.
 
 Example:
 
@@ -373,13 +443,13 @@ No authoritative response
       ↓
 UNKNOWN
 
-The correct representation is not:
+Noema must not represent this as:
 
 FAILED
 
-unless failure has actually been established.
+unless failure has been established.
 
-Nor:
+It must also not represent it as:
 
 COMPLETED
 
@@ -387,37 +457,37 @@ without evidence.
 
 Therefore:
 
-Unknown is a first-class outcome.
+UNKNOWN is a first-class outcome state.
 
 ⸻
 
-16. CANCELLED
+17. CANCELLED
 
-CANCELLED means execution was intentionally terminated before successful completion.
+CANCELLED means that execution was intentionally terminated before successful completion.
 
-Cancellation may occur because:
+Cancellation may result from:
 
-* Actor requested cancellation
-* policy required cancellation
-* execution was revoked where supported
-* workflow was terminated
-* external system cancelled the operation
+* Actor request
+* policy requirement
+* supported execution revocation
+* workflow termination
+* external-system cancellation
 
-Cancellation semantics should distinguish:
+Where supported by the underlying system, Noema should distinguish:
 
-Cancellation requested
+Cancellation Requested
 
 from:
 
-Cancellation confirmed
+Cancellation Confirmed
 
-where the underlying system supports such a distinction.
+A cancellation request does not itself establish that the underlying execution was successfully cancelled.
 
 ⸻
 
-17. Outcome Determination
+18. Outcome Determination
 
-The Outcome Engine should conceptually perform:
+The Outcome Engine conceptually evaluates:
 
 Execution Record
       +
@@ -426,40 +496,44 @@ Expected Outcome
 Observed Evidence
       +
 Postconditions
+      +
+Outcome Rules
       ↓
 Outcome Evaluation
       ↓
 Outcome
 
-The evaluation must be deterministic with respect to the relevant inputs and rules.
+Outcome determination should be deterministic with respect to the relevant inputs, evidence, and rule versions.
 
 ⸻
 
-18. Outcome Determination Is Not Model Judgment
+19. Outcome Determination Is Not Model Judgment
 
-An LLM may help interpret unstructured execution responses where necessary.
+An LLM may assist in interpreting unstructured execution responses where necessary.
 
-However, the authoritative outcome should be established through explicit rules and evidence.
+However, authoritative outcome determination must not depend solely upon model judgment.
 
-The architecture must not rely on:
+The architecture should not rely on:
 
-“The model thinks the operation succeeded.”
+"The model thinks the operation succeeded."
 
 Instead:
 
 Execution Evidence
       ↓
-Deterministic Outcome Rules
+Defined Outcome Rules
       ↓
-Outcome
+Outcome Determination
 
-Where interpretation is genuinely required, the interpreted result should remain distinguishable from authoritative evidence.
+Where model-assisted interpretation is necessary, the interpreted information should remain distinguishable from authoritative evidence.
+
+The system must preserve the provenance of that interpretation.
 
 ⸻
 
-19. Outcome Evidence
+20. Outcome Evidence
 
-Every consequential outcome should have provenance.
+Consequential outcomes should preserve evidence provenance.
 
 Conceptually:
 
@@ -472,27 +546,31 @@ OutcomeEvidence {
     freshness
 }
 
-Examples:
+Example:
 
+Source:
 Payment Provider
-Transaction ID
+Evidence:
+Transaction ID = TX-789
 Status = SETTLED
-Observed = 14:32
+Observed At = 14:32
 
 or:
 
+Source:
 CRM
+Evidence:
 Customer Record
 Status = ACTIVE
-Observed = 09:15
+Observed At = 09:15
 
 Evidence should be referenced rather than duplicated unnecessarily.
 
 ⸻
 
-20. Authoritative Sources
+21. Authoritative Sources
 
-The Outcome Engine must understand the distinction between:
+The Outcome Engine must distinguish among:
 
 * execution consumer
 * authoritative business system
@@ -502,19 +580,18 @@ The Outcome Engine must understand the distinction between:
 For example:
 
 Payment Provider
-       ↓
+      ↓
 Authoritative payment state
-Noema
-       ↓
-Observes payment state
-       ↓
-Records outcome
+      ↓
+Noema observes state
+      ↓
+Outcome determination
 
-Noema should not claim ownership of a business state merely because it observed it.
+Noema does not become the owner of the payment state merely because it observed it.
 
 ⸻
 
-21. Postcondition Verification
+22. Postcondition Verification
 
 Action Contracts may define postconditions.
 
@@ -527,33 +604,29 @@ Card exists
 Postcondition:
 Card.status = ACTIVE
 
-The Outcome Engine may verify:
-
-Card.status
-
-after execution.
+The Outcome Engine may verify the postcondition against the authoritative system.
 
 If:
 
-ACTIVE
+Card.status = ACTIVE
 
-then:
-
-COMPLETED
+then the expected outcome may be established.
 
 If:
 
-BLOCKED
+Card.status = BLOCKED
 
-then the intended outcome has not been achieved.
+the intended outcome has not been achieved.
+
+Execution success and postcondition success must therefore remain distinguishable.
 
 ⸻
 
-22. Outcome and Business State
+23. Outcome and Business State
 
 Business state may change independently of Noema.
 
-Therefore:
+The relationship is:
 
 Noema Execution
        ↓
@@ -561,15 +634,15 @@ External System
        ↓
 Business State
 
-The Outcome Engine observes relevant business state through defined interfaces.
+The Outcome Engine may observe relevant business state through defined interfaces.
 
-It should not maintain a competing authoritative state merely to simplify outcome determination.
+It must not maintain a competing authoritative business state merely to simplify outcome determination.
 
 ⸻
 
-23. Temporal Outcome Verification
+24. Temporal Outcome Verification
 
-Outcome verification may be asynchronous.
+Outcome verification may occur asynchronously.
 
 Example:
 
@@ -578,7 +651,7 @@ Execution submitted
 T2
 Execution accepted
 T3
-Processing
+External processing
 T4
 Business state changed
 T5
@@ -588,37 +661,37 @@ Therefore:
 
 Execution Time ≠ Outcome Time
 
-Noema should retain both where relevant.
+Noema should preserve the relevant timestamps independently.
 
 ⸻
 
-24. Eventual Outcomes
+25. Eventual Outcomes
 
 Some Actions cannot establish their final outcome immediately.
 
 Example:
 
 Loan application submitted
-
-The immediate result may be:
-
+        ↓
 PENDING
-
-Later:
-
+        ↓
 APPROVED
 
 or:
 
+PENDING
+        ↓
 REJECTED
 
-The Outcome Engine must support asynchronous outcome progression.
+The Outcome Engine must therefore support asynchronous outcome progression.
+
+The initial outcome does not necessarily represent the final outcome.
 
 ⸻
 
-25. Outcome Reconciliation
+26. Outcome Reconciliation
 
-When execution and business-state observations disagree, Noema may need reconciliation.
+Execution evidence and authoritative business state may disagree.
 
 Example:
 
@@ -627,9 +700,9 @@ SUCCESS
 Authoritative System:
 Transaction = FAILED
 
-The Outcome Engine must not silently select one.
+The Outcome Engine must not silently select one representation.
 
-The discrepancy should produce an explicit reconciliation state or outcome determination process.
+The discrepancy must be explicitly represented and processed through reconciliation.
 
 Conceptually:
 
@@ -643,7 +716,7 @@ Resolved Outcome
 
 ⸻
 
-26. Unknown Outcome Recovery
+27. Unknown Outcome Recovery
 
 An unknown outcome may later become known.
 
@@ -653,7 +726,7 @@ EXECUTION
    ↓
 UNKNOWN
    ↓
-authoritative lookup
+Authoritative Lookup
    ↓
 COMPLETED
 
@@ -661,21 +734,21 @@ or:
 
 UNKNOWN
    ↓
-authoritative lookup
+Authoritative Lookup
    ↓
 FAILED
 
 Therefore:
 
-UNKNOWN
+UNKNOWN is not necessarily terminal.
 
-need not be terminal.
+The Outcome Engine must support subsequent evidence that resolves an earlier unknown state.
 
 ⸻
 
-27. Outcome State History
+28. Outcome State History
 
-Outcome transitions should be auditable.
+Outcome transitions must remain auditable.
 
 Example:
 
@@ -686,24 +759,26 @@ UNKNOWN
 T2:
 COMPLETED
 
-This history is important because the final outcome alone does not explain what Noema knew at each point in time.
+The final state alone is insufficient to explain what Noema knew at each point in time.
+
+The historical progression must therefore remain reconstructible.
 
 ⸻
 
-28. Outcome Transition Provenance
+29. Outcome Transition Provenance
 
-A transition should record, where applicable:
+Each material outcome transition should preserve, where applicable:
 
 * previous outcome
 * triggering event
 * new outcome
 * timestamp
-* Execution ID
-* Intent version
-* evaluation ID
+* execution ID
 * evidence references
+* evaluation ID
 * verification result
 * reason
+* relevant rule version
 
 Conceptually:
 
@@ -715,11 +790,12 @@ OutcomeTransition {
     execution_id
     evidence
     reason
+    rule_version
 }
 
 ⸻
 
-29. Outcome Determinism
+30. Outcome Determinism
 
 Given the same:
 
@@ -741,52 +817,54 @@ Outcome(
     Rules
 )
 =
-deterministic result
+Deterministic Result
+
+Determinism is necessary for auditability and historical reconstruction.
 
 ⸻
 
-30. Outcome Rule Versioning
+31. Outcome Rule Versioning
 
 Outcome rules may evolve.
 
-Therefore an outcome evaluation should identify the relevant:
+Therefore every outcome evaluation should identify the relevant:
 
 rule_id
 rule_version
 
-This permits historical reconstruction.
+A historical outcome must remain reconstructible even after the current outcome rules have changed.
 
-A historical outcome should not become inexplicable merely because the current rule set changed.
+The current rule set must not silently rewrite historical outcome determinations.
 
 ⸻
 
-31. Consumer Failure vs Business Failure
+32. Consumer Failure vs Business Failure
 
-These should remain distinct.
+Consumer-level failure and business-level failure must remain distinct.
 
 Example:
 
 Execution Consumer:
-timeout
+TIMEOUT
 
-does not necessarily mean:
+does not necessarily establish:
 
 Business Action:
-failed
+FAILED
 
 The request may have reached the external system before the timeout.
 
-Therefore the outcome may initially be:
+Therefore the appropriate initial outcome may be:
 
 UNKNOWN
 
-until authoritative state can be established.
+until authoritative business state can be established.
 
 This distinction is essential for consequential operations.
 
 ⸻
 
-32. Idempotency and Outcomes
+33. Idempotency and Outcomes
 
 Outcome determination must account for idempotency.
 
@@ -800,7 +878,7 @@ Response lost
    ↓
 UNKNOWN
 
-A retry without determining the prior outcome could create duplicate execution.
+A blind retry could produce duplicate execution.
 
 Therefore:
 
@@ -808,28 +886,29 @@ UNKNOWN
 
 may require reconciliation before another execution attempt is permitted.
 
-The Outcome Engine should expose sufficient state for the Execution layer to apply the Action Contract’s idempotency semantics.
+The Outcome Engine should expose sufficient state for the Execution layer to apply the Action’s idempotency semantics.
 
 ⸻
 
-33. Outcome and Retry
+34. Outcome and Retry
 
 Retry is not equivalent to failure recovery.
 
 A retry may be safe only when:
 
-* the prior execution is known to have failed
-* the Action is explicitly retryable
+* the previous execution is known to have failed
+* the Action is retryable
 * idempotency semantics permit retry
-* relevant conditions remain valid
+* relevant preconditions remain valid
+* the Execution Contract permits the retry
 
-An unknown outcome must not automatically trigger a retry.
+An unknown outcome must not automatically trigger another execution attempt.
 
 ⸻
 
-34. Outcome and Partial Execution
+35. Outcome and Partial Execution
 
-Composite Actions may produce different outcomes per component.
+Composite Actions may have different outcomes for individual components.
 
 Example:
 
@@ -837,7 +916,7 @@ Component A → COMPLETED
 Component B → FAILED
 Component C → PENDING
 
-The composite outcome depends on the declared semantics of the Intent and Action Contract.
+The aggregate outcome depends on the declared semantics of the Intent and Action Contract.
 
 Noema must not infer:
 
@@ -847,26 +926,26 @@ or:
 
 partial success permitted
 
-unless the contract establishes it.
+unless those semantics are explicitly established.
 
 ⸻
 
-35. Outcome and Compensation
+36. Outcome and Compensation
 
-Some Actions may support compensating Actions.
+Some Actions may require compensating Actions after partial or unsuccessful execution.
 
 Example:
 
 A completed
 B failed
-↓
+      ↓
 Compensation required
 
-The Outcome Engine should record that compensation is required or has occurred.
+The Outcome Engine should record that compensation is required or that compensation occurred.
 
-It should not silently reinterpret the original outcome.
+It must not silently reinterpret the original outcome.
 
-Conceptually:
+The relationship is:
 
 Original Outcome
       ↓
@@ -880,13 +959,13 @@ The original execution history remains intact.
 
 ⸻
 
-36. Outcome Does Not Rewrite Trust
+37. Outcome Does Not Rewrite Trust
 
-If an Intent was correctly marked READY and execution later fails, the failure does not retroactively mean:
+If an Intent was correctly marked READY and execution subsequently fails, that failure does not retroactively establish:
 
-Trust = invalid
+Trust = INVALID
 
-The distinction is:
+The distinction remains:
 
 Trust:
 Was execution permitted?
@@ -905,9 +984,9 @@ is a valid lifecycle.
 
 ⸻
 
-37. Outcome Does Not Rewrite Validation
+38. Outcome Does Not Rewrite Validation
 
-Similarly, execution failure does not automatically imply that the original Intent was invalid.
+Execution failure does not automatically imply that the original Intent was invalid.
 
 A valid and trusted Intent may encounter:
 
@@ -916,32 +995,41 @@ A valid and trusted Intent may encounter:
 * unavailable resource
 * changed business state
 * consumer failure
+* postcondition failure
 
-Validation and outcome must remain separate.
+Validation and outcome therefore remain separate architectural concerns.
 
 ⸻
 
-38. Outcome and Intent Lifecycle
+39. Outcome and Intent Lifecycle
 
-The broader Intent lifecycle may contain:
+A broader Intent lifecycle may include:
 
 RESOLVED
+   ↓
 TRUSTED
+   ↓
 EXECUTING
+   ↓
 COMPLETED
+
+or:
+
+EXECUTING
+   ↓
 FAILED
 
-The Outcome Engine provides the evidence needed to establish the execution result.
+The Outcome Engine provides the evidence and determination required to establish the execution result.
 
-The Intent lifecycle should reference the outcome rather than conflating the two models.
+The Intent lifecycle may reference the resulting outcome without collapsing the Intent model and Outcome model into one record.
 
 ⸻
 
-39. Outcome and Execution Record
+40. Outcome and Execution Record
 
-The Execution Record establishes what Noema attempted or what the execution consumer reported.
+The Execution Record captures execution activity.
 
-The Outcome Engine determines what that execution resulted in.
+The Outcome Engine evaluates that execution activity and its associated evidence.
 
 Conceptually:
 
@@ -953,9 +1041,13 @@ Outcome Record
 
 The two records should remain independently auditable.
 
+The Execution Record answers what execution occurred.
+
+The Outcome Record answers what result Noema established from that execution.
+
 ⸻
 
-40. Outcome Record
+41. Outcome Record
 
 A conceptual Outcome Record may contain:
 
@@ -974,9 +1066,11 @@ OutcomeRecord {
 
 The exact schema belongs to the implementation specification.
 
+The architectural requirement is that the Outcome Record remain attributable to the relevant Intent, execution, evidence, and determination rules.
+
 ⸻
 
-41. Outcome Correlation
+42. Outcome Correlation
 
 Every outcome should be correlated to the execution and Intent that produced it.
 
@@ -992,25 +1086,26 @@ Outcome ID
 
 This allows Noema to reconstruct:
 
-What was intended?
-What was authorized?
-What was executed?
-What happened?
+* what was intended
+* what was authorized
+* what was executed
+* what evidence was observed
+* what outcome was established
 
 ⸻
 
-42. Outcome and External Events
+43. Outcome and External Events
 
 External systems may emit events after execution.
 
-Example:
+Examples:
 
 payment.submitted
 payment.settled
 
-The Outcome Engine may consume these events to establish the final outcome.
+The Outcome Engine may consume such events when they provide relevant evidence.
 
-External events should retain:
+External events should preserve, where available:
 
 * source
 * event identity
@@ -1019,39 +1114,53 @@ External events should retain:
 * correlation identifier
 * authority
 
+These properties support deterministic correlation and reconciliation.
+
 ⸻
 
-43. Duplicate Events
+44. Duplicate Events
 
 External systems may emit duplicate events.
 
 Outcome processing should therefore be idempotent where the source semantics require it.
 
-The same authoritative event should not produce multiple contradictory outcome transitions merely because it was delivered more than once.
+The same authoritative event must not produce multiple contradictory outcome transitions merely because it was delivered more than once.
+
+Event identity and correlation should be used to establish whether an event has already been incorporated into the outcome history.
 
 ⸻
 
-44. Out-of-Order Events
+45. Out-of-Order Events
 
-Events may arrive out of order.
+External events may arrive out of order.
 
-Example:
+For example:
 
-settled
+payment.settled
 
-arrives before:
+may arrive before:
 
-submitted
+payment.submitted
 
-The Outcome Engine should use event identity, timestamps, versions, and authoritative state where available rather than assuming message arrival order equals business-state order.
+The Outcome Engine should use:
+
+* event identity
+* event timestamps
+* event versions
+* correlation identifiers
+* authoritative current state
+
+where available.
+
+Message arrival order must not automatically be treated as business-state order.
 
 ⸻
 
-45. Outcome Freshness
+46. Outcome Freshness
 
 An outcome is based on evidence observed at a particular time.
 
-Therefore Noema should distinguish:
+Therefore Noema must distinguish:
 
 Outcome established at T1
 
@@ -1059,11 +1168,11 @@ from:
 
 Current business state at T2
 
-A completed outcome does not imply that the resource remains in the same state forever.
+A completed outcome does not imply that the affected resource remains in the same state indefinitely.
 
 ⸻
 
-46. Outcome vs Current State
+47. Outcome vs Current State
 
 Example:
 
@@ -1072,23 +1181,23 @@ Card activation completed.
 T2:
 Card later suspended.
 
-The outcome of the activation Action remains:
+The activation outcome remains:
 
 COMPLETED
 
-The current business state is now:
+while the current business state is:
 
 SUSPENDED
 
 These are not contradictory.
 
-Outcome describes what happened to the Action.
+The Outcome describes what happened to the Action.
 
-Current state describes the resource now.
+Current State describes the present state of the affected resource.
 
 ⸻
 
-47. Outcome Verification Failure
+48. Outcome Verification Failure
 
 Verification itself may fail.
 
@@ -1100,7 +1209,7 @@ Postcondition lookup unavailable
       ↓
 Outcome cannot be established
 
-The result may be:
+The appropriate outcome may therefore be:
 
 UNKNOWN
 
@@ -1108,31 +1217,35 @@ rather than:
 
 FAILED
 
-unless the business system provides authoritative evidence of failure.
+unless authoritative evidence establishes failure.
+
+Failure of verification is not automatically failure of the underlying Action.
 
 ⸻
 
-48. Outcome Escalation
+49. Outcome Escalation
 
 Certain unknown or contradictory outcomes may require human intervention.
 
 Example:
 
 Payment request
-   ↓
+      ↓
 UNKNOWN
-   ↓
+      ↓
 Authoritative systems disagree
-   ↓
+      ↓
 HUMAN_INTERVENTION_REQUIRED
 
-Human intervention should be represented explicitly rather than hidden inside retry behavior.
+Human intervention should be represented explicitly.
+
+It must not be hidden inside retry behavior or informal operational procedures.
 
 ⸻
 
-49. Outcome Notifications
+50. Outcome Notifications
 
-Outcome changes may emit events such as:
+Outcome changes may produce events such as:
 
 outcome.pending
 outcome.completed
@@ -1149,19 +1262,21 @@ These events may be consumed by:
 * monitoring systems
 * downstream orchestration
 
-The event vocabulary is illustrative and may evolve.
+The exact event vocabulary may evolve.
 
 ⸻
 
-50. Outcome Provenance
+51. Outcome Provenance
 
-Outcome provenance should establish:
+Outcome provenance must establish:
 
-What happened?
-How do we know?
-Which system told us?
-When did we observe it?
-Which rule established the outcome?
+* what happened
+* how Noema knows
+* which system supplied the evidence
+* when the evidence was observed
+* which rule established the outcome
+* which verification was performed
+* whether the evidence was authoritative
 
 Conceptually:
 
@@ -1175,13 +1290,13 @@ Observation
    ↓
 Rule
 
-This is necessary for auditability and dispute resolution.
+This is necessary for auditability, reconciliation, and dispute resolution.
 
 ⸻
 
-51. Outcome and Auditability
+52. Outcome and Auditability
 
-A consequential outcome should be reconstructible after the fact.
+A consequential outcome must be reconstructible after the fact.
 
 An auditor should be able to determine:
 
@@ -1192,13 +1307,16 @@ An auditor should be able to determine:
 5. What outcome was determined?
 6. Which authoritative system supplied the evidence?
 7. When was the outcome established?
-8. Did the outcome later change?
+8. Did the outcome subsequently change?
 9. Was reconciliation required?
 10. Was human intervention involved?
+11. Which outcome rules were used?
+
+The Outcome Engine therefore forms a critical component of Noema’s audit architecture.
 
 ⸻
 
-52. Outcome Invariants
+53. Outcome Invariants
 
 Invariant 1
 
@@ -1206,15 +1324,15 @@ Execution does not equal outcome.
 
 Invariant 2
 
-Outcome must be based on explicit evidence.
+Outcome determination must be based on explicit evidence.
 
 Invariant 3
 
-Unknown must not be represented as success.
+UNKNOWN must not be represented as success.
 
 Invariant 4
 
-Unknown must not be represented as failure without evidence.
+UNKNOWN must not be represented as failure without evidence.
 
 Invariant 5
 
@@ -1264,9 +1382,25 @@ Invariant 16
 
 Noema must not silently convert uncertain execution into a definitive outcome.
 
+Invariant 17
+
+A consumer success response is not automatically authoritative business-state evidence.
+
+Invariant 18
+
+Verification failure must remain distinguishable from verified business failure.
+
+Invariant 19
+
+Historical outcome determinations must remain reconstructible under their original rule versions.
+
+Invariant 20
+
+Retry must not erase or replace the outcome history of the prior execution attempt.
+
 ⸻
 
-53. Canonical Outcome Flow
+54. Canonical Outcome Flow
 
               Execution
                   │
@@ -1299,9 +1433,17 @@ Noema must not silently convert uncertain execution into a definitive outcome.
        ▼
  COMPLETED / FAILED
 
+Cancellation may enter the flow where explicitly supported:
+
+Execution
+   ↓
+Cancellation
+   ↓
+CANCELLED
+
 ⸻
 
-54. Relationship to the Trust State Machine
+55. Relationship to the Trust State Machine
 
 The Trust State Machine determines execution eligibility.
 
@@ -1317,7 +1459,7 @@ Execution
   ↓
 Outcome
 
-Therefore:
+For example:
 
 Trust State:
 READY
@@ -1336,17 +1478,17 @@ or:
 Outcome:
 FAILED
 
-Trust and Outcome should not be collapsed into one semantic decision.
+Trust and Outcome must not be collapsed into a single semantic decision.
 
 ⸻
 
-55. Relationship to the Execution Planner
+56. Relationship to the Execution Planner
 
-The Execution Planner determines how a trusted Intent should be translated into an executable sequence.
+The Execution Planner determines how a trusted Intent is translated into an executable sequence.
 
-The Outcome Engine does not plan the execution.
+The Outcome Engine does not plan execution.
 
-It evaluates what happened after execution.
+The relationship is:
 
 Intent
   ↓
@@ -1357,21 +1499,29 @@ Execution Plan
 Execution
   ↓
 Outcome Engine
+  ↓
+Outcome
+
+The Planner determines what should be executed.
+
+The Outcome Engine determines what resulted from execution.
 
 ⸻
 
-56. Relationship to the Execution Record
+57. Relationship to the Execution Record
 
-The Execution Record captures execution activity.
+The Execution Record captures execution activity, including relevant requests, responses, consumers, timestamps, and execution state.
 
-The Outcome Engine consumes that record and associated evidence.
+The Outcome Engine consumes the Execution Record and associated evidence.
+
+Conceptually:
 
 Execution Record
         │
         ├── request
         ├── consumer
         ├── timestamps
-        ├── status
+        ├── execution state
         ├── responses
         └── references
                 │
@@ -1379,11 +1529,13 @@ Execution Record
           Outcome Engine
                 │
                 ▼
-            Outcome
+             Outcome
+
+The Outcome Engine must not reconstruct execution history by inference where the Execution Record already provides the authoritative execution history.
 
 ⸻
 
-57. Relationship to Operational Memory
+58. Relationship to Operational Memory
 
 Outcome records become part of Noema’s operational history.
 
@@ -1394,15 +1546,15 @@ Operational Memory may use outcomes to establish:
 * whether reconciliation occurred
 * whether an execution remains pending
 * what evidence was observed
-* what follow-up may be required
+* whether follow-up may be required
 
-Outcome history should remain distinguishable from authoritative business state.
+Outcome history must remain distinguishable from authoritative business state.
 
 ⸻
 
-58. Outcome and Learning
+59. Outcome and Learning
 
-Historical outcomes may provide useful information for future system behavior.
+Historical outcomes may provide information useful for future system behavior.
 
 For example:
 
@@ -1424,7 +1576,7 @@ It is not automatically permission for future execution.
 
 ⸻
 
-59. Outcome and Idempotent Recovery
+60. Outcome and Idempotent Recovery
 
 For consequential Actions, the Outcome Engine should provide sufficient information to determine whether another execution attempt could create duplication or inconsistency.
 
@@ -1438,17 +1590,19 @@ may require reconciliation before retry.
 
 This protects against:
 
-lost response
-     ↓
-blind retry
-     ↓
-duplicate Action
+Lost Response
+      ↓
+Blind Retry
+      ↓
+Duplicate Action
+
+The Outcome Engine therefore participates in safe recovery without itself becoming the execution authority.
 
 ⸻
 
-60. Outcome and Compensation
+61. Outcome and Compensation
 
-Where a failed composite execution requires compensation, the compensation should be represented as a new explicit Action.
+Where a failed or partial execution requires compensation, the compensation must be represented as a new explicit Action.
 
 Example:
 
@@ -1468,45 +1622,64 @@ New Outcome
 
 The original outcome remains historically accurate.
 
+Compensation does not rewrite the original execution record or outcome.
+
 ⸻
 
-61. Outcome State Transition Principle
+62. Outcome State Transition Principle
 
-An outcome state may change only because of:
+An outcome state may change only because of a defined source of evidence or state transition.
 
-* a defined execution event
+Permitted causes include:
+
+* defined execution event
 * authoritative external evidence
 * postcondition verification
 * reconciliation
 * explicit cancellation
-* deterministic re-evaluation
+* deterministic re-evaluation under defined rules
 
-It must not change because:
+An outcome must not change merely because:
 
 * an LLM appears more confident
 * a retry occurred without new evidence
 * a user expects success
 * an execution response merely sounds positive
+* the current business state changed in a way unrelated to the original Action
+
+Outcome transitions must therefore be attributable to observable evidence or an explicit architectural operation.
 
 ⸻
 
-62. Canonical Mental Model
+63. Canonical Mental Model
 
 The Outcome Engine can be reduced to four questions:
 
 1. Did execution occur?
 
+Answered through:
+
 Execution Record
 
 2. What evidence exists?
 
+Answered through:
+
 Observed Evidence
 
-3. Did the expected postconditions occur?
+3. Did the expected conditions occur?
+
+Answered through:
 
 Verification
 
+and, where applicable:
+
+Postcondition Evaluation
+
 4. What outcome can Noema establish?
+
+The result is one of the applicable outcome states:
 
 PENDING
 COMPLETED
@@ -1517,7 +1690,7 @@ CANCELLED
 
 ⸻
 
-63. Fundamental Boundary
+64. Fundamental Boundary
 
 The complete Noema chain is:
 
@@ -1535,29 +1708,105 @@ Execution
       ↓
 Outcome
 
-Each stage answers a different question:
+Each stage answers a different architectural question:
 
-Meaning:
-What does the Actor intend?
-Validation:
-Is the Intent well formed and applicable?
-Trust:
-May the Intent proceed?
-Action:
-What executable capability represents it?
-Execution:
-What did the system attempt?
-Outcome:
-What actually happened?
+Stage	Question
+Meaning	What does the Actor intend?
+Validation	Is the Intent well formed and applicable?
+Trust	May the Intent proceed?
+Action	What executable operation represents the Intent?
+Execution	What did the system attempt and report?
+Outcome	What result can Noema establish from the evidence?
 
 Noema should preserve these distinctions.
 
 ⸻
 
-64. Final Definition
+65. Canonical Relationship
 
-The Outcome Engine is the deterministic Noema component responsible for establishing, recording, and maintaining the outcome of an execution using explicit execution records, expected outcomes, observed evidence, postconditions, authoritative external state, and versioned outcome rules.
+The complete relationship among execution, evidence, and outcome is:
+
+                         ┌──────────────┐
+                         │    Intent    │
+                         └──────┬───────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │  Validation  │
+                         └──────┬───────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │    Trust     │
+                         └──────┬───────┘
+                                │
+                              READY
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │Action/Plan   │
+                         └──────┬───────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │   Contract   │
+                         └──────┬───────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │  Execution   │
+                         └──────┬───────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │Execution Record │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │    Evidence     │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │ Outcome Engine  │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │     Outcome     │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │  Verification   │
+                       └─────────────────┘
+
+This separation preserves the Noema boundary between:
+
+* understanding
+* validation
+* Trust
+* authorization
+* execution
+* evidence
+* outcome determination
+* authoritative business state
+
+⸻
+
+66. Final Definition
+
+The Outcome Engine is the canonical Noema architectural component responsible for establishing, recording, and maintaining the outcome of an execution using the relevant Execution Record, expected outcome, observed evidence, postconditions, authoritative external state, reconciliation processes, and versioned outcome rules.
+
+It does not execute Actions.
+
+It does not replace authoritative external business systems.
+
+It does not retroactively rewrite Intent, Validation, or Trust.
+
+Its fundamental responsibility is to determine what result Noema can legitimately establish from the evidence available after execution.
 
 The core invariant is:
 
-Noema does not declare an Action successful because execution was attempted. It declares an outcome only when the available evidence establishes what happened. When the result cannot be established, Noema represents that uncertainty explicitly rather than inventing success or failure.
+Noema does not declare an Action successful merely because execution was attempted or accepted. It establishes an outcome only when the available evidence supports that determination. When the result cannot be established, Noema represents that uncertainty explicitly rather than inventing success or failure.

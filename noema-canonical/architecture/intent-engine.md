@@ -9,27 +9,27 @@ Canonical Path: architecture/intent-engine.md
 
 1. Definition
 
-The Intent Engine is the architectural component responsible for transforming interpreted human intent into a canonical, resolved, validated Intent representation that can proceed through Noema’s Trust and execution lifecycle.
+The Intent Engine is Noema’s architectural component responsible for transforming an Actor’s expressed objective into a canonical, sufficiently resolved Intent that can proceed through Validation, Trust, and, ultimately, execution.
 
-The Intent Engine is responsible for establishing what the Actor intends to accomplish.
+The Intent Engine establishes what the Actor intends to accomplish.
 
-It does not authorize execution.
+It does not:
 
-It does not execute Actions.
+* authorize execution
+* establish Trust
+* execute Actions
+* own authoritative external business state
+* determine how an Intent is operationally fulfilled
 
-It does not own authoritative business state.
-
-Its responsibility is:
-
-Understand, construct, resolve, and maintain canonical Intent.
+Its responsibility is to construct, resolve, version, and maintain canonical Intent.
 
 The canonical relationship is:
 
 Human Expression
       ↓
-AI Interpretation
+Interpretation
       ↓
-Intent Candidate
+Candidate Intent
       ↓
 Intent Engine
       ↓
@@ -39,7 +39,13 @@ Validation
       ↓
 Trust
       ↓
+Action Graph
+      ↓
+Action Contracts
+      ↓
 Execution
+      ↓
+Outcome
 
 ⸻
 
@@ -50,121 +56,140 @@ The Intent Engine owns the semantic lifecycle between an Actor’s expression an
 It is responsible for:
 
 * constructing Intent representations
-* resolving semantic ambiguity
-* identifying required information
+* resolving semantic references
+* identifying ambiguity
+* identifying missing semantic information
 * incorporating permitted context
-* maintaining Intent state
+* applying deterministic resolution rules
 * requesting clarification
-* applying deterministic semantic rules
-* preserving provenance
-* producing Intent versions
+* maintaining Intent state
+* maintaining Intent versions
+* preserving semantic provenance
+* identifying semantic requirements
 * determining when an Intent is sufficiently resolved for Validation
 
 The Intent Engine must not silently cross into:
 
+* Validation authority
+* Trust authority
 * authorization
-* Trust evaluation
+* execution planning authority
 * execution
-* business-state ownership
+* external business-state ownership
 
 These remain separate architectural responsibilities.
 
 ⸻
 
-3. Intent Engine Boundary
+3. The Intent Boundary
 
-The Intent Engine sits between probabilistic interpretation and deterministic downstream control.
+The Intent Engine is the boundary between probabilistic interpretation and canonical semantic state.
 
                  Actor
                    │
                    ▼
-             Human Expression
+           Human Expression
                    │
                    ▼
-            AI Interpretation
+             Interpretation
                    │
                    ▼
-          ┌──────────────────┐
-          │   Intent Engine  │
-          └────────┬─────────┘
+          Candidate Intent
+                   │
+                   ▼
+          ┌─────────────────┐
+          │  Intent Engine  │
+          └────────┬────────┘
                    │
           ┌────────┴─────────┐
           │                  │
           ▼                  ▼
-     Clarification       Canonical Intent
+   Clarification       Canonical Intent
                               │
                               ▼
                          Validation
                               │
                               ▼
                             Trust
-                              │
-                              ▼
-                           Action
 
-The Intent Engine therefore acts as a semantic boundary.
+A model may propose an interpretation.
 
-The AI may propose interpretations.
-
-The Intent Engine establishes the canonical Intent representation.
-
-⸻
-
-4. Intent Engine vs AI Model
-
-The Intent Engine must not be equivalent to an LLM or other model.
-
-An AI model may:
-
-* interpret language
-* extract entities
-* infer candidate objectives
-* identify possible references
-* propose missing context
-* generate clarification questions
-* construct candidate Intent objects
-
-The Intent Engine determines whether those outputs can become canonical Intent.
+The Intent Engine establishes whether that interpretation can become canonical Intent.
 
 Therefore:
 
 Model Output
-     ↓
+    ↓
 Candidate Interpretation
-     ↓
+    ↓
 Intent Engine
-     ↓
+    ↓
 Canonical Intent
 
-Not:
+not:
 
 Model Output
-     ↓
+    ↓
 Canonical Intent
-
-The model is an input to the Intent Engine.
-
-It is not the authority over Intent state.
 
 ⸻
 
-5. Core Principle
+4. Core Principle
 
-The Intent Engine must preserve the distinction between:
+Noema must preserve the distinction between:
 
-What the Actor said
+What the Actor expressed
 
 and:
 
-What Noema has established the Actor intends
+What Noema has established the Actor intends.
 
-Natural language is evidence for Intent interpretation.
+Natural-language expression is evidence for semantic interpretation.
 
-The canonical Intent is the structured representation established after interpretation and resolution.
+It is not itself the canonical Intent representation.
+
+Likewise, a plausible model interpretation is not automatically an established Intent.
 
 Therefore:
 
-Noema must never confuse a plausible interpretation with an established Intent.
+Plausible Interpretation
+        ≠
+Canonical Intent
+
+The Intent Engine exists to establish that boundary.
+
+⸻
+
+5. Intent Engine Is Not the AI Model
+
+The Intent Engine must not be equivalent to an LLM or other probabilistic model.
+
+A model may:
+
+* interpret language
+* extract entities
+* identify candidate objectives
+* identify possible references
+* propose parameters
+* identify potential contextual relationships
+* propose clarification questions
+* construct candidate Intent objects
+
+The Intent Engine determines whether those outputs satisfy the requirements for canonical Intent.
+
+Therefore:
+
+AI Model
+   ↓
+Candidate Interpretation
+   ↓
+Intent Engine
+   ↓
+Canonical Intent
+
+The model is an input to the semantic process.
+
+It is not the authority over Intent state.
 
 ⸻
 
@@ -174,27 +199,28 @@ The Intent Engine may consume:
 
 * Actor expression
 * conversation context
-* previously established Intent
+* an existing Intent
 * Actor identity
 * authorized contextual information
 * relevant business context
-* available capabilities
 * domain vocabulary
 * semantic rules
 * deterministic defaults
 * prior clarification responses
-* external evidence permitted for Intent resolution
+* permitted external evidence
 * model-generated candidate interpretations
 
-Inputs must retain provenance.
+Every material input should retain provenance.
 
-The Intent Engine must be able to distinguish:
+The Intent Engine must distinguish, where applicable:
 
-Actor-provided information
-Model-inferred information
-System-provided context
-External evidence
-Deterministic defaults
+ACTOR
+MODEL
+CONTEXT
+EXTERNAL_EVIDENCE
+DETERMINISTIC_RULE
+DEFAULT
+CLARIFICATION
 
 These sources must not be silently conflated.
 
@@ -206,13 +232,15 @@ The Intent Engine may produce:
 
 * canonical Intent
 * updated Intent version
+* partially resolved Intent
 * unresolved Intent
-* clarification requirement
-* clarification request
 * semantic requirements
+* ambiguity records
+* clarification requirements
+* clarification requests
 * resolution provenance
-* Intent state transition
-* candidate interpretations where resolution is not yet possible
+* Intent state transitions
+* candidate interpretations where canonical resolution is not yet possible
 
 A resolved Intent becomes eligible for Validation.
 
@@ -228,9 +256,9 @@ Trust
 
 ⸻
 
-8. Intent Construction
+8. Canonical Intent Construction
 
-The Intent Engine constructs Intent from available semantic information.
+The Intent Engine constructs Intent using Noema’s canonical Intent ontology.
 
 Conceptually:
 
@@ -250,47 +278,47 @@ Intent {
     state
 }
 
-The exact Intent schema is defined by the canonical Intent ontology.
+The exact Intent schema belongs to the canonical Intent specification.
 
-The Intent Engine must use that canonical representation rather than creating application-specific semantic representations.
+The Intent Engine must not create competing application-specific semantic representations where the canonical ontology already defines the relevant concept.
 
 ⸻
 
 9. Intent Resolution
 
-Intent resolution establishes the semantic meaning of an expression.
+Intent resolution establishes the semantic meaning of an Actor expression.
 
-Example:
+For example:
 
 "Send ₦50,000 to John."
 
-The Intent Engine may establish:
+may establish:
 
 objective = transfer_funds
 amount = ₦50,000
 recipient = John
 
-But if multiple people named John exist:
+However, if multiple persons named John are possible:
 
-recipient = ambiguous
+recipient = AMBIGUOUS
 
-The Intent Engine must not select one merely because it appears likely.
+The Intent Engine must not arbitrarily select one.
 
 Instead:
 
 Intent
    ↓
-Ambiguity detected
+Ambiguity Detected
    ↓
-Clarification required
+Clarification Required
 
 ⸻
 
 10. Resolution Is Not Guessing
 
-The Intent Engine may use contextual evidence to resolve ambiguity when the evidence establishes a canonical interpretation.
+The Intent Engine may use contextual evidence to resolve meaning where that evidence establishes the interpretation.
 
-It must not use probability alone as authority.
+It must not treat probability alone as semantic authority.
 
 For example:
 
@@ -298,60 +326,58 @@ John A
 John B
 John C
 
-If the Actor explicitly identifies John B through an authoritative contextual reference, the Intent may resolve to John B.
+If authoritative context establishes that the Actor selected John B, the Intent may resolve to John B.
 
-If the system merely estimates that John B is probably intended, the Intent remains unresolved.
+If the system merely estimates that John B is the most likely interpretation, the Intent remains unresolved.
 
-The principle is:
+The governing principle is:
 
-Plausibility is not semantic establishment.
+Plausibility ≠ Semantic Establishment
 
 ⸻
 
-11. Clarification
+11. Clarification as a First-Class Operation
 
 Clarification is a first-class Intent Engine operation.
 
-When required semantic information cannot be established, the Intent Engine should generate a structured clarification requirement.
+When required semantic information cannot be established, the Engine should produce a structured clarification requirement.
 
 Example:
 
 Intent:
-    action = transfer
-    recipient = ambiguous
+    action = TRANSFER
     amount = ₦50,000
+    recipient = AMBIGUOUS
 Requirement:
     recipient identity must be established
 
-The resulting state may be:
+The Intent may enter:
 
 WAITING_FOR_CLARIFICATION
 
-The clarification request should identify the missing semantic information without unnecessarily exposing internal implementation details.
+The clarification request should target the unresolved semantic requirement.
 
 ⸻
 
-12. Clarification Must Be Targeted
+12. Targeted Clarification
 
-Clarification should resolve the smallest missing semantic condition necessary to continue.
+Clarification should establish the smallest missing semantic condition necessary to continue.
 
 Instead of:
 
-“Please provide more information.”
+Please provide more information.
 
-Prefer a request that establishes the unresolved field.
+the Engine should identify the actual ambiguity:
 
-For example:
+Which John do you mean: John A or John B?
 
-“Which John do you mean: John A or John B?”
-
-The Intent Engine should avoid asking for information that is already established.
+The Intent Engine should not request information that has already been established.
 
 ⸻
 
 13. Contextual Resolution
 
-Context may resolve Intent information.
+Context may establish Intent information.
 
 Relevant context may include:
 
@@ -364,7 +390,7 @@ Relevant context may include:
 * authoritative system state
 * previously resolved Intent information
 
-Context must be used according to explicit resolution rules.
+Context must be applied according to explicit resolution rules.
 
 Context is not unlimited permission to infer.
 
@@ -372,13 +398,13 @@ Therefore:
 
 Context
    ↓
-may resolve meaning
+may establish meaning
 
 but not:
 
 Context
    ↓
-may manufacture authority
+may establish authority
 
 Authorization remains a Trust concern.
 
@@ -397,10 +423,11 @@ CLARIFICATION_REQUIRED
 RESOLVED
 SUPERSEDED
 CANCELLED
+EXPIRED
 
-The exact lifecycle is defined by the Intent specification.
+The exact lifecycle belongs to the Intent specification.
 
-The Intent Engine should not use Trust states as substitutes for Intent states.
+Intent state must not be substituted with Trust state.
 
 For example:
 
@@ -409,13 +436,13 @@ RESOLVED
 Trust State:
 WAITING_FOR_APPROVAL
 
-These represent different dimensions.
+These are valid simultaneous states because they represent different dimensions.
 
 ⸻
 
 15. Intent State vs Trust State
 
-The distinction is foundational.
+This distinction is foundational.
 
 Intent state answers:
 
@@ -431,7 +458,7 @@ Intent
  ├── Intent State
  └── Trust State
 
-An Intent can be:
+An Intent may therefore be:
 
 RESOLVED
 +
@@ -443,23 +470,25 @@ RESOLVED
 +
 READY
 
-The Intent Engine owns the former.
+The Intent Engine owns semantic Intent state.
 
-The Trust subsystem owns the latter.
+The Trust subsystem owns Trust state.
 
 ⸻
 
 16. Intent Versioning
 
-An Intent should be versioned whenever its canonical semantic representation materially changes.
+An Intent must be versioned whenever its canonical semantic representation materially changes.
 
 Example:
 
 Intent v1
 recipient = John
-       ↓ clarification
+      ↓
+clarification
+      ↓
 Intent v2
-recipient = John_123
+recipient = customer_123
 
 The previous representation must remain reconstructible.
 
@@ -473,7 +502,7 @@ Intent versioning supports:
 * reproducibility
 * historical reconstruction
 
-A material semantic change must not silently overwrite history.
+A material semantic change must never silently overwrite historical Intent state.
 
 ⸻
 
@@ -481,24 +510,23 @@ A material semantic change must not silently overwrite history.
 
 Material changes may include:
 
-* Action changes
 * Actor changes
+* objective changes
+* Action changes
 * target changes
 * resource changes
 * amount changes
 * destination changes
 * constraints changes
 * desired outcome changes
-* execution-relevant parameters changing
-* contextual assumptions changing materially
+* execution-relevant parameter changes
+* material contextual assumption changes
 
-A material change should trigger the appropriate downstream revalidation and Trust evaluation.
-
-Conceptually:
+A material change must trigger the appropriate downstream Validation and Trust re-evaluation.
 
 Intent v1
    ↓
-material change
+Material Change
    ↓
 Intent v2
    ↓
@@ -506,11 +534,13 @@ Validation
    ↓
 Trust Evaluation
 
+A previous Trust decision must not silently transfer to a materially changed Intent.
+
 ⸻
 
 18. Non-Material Updates
 
-Not every event necessarily creates a new semantic Intent version.
+Not every update requires a new semantic Intent version.
 
 Examples may include:
 
@@ -521,28 +551,30 @@ Examples may include:
 
 The implementation should distinguish semantic changes from operational metadata.
 
-The canonical criterion is whether the change can materially affect the meaning or execution eligibility of the Intent.
+The relevant criterion is whether the change can materially affect:
+
+* Intent meaning
+* semantic validity
+* execution eligibility
 
 ⸻
 
 19. Intent Provenance
 
-The Intent Engine must preserve provenance for semantic claims.
-
-For relevant fields, provenance should identify where the information originated.
+The Intent Engine must preserve provenance for material semantic claims.
 
 Conceptually:
 
 Field:
-recipient
+    recipient
 Value:
-customer_123
+    customer_123
 Source:
-Actor clarification
+    ACTOR_CLARIFICATION
 Evidence:
-clarification_event_456
+    clarification_event_456
 Timestamp:
-...
+    ...
 
 Possible provenance sources include:
 
@@ -558,37 +590,9 @@ Provenance allows Noema to distinguish established information from inferred inf
 
 ⸻
 
-20. Model-Assisted Intent Generation
+20. Candidate Intent
 
-Models may generate candidate Intent structures.
-
-For example:
-
-Natural Language
-      ↓
-LLM
-      ↓
-Candidate Intent
-
-The candidate is then processed by the Intent Engine.
-
-The Engine must establish:
-
-* schema conformity
-* required semantic fields
-* reference resolution
-* ambiguity
-* permitted defaults
-* contextual consistency
-* provenance
-
-The model must not directly establish canonical execution semantics.
-
-⸻
-
-21. Candidate vs Canonical Intent
-
-Noema should distinguish:
+Noema must distinguish:
 
 Candidate Intent
 
@@ -596,15 +600,15 @@ from:
 
 Canonical Intent
 
-A candidate represents a possible interpretation.
+A Candidate Intent represents a possible semantic interpretation.
 
-A canonical Intent represents the interpretation established by Noema’s semantic process.
+A Canonical Intent represents an interpretation established by the Intent Engine.
 
-This distinction prevents probabilistic model output from silently becoming system state.
+This prevents probabilistic model output from silently becoming authoritative system state.
 
 ⸻
 
-22. Multiple Candidate Interpretations
+21. Multiple Candidate Interpretations
 
 An expression may legitimately produce multiple candidates.
 
@@ -612,82 +616,88 @@ Example:
 
 "Cancel the subscription."
 
-Possible interpretations:
+Possible targets:
 
 Subscription A
 Subscription B
 Subscription C
 
-The Intent Engine should preserve ambiguity until it can be resolved through:
+The Intent Engine should preserve this ambiguity until it can be resolved through:
 
 * explicit Actor clarification
 * authoritative context
 * deterministic semantic rules
 * authoritative evidence
 
-It should not collapse candidates arbitrarily.
+It must not collapse candidates arbitrarily.
 
 ⸻
 
-23. Deterministic Resolution Rules
+22. Deterministic Resolution Rules
 
 Where semantic resolution depends on deterministic rules, those rules should be explicit and versioned.
 
 Conceptually:
 
 Resolve(
-    Candidate Intent,
+    CandidateIntent,
     Context,
     Evidence,
-    Resolution Rules
+    ResolutionRules
 )
-→ Resolution Result
+→ ResolutionResult
 
-Given the same relevant inputs and rule versions, resolution should be reproducible.
+Given the same relevant inputs and rule versions, deterministic resolution should be reproducible.
 
-Model-generated variability must not silently alter deterministic resolution outcomes.
+Model variability must not silently alter a deterministic resolution outcome.
 
 ⸻
 
-24. Defaults
+23. Defaults
 
-Defaults may be used only where the Intent semantics explicitly permit them.
+Defaults may be used only where Intent semantics explicitly permit them.
 
-Example:
+For example:
 
 currency = account.default_currency
 
-may be legitimate if the account’s authoritative currency is the canonical source.
+may be valid if the account’s authoritative currency is defined as the canonical source.
 
 But:
 
 recipient = most_recent_contact
 
-must not be silently assumed merely because it is statistically likely.
+must not be silently assumed merely because it appears likely.
 
-Every default should have:
+Every semantic default should have:
 
 * an explicit rule
-* a defined scope
-* a provenance marker
-* a deterministic basis
+* defined scope
+* provenance
+* deterministic basis
+
+Defaults must never become a mechanism for hiding ambiguity.
 
 ⸻
 
-25. Semantic Completeness
+24. Semantic Completeness
 
-An Intent is semantically complete when all information required to establish its intended meaning has been resolved.
+An Intent is semantically complete when the information necessary to establish its intended meaning has been resolved.
 
-Semantic completeness does not mean:
+Semantic completeness does not establish:
 
-* authorization is complete
-* Trust is established
-* execution capability is available
-* execution will succeed
+* structural validity
+* authorization
+* Trust
+* capability availability
+* execution readiness
+* execution success
 
 Therefore:
 
 Semantically Complete
+        ≠
+Valid
         ≠
 Trusted
         ≠
@@ -697,20 +707,18 @@ Successful
 
 ⸻
 
-26. Intent Requirements
+25. Intent Requirements
 
-The Intent Engine may identify semantic requirements.
+The Intent Engine may identify machine-readable semantic requirements.
 
 Example:
 
 Intent:
-    action = transfer
+    action = TRANSFER
     amount = ₦50,000
     recipient = ?
 Requirement:
     recipient identity required
-
-Requirements should be machine-readable.
 
 Conceptually:
 
@@ -723,25 +731,23 @@ Requirement {
     resolvable
 }
 
-The exact schema remains subject to the canonical ontology.
+The exact schema belongs to the canonical Intent ontology.
 
 ⸻
 
-27. Intent Engine and Validation
+26. Intent Engine vs Validation
 
 The Intent Engine establishes semantic Intent.
 
-Validation verifies that the resulting Intent satisfies structural and applicability requirements.
+Validation determines whether the resulting Intent satisfies structural and applicability requirements.
 
 Therefore:
 
 Intent Engine
-    ↓
+      ↓
 Canonical Intent
-    ↓
+      ↓
 Validation
-
-The Intent Engine should not duplicate the Validation Engine.
 
 For example:
 
@@ -750,15 +756,15 @@ recipient = customer_123
 Validation:
 customer_123 exists
 
-The distinction should remain explicit.
+The Intent Engine should not become a duplicate Validation Engine.
 
 ⸻
 
-28. Intent Engine and Trust
+27. Intent Engine vs Trust
 
 The Intent Engine does not determine whether an Intent may execute.
 
-After the Intent becomes sufficiently resolved:
+After semantic resolution:
 
 Resolved Intent
       ↓
@@ -766,7 +772,7 @@ Validation
       ↓
 Trust
 
-Trust may determine:
+Trust may establish states such as:
 
 WAITING
 BLOCKED
@@ -774,15 +780,15 @@ READY
 
 The Intent Engine must not convert:
 
-resolved
+RESOLVED
 
 into:
 
-trusted
+TRUSTED
 
 ⸻
 
-29. Intent Engine and Context Engine
+28. Intent Engine and Context Engine
 
 The Intent Engine consumes context.
 
@@ -791,167 +797,119 @@ The Context Engine is responsible for acquiring, organizing, and maintaining con
 Therefore:
 
 Context Engine
-       │
-       ▼
+      ↓
 Context
-       │
-       ▼
+      ↓
 Intent Engine
-       │
-       ▼
+      ↓
 Resolved Intent
 
 The Intent Engine should not become the authoritative owner of all contextual data.
 
-It should reference context according to explicit provenance and dependency rules.
+It should reference contextual information according to explicit provenance and dependency rules.
 
 ⸻
 
-30. Intent Engine and Action Graph
+29. Intent Engine and Action Graph
 
-The Intent Engine may identify the objective and semantic Action required to satisfy an Intent.
+The Intent Engine establishes the Actor’s semantic objective.
 
-The Action Graph represents available relationships between:
-
-* Actions
-* capabilities
-* resources
-* dependencies
-* preconditions
-* outputs
-* execution relationships
-
-The Intent Engine may therefore produce an Intent whose Action semantics can later be mapped through the Action Graph.
-
-Conceptually:
-
-Intent
-  ↓
-Action
-  ↓
-Action Graph
-  ↓
-Executable Capability
-
-The Intent Engine does not itself execute the graph.
-
-⸻
-
-31. Intent Engine and Execution Planner
-
-The Intent Engine establishes what the Actor intends.
-
-The Execution Planner determines how that Intent can be fulfilled through available Actions and dependencies.
+The Action Graph establishes an explicit operational structure for fulfilling that objective.
 
 Therefore:
 
+Intent
+   ↓
+Action Graph
+   ↓
+Actions
+   ↓
+Action Contracts
+   ↓
+Execution
+
+The Intent Engine may identify the semantic Action or objective that an Action Graph must ultimately satisfy.
+
+It does not determine the complete execution structure.
+
+That responsibility belongs to the Action Graph and associated planning architecture.
+
+⸻
+
+30. Intent Engine and Execution Planning
+
+The architectural distinction is:
+
 Intent Engine
-"What does the Actor want?"
-        ↓
-Execution Planner
-"How can that objective be fulfilled?"
+"What does the Actor intend?"
 
-The distinction prevents planning concerns from contaminating semantic resolution.
+versus:
 
-⸻
+Action Graph / Planner
+"How can that Intent be fulfilled?"
 
-32. Intent Engine and Execution Contract
+The Intent Engine must not prematurely collapse semantic meaning into a specific execution sequence.
 
-The Intent Engine does not create final execution authority merely by resolving Intent.
+For example:
 
-The later lifecycle is:
+Intent:
+Renew my card.
 
-Resolved Intent
-      ↓
-Validation
-      ↓
-Trust
-      ↓
-Action Selection
-      ↓
-Execution Contract
-      ↓
-Execution Consumer
+does not itself establish:
 
-An Execution Contract is therefore downstream of the Intent Engine.
+Check eligibility
+→ Verify address
+→ Request renewal
+→ Confirm renewal
+→ Initiate delivery
+
+Those are execution-structure concerns.
 
 ⸻
 
-33. Intent Identity
+31. Intent and Objective
 
-Each Intent should have a stable identity independent of its versions.
+The Intent Engine must preserve the distinction between:
 
-Conceptually:
-
-intent_id = stable identity
-version = semantic revision
-
-This allows Noema to distinguish:
-
-the same evolving Intent
-
-from:
-
-a different Intent
-
-The exact identity semantics are defined in the Intent ontology.
-
-⸻
-
-34. Actor Ownership
-
-An Intent must retain its Actor relationship.
-
-The Actor identifies the principal whose objective is being represented.
-
-The Intent Engine must not silently change the Actor because another system or model produces a different interpretation.
-
-Any change to Actor identity is a material semantic event and should be explicitly represented.
-
-⸻
-
-35. Intent and Objective
-
-The Intent Engine should preserve the distinction between:
-
-Objective
-
-and:
-
-Action
+* objective
+* Action
+* execution strategy
 
 An Actor may express:
 
 “I need my card renewed.”
 
-The objective is the desired outcome.
+The objective may be:
 
-The specific operational Actions required to accomplish it may involve:
+renew_card
 
-* checking eligibility
-* selecting a renewal path
-* requesting replacement
-* updating records
-* notifying the Actor
+The eventual Action Graph may contain:
 
-The Intent Engine should capture the objective without prematurely collapsing it into an implementation-specific execution sequence.
+CHECK_ELIGIBILITY
+VERIFY_ADDRESS
+REQUEST_REPLACEMENT
+CONFIRM_REQUEST
+
+The Intent Engine establishes the objective.
+
+It does not need to encode the eventual execution sequence into the Intent itself.
 
 ⸻
 
-36. Intent and Action
+32. Intent and Action
 
-An Intent may identify an explicit Action where the Actor’s request is operationally specific.
+An Intent may contain an explicit Action where the Actor’s expression is operationally specific.
 
 Example:
 
 "Cancel subscription 123."
 
-The Intent may represent:
+may establish:
 
 objective = cancel_subscription
 target = subscription_123
 
-The eventual execution plan may contain multiple underlying Actions.
+The eventual execution structure may still contain multiple Actions.
 
 Therefore:
 
@@ -959,15 +917,15 @@ Intent
    ↓
 Objective
    ↓
-Plan
+Action Graph
    ↓
 Actions
 
-The Intent Engine establishes the semantic objective.
+The semantic objective remains distinct from its operational realization.
 
 ⸻
 
-37. Composite Intents
+33. Composite Intents
 
 A single Actor expression may contain multiple objectives.
 
@@ -975,9 +933,9 @@ Example:
 
 “Cancel my old subscription and move the balance to my new account.”
 
-The Intent Engine may represent this as a composite Intent or a set of related Intent components, depending on the canonical Intent model.
+The Intent Engine may represent this as a composite Intent or related Intent components, according to the canonical Intent model.
 
-The architecture must preserve:
+The representation must preserve:
 
 * component identity
 * dependencies
@@ -986,13 +944,15 @@ The architecture must preserve:
 * atomicity requirements
 * provenance
 
-The Intent Engine must not infer permission for partial execution merely because components can be separated.
+The Intent Engine must not infer permission for partial execution merely because the components can be separated.
 
 ⸻
 
-38. Intent Relationships
+34. Intent Relationships
 
-Intents may have relationships such as:
+Intent relationships should be explicit where they materially affect lifecycle or provenance.
+
+Examples include:
 
 SUPERSEDES
 DERIVED_FROM
@@ -1002,29 +962,24 @@ COMPOSED_OF
 CLARIFIES
 REPLACES
 
-These relationships should be explicit where they materially affect lifecycle or provenance.
+These relationships allow Noema to reconstruct how semantic state evolved.
 
 ⸻
 
-39. Conversational Continuity
+35. Conversational Continuity
 
-Conversation may provide information needed to resolve an Intent.
+Conversation may provide information required to resolve an existing Intent.
 
 Example:
 
 Actor:
-
-“Send ₦50,000 to John.”
-
+"Send ₦50,000 to John."
 Noema:
-
-“Which John?”
-
+"Which John?"
 Actor:
+"John from Finance."
 
-“John from Finance.”
-
-The second response should update the existing Intent rather than creating an unrelated semantic object.
+The second response should resolve the existing Intent rather than silently creating an unrelated semantic object.
 
 Conceptually:
 
@@ -1042,33 +997,29 @@ The relationship must remain auditable.
 
 ⸻
 
-40. Intent Supersession
+36. Intent Supersession
 
-An Actor may change their objective.
+An Actor may materially change the objective.
 
 Example:
 
 "Transfer ₦50,000."
-
-followed by:
-
+        ↓
 "Actually, make it ₦75,000."
 
-The Intent Engine should represent the material change explicitly.
+The Intent Engine must represent the material change explicitly.
 
-The previous Intent version becomes superseded rather than silently rewritten.
+The previous version becomes superseded rather than silently rewritten.
 
-Downstream Validation and Trust decisions associated with the previous version must not automatically apply to the new version.
+Downstream Validation and Trust associated with the previous version must not automatically apply to the new version.
 
 ⸻
 
-41. Cancellation
+37. Cancellation
 
 An Actor may cancel an Intent before execution.
 
-Cancellation should be represented as an explicit lifecycle event.
-
-For example:
+Cancellation should be represented as an explicit lifecycle event:
 
 RESOLVED
    ↓
@@ -1076,37 +1027,34 @@ intent.cancelled
    ↓
 CANCELLED
 
-Cancellation must not be confused with:
+Cancellation must remain distinct from:
 
 BLOCKED
 FAILED
 
-These represent different causes and lifecycle meanings.
+because these states have different causes and lifecycle meanings.
 
 ⸻
 
-42. Intent Expiration
+38. Intent Expiration
 
 Some Intents may have temporal validity.
 
 Example:
 
-Intent valid until:
-18:00
+valid_until = 18:00
 
-After expiration, the Intent may require re-resolution or become invalid for further processing.
+After expiration, the Intent may require re-resolution, revalidation, or another explicitly defined lifecycle transition.
 
-Expiration should be explicit and deterministic.
-
-The Intent Engine should not assume that a previously resolved Intent remains semantically applicable forever.
+The Intent Engine must not assume that a previously resolved Intent remains semantically applicable indefinitely.
 
 ⸻
 
-43. External Evidence
+39. External Evidence
 
-The Intent Engine may use external evidence where that evidence is necessary to resolve meaning.
+The Intent Engine may consume external evidence when required to establish meaning.
 
-For example:
+Example:
 
 Actor:
 "Renew my card ending in 1234."
@@ -1117,11 +1065,16 @@ The evidence may establish the target resource.
 
 The external system remains authoritative for the underlying business fact.
 
-Noema retains the evidence reference and provenance.
+Noema should retain:
+
+* evidence reference
+* provenance
+* relevant evaluation identity
+* applicable timestamp
 
 ⸻
 
-44. Unknown Information
+40. Unknown Information
 
 The Intent Engine must distinguish:
 
@@ -1130,57 +1083,57 @@ UNKNOWN
 AMBIGUOUS
 MISSING
 
-These are not interchangeable.
+These states are not interchangeable.
 
 For example:
 
-recipient = unknown
+recipient = UNKNOWN
 
 does not mean:
 
-recipient = denied
+recipient = DENIED
 
 and does not mean:
 
-recipient = most likely candidate
+recipient = MOST_LIKELY_CANDIDATE
 
-Unknown semantic information that is necessary to establish Intent should prevent the Intent from becoming resolved.
+If required semantic information is unknown or ambiguous, the Intent must not become resolved merely to permit downstream processing.
 
 ⸻
 
-45. No Silent Semantic Mutation
+41. No Silent Semantic Mutation
 
-The Intent Engine must not silently modify the Actor’s objective merely to satisfy downstream requirements.
+The Intent Engine must not modify the Actor’s objective merely to satisfy downstream requirements.
 
 For example:
 
 Actor:
 
-“Cancel my subscription.”
+"Cancel my subscription."
 
-The Engine must not silently transform this into:
+must not silently become:
 
 cancel subscription_123
 
-unless the canonical resolution rules and available evidence establish that subscription_123 is the intended target.
+unless canonical resolution rules and available evidence establish that subscription_123 is the intended target.
 
 Semantic convenience is not sufficient justification for mutation.
 
 ⸻
 
-46. Intent Engine Determinism
+42. Intent Resolution Determinism
 
 Where deterministic rules govern resolution, the result should be reproducible from:
 
-Intent input
+Intent Input
 +
 Context
 +
 Evidence
 +
-Resolution rules
+Resolution Rules
 +
-Rule versions
+Rule Versions
 
 Model variability may exist upstream.
 
@@ -1188,7 +1141,7 @@ The canonical resolution process must preserve explicit provenance for any model
 
 ⸻
 
-47. Intent Resolution Confidence
+43. Model Confidence
 
 Model confidence may be retained as metadata where useful.
 
@@ -1208,11 +1161,11 @@ It cannot independently establish canonical semantic truth.
 
 ⸻
 
-48. Intent Engine Errors
+44. Intent Engine Errors
 
-Errors should be structured.
+Intent Engine errors should be structured and machine-readable.
 
-Examples:
+Examples include:
 
 AMBIGUOUS_REFERENCE
 MISSING_REQUIRED_MEANING
@@ -1225,15 +1178,15 @@ RESOLUTION_RULE_FAILURE
 
 Human-readable explanations may accompany these codes.
 
-Machine-readable codes remain canonical.
+Machine-readable error identity remains canonical.
 
 ⸻
 
-49. Intent Resolution Result
+45. Resolution Result
 
 Conceptually:
 
-ResolutionResult {
+IntentResolutionResult {
     status
     intent
     requirements
@@ -1251,11 +1204,11 @@ CLARIFICATION_REQUIRED
 INVALID
 UNKNOWN
 
-The exact result schema should remain aligned with the canonical Intent ontology and Validation model.
+The exact result schema must remain aligned with the canonical Intent ontology and Validation model.
 
 ⸻
 
-50. Intent Engine Event Model
+46. Intent Engine Events
 
 Conceptual events include:
 
@@ -1271,33 +1224,34 @@ intent.superseded
 intent.cancelled
 intent.expired
 
-These are illustrative architectural events rather than a final protocol.
+These are architectural event concepts rather than a final event protocol.
 
-Each material event should preserve provenance.
+Material events must preserve relevant provenance.
 
 ⸻
 
-51. Intent Engine Re-Resolution
+47. Re-Resolution
 
-Re-resolution may be required when material semantic context changes.
+Re-resolution may be required when material semantic dependencies change.
 
-Examples:
+Examples include:
 
 * Actor provides clarification
 * referenced resource changes
 * contextual reference becomes unavailable
 * external evidence changes
 * Intent is materially amended
+* a resolution rule changes where that rule is semantically material
 
-Re-resolution must produce a new deterministic result.
+Re-resolution must produce an explicit new resolution result.
 
-A previous resolution must not be silently assumed to remain valid when its semantic dependencies have materially changed.
+A previous resolution must not silently remain authoritative when its semantic dependencies have materially changed.
 
 ⸻
 
-52. Intent Dependency Graph
+48. Intent Dependency Graph
 
-Intent resolution may depend on external facts.
+Intent resolution may depend on external semantic facts.
 
 Conceptually:
 
@@ -1309,13 +1263,58 @@ Intent
   ├── Evidence
   └── Resolution Rules
 
-Dependencies should be identifiable where they can affect semantic validity.
+These dependencies should be identifiable where they can affect semantic validity.
 
-This enables selective re-resolution rather than rebuilding every Intent after every contextual event.
+This allows Noema to determine when selective re-resolution is required rather than rebuilding every Intent after every contextual event.
 
 ⸻
 
-53. Intent Engine Auditability
+49. Partial Intent Resolution
+
+The Intent Engine may maintain a partially resolved Intent when useful.
+
+Example:
+
+action    = TRANSFER
+amount    = ₦50,000
+recipient = UNKNOWN
+currency  = NGN
+
+The unresolved portion should remain explicit.
+
+Partial semantic state is preferable to silently inventing the missing information.
+
+⸻
+
+50. Intent Engine Contract
+
+Conceptually:
+
+ResolveIntent(
+    Expression,
+    Context,
+    Evidence,
+    ExistingIntent,
+    ResolutionRules
+)
+→ IntentResolutionResult
+
+The result should be:
+
+* structured
+* explicit about uncertainty
+* versioned
+* traceable
+* inspectable
+* deterministic where deterministic rules apply
+
+The operation establishes semantic state.
+
+It does not grant execution authority.
+
+⸻
+
+51. Intent Engine Auditability
 
 The Intent Engine should make it possible to reconstruct:
 
@@ -1323,66 +1322,66 @@ The Intent Engine should make it possible to reconstruct:
 2. the candidate interpretation
 3. relevant context
 4. evidence used for resolution
-5. clarification requests
+5. clarification requirements
 6. clarification responses
-7. resolution rules
+7. applicable resolution rules
 8. Intent versions
-9. state transitions
-10. the final canonical Intent
+9. Intent state transitions
+10. the resulting canonical Intent
 
 This does not require retaining private model chain-of-thought.
 
-It requires retaining decision provenance and semantic state.
+It requires retaining semantic provenance and state necessary to reconstruct the canonical decision.
 
 ⸻
 
-54. Intent Engine and Safety
+52. Intent Engine and Safety
 
-Safety mechanisms must prevent semantic uncertainty from becoming execution authority.
+Semantic uncertainty must not become execution authority.
 
-The Intent Engine should therefore enforce:
+Therefore:
 
-Ambiguous
+AMBIGUOUS
     ↓
-Clarification / unresolved
+CLARIFICATION / UNRESOLVED
 
 not:
 
-Ambiguous
+AMBIGUOUS
     ↓
-Best guess
+BEST GUESS
     ↓
-Execution
+EXECUTION
 
-Similarly:
+Likewise:
 
-Unknown
+UNKNOWN
     ↓
-Unknown
+UNKNOWN
 
 not:
 
-Unknown
+UNKNOWN
     ↓
-Assumed true
+ASSUMED TRUE
 
 The Trust subsystem subsequently applies execution-governance controls.
 
 ⸻
 
-55. Intent Engine Failure Modes
+53. Failure Modes
 
-The Intent Engine should explicitly distinguish:
+The Intent Engine should distinguish semantic failure modes.
 
 Semantic ambiguity
 
-The Actor’s meaning is not sufficiently established.
+The Actor’s meaning has multiple plausible interpretations.
 
 → CLARIFICATION_REQUIRED
 
 Missing information
 
-A required semantic field has not been provided.
+A required semantic field has not been established.
 
 → UNRESOLVED
 
@@ -1400,110 +1399,205 @@ No canonical Intent representation can express the requested objective.
 
 External information unavailable
 
-Required contextual evidence cannot currently be obtained.
+Required evidence cannot currently be obtained.
 
-→ UNKNOWN / NOT RESOLVED
+→ UNKNOWN / NOT_RESOLVED
 
-These states should not collapse into a generic failure.
-
-⸻
-
-56. Intent Engine and Partial Information
-
-The Intent Engine may maintain partially resolved Intent when useful.
-
-Example:
-
-action = TRANSFER
-amount = ₦50,000
-recipient = UNKNOWN
-currency = NGN
-
-This is preferable to discarding the entire semantic representation.
-
-The unresolved portion should be explicitly represented.
+These states must not collapse into an undifferentiated generic failure.
 
 ⸻
 
-57. Intent Engine and Deterministic Defaults
+54. Intent Engine and Validation Boundary
 
-A deterministic default may resolve a field only when:
+The architectural boundary is:
 
-1. the Intent semantics permit the default
-2. the default rule is explicit
-3. the source is authoritative or otherwise defined
-4. the result is deterministic
-5. provenance is retained
+Intent Engine
+    │
+    │ establishes semantic meaning
+    ▼
+Canonical Intent
+    │
+    │ establishes structural/applicability validity
+    ▼
+Validation
+    │
+    │ establishes execution eligibility
+    ▼
+Trust
 
-Defaults must never be used as a mechanism for hiding ambiguity.
+The Intent Engine must not absorb Validation or Trust responsibilities merely because some checks are necessary to resolve meaning.
+
+Where a fact is needed for semantic resolution, the Intent Engine may consume that fact.
+
+Whether the resulting Intent is valid or trusted remains downstream.
 
 ⸻
 
-58. Intent Engine Contract
+55. Intent Engine and Action Graph Boundary
 
-Conceptually:
+The distinction between Intent and Action Graph must remain explicit.
 
-ResolveIntent(
-    Expression,
-    Context,
-    Evidence,
-    ExistingIntent,
-    ResolutionRules
-)
-→ IntentResolutionResult
+Intent:
+"What does the Actor want?"
+Action Graph:
+"What explicit Actions and dependencies can fulfill it?"
 
-The result should be:
+For example:
 
-* structured
-* deterministic where rules apply
-* versioned
-* traceable
-* inspectable
-* explicit about uncertainty
+Intent:
+Replace my expired card.
+
+may produce an Action Graph containing:
+
+CHECK_CARD_STATUS
+        ↓
+CHECK_REPLACEMENT_ELIGIBILITY
+        ↓
+CREATE_REPLACEMENT_REQUEST
+        ↓
+VERIFY_REQUEST_ACCEPTED
+
+The Intent Engine establishes the objective.
+
+The Action Graph establishes the operational structure.
+
+⸻
+
+56. Intent Engine and Execution Boundary
+
+The Intent Engine does not execute Actions.
+
+The canonical downstream path is:
+
+Resolved Intent
+      ↓
+Validation
+      ↓
+Trust
+      ↓
+Action Graph
+      ↓
+Action Contract
+      ↓
+Consumer
+      ↓
+Execution
+      ↓
+Outcome
+
+Resolving an Intent therefore never constitutes permission to execute.
+
+⸻
+
+57. Intent Expiration and Material Context
+
+A previously resolved Intent may become semantically stale when material contextual dependencies change.
+
+Examples:
+
+* referenced resource is no longer identifiable
+* contextual reference changes
+* required semantic evidence becomes invalid
+* Actor materially changes the request
+* temporal validity expires
+
+The appropriate response is explicit re-resolution or lifecycle transition.
+
+Noema must not silently preserve stale semantic assumptions.
+
+⸻
+
+58. Intent History
+
+Intent history must remain reconstructible.
+
+For a stable Intent identity:
+
+intent_id = stable identity
+version   = semantic revision
+
+Noema should be able to reconstruct:
+
+Intent v1
+   ↓
+Clarification
+   ↓
+Intent v2
+   ↓
+Material amendment
+   ↓
+Intent v3
+
+This history provides the semantic basis for downstream Validation and Trust decisions.
 
 ⸻
 
 59. Canonical Intent Engine Flow
 
-                 Actor Expression
-                        │
-                        ▼
-                AI Interpretation
-                        │
-                        ▼
-               Candidate Intent
-                        │
-                        ▼
-              Intent Construction
-                        │
-                        ▼
-              Context Integration
-                        │
-                        ▼
-             Semantic Resolution
-                        │
-                 ┌──────┴──────┐
-                 │             │
-                 ▼             ▼
-             Unresolved      Resolved
-                 │             │
-                 ▼             ▼
-          Clarification     Validation
-                 │             │
-                 └──────┐      ▼
-                        │     Trust
-                        │      │
-                        └──────┘
+The canonical lifecycle is:
 
-The loop continues until the semantic requirements necessary for the next lifecycle stage are established or the Intent is explicitly terminated.
+                    Actor Expression
+                           │
+                           ▼
+                    Interpretation
+                           │
+                           ▼
+                    Candidate Intent
+                           │
+                           ▼
+                  Intent Construction
+                           │
+                           ▼
+                  Context Integration
+                           │
+                           ▼
+                 Semantic Resolution
+                           │
+                  ┌────────┴────────┐
+                  │                 │
+                  ▼                 ▼
+             Unresolved          Resolved
+                  │                 │
+                  ▼                 ▼
+          Clarification         Validation
+                  │                 │
+                  └───────┐         ▼
+                          │       Trust
+                          │         │
+                          └─────────┘
+
+The cycle continues until:
+
+* semantic requirements are established
+* the Intent is resolved
+* the Intent is cancelled
+* the Intent expires
+* the objective is unsupported
+* or another explicitly defined terminal state is reached.
 
 ⸻
 
-60. Architectural Invariants
+60. Intent Engine State Transition Principle
+
+Intent state may change only because of an explicitly defined semantic event, dependency transition, clarification, evidence change, or deterministic re-evaluation.
+
+It must not change merely because:
+
+* a model became more confident
+* a different model generated a different interpretation
+* a prompt was reformulated
+* a model produced a different candidate
+* a downstream executor requires additional information
+
+Semantic state must be established through the defined Intent Engine lifecycle.
+
+⸻
+
+61. Architectural Invariants
 
 Invariant 1
 
-The Intent Engine owns semantic Intent construction and resolution, not business state.
+The Intent Engine owns semantic Intent construction and resolution, not external business state.
 
 Invariant 2
 
@@ -1519,7 +1613,7 @@ Unknown semantic information must not be silently converted into known informati
 
 Invariant 5
 
-Clarification is a valid Intent lifecycle state.
+Clarification is a first-class Intent lifecycle operation.
 
 Invariant 6
 
@@ -1535,15 +1629,15 @@ A resolved Intent is not necessarily trusted.
 
 Invariant 9
 
-Material Intent changes require a new semantic version or equivalent reconstructible representation.
+Material Intent changes require a new semantic version or an equivalent reconstructible representation.
 
 Invariant 10
 
-Intent provenance must be retained for material semantic decisions.
+Material semantic provenance must be retained.
 
 Invariant 11
 
-Deterministic resolution rules must be versionable.
+Deterministic resolution rules must be explicit and versionable.
 
 Invariant 12
 
@@ -1573,39 +1667,62 @@ Invariant 18
 
 Intent history must be reconstructible.
 
+Invariant 19
+
+Defaults must not conceal unresolved semantic ambiguity.
+
+Invariant 20
+
+Model confidence cannot independently establish canonical semantic resolution.
+
+Invariant 21
+
+The Intent Engine must not collapse semantic resolution into an execution plan.
+
+Invariant 22
+
+Canonical Intent establishes semantic meaning; Validation, Trust, Action Graph, Contracts, and Execution establish subsequent lifecycle responsibilities.
+
 ⸻
 
-61. Canonical Mental Model
+62. Canonical Mental Model
 
 The Intent Engine can be reduced to four questions:
 
 1. What did the Actor express?
-          ↓
 2. What could that expression mean?
-          ↓
-3. Which meaning has been established?
-          ↓
-4. Is the resulting Intent sufficiently resolved for Validation?
+3. Which meaning has actually been established?
+4. Is the resulting Intent sufficiently resolved to enter Validation?
 
-Which produces:
+This produces:
 
-Expression
-    ↓
+Actor Expression
+       ↓
 Interpretation
-    ↓
+       ↓
 Candidate Intent
-    ↓
-Resolution
-    ↓
+       ↓
+Semantic Resolution
+       ↓
 Canonical Intent
-    ↓
+       ↓
 Validation
+       ↓
+Trust
+       ↓
+Action Graph
+       ↓
+Action Contracts
+       ↓
+Execution
+       ↓
+Outcome
 
 ⸻
 
-62. Final Definition
+63. Final Definition
 
-The Intent Engine is Noema’s semantic control layer for constructing, resolving, versioning, and maintaining canonical Intent between human expression and deterministic downstream validation and Trust evaluation.
+The Intent Engine is Noema’s semantic control layer for constructing, resolving, versioning, and maintaining canonical Intent between Actor expression and deterministic downstream Validation and Trust evaluation.
 
 Its central invariant is:
 
@@ -1617,9 +1734,15 @@ Validation establishes whether that Intent is structurally and semantically vali
 
 Trust establishes whether that Intent may proceed.
 
+The Action Graph establishes how the trusted objective may be operationally fulfilled.
+
+Action Contracts establish the executable interfaces, obligations, and constraints governing individual Actions.
+
 Execution establishes what is actually performed.
 
-The boundaries remain explicit:
+Outcome records what actually happened.
+
+The boundaries therefore remain explicit:
 
 Interpretation
       ↓
@@ -1631,6 +1754,16 @@ Validation
       ↓
 Trust
       ↓
+Action Graph
+      ↓
+Action Contracts
+      ↓
 Execution
       ↓
 Outcome
+
+Canonical boundary:
+
+The Intent Engine determines what the Actor intends.
+It does not determine whether the Actor is authorized,
+how the Intent must be executed, or what actually happened.
