@@ -1,3 +1,5 @@
+> **ARCHIVED — NON-AUTHORITATIVE.** This document predates `docs/NOEMA_SOURCE_OF_TRUTH.md` (v1.1) and is superseded by it. It is kept only as historical reasoning. Its vocabulary and decisions (for example READY / WAITING / BLOCKED trust states, Execution or Action Contracts, a separate Validation layer, "intent infrastructure" or "Intent OS" framing, and card-replacement or account-inquiry wedges) are not current. Do not implement, cite or quote from it. See `docs/archive/README.md`.
+
 Below is the updated execution.md, revised in the same architectural direction as the preceding actors.md and context.md: preserving the existing reference-workflow structure and terminology while tightening the boundaries between Action, Execution, Enterprise State, Evidence, Outcome, Trust, Policy, and the model.
 
 # Execution
