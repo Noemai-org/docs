@@ -26,6 +26,7 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 |---|---|
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
+| `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
 | `docs/archive/` | **Non-authoritative** historical material |
 | `AGENTS.md`, `CLAUDE.md` | Operating instructions for coding agents |
 

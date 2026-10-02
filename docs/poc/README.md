@@ -38,7 +38,8 @@ The test for every feature request (§33): *does this help prove that a probabil
 | The POC loop | §35.2 |
 | Technology choices [DECISION], and OD-11 on language | §35.3, §46 |
 | Idempotency key, state classifications, recovery types, revalidation | §35.5 (see also [`../engineering/state-registry.md`](../engineering/state-registry.md)) |
-| Synthetic environment | §36 ([OD-P-03](../open-decisions.md#od-p-03): the Tuche specification itself is not in this repository) |
+| Synthetic environment | §36 |
+| Synthetic environment (Tushe) | [`tushe/README.md`](tushe/README.md): the issued requirements and acceptance specification for the Tushe environment; frozen; changes go through delta files. |
 | Requirements and user stories | §37 (see [`../requirements-index.md`](../requirements-index.md)) |
 | Benchmark, targets, safety gates, comparison arms | §38 |
 | Deployment path (shadow → assisted → governed non-monetary production) | §39 |
