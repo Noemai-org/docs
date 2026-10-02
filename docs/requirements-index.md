@@ -244,7 +244,7 @@ SoT §46. Fifteen canonical open decisions, OD-01 to OD-15, each with a recommen
 |---|---|---|---|
 | B1–B8 | §20.2 | Benchmark families (Understanding, State, Trust, Execution, Outcome, Security, Record, Business) | The POC edition is "Noema Trusted Execution Benchmark v0.1 (Transaction Exceptions)" (§38). |
 | S0–S3 | §38.3 | Severity classes for benchmark and incident findings | Release gates: zero S0 anywhere, zero S1 in the release suite (§38.3). |
-| AT-01 to AT-20 | §36, §40.1, §41 | Synthetic-environment acceptance tests from the Tuche specification | Only the range is named in the SoT. The individual tests are defined in the *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is **not in this repository** ([OD-P-03](open-decisions.md#od-p-03)). |
+| AT-01 to AT-20 | §36, §40.1, §41 | Synthetic-environment acceptance tests from the Tushe specification | Only the range is named in the SoT. The individual tests are defined in the *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is **not in this repository** ([OD-P-03](open-decisions.md#od-p-03)). |
 
 ## Coverage check
 

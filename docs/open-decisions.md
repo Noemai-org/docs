@@ -77,16 +77,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would invalidate it:** the founders keep the log elsewhere. In that case, link it from `decisions/README.md`.
 
 <a id="od-p-03"></a>
-### OD-P-03: The Tuche specification is referenced but absent
+### OD-P-03: The Tushe specification is referenced but absent
 
 - **Status:** [OPEN] · NON-CANONICAL · blocking for Phase A / Phase 0 exit
-- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
+- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
   - acceptance tests AT-01 to AT-20;
   - the twenty-scenario pack;
   - the documented transitions and invariants of the domain lifecycles.
 - **Why it matters:**
   - Phase A cannot exit without AT-01 to AT-20 passing (§36, §40.1).
-  - The SoT ranks the Tuche specification fourth in its order of authority.
+  - The SoT ranks the Tushe specification fourth in its order of authority.
 - **Proposed default:**
   - Rely only on the summary in SoT §36 and the lifecycle lists in §35.5.
   - Do not write AT-xx definitions or scenario content from memory or inference.

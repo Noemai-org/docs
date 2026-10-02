@@ -66,7 +66,7 @@ External facts carry a source marker such as **[S4]**. Sources are listed with l
 1. The latest explicit, recorded founder decision.
 2. The company thesis (Parts I–VI and XI of this document).
 3. Approved POC decisions (Part VII).
-4. The detailed engineering specification (Part IX, and the Tuche specification for the synthetic environment).
+4. The detailed engineering specification (Part IX, and the Tushe specification for the synthetic environment).
 5. Validated design-partner requirements.
 6. The engineering decision log.
 7. Implementation convenience.
@@ -533,7 +533,7 @@ We prevent it with one discipline: **from day one, every vertical is described b
 | Taxonomy | The question it answers | What it contains | Which power reads it |
 |---|---|---|---|
 | **Intent Taxonomy** | How do people in this domain express goals, and what must be known before we can act? | Intent nodes (domain → class → operation), required and optional slots with abstract types, disambiguation strategies, locale lexicons, examples | Understanding |
-| **Trust Taxonomy** | What makes an action allowed, risky or forbidden in this domain? | Risk classes, authority model (roles, delegation, segregation of duties), policy rule templates, regulatory clocks, approval schemes, data sensitivity classes, prohibitions, evidence requirements | Trust |
+| **Trust Taxonomy** | What makes an action allowed, risky or forbidden in this domain? | Risk classes, authority model (roles, delegation, segregation of duties), policy rule templates, regulatory clocks, approval schemes, data sensitivity classes, prohibitions, evidence requirements, maximum evidence age the profile will accept | Trust |
 | **Outcome Taxonomy** | What does "completed" actually mean here, and how is it proven? | Outcome definitions: success predicates over evidence, intermediate and terminal states, settle windows, verification sources and their priority, compensation options, explanation templates, SLAs | Outcome (and Execution, for expected effects) |
 
 Every intent node points to one trust profile and one or more outcome definitions. That link is the consequence contract (§12).
@@ -543,7 +543,7 @@ Every intent node points to one trust profile and one or more outcome definition
 | Taxonomy | Minimum properties |
 |---|---|
 | **Intent** | Actor; desired outcome; objects and entities involved; constraints; temporal meaning; evidence the requester supplied; urgency; authorisation context; ambiguity; provenance (source, modality, model and prompt version). It captures synonyms, local language and code-switching, not just a label list. |
-| **Trust** | Identity; authentication state; authority; resource ownership; business role; policy eligibility; action risk; regulatory constraints; required evidence; required confirmation; segregation-of-duties requirements; fraud and risk signals where relevant; data sensitivity; consent where the domain requires it; policy version; temporal validity; tenant boundary. **Trust is never a single score.** An authenticated person can still be unauthorised for a particular action, and technical authorisation is not business authorisation. |
+| **Trust** | Identity; authentication state; authority; resource ownership; business role; policy eligibility; action risk; regulatory constraints; required evidence; required confirmation; segregation-of-duties requirements; fraud and risk signals where relevant; data sensitivity; consent where the domain requires it; policy version; temporal validity; tenant boundary; maximum acceptable evidence age (the stricter of this and the source's limit wins). **Trust is never a single score.** An authenticated person can still be unauthorised for a particular action, and technical authorisation is not business authorisation. |
 | **Outcome** | Expected outcome; authoritative source; observed state; verification evidence; verification timestamp; terminal and non-terminal states; outcome confidence derived from evidence, never from model confidence; reconciliation state; recovery and compensation state; acceptable uncertainty; escalation outcomes. |
 
 Why the Outcome Taxonomy must exist on its own: **an API response is not an outcome.** A payment API returning HTTP 200 may mean the request was accepted, not that the beneficiary was credited. A healthcare system accepting a referral does not mean the appointment was booked. A logistics API accepting a reroute does not mean the shipment changed route. A claims system accepting a submission does not mean the claim was approved.
@@ -606,6 +606,7 @@ These are the shapes the core validates. Field names are final for v1 unless cha
   "approvals": [],
   "prohibited_capabilities": ["fin.cap.transfer_funds", "fin.cap.reverse_transaction", "fin.cap.adjust_balance", "fin.cap.initiate_refund"],
   "evidence_required": ["fin.src.core_ledger", "fin.src.switch", "fin.src.settlement"],
+  "max_evidence_age_seconds": 300,
   "data_sensitivity": "S3_financial_pii"
 }
 ```
@@ -637,6 +638,7 @@ Saying "keep the core general" is not enough. We make it a build check.
 - **[DECISION] Conformance packs for telecom, insurance and healthcare administration: skeletal but real.** Each contains two or three schema-valid intent nodes, one trust profile and one outcome definition [ILLUSTRATIVE content, not a product commitment]. They exist for one reason: CI loads all four packs and runs the core's contract tests against each. If a core change only works for fintech (for example, it assumes every `Resource` has a currency balance), the conformance tests for the other packs fail and the change cannot merge.
 - **Core lint.** A forbidden-terms list (for example: `naira`, `NIBSS`, `NIP`, `BVN`, `NUBAN`, `kobo`, `CBN`, `ledger_balance`, `ICD`, `HIPAA`, `MSISDN`) is checked against every file under `/core`. A match fails the build.
 - **No `if vertical == ...` branches in core.** Behaviour differences come from pack data, never from conditionals in engine code.
+- **Pack checker.** An internal command-line tool, `packcheck validate`, runs every pack check locally with the same code path as CI: schema validation, referential integrity, predicate type-checking, required freshness fields, conformance tests and the core forbidden-terms lint. It is an internal engineering tool, not a product. An external pack-author kit (scaffolding, evidence-source simulator, test generation) belongs with Studio in Phase 3.
 
 Illustrative conformance nodes (not built as products during the POC):
 
@@ -654,7 +656,7 @@ A Vertical Pack is everything Noema needs to serve one industry, and nothing in 
 2. Trust Taxonomy (risk classes, authority model, policy templates, clocks, approvals, prohibitions, data classes).
 3. Outcome Taxonomy (definitions, predicates, settle windows, sources, compensation, explanation templates).
 4. Capability bindings: which registered capabilities exist in this vertical, their risk class and verification method.
-5. Evidence source descriptors: what each source system is authoritative for, and its expected freshness.
+5. Evidence source descriptors: what each source system is authoritative for, and its expected freshness (trust profiles may tighten it, never loosen it).
 6. Benchmark seed cases for that vertical (§20).
 
 Packs are versioned with semantic versioning. Every Decision Record and Outcome Verdict stores the pack version it used, so any past decision can be reproduced exactly.
@@ -1358,7 +1360,7 @@ The test we apply to every feature request: *does this help prove that a probabi
 
 Transfer money · refund money · reverse a transaction · adjust a balance · initiate any financial movement · build or submit any payment instruction · create or modify a beneficiary · change authentication, permissions or policies · make any arbitrary or unregistered write · expose data across tenant, account or principal scope · let any model modify policy, identity, allowlists, audit records or credentials, or elevate its own privileges · let unresolved ambiguity become any consequential action.
 
-The normal Noema integration credential cannot move money even inside the simulation. The synthetic environment may *model* monetary state changes (so faults like "debit without credit" can be produced), but only Tuche's fault controller can cause them, never a Noema credential.
+The normal Noema integration credential cannot move money even inside the simulation. The synthetic environment may *model* monetary state changes (so faults like "debit without credit" can be produced), but only Tushe's fault controller can cause them, never a Noema credential.
 
 **[CONVICTION]** Prohibition is enforced structurally: these capabilities exist in the registry with risk class `PROHIBITED` and a hard-coded rejection; no adapter for them exists in the POC codebase; a property test asserts they are never callable; any attempt in any test, benchmark or demo is an S0 failure that stops the release. It is not enforced by prompts or documentation.
 
@@ -1496,13 +1498,13 @@ The encoding is canonical, versioned and unambiguous (length-prefixed fields or 
 | Original debit and its reversal both confirmed | `REVERSED_CONFIRMED` | Explain the verified reversal. Do not start any further action. |
 | Ledger debit; switch says failed; destination shows a credit | `CONTRADICTORY_STATE` | **Freeze consequential writes** on this target; gather evidence; escalate. |
 | A case write may have committed but the response was lost | `OUTCOME_UNKNOWN` | Query by the stable idempotency key; never create a duplicate case. |
-| Evidence older than its freshness window | `STALE_EVIDENCE` | Refresh or send to review; no consequential action on stale evidence. |
+| Evidence older than its effective freshness limit (the stricter of the source's and the trust profile's) | `STALE_EVIDENCE` | Refresh or send to review; no consequential action on stale evidence. |
 | Two or more transactions match | `AMBIGUOUS_ENTITY` | Targeted clarification; never guess. |
 | Policy changed after planning | `POLICY_STALE` | Revalidate and replan; the Record shows both versions. |
 | A write returned success but the postcondition is absent | `POSTCONDITION_UNVERIFIED` | Do not report success; recover or escalate. |
 | Late or out-of-order event | `EVENT_ORDER_UNCERTAIN` until reconciled | Keep both event time and ingestion time; recompute deterministically. |
 
-The synthetic environment's domain lifecycles keep these distinct (from the Tuche specification): **transaction** CREATED, INITIATED, SUBMITTED, PROCESSING, SUCCESSFUL, FAILED, REJECTED, TIMED_OUT, EXECUTION_OUTCOME_UNKNOWN, DUPLICATE, PARTIAL; **settlement** NOT_REQUIRED, PENDING, SETTLED, FAILED, REVERSED, UNKNOWN; **beneficiary credit** NOT_APPLICABLE, PENDING, CREDITED, NOT_CREDITED, UNKNOWN; **case** NOT_OPEN, OPEN, INVESTIGATING, AWAITING_EXTERNAL_RESPONSE, ACTION_REQUIRED, ESCALATED, RESOLVED, CLOSED; **dispute** NONE, OPEN, UNDER_REVIEW, UPHELD, REJECTED, RESOLVED. Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence. The most important state is often UNKNOWN: a timeout after a write does not mean failure, it means the system does not yet know, and that distinction is what prevents duplicate execution.
+The synthetic environment's domain lifecycles keep these distinct (from the Tushe specification): **transaction** CREATED, INITIATED, SUBMITTED, PROCESSING, SUCCESSFUL, FAILED, REJECTED, TIMED_OUT, EXECUTION_OUTCOME_UNKNOWN, DUPLICATE, PARTIAL; **settlement** NOT_REQUIRED, PENDING, SETTLED, FAILED, REVERSED, UNKNOWN; **beneficiary credit** NOT_APPLICABLE, PENDING, CREDITED, NOT_CREDITED, UNKNOWN; **case** NOT_OPEN, OPEN, INVESTIGATING, AWAITING_EXTERNAL_RESPONSE, ACTION_REQUIRED, ESCALATED, RESOLVED, CLOSED; **dispute** NONE, OPEN, UNDER_REVIEW, UPHELD, REJECTED, RESOLVED. Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence. The most important state is often UNKNOWN: a timeout after a write does not mean failure, it means the system does not yet know, and that distinction is what prevents duplicate execution.
 
 **Compensation is not rollback.** Five recovery types are kept distinct and never confused: (1) retrying a read; (2) verifying an uncertain write; (3) retrying the same idempotent logical write under a new grant; (4) compensating with a new, separately authorised action; (5) escalating because compensation is unsafe. The POC implements no monetary compensation.
 
@@ -1512,7 +1514,7 @@ The synthetic environment's domain lifecycles keep these distinct (from the Tuch
 
 **[CONVICTION] Milestone one, blocking.** No real customer data exists yet, and none is needed to start. The first thing the POC needs is an environment that behaves like real enterprise infrastructure on a bad day: systems that disagree, state that arrives late, events that duplicate or vanish, outcomes that cannot be read from one response, and failures reproducible on demand. A clean CRUD demo would prove nothing.
 
-**[DECISION]** We are using **Tuche**, a no-code core-banking and fintech platform, as the substrate, under the *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0* sent to the Tuche team. Its essentials:
+**[DECISION]** We are using **Tushe**, a no-code core-banking and fintech platform, as the substrate, under the *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0* sent to the Tushe team. Its essentials:
 
 - Ten independently observable logical domains: customer/identity, accounts/ledger, transaction service, payment switch, beneficiary and name enquiry, settlement, events and webhooks, case/dispute, policy/authorisation, audit.
 - Separate lifecycles for transaction, settlement, beneficiary credit, case and dispute, each with documented transitions and invariants; `EXECUTION_OUTCOME_UNKNOWN` survives as a real state.
@@ -1522,11 +1524,11 @@ The synthetic environment's domain lifecycles keep these distinct (from the Tuch
 - Integration credentials restricted to reads and non-monetary case operations; money-moving operations gated off.
 - Twenty acceptance tests (AT-01 to AT-20) and a twenty-scenario pack that must pass before integration work starts.
 
-**Logical mock services.** Whatever Tuche hosts natively, Noema's adapters and tests address the environment as separate logical services with independent APIs, state ownership, fault boundaries and telemetry: `mock-ledger`, `mock-switch`, `mock-destination` (receiving institution), `mock-customer` (identity), `mock-policy`, `mock-case`, `mock-clock`, a `fault-controller` and a `fixture-loader`. They may share one Postgres instance with separate schemas. These are logical boundaries, not a mandate to deploy each one separately.
+**Logical mock services.** Whatever Tushe hosts natively, Noema's adapters and tests address the environment as separate logical services with independent APIs, state ownership, fault boundaries and telemetry: `mock-ledger`, `mock-switch`, `mock-destination` (receiving institution), `mock-customer` (identity), `mock-policy`, `mock-case`, `mock-clock`, a `fault-controller` and a `fixture-loader`. They may share one Postgres instance with separate schemas. These are logical boundaries, not a mandate to deploy each one separately.
 
-**Fault families the environment must be able to produce** (the union of the Tuche specification and every peer draft): semantic "pending" behind a transport success; timeout before commit; timeout after commit (response dropped); debit without beneficiary credit; delayed settlement; delayed reversal; split ledger, switch and destination state; duplicate, missing, late and out-of-order events and webhooks; malformed or stale events; stale reads; contradictory source evidence; ambiguous beneficiary and similar candidate transactions; duplicate submission and idempotency-key collision; retry after unknown outcome; unauthorised or wrong principal and wrong resource; approval required; policy mutation between plan and execution; concurrent modification of the same case; dependency outage and latency spikes; interrupted and resumed conversations; a case committed with its response lost; prompt and tool injection through notes, narration and other enterprise fields; impossible-state fixtures; and composite multi-failure scenarios. SLA boundaries and delayed events are driven by the controllable clock.
+**Fault families the environment must be able to produce** (the union of the Tushe specification and every peer draft): semantic "pending" behind a transport success; timeout before commit; timeout after commit (response dropped); debit without beneficiary credit; delayed settlement; delayed reversal; split ledger, switch and destination state; duplicate, missing, late and out-of-order events and webhooks; malformed or stale events; stale reads; contradictory source evidence; ambiguous beneficiary and similar candidate transactions; duplicate submission and idempotency-key collision; retry after unknown outcome; unauthorised or wrong principal and wrong resource; approval required; policy mutation between plan and execution; concurrent modification of the same case; dependency outage and latency spikes; interrupted and resumed conversations; a case committed with its response lost; prompt and tool injection through notes, narration and other enterprise fields; impossible-state fixtures; and composite multi-failure scenarios. SLA boundaries and delayed events are driven by the controllable clock.
 
-**Contingency.** Where Tuche cannot provide a capability natively, we agree a control hook, or we build a thin hostility proxy in front of Tuche ourselves. Determinism, ground truth and fault scripting are benchmark-critical, so we will not accept a version without them.
+**Contingency.** Where Tushe cannot provide a capability natively, we agree a control hook, or we build a thin hostility proxy in front of Tushe ourselves. Determinism, ground truth and fault scripting are benchmark-critical, so we will not accept a version without them.
 
 **Exit of Phase A:** AT-01 to AT-20 pass in a joint session; schemas frozen at v1.
 
@@ -1610,7 +1612,7 @@ Every item is a named benchmark case with a declared expected outcome.
 | Family | Cases |
 |---|---|
 | Ambiguity | Two and three similar names; three same-amount transfers; vague time ("this morning", "yesterday evening"); no amount; amount off by a small delta; nickname or alias; recently added vs long-standing beneficiary; incomplete utterance; speech-recognition low confidence on a key slot |
-| State | Debit + switch timeout; debit + destination credit; failed debit + destination credit; settlement pending; reversal pending; reversal completed during the investigation; stale app record; duplicate transaction; partial state; a source unavailable |
+| State | Debit + switch timeout; debit + destination credit; failed debit + destination credit; settlement pending; reversal pending; reversal completed during the investigation; stale app record; duplicate transaction; partial state; a source unavailable; evidence fresh for the source but too old for the trust profile; trust profile looser than the source (source limit applies); evidence ages past its limit between decision and execution (grant voided at revalidation); refresh impossible because the source is unavailable (ESCALATE or UNKNOWN, never ALLOW) |
 | Time | Delayed webhook; old transaction; policy change after admission; transaction crosses an SLA boundary during the case; session expiry mid-clarification |
 | Execution | Timeout after commit; silent success; duplicate submission; duplicate, missing or reordered webhooks; dependency unavailable; process restart mid-case |
 | Authority | Valid user, unauthorised action; unowned transaction; expired session; insufficient approval; policy threshold exceeded |
@@ -1786,7 +1788,7 @@ Each step needs zero S0 and S1 events in the previous step over an agreed period
 
 | Phase | What happens | Exit condition |
 |---|---|---|
-| **A. Environment** | Tuche environment delivered to spec; contracts and schemas written first; fixtures | Tuche AT-01 to AT-20 pass; `/contracts` v1 frozen; ≥ 50 adversarial fixtures run reproducibly |
+| **A. Environment** | Tushe environment delivered to spec; contracts and schemas written first; fixtures | Tushe AT-01 to AT-20 pass; `/contracts` v1 frozen; ≥ 50 adversarial fixtures run reproducibly |
 | **B. Core on text** | Understanding → Trust → Execution → Outcome → Record, end to end on text | Clean and basic ambiguity cases pass end to end; seven-outcome enum enforced; policy versioning works; Record reconstructs a case |
 | **C. Hardening** | Run the full adversarial suite; fix what breaks | All safety gates hold across the full suite; idempotency, replay and timeout cases pass |
 | **D. Comparison** | Build arms A and B to a competent standard; run them | Head-to-head report produced and reviewed |
@@ -1836,10 +1838,10 @@ The strongest possible POC result is not applause. It is a real enterprise givin
 
 | Phase | What we do | What we optimise for | Exit gate (what moves us on) | Stop or rethink if |
 |---|---|---|---|---|
-| **0. Foundations** (now) | Tuche environment to spec; canonical contracts; fintech pack (POC subset) and three conformance packs; benchmark harness skeleton; threat model; design-partner interviews, workflow maps and baseline economics | A test bed that cannot be gamed; a frequent, consequential, measurable pain with an accountable buyer | Tuche AT-01 to AT-20 pass; contracts v1 frozen; conformance tests green; a credible design partner agrees to validate the workflow and to provide a bounded pilot path, data or baseline metrics | Cases are rare or cheap to resolve, evidence is inaccessible, or no buyer owns the KPI |
+| **0. Foundations** (now) | Tushe environment to spec; canonical contracts; fintech pack (POC subset) and three conformance packs; benchmark harness skeleton; threat model; design-partner interviews, workflow maps and baseline economics | A test bed that cannot be gamed; a frequent, consequential, measurable pain with an accountable buyer | Tushe AT-01 to AT-20 pass; contracts v1 frozen; conformance tests green; a credible design partner agrees to validate the workflow and to provide a bounded pilot path, data or baseline metrics | Cases are rare or cheap to resolve, evidence is inaccessible, or no buyer owns the KPI |
 | **1. Proof (the POC)** | Build and harden the Mode 1 slice (Part VII); run comparison arms; publish the benchmark methodology openly (Show HN) | Zero unsafe actions with the highest honest autonomy | POC definition of done (§40.3), including the real-conditions voice gate (§37.5); comparison report produced; at least one design partner agrees to shadow mode with their data | A competent baseline matches Noema on safety, correctness and value (§54) |
 | **2. First production: the discovery wedge** (founder thesis: months 1–4 of the company plan) | One customer. Replace synthetic adapters one boundary at a time: shadow → assisted → governed production of **read, diagnose and non-monetary actions only**, with the full trust architecture running; kill switch, rollback and incident playbook live; SOC 2 Type I readiness | Measured improvement on the partner's own numbers | **100,000 successfully completed actions with zero unrecovered errors; a documented reduction of at least 30% in the partner's relevant support-ticket volume; one referenceable live production deployment**; first paid contract; no unresolved critical incident; security and legal review complete; a clear operational owner. We do not touch write operations that move money until this gate is met. | Authoritative data cannot be obtained; integration cost overwhelms value; the error budget is breached |
-| **3. Earned consequence and global launch** (founder thesis: months 4–12) | Consequential writes unlocked in steps (§41.1); every financial parameter verified by two independent inputs; Enterprise Studio built; 3–5 design partners; public API, SDKs and documentation; **global public launch through Show HN and Product Hunt**; the public benchmark and scoreboard; EU and US data residency; first US and EU design partners; SOC 2 Type II. The next fundraise happens here. | Consequence handled safely at higher stakes; time for a new enterprise to reach its first verified outcome | **At least $10M of transaction volume through Noema with zero untracked hallucination or execution errors, and at least five live enterprise integrations**; the second deployment materially cheaper and faster than the first; paying customers on two continents; SOC 2 Type II | Any untracked error; unit economics that do not improve from the first deployment to the second |
+| **3. Earned consequence and global launch** (founder thesis: months 4–12) | Consequential writes unlocked in steps (§41.1); every financial parameter verified by two independent inputs; Enterprise Studio built with an external pack-author kit (scaffolding, evidence-source simulator, test generation); 3–5 design partners; public API, SDKs and documentation; **global public launch through Show HN and Product Hunt**; the public benchmark and scoreboard; EU and US data residency; first US and EU design partners; SOC 2 Type II. The next fundraise happens here. | Consequence handled safely at higher stakes; time for a new enterprise to reach its first verified outcome | **At least $10M of transaction volume through Noema with zero untracked hallucination or execution errors, and at least five live enterprise integrations**; the second deployment materially cheaper and faster than the first; paying customers on two continents; SOC 2 Type II | Any untracked error; unit economics that do not improve from the first deployment to the second |
 | **4. Multi-vertical, multi-geography, and Mode 2** (founder thesis: months 12–30) | Telecom pack with a design partner; Kenya and Ghana; cross-enterprise orchestration; Mode 2 trust boundary generally available on a stable, versioned contract; ISO/IEC 27001 and ISO/IEC 42001 certification | Reuse: packs, adapters and capabilities carried across customers and countries | **Production deployments in three sectors, operations in at least three markets, and at least $100M cumulative transaction volume**; each new pack shipped **with zero core changes**; at least one customer-owned or third-party agent integrated through Mode 2, with independent tests showing the boundary prevents the defined unsafe and unverified outcomes | A new vertical needs core changes repeatedly; Mode 2 shows no independent value |
 | **5. Scale and execution intelligence** | Insurance and healthcare administration, then logistics; Egypt and South Africa (**only after more than one million proven completed actions**); operational memory and predictive recovery; partner and integrator programme | Compounding execution performance | A measured learning effect: integration time and decision quality improving from cross-customer evidence; most new customers start from an existing pack | No measurable learning effect; regulatory or data-residency barriers we cannot meet |
 | **6. Default interface and the network** (founder thesis: months 30–60, a vision marker rather than a hard gate) | A proactive layer that surfaces a useful action or insight when evidence supports it, instead of waiting to be asked; WhatsApp as a second primary modality; privacy-preserving cross-enterprise learning; Noema as the neutral boundary across agent ecosystems | Every customer makes Noema better for the next | Noema routing for multiple competing agent vendors in the same enterprise; measurable improvement attributable to the network | Proactivity that customers experience as intrusive, or that creates any unsafe action |
@@ -1979,11 +1981,14 @@ Rules: immutable once admitted to Trust (changes create a new `version` with `su
   "evidence_snapshot_id": "evs_51A",
   "policy_version": "fin.pol@3.2",
   "pack_version": "fintech@1.0.0",
+  "evidence_freshness": [ { "source": "fin.src.settlement", "age_seconds": 42, "effective_limit_seconds": 300, "limit_set_by": "TRUST_PROFILE" } ],
   "clarification": { "slot": "subject_resource", "options": [ { "label": "₦20,000 at 07:12 to account ending 2144" }, { "label": "₦20,000 at 08:03 to account ending 8891" } ] },
   "evaluated_at": "2026-10-01T09:47:04.210Z",
   "sig": { "key_id": "trust-2026-10", "value": "..." }
 }
 ```
+
+`limit_set_by` ∈ `SOURCE`, `TRUST_PROFILE`, `PROFILE_OVERRIDE`.
 
 On ALLOW only, Trust also issues a grant:
 
@@ -2073,6 +2078,8 @@ A grant binds the authenticated principal, the resource (target), the intent, on
 ```
 
 `fact_status` ∈ `KNOWN`, `INFERRED`, `AMBIGUOUS`, `UNAVAILABLE`, `STALE`, `CONTRADICTORY`, `UNKNOWN`, `UNAUTHORIZED`. `read_at` (retrieval time) and `effective_at` (event time) are always both kept. `payload_hash` is the integrity metadata. A missing record yields `UNAVAILABLE` or `UNKNOWN`, never a negative fact (INV-19).
+
+Staleness is judged against the effective limit (§15.1): the stricter of `freshness_sla_seconds` and the governing trust profile's `max_evidence_age_seconds`, measured from `read_at`.
 
 ### 43.6 Record event
 
@@ -2195,6 +2202,7 @@ Each is enforced in code and asserted as a property test that runs on every merg
 | INV-20 | A CONTRADICTORY_STATE classification freezes all consequential writes on that target until Trust records a resolution or escalation. |
 | INV-21 | Replay determinism: the same scenario, seed, evidence, policy and pack versions produce the same Trust decisions and verdicts. |
 | INV-22 | No runtime credential can read the benchmark oracle; the Explanation renderer cannot write to any store except its own output. |
+| INV-23 | Trust and Execution apply the stricter of the source's freshness limit and the trust profile's limit (including any per-source override). A trust profile can never loosen a source's limit. Age is measured from retrieval time (read_at). |
 
 ### 45.1 Engineering doctrine
 
@@ -2400,12 +2408,13 @@ Principal-scoped reads; data minimisation; masking on every surface; short-lived
     /insurance          conformance pack (skeletal)
     /healthcare_admin   conformance pack (skeletal)
   /adapters
-    /synthetic_tuche    read and write adapters to the synthetic environment
+    /synthetic_tushe    read and write adapters to the synthetic environment
   /providers            model, speech and TTS providers behind neutral interfaces
   /voice                streaming audio pipeline (Track E)
   /ui                   overlay and evidence panel
   /benchmark            cases, fixtures, fault configs, oracle client, runner, comparison arms, reports
   /tools/lint           core forbidden-terms lint, boundary checks
+  /tools/packcheck      internal pack-validation CLI (wraps CI checks)
   /docs                 this document, open decisions, runbooks
 ```
 
@@ -2604,7 +2613,7 @@ We are not betting on today's interface or today's model. We are betting that tr
 | **Conformance pack** | A small, schema-valid pack for an industry we are not yet serving, used in CI to stop industry assumptions leaking into the core. |
 | **Mode 1** | Noema runs the full path from intent to verified outcome. |
 | **Mode 2** | Noema is the independent trust boundary for actions proposed by external agents. |
-| **Synthetic enterprise environment** | The controlled, hostile simulation of enterprise systems (provided through Tuche) used to build and benchmark the POC. |
+| **Synthetic enterprise environment** | The controlled, hostile simulation of enterprise systems (provided through Tushe) used to build and benchmark the POC. |
 | **Ground truth / oracle** | The authoritative record of what actually happened in the synthetic environment, visible to the benchmark and never to Noema's runtime. |
 | **OUTCOME_UNKNOWN** | The state of an execution when the external system gave no reliable answer. Resolved only by verification. |
 | **POC** | The proof of concept: transaction-exception resolution in Nigerian fintech, voice-fronted, Mode 1, non-monetary. Not the company. |
@@ -2619,6 +2628,7 @@ We are not betting on today's interface or today's model. We are betting that tr
 | **Confirmation card** | The legible, specific confirmation (amount, person, last four digits) a person can approve or reject in under a second at the moment of highest stakes. |
 | **Software literacy tax** | The cost people pay when software makes them learn its structure before they can get an outcome (§6.1). |
 | **Binding decision (BD-)** | A settled decision listed in §0.5; changed only by a new version of this document. |
+| **Effective freshness limit** | The stricter of an evidence source's freshness limit and the governing trust profile's maximum evidence age, measured from retrieval time. Evidence older than it is STALE. |
 
 ## Appendix B — Requirement index
 
@@ -2633,7 +2643,7 @@ We are not betting on today's interface or today's model. We are betting that tr
 | AGENT-01 to AGENT-26 | Rules for coding agents and the people working with them | §44 |
 | OD-01 to OD-15 | Open decisions with defaults | §46 |
 | B1 to B8 | Benchmark families | §20.2 |
-| AT-01 to AT-20 | Synthetic environment acceptance tests (Tuche specification) | §36 |
+| AT-01 to AT-20 | Synthetic environment acceptance tests (Tushe specification) | §36 |
 | S0 to S3 | Severity classes | §38.3 |
 
 ## Appendix C — Sources

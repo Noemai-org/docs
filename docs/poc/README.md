@@ -20,7 +20,7 @@ When in doubt, a POC statement says "POC".
 | Interfaces | Voice as the front door; text as the canonical internal contract. Correctness is benchmarked text-first (BD-14, §34.4). |
 | Verticals | Fintech pack (POC subset) populated; telecom, insurance and healthcare-administration conformance packs skeletal (§15.4, POC-FR-15) |
 | Actions | Reads, diagnosis and **non-monetary** writes only. **No money movement of any kind** (BD-08, §34). |
-| Environment | The synthetic enterprise environment on Tuche, with deterministic fault injection (BD-07, §36) |
+| Environment | The synthetic enterprise environment on Tushe, with deterministic fault injection (BD-07, §36) |
 | Success | Benchmark gates passed, competent baselines beaten or honestly matched, and a design partner's own numbers moved (§30, §40.3) |
 
 The test for every feature request (§33): *does this help prove that a probabilistic system can propose while Noema deterministically decides, executes, verifies and proves, under hostile conditions?* If not, it is out of scope.
@@ -38,7 +38,7 @@ The test for every feature request (§33): *does this help prove that a probabil
 | The POC loop | §35.2 |
 | Technology choices [DECISION], and OD-11 on language | §35.3, §46 |
 | Idempotency key, state classifications, recovery types, revalidation | §35.5 (see also [`../engineering/state-registry.md`](../engineering/state-registry.md)) |
-| Synthetic environment | §36 ([OD-P-03](../open-decisions.md#od-p-03): the Tuche specification itself is not in this repository) |
+| Synthetic environment | §36 ([OD-P-03](../open-decisions.md#od-p-03): the Tushe specification itself is not in this repository) |
 | Requirements and user stories | §37 (see [`../requirements-index.md`](../requirements-index.md)) |
 | Benchmark, targets, safety gates, comparison arms | §38 |
 | Deployment path (shadow → assisted → governed non-monetary production) | §39 |
@@ -65,7 +65,7 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 ## Order of work (SoT §35.4, §40.1)
 
 1. **Phase A (environment):**
-   - the Tuche environment to spec;
+   - the Tushe environment to spec;
    - contracts and schemas first;
    - fixtures.
 

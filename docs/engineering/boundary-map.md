@@ -34,7 +34,7 @@ Understanding → Trust → Execution → Outcome, with an independent Record th
 | Element | SoT | Planned location (§51) | Boundary |
 |---|---|---|---|
 | Evidence Layer | §14, §43.5 | `/core/evidence` (interfaces) | Read-only adapters. Trust and Outcome each read it separately. Data minimisation (PLAT-NFR-10). |
-| Enterprise (write) adapters | §14 | `/adapters` (POC: `/adapters/synthetic_tuche`) | One per registered capability. Only Execution may call them. No adapter exists for a `PROHIBITED` capability (§34.2, BD-08). |
+| Enterprise (write) adapters | §14 | `/adapters` (POC: `/adapters/synthetic_tushe`) | One per registered capability. Only Execution may call them. No adapter exists for a `PROHIBITED` capability (§34.2, BD-08). |
 | Vertical Packs | §15 | `/packs` (POC: fintech populated; telecom, insurance and healthcare_admin conformance packs skeletal) | Loaded as **data**, never imported as code. All industry and country terms live here (INV-14, AGENT-04, PLAT-NFR-08). |
 | Providers | §17 | `/providers` | Model, speech and TTS behind neutral interfaces. Changing provider is configuration plus a benchmark run (PLAT-NFR-09). |
 | Contracts | §43 | `/contracts` (JSON Schemas; not yet written) | One source of truth for every boundary object. Changes need a version bump (AGENT-15, PLAT-NFR-17). |

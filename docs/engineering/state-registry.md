@@ -105,7 +105,7 @@ The POC implements no monetary compensation. All recovery goes back through Trus
 
 ## 9. Synthetic environment domain lifecycles (POC only, fintech)
 
-From SoT §35.5, taken from the Tuche specification ([OD-P-03](../open-decisions.md#od-p-03)). These are **states of the synthetic enterprise's records**. They are not Noema core states. They belong to the fintech pack and the synthetic adapters, never to `/core` (INV-14, AGENT-04).
+From SoT §35.5, taken from the Tushe specification ([OD-P-03](../open-decisions.md#od-p-03)). These are **states of the synthetic enterprise's records**. They are not Noema core states. They belong to the fintech pack and the synthetic adapters, never to `/core` (INV-14, AGENT-04).
 
 | Lifecycle | States |
 |---|---|
@@ -115,7 +115,7 @@ From SoT §35.5, taken from the Tuche specification ([OD-P-03](../open-decisions
 | Case | NOT_OPEN, OPEN, INVESTIGATING, AWAITING_EXTERNAL_RESPONSE, ACTION_REQUIRED, ESCALATED, RESOLVED, CLOSED |
 | Dispute | NONE, OPEN, UNDER_REVIEW, UPHELD, REJECTED, RESOLVED |
 
-Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence (§35.5). The documented transitions and invariants are in the Tuche specification, which is not in this repository.
+Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence (§35.5). The documented transitions and invariants are in the Tushe specification, which is not in this repository.
 
 ## 10. Classes and levels
 
