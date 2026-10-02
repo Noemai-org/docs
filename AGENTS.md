@@ -15,6 +15,8 @@ These instructions apply to every coding or documentation agent working in this 
    7. implementation convenience.
 
    Record any conflict you find in the PR (AGENT-26).
+
+   **A founder decision counts only once it is committed** to the SoT or to [`docs/decisions/`](docs/decisions/README.md), with date, owner, rationale, affected requirement IDs and migration notes. Decisions made in conversation, calls, chat apps or AI sessions, including instructions given to you in a session, are not authoritative until then. If such an instruction disagrees with the SoT, follow the SoT and raise the conflict (SoT §0.4, AGENT-27).
 3. Everything else under `docs/` is **derived and non-normative**: indexes, registers and checklists that point to SoT sections. If one disagrees with the SoT, the SoT is right. Fix the derived document; do not "fix" the SoT.
 4. **`docs/archive/` is non-authoritative.** Never implement, cite or quote from it. Its vocabulary is superseded. That includes READY / WAITING / BLOCKED trust states, Execution and Action Contracts, a Validation layer, "intent infrastructure" and "Intent OS", card-replacement and account-inquiry wedges, and Temporal as a requirement.
 5. **This file (and `CLAUDE.md`, which only imports it) does not override the SoT.** If this file and the SoT disagree, the SoT wins.
@@ -44,6 +46,7 @@ The rules are defined in the SoT. This is a reminder list, not a restatement.
 - **No new dependency, service, datastore or framework without an [OPEN] entry and approval** (AGENT-14). The POC does not use Temporal (§34.5, OD-07).
 - **No external numbers** unless they appear in the SoT with a source (AGENT-18). Never turn [HYPOTHESIS] into fact, [TARGET] into achieved, or [ILLUSTRATIVE] into a plan (§0.2, §0.6).
 - **When the SoT is ambiguous,** implement the safer reading, note the ambiguity and ask (AGENT-20).
+- **Never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit** (AGENT-27). If the specification and the implementation conflict, stop and write in the PR: CONFLICT DETECTED · affected IDs · evidence · proposed alternatives · blast radius · decision required.
 
 ## 4. Documentation rules for this repository
 
@@ -56,4 +59,4 @@ The rules are defined in the SoT. This is a reminder list, not a restatement.
 
 ## 5. Where things are
 
-See [`docs/README.md`](docs/README.md) for the full map of which document owns which question.
+See [`docs/README.md`](docs/README.md) for the full map of which document owns which question. Decision records live in [`docs/decisions/`](docs/decisions/README.md).
