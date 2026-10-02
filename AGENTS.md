@@ -28,8 +28,8 @@ Read, in this order:
 - SoT §0.1 (the five distinctions);
 - SoT §0.3 (notes for coding agents);
 - SoT §0.4–0.6;
-- SoT §44 (AGENT-01 to AGENT-26);
-- SoT §45 (INV-01 to INV-22);
+- SoT §44 (AGENT-01 to AGENT-27);
+- SoT §45 (INV-01 to INV-28);
 - the SoT section that your task's requirement ID points to. Use [`docs/requirements-index.md`](docs/requirements-index.md) to find it.
 
 ## 3. Rules you will most often need

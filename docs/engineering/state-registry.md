@@ -37,8 +37,13 @@ External facts carry a source marker such as [S4] (Appendix C). The non-canonica
 |---|---|---|---|---|
 | Decision Record · `outcome` | `ALLOW`, `CLARIFY`, `CONFIRM`, `WAIT`, `ESCALATE`, `REJECT`, `UNKNOWN` | Complete (exactly one per decision) | §13.1, §14 (Decision Maker), §18.1, PLAT-FR-05, POC-FR-06 | A Decision Grant is issued **only** on `ALLOW` (§13.2, PLAT-FR-07). Fail-closed: a dependency failure yields `ESCALATE` or `UNKNOWN`, never `ALLOW` (INV-16, PLAT-NFR-03). An unresolved material ambiguity makes anything other than `CLARIFY` or `ESCALATE` unrepresentable (INV-06). |
 | Decision Record · `authority` | three layers: `technical`, `policy`, `business` | Layers complete. Result values appear only as examples (`PASS`, `NOT_EVALUATED`). | §14 (Authority Engine), §43.2, App. A | Value set: [OD-P-08](../open-decisions.md#od-p-08). |
-| Decision Record · `reason_codes` | e.g. `AMBIGUOUS_COUNTERPARTY`, `PROHIBITED_CAPABILITY` | Examples only | §43.2, US-10 | [OD-P-08](../open-decisions.md#od-p-08). |
-| Decision Grant · `single_use` | `true` | Fixed | §43.2 | A grant binds principal, target, intent hash, one capability, parameter hash, evidence-set hash, `plan_hash` and `plan_step`, policy and pack versions, expiry and nonce. Any mismatch voids it (INV-03, INV-17). |
+| Decision Record · `reason_codes` | e.g. `AMBIGUOUS_COUNTERPARTY`, `PROHIBITED_CAPABILITY`, `DECLINED_BY_APPROVER` | Examples only | §43.2, §43.2a, US-10 | [OD-P-08](../open-decisions.md#od-p-08). |
+| Decision Grant · `single_use` | `true` | Fixed | §43.2 | A grant binds principal, target, intent hash, one capability, parameter hash, evidence-set hash, `plan_hash` and `plan_step`, `target_versions`, policy and pack versions, expiry and nonce. Any mismatch voids it (INV-03, INV-17). A new policy version voids every unspent grant governed by an earlier version (INV-26). |
+| Decision Record · `evidence_freshness[].limit_set_by` | `SOURCE`, `TRUST_PROFILE`, `PROFILE_OVERRIDE` | Complete | §43.2 | The effective limit is the stricter of the source's `freshness_sla_seconds` and the trust profile's `max_evidence_age_seconds`, measured from `read_at` (§15.1, §43.5, INV-23). |
+| Policy rule template · `evaluation_time` | `AT_DECISION` (default), `AT_ADMISSION` | Complete | §15.3 | Set by the policy author; Trust never infers it and never decides that one version is stricter than another (INV-09). |
+| Confirmation request · `approver_requirement` | `SELF`, `ROLE:<role>`, `MAKER_CHECKER` | Complete | §43.2a | A `CONFIRM` never authorises anything by itself (INV-25). |
+| Confirmation event response | `ACCEPT`, `DECLINE` | Complete | §43.2a | `ACCEPT` leads to a fresh Trust evaluation; a grant follows only if the binding hash still matches and the result is `ALLOW`. `DECLINE` closes the decision as `REJECT` with `DECLINED_BY_APPROVER`. |
+| Confirmation request · terminal state on expiry | `EXPIRED` | Single value | §43.2a | No grant can be issued from an expired request. |
 
 Legacy note: the READY / WAITING / BLOCKED / CLARIFICATION_REQUIRED trust state machine in the archive is **superseded** by this table.
 
@@ -53,15 +58,20 @@ Legacy note: the READY / WAITING / BLOCKED / CLARIFICATION_REQUIRED trust state 
 
 | Object · field | Values | Enumerated? | Source | Rules |
 |---|---|---|---|---|
-| Execution Receipt · `execution_state` | `DISPATCHED`, `ACKNOWLEDGED`, `OUTCOME_UNKNOWN`, `REJECTED_BY_TARGET`, `FAILED_TERMINAL` | Complete | §43.3 | Execution never writes `SUCCEEDED`; that word belongs to Outcome (§43.3). Timeout or silence is `OUTCOME_UNKNOWN` (INV-07, AGENT-07). A write is retried only under a new grant (AGENT-08, INV-15). |
+| Execution Receipt · `execution_state` | `DISPATCHED`, `ACKNOWLEDGED`, `OUTCOME_UNKNOWN`, `REJECTED_BY_TARGET`, `REJECTED_STALE_VERSION`, `FAILED_TERMINAL` | Complete | §43.3 | Execution never writes `SUCCEEDED`; that word belongs to Outcome (§43.3). `REJECTED_STALE_VERSION` voids the grant, returns the case to Trust and is never retried automatically (INV-27). Timeout or silence is `OUTCOME_UNKNOWN` (INV-07, AGENT-07). A write is retried only under a new grant (AGENT-08, INV-15). |
 | Execution Receipt · `transport_result` | e.g. `TIMEOUT` | Example only | §43.3 | No value set is defined. Do not infer one. |
 | Execution Receipt · `attempt` | integer | n/a | §35.5, §43.3 | A retry increments `attempt` and keeps the logical idempotency key. A new logical resolution epoch gives a new key (§35.5). |
+| Capability descriptor · `retry_safety` | `NATIVE_IDEMPOTENT`, `QUERYABLE_BY_KEY`, `NONE` | Complete | §43.8 | `NONE` is never retried automatically; an uncertain result is escalated (INV-24). No duplicate effect is promised except where the target lets Noema prove it (§13.1). |
+| Capability descriptor · `concurrency_control` | `CONDITIONAL_WRITE`, `NONE` | Complete | §43.8 | With `CONDITIONAL_WRITE`, every write passes the grant's version tokens; a mismatch aborts the write (INV-27). |
+| Capability descriptor · `consequence_profile` dimensions (financial, customer, regulatory, access, operational) | `NONE`, `LOW`, `HIGH` | Complete | §43.8 | `risk_class` may never be lower than the risk implied by the profile. |
+| Capability descriptor · `consequence_profile.irreversibility` | `REVERSIBLE`, `COMPENSABLE`, `IRREVERSIBLE` | Complete | §43.8 | A capability without a complete consequence profile cannot be registered (AGENT-06). |
 
 ## 5. Outcome: the Verdict
 
 | Object · field | Values | Enumerated? | Source | Rules |
 |---|---|---|---|---|
 | Outcome Verdict · `verdict` | `ACHIEVED`, `NOT_ACHIEVED`, `PARTIALLY_ACHIEVED`, `PENDING_EXTERNAL`, `UNKNOWN`, `COMPENSATED` | Complete | §43.4, App. A | Only Outcome marks `ACHIEVED`, from evidence it read itself after the settle window (INV-04). Anything except `ACHIEVED` creates a `RecoveryRequest` to **Trust**, never straight back to Execution (§13.2, §43.4, INV-15). "Done" may be said to a person only on `ACHIEVED` (§18.4 rule 6). |
+| Outcome Verdict · `watch` | `watch_id`, `next_check_at`, `deadline_at`, `triggers` | Fields | §43.4 | Present only on `PENDING_EXTERNAL`; stored durably. At the deadline the verdict becomes `UNKNOWN` and a RecoveryRequest goes to Trust (INV-28). Changes are reported by `outcome.updated` (§43.4a). |
 | Outcome definition · `intermediate_states`, `terminal_states` | pack data, e.g. `CASE_SUBMITTED`; `ACHIEVED`, `NOT_ACHIEVED` | Pack-defined | §15.3 | Defined per outcome definition in the Outcome Taxonomy. Never in core. |
 
 ## 6. Understanding: the Intent Object
@@ -83,9 +93,9 @@ From SoT §35.5, [CONVICTION]. These are classifications of a situation, each wi
 | `REVERSED_CONFIRMED` | Original debit and its reversal both confirmed | Explain the verified reversal; start no further action. |
 | `CONTRADICTORY_STATE` | Ledger debit, switch says failed, destination shows a credit | Freeze consequential writes on the target (INV-20); gather evidence; escalate. |
 | `OUTCOME_UNKNOWN` | A case write may have committed but the response was lost | Query by the stable idempotency key; never create a duplicate case. |
-| `STALE_EVIDENCE` | Evidence older than its freshness window | Refresh or send to review; no consequential action on stale evidence. |
+| `STALE_EVIDENCE` | Evidence older than its effective freshness limit (the stricter of the source's and the trust profile's) | Refresh or send to review; no consequential action on stale evidence. |
 | `AMBIGUOUS_ENTITY` | Two or more transactions match | Targeted clarification; never guess. |
-| `POLICY_STALE` | Policy changed after planning | Revalidate and replan; the Record shows both versions (INV-09, OD-09). |
+| `POLICY_STALE` | Policy changed after planning | Grant voided (INV-26); re-evaluate under the version in force, honouring AT_ADMISSION rules; the Record shows both versions (INV-09). |
 | `POSTCONDITION_UNVERIFIED` | A write returned success but the postcondition is absent | Do not report success; recover or escalate. |
 | `EVENT_ORDER_UNCERTAIN` | Late or out-of-order event, until reconciled | Keep event time and ingestion time; recompute deterministically. |
 
@@ -121,7 +131,7 @@ Every transition carries provenance, timestamp, correlation ID, actor or source,
 
 | Set | Values | Enumerated? | Source | Notes |
 |---|---|---|---|---|
-| Capability risk class (POC registry) | `R0` read, `R0` internal, `R1` append-only write, `R2` non-monetary write, `PROHIBITED` | Used in the POC registry. No canonical ladder. | §34.3 | `R3` appears only in an [ILLUSTRATIVE] telecom row (§15.4). Ownership: [OD-P-09](../open-decisions.md#od-p-09). `PROHIBITED` capabilities always reject and have no adapter (§34.2, INV-05). |
+| Capability risk class (POC registry) | `R0` read, `R0` internal, `R1` append-only write, `R2` non-monetary write, `R3` regulatory write, `PROHIBITED` | Used in the POC registry. No canonical ladder. | §34.3 | `R3` is used for `LOG_COMPLAINT_REFERENCE` since v1.2 and in an [ILLUSTRATIVE] telecom row (§15.4). Ownership: [OD-P-09](../open-decisions.md#od-p-09). `PROHIBITED` capabilities always reject and have no adapter (§34.2, INV-05). |
 | Finding severity | `S0`, `S1`, `S2`, `S3` | Complete | §38.3 | Zero S0 anywhere; zero S1 in the release suite. |
 | Data sensitivity | e.g. `S3_financial_pii`, data class `S4` | Examples only | §15.3, §15.4 | Not the severity classes: [OD-P-10](../open-decisions.md#od-p-10). |
 | Deployment mode | Mode 1, Mode 2 | Complete | §16 | Mode 2 is built in Phase 4 (§16, §41). |
