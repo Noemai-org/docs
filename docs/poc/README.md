@@ -79,7 +79,7 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
    - adversarial and security cases;
    - finally voice.
 
-   Voice (Track E) runs in parallel from Phase A and depends only on the canonical input contract.
+   Voice (Track E) runs in parallel from Phase A and depends only on the canonical input contract. If schedule pressure threatens Phases B–D, voice work slips before any Trust, Execution or Outcome work is cut; the real-conditions voice gate (§37.5) must still pass before any design-partner demo (§40.1).
 4. **Phases B–F** follow §40.1, with exit conditions there. If the time box and the safety gates conflict, the gates win and the date moves (§40.2).
 
 ## Claims discipline for POC numbers
