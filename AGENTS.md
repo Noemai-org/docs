@@ -56,6 +56,7 @@ The rules are defined in the SoT. This is a reminder list, not a restatement.
 - **Do not create implementation directories** (`/core`, `/contracts`, `/packs`, …) unless a POC requirement needs them. The repository is documentation-first ([OD-P-01](docs/open-decisions.md#od-p-01)).
 - **Provisional items (`OD-P-xx`) are NON-CANONICAL.** Never cite one as authority for building something.
 - **Preserve requirement IDs and status tags exactly** as the SoT writes them.
+- **Issued external documents are frozen.** Files marked "frozen record" (for example the Tushe specification in `docs/poc/tushe/`) must never be edited. Propose changes in a delta file next to them, and do not put internal strategy, benchmark details or hidden test material in any document meant for an external partner.
 
 ## 5. Where things are
 

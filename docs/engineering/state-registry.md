@@ -125,7 +125,7 @@ From SoT §35.5, taken from the Tushe specification ([OD-P-03](../open-decisions
 | Case | NOT_OPEN, OPEN, INVESTIGATING, AWAITING_EXTERNAL_RESPONSE, ACTION_REQUIRED, ESCALATED, RESOLVED, CLOSED |
 | Dispute | NONE, OPEN, UNDER_REVIEW, UPHELD, REJECTED, RESOLVED |
 
-Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence (§35.5). The documented transitions and invariants are in the Tushe specification, which is not in this repository.
+Every transition carries provenance, timestamp, correlation ID, actor or source, policy version where relevant, and supporting evidence (§35.5). The Tushe specification (§5, STM-01 to STM-03, in [`../poc/tushe/`](../poc/tushe/README.md)) requires Tushe to document the legal transitions and invariants; that documentation is a Tushe deliverable and is not yet in this repository.
 
 ## 10. Classes and levels
 

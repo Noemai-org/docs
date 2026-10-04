@@ -20,6 +20,7 @@ Do not edit the SoT in place. A change to the SoT is a new SoT version with an e
 | What state, outcome and status values exist? | SoT §13.1, §35.5, §43 (lookup: [`engineering/state-registry.md`](engineering/state-registry.md)) |
 | What are the invariants and security boundaries? | SoT §45, §47 |
 | What is the POC, and where is the fence between Noema and the POC? What is the first wedge? | SoT Part VII, §30–40 (brief and checklist: [`poc/README.md`](poc/README.md)) |
+| What did we ask Tushe to build for the synthetic environment? | [`poc/tushe/`](poc/tushe/README.md): issued external specification — frozen (SoT §36) |
 | What comes after the POC? | SoT Part VIII, §41–42 |
 | Which requirement IDs exist, and what is their scope? | SoT (definitions); [`requirements-index.md`](requirements-index.md) (traceability) |
 | What does each status tag mean? | SoT §0.2 |
@@ -52,7 +53,11 @@ docs/
     state-registry.md          every state and status value with its SoT source (derived)
   poc/
     README.md                  POC fence, scope pointers, definition-of-done checklist (derived)
-    tushe-spec-delta-v1.2.md   requested additions to the Tushe specification
+    tushe/                     Issued external specification — frozen
+      README.md                index, rules and issue record for the Tushe documents
+      Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md
+                               Tushe requirements & acceptance spec v1.0 — issued, frozen
+      source/                  original v1.0 export, unchanged
   decisions/
     README.md                  decision-record process and template
     DEC-2026-10-02-sot-v1.2.md the v1.2 amendment record

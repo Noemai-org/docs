@@ -78,10 +78,11 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would invalidate it:** the founders keep the log elsewhere. In that case, link it from `decisions/README.md`.
 
 <a id="od-p-03"></a>
-### OD-P-03: The Tushe specification is referenced but absent
+### OD-P-03: The Tushe specification was referenced but absent
 
 - **Status:** [OPEN] · NON-CANONICAL · blocking for Phase A / Phase 0 exit
-- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
+- **Update (October 2026):** the issued v1.0 specification is now in the repository as a frozen record: [`poc/tushe/`](poc/tushe/README.md). Closing this item, and linking the specification from the SoT, are left to the founders and the next SoT revision.
+- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
   - acceptance tests AT-01 to AT-20;
   - the twenty-scenario pack;
   - the documented transitions and invariants of the domain lifecycles.
