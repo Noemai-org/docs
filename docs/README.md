@@ -2,11 +2,11 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.1, 2 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.2, 2 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
-The SoT is copied here byte for byte from the version adopted on 2 October 2026. Do not edit it in place. A change to the SoT is a new SoT version with an entry in its Appendix D.
+Do not edit the SoT in place. A change to the SoT is a new SoT version with an entry in its Appendix D, recorded in [`decisions/`](decisions/README.md) and merged through a reviewed pull request (SoT §0.4).
 
 ## Which document owns which question
 
@@ -60,6 +60,7 @@ docs/
       source/                  original v1.0 export, unchanged
   decisions/
     README.md                  decision-record process and template
+    DEC-2026-10-02-sot-v1.2.md the v1.2 amendment record
   archive/                     NON-AUTHORITATIVE legacy material and the migration report
 ```
 

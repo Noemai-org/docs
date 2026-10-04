@@ -20,7 +20,7 @@ When in doubt, a POC statement says "POC".
 | Interfaces | Voice as the front door; text as the canonical internal contract. Correctness is benchmarked text-first (BD-14, §34.4). |
 | Verticals | Fintech pack (POC subset) populated; telecom, insurance and healthcare-administration conformance packs skeletal (§15.4, POC-FR-15) |
 | Actions | Reads, diagnosis and **non-monetary** writes only. **No money movement of any kind** (BD-08, §34). |
-| Environment | The synthetic enterprise environment on Tuche, with deterministic fault injection (BD-07, §36) |
+| Environment | The synthetic enterprise environment on Tushe, with deterministic fault injection (BD-07, §36) |
 | Success | Benchmark gates passed, competent baselines beaten or honestly matched, and a design partner's own numbers moved (§30, §40.3) |
 
 The test for every feature request (§33): *does this help prove that a probabilistic system can propose while Noema deterministically decides, executes, verifies and proves, under hostile conditions?* If not, it is out of scope.
@@ -31,12 +31,12 @@ The test for every feature request (§33): *does this help prove that a probabil
 |---|---|
 | Allowed governed, non-monetary actions | §34.1 |
 | Prohibited actions, whatever the confidence | §34.2 |
-| The complete POC capability registry (12 callable, 4 `PROHIBITED`) | §34.3 |
+| The complete POC capability registry (12 callable, 8 `PROHIBITED`), with retry safety and consequence profiles | §34.3, §43.8 |
 | Languages and channels | §34.4 |
 | Non-goals, with reasons | §34.5 |
 | What is built and what is deferred, by power | §35.1 |
 | The POC loop | §35.2 |
-| Technology choices [DECISION], and OD-11 on language | §35.3, §46 |
+| Technology choices [DECISION], and OD-11 on language and framework | §35.3, §46 |
 | Idempotency key, state classifications, recovery types, revalidation | §35.5 (see also [`../engineering/state-registry.md`](../engineering/state-registry.md)) |
 | Synthetic environment | §36 |
 | Synthetic environment (Tushe) | [`tushe/README.md`](tushe/README.md): the issued requirements and acceptance specification for the Tushe environment; frozen; changes go through delta files. |
@@ -50,6 +50,7 @@ The test for every feature request (§33): *does this help prove that a probabil
 These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 
 - Any monetary write, any refund, reversal or transfer, and any compensation for monetary actions.
+- Non-monetary writes that end obligations or silence alerts: closing or resolving a case or complaint; changing, pausing or stopping an SLA or regulatory clock; editing or deleting recorded evidence; lowering a case's priority or severity (§34.2).
 - The Mode 2 integration.
 - Verticals beyond the conformance packs.
 - Studio, and natural-language policy authoring.
@@ -57,7 +58,7 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 - Fine-tuning or learning from production data.
 - Microservices or Kubernetes "for appearance".
 - Vector databases, graph databases or Kafka, and Redis as authoritative state.
-- **Temporal.** Postgres is the POC system of record, and OD-07 evaluates Temporal for Phase 3.
+- **Temporal.** Postgres is the POC system of record; under OD-07 a durable workflow engine is adopted only when measured needs exceed what the Postgres controller can safely guarantee.
 - WhatsApp, SMS or other channels.
 - A consumer banking app.
 - Broad analytics dashboards.
@@ -66,21 +67,22 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 ## Order of work (SoT §35.4, §40.1)
 
 1. **Phase A (environment):**
-   - the Tuche environment to spec;
+   - the Tushe environment to spec;
    - contracts and schemas first;
    - fixtures.
 
    Exits when AT-01 to AT-20 pass, `/contracts` v1 is frozen, and at least 50 adversarial fixtures run reproducibly.
 2. **First vertical slice, on text, no faults:** Text → Input Gateway → Intent Object → Entity Resolution → evidence reads → State Reconciliation → Trust decision → Planner → Execution → Outcome verdict → Explanation → Record.
 3. **Then, in this order:**
+   - timeout after write → `OUTCOME_UNKNOWN` → independent verification by idempotency key;
    - ambiguity and clarification;
-   - conflicting state;
-   - policy edge cases and clocks;
-   - unknown outcomes and recovery;
+   - contradictory state;
+   - policy edge cases, clocks and the confirmation flow;
+   - recovery and the pending-outcome watch;
    - adversarial and security cases;
    - finally voice.
 
-   Voice (Track E) runs in parallel from Phase A and depends only on the canonical input contract.
+   Voice (Track E) runs in parallel from Phase A and depends only on the canonical input contract. If schedule pressure threatens Phases B–D, voice work slips before any Trust, Execution or Outcome work is cut; the real-conditions voice gate (§37.5) must still pass before any design-partner demo (§40.1).
 4. **Phases B–F** follow §40.1, with exit conditions there. If the time box and the safety gates conflict, the gates win and the date moves (§40.2).
 
 ## Claims discipline for POC numbers
@@ -88,6 +90,8 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 - The 73% autonomous-resolution and 89% handling-time figures are **[HYPOTHESIS]**. They are never published as facts until measured (§38.2).
 - The manual-touch reduction is a **[HYPOTHESIS]** that must be measured with a design partner (§31.3).
 - §38.2 targets are **[TARGET]** synthetic gates, not real-world performance claims.
+- Zero failures in n cases supports only a bound of about 3/n at 95% confidence, never "zero" (§38.8). Any external safety claim states the number of cases, how they were generated, the conditions exercised and the bound.
+- Results from generated cases alone are never reported as the release result; release runs use the held-out set (§38.1, OD-16).
 - No monetary saving is claimed outside the company until a design partner's numbers validate it (§38.6).
 - Synthetic switch response codes are labelled synthetic and never presented as NIBSS semantics (§34.5, AGENT-25).
 

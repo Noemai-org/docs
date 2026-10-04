@@ -2,7 +2,7 @@
 
 > **Derived, non-normative.** This index exists for traceability (AGENT-01). Every requirement is *defined* only in [`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the SoT). The "Summary" column is a verbatim prefix of the SoT text, cut at a word boundary and marked "…" where truncated. Read the SoT section before acting on any ID. If this file and the SoT disagree, the SoT wins and this file is wrong.
 
-Generated from SoT v1.1 (2 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
+Generated from SoT v1.2 (2 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
 
 ## How to read this index
 
@@ -58,7 +58,7 @@ SoT §21.1. The full Noema the POC must not block.
 | PLAT-FR-12 | §21.1 | Record a hash-chained causal record for every consequential action; expose a reconstruction API. | PLATFORM | POC-FR-12 |
 | PLAT-FR-13 | §21.1 | Load, version and validate Vertical Packs; run conformance tests for every pack in CI. | PLATFORM | POC-FR-15 |
 | PLAT-FR-14 | §21.1 | Support Mode 2: accept proposed actions from external agents as untrusted input with the principal and delegation chain. | PLATFORM | POC-FR-16 |
-| PLAT-FR-15 | §21.1 | Support human approval steps (including maker-checker) as first-class Trust outcomes. | PLATFORM | — |
+| PLAT-FR-15 | §21.1 | Support human approval steps (including maker-checker) as first-class Trust outcomes through the confirmation contract … | PLATFORM | — |
 | PLAT-FR-16 | §21.1 | Provide multi-tenant isolation of data, policy, packs, keys and records. | PLATFORM | — |
 | PLAT-FR-17 | §21.1 | Provide enterprise configuration (Studio) for packs, policies and capabilities, with versioning and approvals. | PLATFORM | — |
 
@@ -171,6 +171,12 @@ SoT §37.3. Each is an automated, release-gating benchmark case (SoT §37.3 head
 | US-14 | §37.3 | Money appears in two places | POC | Release-gating benchmark case |
 | US-15 | §37.3 | Stale evidence | POC | Release-gating benchmark case |
 | US-16 | §37.3 | Success that is not | POC | Release-gating benchmark case |
+| US-17 | §37.3 | Settlement arrives later | POC | Release-gating benchmark case |
+| US-18 | §37.3 | Confirmation that goes stale | POC | Release-gating benchmark case |
+| US-19 | §37.3 | Someone else changed the case | POC | Release-gating benchmark case |
+| US-20 | §37.3 | Policy changes after the grant | POC | Release-gating benchmark case |
+| US-21 | §37.3 | The system says "slow down" | POC | Release-gating benchmark case |
+| US-22 | §37.3 | Close it for me | POC | Release-gating benchmark case |
 
 ## Invariants (INV)
 
@@ -178,7 +184,7 @@ SoT §45. Each is enforced in code and asserted as a property test on every merg
 
 | ID | SoT § | Summary | Primarily exercised by (derived) | Scope | Verification |
 |---|---|---|---|---|---|
-| INV-01 | §45 | No code path in Trust, Execution or the Outcome verdict calls a language model. | Trust, Execution, Outcome verdict | ALL | Property test on every merge |
+| INV-01 | §45 | No code path in Trust, Execution or the Outcome verdict calls a language model. | Trust, Execution, Outcome | ALL | Property test on every merge |
 | INV-02 | §45 | No free-form model output reaches an execution path; only schema-valid objects cross the schema gate. | Understanding → schema gate | ALL | Property test on every merge |
 | INV-03 | §45 | Execution acts only with a valid, unexpired, unused, correctly signed Decision Grant whose target and parameter hash … | Execution | ALL | Property test on every merge |
 | INV-04 | §45 | Only Outcome can mark an outcome ACHIEVED, using evidence it read itself after the definition's settle window. | Outcome | ALL | Property test on every merge |
@@ -186,11 +192,11 @@ SoT §45. Each is enforced in code and asserted as a property test on every merg
 | INV-06 | §45 | An unresolved material ambiguity makes any Trust outcome other than CLARIFY or ESCALATE unrepresentable. | Trust | ALL | Property test on every merge |
 | INV-07 | §45 | A timeout or silence yields OUTCOME_UNKNOWN, never SUCCEEDED or FAILED. | Execution | ALL | Property test on every merge |
 | INV-08 | §45 | Every write carries an idempotency key created and stored before the call. | Execution | ALL | Property test on every merge |
-| INV-09 | §45 | Every decision records the policy version and pack version that governed it; policy is resolved at admission time … | Trust | ALL | Property test on every merge |
+| INV-09 | §45 | Every decision records the policy and pack versions that governed it. Each policy rule is evaluated under the version … | Trust | ALL | Property test on every merge |
 | INV-10 | §45 | Every consequential decision is reconstructable from the Record alone. | Record | ALL | Property test on every merge |
 | INV-11 | §45 | The Record is append-only and hash-chained; any break in the chain raises a security alert. | Record | ALL | Property test on every merge |
 | INV-12 | §45 | Identity is never derived from model output or user text. | Understanding, Trust | ALL | Property test on every merge |
-| INV-13 | §45 | No user-facing statement presents a non-KNOWN fact as certain. | Outcome (Explanation) | ALL | Property test on every merge |
+| INV-13 | §45 | No user-facing statement presents a non-KNOWN fact as certain. | Explanation (separate component) | ALL | Property test on every merge |
 | INV-14 | §45 | `/core` contains no vertical or country terms; all four packs pass contract tests. | Core / packs (CI lint, conformance) | ALL | Property test on every merge |
 | INV-15 | §45 | Every non-ACHIEVED verdict returns to Trust; Execution never re-runs on its own. | Outcome → Trust | ALL | Property test on every merge |
 | INV-16 | §45 | Any dependency failure that prevents a safe decision results in ESCALATE or UNKNOWN, never ALLOW. | Trust | ALL | Property test on every merge |
@@ -199,7 +205,13 @@ SoT §45. Each is enforced in code and asserted as a property test on every merg
 | INV-19 | §45 | Absence of evidence is never recorded as a negative fact; a missing record yields UNAVAILABLE or UNKNOWN. | Trust (State Reconciliation), Evidence Layer | ALL | Property test on every merge |
 | INV-20 | §45 | A CONTRADICTORY_STATE classification freezes all consequential writes on that target until Trust records a resolution … | Trust, Execution | ALL | Property test on every merge |
 | INV-21 | §45 | Replay determinism: the same scenario, seed, evidence, policy and pack versions produce the same Trust decisions and … | All powers (benchmark replay) | ALL | Property test on every merge |
-| INV-22 | §45 | No runtime credential can read the benchmark oracle; the Explanation renderer cannot write to any store except its own … | Benchmark; Outcome (Explanation renderer) | ALL | Property test on every merge |
+| INV-22 | §45 | No runtime credential can read the benchmark oracle; `/core/explanation` cannot write to any store except its own … | Benchmark; Explanation (`/core/explanation`) | ALL | Property test on every merge |
+| INV-23 | §45 | Trust and Execution apply the stricter of the source's freshness limit and the trust profile's limit (including any … | Trust, Execution | ALL | Property test on every merge |
+| INV-24 | §45 | A capability whose retry_safety is NONE is never retried automatically. Any uncertain result for it is recorded as … | Execution | ALL | Property test on every merge |
+| INV-25 | §45 | A Decision Grant can be issued only by an ALLOW evaluation. For a CONFIRM decision, that requires a valid, unexpired … | Trust | ALL | Property test on every merge |
+| INV-26 | §45 | Publishing a new policy version voids every outstanding, unspent Decision Grant governed by an earlier version of that … | Trust, Execution | ALL | Property test on every merge |
+| INV-27 | §45 | When a capability declares CONDITIONAL_WRITE, every write passes the grant's target version tokens to the target; a … | Execution | ALL | Property test on every merge |
+| INV-28 | §45 | No PENDING_EXTERNAL verdict exists without a durable watch and a deadline. At the deadline the verdict becomes UNKNOWN … | Outcome (Outcome Watch) → Trust | ALL | Property test on every merge |
 
 ## Rules for coding agents (AGENT)
 
@@ -211,8 +223,8 @@ SoT §44. Apply to every AI coding agent and every human working with one. See a
 | AGENT-02 | §44 | If a task needs something this document does not specify, do not invent it, even if it looks useful. Instead: (1) … | ALL |
 | AGENT-03 | §44 | Build the POC (Part VII). Do not implement full-platform features unless a POC requirement explicitly asks for them. … | ALL |
 | AGENT-04 | §44 | Never put industry-specific or country-specific terms, rules or constants in `/core`. They go in `/packs` or … | ALL |
-| AGENT-05 | §44 | Never call a language model from `/core/trust`, `/core/execution` or the verdict path of `/core/outcome`. Models are … | ALL |
-| AGENT-06 | §44 | Never add a capability to the registry without risk class, idempotency semantics, verification method, compensation and … | ALL |
+| AGENT-05 | §44 | Never call a language model from /core/trust, /core/execution or /core/outcome. Models are allowed only in … | ALL |
+| AGENT-06 | §44 | Never add a capability to the registry without risk class, consequence profile, retry safety, concurrency control, … | ALL |
 | AGENT-07 | §44 | Never treat a timeout, a 5xx or silence as success or failure. It is `OUTCOME_UNKNOWN` until Outcome says otherwise. | ALL |
 | AGENT-08 | §44 | Never retry a write without a new Decision Grant. | ALL |
 | AGENT-09 | §44 | Never let text from users, models, enterprise fields or tool outputs become a capability name, a parameter outside the … | ALL |
@@ -233,10 +245,11 @@ SoT §44. Apply to every AI coding agent and every human working with one. See a
 | AGENT-24 | §44 | Every new integration or adapter ships with contract tests against its documented and its observed behaviour, including … | ALL |
 | AGENT-25 | §44 | Label synthetic fixtures as synthetic (for example switch response codes); never present them as real NIBSS or other … | ALL |
 | AGENT-26 | §44 | When two sources of instruction conflict, follow the order of authority in §0.4 and record the conflict in the PR. | ALL |
+| AGENT-27 | §44 | Never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit. … | ALL |
 
 ## Open decisions (OD)
 
-SoT §46. Fifteen canonical open decisions, OD-01 to OD-15, each with a recommended default that applies until decided. Their status is tracked in [`open-decisions.md`](open-decisions.md). They are not requirements.
+SoT §46. Sixteen canonical open decisions, OD-01 to OD-16, each with a recommended default that applies until decided (OD-09 is closed in v1.2). Their status is tracked in [`open-decisions.md`](open-decisions.md). They are not requirements.
 
 ## Other ID families
 
@@ -250,15 +263,13 @@ SoT §46. Fifteen canonical open decisions, OD-01 to OD-15, each with a recommen
 
 | Prefix | IDs defined in SoT | IDs listed here |
 |---|---|---|
-| AGENT- | 26 | 26 |
+| AGENT- | 27 | 27 |
 | BD- | 15 | 15 |
-| INV- | 22 | 22 |
-| OD- | 15 | 15 (in open-decisions.md) |
+| INV- | 28 | 28 |
+| OD- | 16 | 16 (in open-decisions.md) |
 | PLAT-FR- | 17 | 17 |
 | PLAT-NFR- | 21 | 21 |
 | PLAT-US- | 11 | 11 |
 | POC-FR- | 17 | 17 |
 | POC-NFR- | 10 | 10 |
-| US- | 16 | 16 |
-
-The validation run for this migration confirmed that every ID above appears in the SoT and every SoT ID appears in this file or in `open-decisions.md`; see `archive/migration-2026-10.md` §J.
+| US- | 22 | 22 |

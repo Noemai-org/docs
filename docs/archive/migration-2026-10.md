@@ -153,10 +153,10 @@ Each row of the table below carries: old file · purpose · status class (ACTIVE
 | `noema-canonical/graph/enterprise-graph.md` | Enterprise Action Graph, capability model, graph evolution | SUPERSEDED | §14 Execution, §43.8-43.9, INV-18 | docs/archive/legacy-canon-2026-09/graph/enterprise-graph.md | ARCHIVE | Action Graph is data of registered capabilities + evidence reads with a deterministic Planner and plan_hash; old graph docs predate grant/plan binding. |
 | `noema-canonical/graph/graph-evolution.md` | Enterprise Action Graph, capability model, graph evolution | SUPERSEDED | §14 Execution, §43.8-43.9, INV-18 | docs/archive/legacy-canon-2026-09/graph/graph-evolution.md | ARCHIVE | Action Graph is data of registered capabilities + evidence reads with a deterministic Planner and plan_hash; old graph docs predate grant/plan binding. |
 | `noema-canonical/graph/graph-model.md` | Enterprise Action Graph, capability model, graph evolution | SUPERSEDED | §14 Execution, §43.8-43.9, INV-18 | docs/archive/legacy-canon-2026-09/graph/graph-model.md | ARCHIVE | Action Graph is data of registered capabilities + evidence reads with a deterministic Planner and plan_hash; old graph docs predate grant/plan binding. |
-| `noema-canonical/integrations/adapters.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/adapters.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tuche only. Old docs describe a general SDK as if current. |
-| `noema-canonical/integrations/enterprise-capabilities.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/enterprise-capabilities.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tuche only. Old docs describe a general SDK as if current. |
-| `noema-canonical/integrations/integration-model.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/integration-model.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tuche only. Old docs describe a general SDK as if current. |
-| `noema-canonical/integrations/sdk.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/sdk.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tuche only. Old docs describe a general SDK as if current. |
+| `noema-canonical/integrations/adapters.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/adapters.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tushe only. Old docs describe a general SDK as if current. |
+| `noema-canonical/integrations/enterprise-capabilities.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/enterprise-capabilities.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tushe only. Old docs describe a general SDK as if current. |
+| `noema-canonical/integrations/integration-model.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/integration-model.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tushe only. Old docs describe a general SDK as if current. |
+| `noema-canonical/integrations/sdk.md` | Integration model, adapters, enterprise capabilities, SDK | SUPERSEDED | §14 utilities, §39, §51 /adapters, AGENT-24, POC-NFR-05 | docs/archive/legacy-canon-2026-09/integrations/sdk.md | ARCHIVE | SDK is a Phase 3 item (§41); POC adapters are synthetic_tushe only. Old docs describe a general SDK as if current. |
 | `noema-canonical/intent/clarification.md` | Intent model, lifecycle, resolution, ambiguity, clarification, confidence, composition | SUPERSEDED | §13.3, §14 Understanding, §43.1, POC-FR-02..04, POC-FR-13 | docs/archive/legacy-canon-2026-09/intent/clarification.md | ARCHIVE | Intent Object now defined in §43.1 (pack nodes, abstract slots, ambiguity_flags, signed). Old lifecycle uses CLARIFICATION_REQUIRED and Validation stages. Intent composition/cancellation is not covered by SoT -> OPEN. |
 | `noema-canonical/intent/confidence.md` | Intent model, lifecycle, resolution, ambiguity, clarification, confidence, composition | SUPERSEDED | §13.3, §14 Understanding, §43.1, POC-FR-02..04, POC-FR-13 | docs/archive/legacy-canon-2026-09/intent/confidence.md | ARCHIVE | Intent Object now defined in §43.1 (pack nodes, abstract slots, ambiguity_flags, signed). Old lifecycle uses CLARIFICATION_REQUIRED and Validation stages. Intent composition/cancellation is not covered by SoT -> OPEN. |
 | `noema-canonical/intent/executable-intent.md` | Intent model, lifecycle, resolution, ambiguity, clarification, confidence, composition | SUPERSEDED | §13.3, §14 Understanding, §43.1, POC-FR-02..04, POC-FR-13 | docs/archive/legacy-canon-2026-09/intent/executable-intent.md | ARCHIVE | Intent Object now defined in §43.1 (pack nodes, abstract slots, ambiguity_flags, signed). Old lifecycle uses CLARIFICATION_REQUIRED and Validation stages. Intent composition/cancellation is not covered by SoT -> OPEN. |
@@ -401,7 +401,7 @@ Format: old statement → canonical statement → affected files (all now archiv
 | **Migrated from legacy** | None. The legacy documents contained no requirement IDs. |
 | **Consolidated** | None. No IDs were merged or renamed. |
 | **Superseded** | Legacy unnumbered invariants (31 in `CANON.md`, plus ADR invariant lists) are superseded by INV-01 to INV-22 and the binding decisions. The legacy ADR-001 to ADR-019 are mapped in `archive/README.md`. |
-| **Unresolved** | The `SEC-` and `PERF-` prefixes are named in §0.3 but no IDs exist (OD-P-07). AT-01 to AT-20 are defined in the absent Tuche specification (OD-P-03). POC-FR-17 has no platform mapping (OD-P-11). Unowned legacy concepts are listed in OD-P-12 and are not requirements. |
+| **Unresolved** | The `SEC-` and `PERF-` prefixes are named in §0.3 but no IDs exist (OD-P-07). AT-01 to AT-20 are defined in the absent Tushe specification (OD-P-03). POC-FR-17 has no platform mapping (OD-P-11). Unowned legacy concepts are listed in OD-P-12 and are not requirements. |
 | **New IDs** | None canonical. The provisional OD-P-01 to OD-P-12 are NON-CANONICAL migration identifiers. |
 
 ## G. Open decisions
@@ -415,7 +415,7 @@ All are in [`../open-decisions.md`](../open-decisions.md).
 |---|---|---|
 | OD-P-01 | Repository layout: documentation-first or monorepo per §51 | Yes |
 | OD-P-02 | Founder decision log and engineering decision log not in the repository | Yes |
-| OD-P-03 | Tuche specification v1.0 absent (AT-01 to AT-20, scenario pack, lifecycle transitions); blocks Phase A exit | Yes, please add the document |
+| OD-P-03 | Tushe specification v1.0 absent (AT-01 to AT-20, scenario pack, lifecycle transitions); blocks Phase A exit | Yes, please add the document |
 | OD-P-04 | Runbooks (kill switch, incident playbook) absent; needed before Phase 2 | Later |
 | OD-P-05 | Founding Canon v4.0, POC Spec v2.0 and peer drafts not in the archive | Optional |
 | OD-P-06 | Intent Object `status` values not enumerated | Yes, before the contracts v1 freeze |
@@ -432,7 +432,7 @@ None of these was resolved by guessing. Where a "proposed default" is given, it 
 
 - **Active documentation:** none. Every Markdown link and every backtick file path in active documents resolves (see §J). References to the 21 removed placeholders are written as removal records, and the decision-record filename pattern is a naming template.
 - **Archived documentation:** archived files keep their original plain-text cross-references (for example `trust/trust-model.md`). Because the tree moved as a whole, these still resolve relative to `docs/archive/legacy-canon-2026-09/`. The exceptions are references to the 21 removed placeholders (for example `reference-workflows/card-renewal/`), which now point at files that exist only in Git history. This is intentional; archived content was not edited beyond the banner.
-- **External references with no file in the repository:** the Tuche specification (OD-P-03), the founder and engineering decision logs (OD-P-02), runbooks (OD-P-04), Founding Canon v4.0 and the peer drafts (OD-P-05).
+- **External references with no file in the repository:** the Tushe specification (OD-P-03), the founder and engineering decision logs (OD-P-02), runbooks (OD-P-04), Founding Canon v4.0 and the peer drafts (OD-P-05).
 
 ## I. Semantic consistency audit
 
@@ -561,7 +561,7 @@ Totals from `9b701bc` to `8047171`:
 
 ## L. Residual risks and items requiring founder approval
 
-1. **Founder approval needed** for OD-P-01 (repository layout), OD-P-03 (add the Tuche specification; this blocks Phase A exit), OD-P-06 and OD-P-08 (enumerations needed before the contracts v1 freeze), OD-P-07 (SEC-/PERF- IDs) and OD-P-09 (risk classes). Each may need a SoT revision (v1.2).
+1. **Founder approval needed** for OD-P-01 (repository layout), OD-P-03 (add the Tushe specification; this blocks Phase A exit), OD-P-06 and OD-P-08 (enumerations needed before the contracts v1 freeze), OD-P-07 (SEC-/PERF- IDs) and OD-P-09 (risk classes). Each may need a SoT revision (v1.2).
 2. **Drift risk in derived documents.**
    - `requirements-index.md`, `docs/engineering/state-registry.md` and `poc/README.md` copy short SoT text. A future SoT revision must be followed by regenerating or rechecking them.
    - Recommended: add the validator to CI once a tooling decision is recorded (AGENT-14).
