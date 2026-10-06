@@ -33,14 +33,14 @@ Some questions must be answered with evidence and are **never silently resolved*
 | OD-01 | Pricing model | First pilot: fixed fee with auditable success criteria agreed in writing in advance; verified outcomes counted internally from day one (verified success, verified safe refusal, verified escalation, unresolved or unknown); outcome-based pricing tested only once both sides can agree on what counted; never per seat | Before the first paid pilot | [OPEN]: default applies | — |
 | OD-02 | Policy evaluation | Deterministic, versioned rules evaluated in our code; import/export for Cedar and OPA later | Phase B | [OPEN]: default applies | — |
 | OD-03 | Ambiguity thresholds | 0.35 auto-resolve margin; escalate above 4 candidates; tune only with full benchmark runs | Phase C | [OPEN]: default applies | — |
-| OD-04 | Speech providers | Benchmark at least two (including an Intron- or N-ATLAS-based option) on the voice subset; choose on key-slot accuracy, then latency, then cost | Week 2 of the POC | [OPEN]: default applies | — |
-| OD-05 | Model providers for Understanding | At least two benchmarked; choose on intent accuracy on the code-switched suite | Week 2 of the POC | [OPEN]: default applies | — |
+| OD-04 | Speech providers | Benchmark at least two (including an Intron- or N-ATLAS-based option) on the voice subset; choose on key-slot accuracy, then latency, then cost | Week 2 of the POC | Closed: Intron vs Deepgram | [DEC-2026-10-06-vendor-benchmarks](decisions/DEC-2026-10-06-vendor-benchmarks.md) |
+| OD-05 | Model providers for Understanding | At least two benchmarked; choose on intent accuracy on the code-switched suite | Week 2 of the POC | Closed: Gemini vs Claude | [DEC-2026-10-06-vendor-benchmarks](decisions/DEC-2026-10-06-vendor-benchmarks.md) |
 | OD-06 | Record integrity | POC: hash chain only, no anchoring. Before Phase 2 production: periodic anchoring of chain heads. External notarisation deferred. | Before Phase 2 | [OPEN]: default applies | — |
-| OD-07 | Durable execution engine | Postgres-backed durable state for the POC. Adopt Temporal (or another durable workflow engine) when measured workflow needs exceed what the Postgres controller can safely guarantee: multi-day waits at volume, many concurrent watches, durable timers or complex compensation. | When the evidence requires | [OPEN]: default applies | — |
+| OD-07 | Durable execution engine | Postgres-backed durable state for the POC. Adopt Temporal (or another durable workflow engine) when measured workflow needs exceed what the Postgres controller can safely guarantee: multi-day waits at volume, many concurrent watches, durable timers or complex compensation. | When the evidence requires | Closed: Temporal mandated from Day 1 | [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) |
 | OD-08 | Data retention | Minimal by default; raw audio discarded after transcription unless a dispute needs it and consent is recorded; retention per pack and region | Before the first design-partner data conversation | [OPEN]: default applies | — |
 | OD-09 | Policy precedence when policy changes mid-case | **DECIDED in v1.2 (see INV-09, INV-26).** Any policy change voids outstanding grants and Trust re-evaluates under the version in force; a rule marked AT_ADMISSION in policy data keeps the version in force when the intent was admitted. Trust never infers "stricter". | Closed | Closed: decided in SoT v1.2 (INV-09, INV-26) | [DEC-2026-10-02-sot-v1.2](decisions/DEC-2026-10-02-sot-v1.2.md) |
 | OD-10 | Public benchmark scope | Publish taxonomy, schemas, fault model and scoring; keep partner data private | End of Phase 1 | [OPEN]: default applies | — |
-| OD-11 | Implementation language and framework | Decided together. Default: Python 3.13 + FastAPI + Pydantic v2 (SQLAlchemy Core or psycopg 3, Alembic), modular monolith; alternatives Python + Django, or TypeScript on Node.js 22 (Fastify, Zod). The rules in §35.3 apply either way | Before Phase B (technical co-founder) | [OPEN]: default applies | — |
+| OD-11 | Implementation language and framework | Decided together. Default: Python 3.13 + FastAPI + Pydantic v2 (SQLAlchemy Core or psycopg 3, Alembic), modular monolith; alternatives Python + Django, or TypeScript on Node.js 22 (Fastify, Zod). The rules in §35.3 apply either way | Before Phase B (technical co-founder) | Closed: Go/Python microservices mandated | [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) |
 | OD-12 | First design partner and customer channel | A Nigerian bank or large fintech with high "where is my money" volume and an executive owner of the KPI; channel through its own app overlay. Pick one exception subtype during discovery (§38.6). | Before the end of Phase 1 | [OPEN]: default applies | — |
 | OD-13 | First production deployment model | Single-tenant SaaS in-region for the first partner; multi-tenant with strong isolation once tenant-isolation tests pass; customer VPC only where a buyer requires it | Before shadow mode | [OPEN]: default applies | — |
 | OD-14 | Certifications the first buyers require, and when | SOC 2 Type I in Phase 2, Type II in Phase 3; confirm with the first US/EU prospects before committing spend | Before Phase 3 planning | [OPEN]: default applies | — |
@@ -54,7 +54,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-01"></a>
 ### OD-P-01: Repository layout (documentation-first vs. monorepo)
 
-- **Status:** [OPEN] · NON-CANONICAL · raised 2 Oct 2026
+- **Status:** [CLOSED] · Multi-repo layout confirmed
 - **Missing decision:** SoT §51 describes a `/noema` monorepo with `/contracts`, `/core`, `/packs`, `/adapters`, `/providers`, `/voice`, `/ui`, `/benchmark`, `/tools/lint` and `/docs`. The SoT does not say whether *this* repository (`noema-org/docs`) is that monorepo or a separate documentation repository.
 - **Why it matters:**
   - SoT §43 places the JSON Schemas in `/contracts`.
@@ -80,8 +80,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-03"></a>
 ### OD-P-03: The Tushe specification was referenced but absent
 
-- **Status:** [OPEN] · NON-CANONICAL · blocking for Phase A / Phase 0 exit
-- **Update (October 2026):** the issued v1.0 specification is now in the repository as a frozen record: [`poc/tushe/`](poc/tushe/README.md). Closing this item, and linking the specification from the SoT, are left to the founders and the next SoT revision.
+- **Status:** [CLOSED]
+- **Update:** the issued v1.0 specification is now in the repository as a frozen record: [`poc/tushe/`](poc/tushe/README.md).
 - **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
   - acceptance tests AT-01 to AT-20;
   - the twenty-scenario pack;
@@ -122,7 +122,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-06"></a>
 ### OD-P-06: The Intent Object `status` values are not enumerated
 
-- **Status:** [OPEN] · NON-CANONICAL · decide before `/contracts` v1 is frozen (Phase A exit, §40.1)
+- **Status:** [CLOSED] · Enums decided in DEC-2026-10-06-architecture-and-contracts
 - **Missing decision:** the Intent Object example (§43.1) has `"status": "VALIDATED"`, but the SoT lists no other value and no lifecycle for this field. The SoT does define:
   - the versioning rules (`version`, `supersedes`, immutable once admitted to Trust);
   - clarification binding (POC-FR-13).
@@ -147,7 +147,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-08"></a>
 ### OD-P-08: Value sets for authority-layer results and reason codes are not enumerated
 
-- **Status:** [OPEN] · NON-CANONICAL · decide before contracts v1 freeze
+- **Status:** [CLOSED] · Enums decided in DEC-2026-10-06-architecture-and-contracts
 - **Missing decision:** the SoT gives these values only as examples:
   - the Decision Record's `authority` layer results: `PASS`, `NOT_EVALUATED` (§43.2);
   - Trust reason codes: `AMBIGUOUS_COUNTERPARTY` (§43.2), `PROHIBITED_CAPABILITY` (US-10), `DECLINED_BY_APPROVER` (§43.2a, since v1.2).
