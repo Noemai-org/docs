@@ -1,0 +1,15 @@
+{
+  "id": "intent-123",
+  "version": "1.0",
+  "status": "VALIDATED",
+  "domain": "fintech",
+  "intent_type": "investigate_exception",
+  "parameters": {
+    "account_number": "1234567890",
+    "amount": 5000
+  },
+  "fact_statuses": {
+    "account_number": "VERIFIED",
+    "amount": "KNOWN"
+  }
+}
