@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: Noema Core Contracts
+  version: 1.2.0
+components:
+  schemas:
+    FactStatus:
+      type: string
+      enum:
+        - KNOWN
+        - INFERRED
+        - UNKNOWN
+        - UNAUTHORIZED
+        - CONFLICTED
+        - STALE
+        - VERIFIED
+        - UNVERIFIED
+
+    IntentStatus:
+      type: string
+      enum:
+        - EXTRACTED
+        - VALIDATED
+        - REJECTED_AT_GATE
+        - SUPERSEDED
+
+    AuthorityResult:
+      type: string
+      enum:
+        - PASS
+        - FAIL
+        - NOT_EVALUATED
+        - OVERRIDDEN
+
+    TrustReasonCode:
+      type: string
+      enum:
+        - PROHIBITED_CAPABILITY
+        - AMBIGUOUS_COUNTERPARTY
+        - DECLINED_BY_APPROVER
+        - POLICY_VERSION_MISMATCH
+        - INSUFFICIENT_EVIDENCE
+        - STALE_EVIDENCE
+        - NONE
+
+    TrustOutcome:
+      type: string
+      enum:
+        - ALLOW
+        - CLARIFY
+        - CONFIRM
+        - WAIT
+        - ESCALATE
+        - REJECT
+        - UNKNOWN
+
+    IntentObject:
+      type: object
+      required:
+        - id
+        - version
+        - status
+        - domain
+        - intent_type
+        - parameters
+      properties:
+        id:
+          type: string
+        version:
+          type: string
+        supersedes_hash:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/IntentStatus'
+        domain:
+          type: string
+        intent_type:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: {}
+        fact_statuses:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FactStatus'
+
+    DecisionGrant:
+      type: object
+      required:
+        - grant_id
+        - intent_id
+        - intent_version
+        - outcome
+      properties:
+        grant_id:
+          type: string
+        intent_id:
+          type: string
+        intent_version:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/TrustOutcome'
+        reason_code:
+          $ref: '#/components/schemas/TrustReasonCode'
+          nullable: true
+        layer_results:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AuthorityResult'
+paths:
+  /dummy:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionGrant'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntentObject'
+      responses:
+        '200':
+          description: OK
