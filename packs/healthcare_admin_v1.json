@@ -1,0 +1,21 @@
+{
+  "domain": "HEALTHCARE",
+  "version": "healthcare-admin.v0.1",
+  "intent_classes": {
+    "SCHEDULE_APPOINTMENT": {
+      "intent_type": "SCHEDULE_APPOINTMENT",
+      "read_write_class": "WRITE",
+      "description": "The Actor wants to schedule a new patient appointment."
+    },
+    "VERIFY_INSURANCE": {
+      "intent_type": "VERIFY_INSURANCE",
+      "read_write_class": "READ",
+      "description": "The Actor wants to verify the active status of an insurance policy."
+    },
+    "UPDATE_PATIENT_RECORD": {
+      "intent_type": "UPDATE_PATIENT_RECORD",
+      "read_write_class": "WRITE",
+      "description": "The Actor wants to update details in a patient's medical record."
+    }
+  }
+}

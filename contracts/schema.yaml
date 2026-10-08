@@ -108,6 +108,37 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/AuthorityResult'
+
+    ExecutionStatus:
+      type: string
+      enum:
+        - SUCCESS
+        - FAILED
+        - UNKNOWN
+        - IN_PROGRESS
+
+    ExecutionReceipt:
+      type: object
+      required:
+        - receipt_id
+        - grant_id
+        - intent_id
+        - status
+        - system_reference
+      properties:
+        receipt_id:
+          type: string
+        grant_id:
+          type: string
+        intent_id:
+          type: string
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
+        system_reference:
+          type: string
+        error_message:
+          type: string
+          nullable: true
 paths:
   /dummy:
     get:
@@ -127,3 +158,9 @@ paths:
       responses:
         '200':
           description: OK
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionReceipt'
