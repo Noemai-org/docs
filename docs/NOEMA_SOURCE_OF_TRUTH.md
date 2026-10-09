@@ -1411,7 +1411,7 @@ A note for anyone comparing this with earlier drafts: one draft said forbidden c
 | `EDIT_OR_DELETE_EVIDENCE` | **PROHIBITED** | n/a | n/a | n/a |
 | `DOWNGRADE_CASE_PRIORITY` | **PROHIBITED** | n/a | n/a | n/a |
 
-¹ To be confirmed against the Tushe case API (see the Tushe delta, `docs/poc/tushe-spec-delta-v1.2.md`). If the case service deduplicates by idempotency key, the class becomes `NATIVE_IDEMPOTENT`.
+¹ To be confirmed against the Tushe case API (see the Tushe delta, `docs/poc/tushe/tushe-spec-delta-v1.1.md`). If the case service deduplicates by idempotency key, the class becomes `NATIVE_IDEMPOTENT`.
 
 ² R3 because logging a complaint starts a regulatory clock and cannot be undone.
 

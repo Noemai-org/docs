@@ -54,7 +54,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-01"></a>
 ### OD-P-01: Repository layout (documentation-first vs. monorepo)
 
-- **Status:** [CLOSED] · Multi-repo layout confirmed
+- **Status:** [CLOSED] · Multi-repo layout confirmed by [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The mapping of repositories to deployables is tracked in [OD-P-13](#od-p-13).
 - **Missing decision:** SoT §51 describes a `/noema` monorepo with `/contracts`, `/core`, `/packs`, `/adapters`, `/providers`, `/voice`, `/ui`, `/benchmark`, `/tools/lint` and `/docs`. The SoT does not say whether *this* repository (`noema-org/docs`) is that monorepo or a separate documentation repository.
 - **Why it matters:**
   - SoT §43 places the JSON Schemas in `/contracts`.
@@ -76,13 +76,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
   - Until a committed founder decision is added there, the SoT is the highest authority available in this repository. The first record is [DEC-2026-10-02-sot-v1.2](decisions/DEC-2026-10-02-sot-v1.2.md).
   - Do not invent historical decisions.
 - **What would invalidate it:** the founders keep the log elsewhere. In that case, link it from `decisions/README.md`.
+- **Note (v1.3):** founder decisions now live in [`decisions/`](decisions/README.md), and AGENT-29 requires each decision record to land in the same pull request as the matching SoT edit and the regenerated register. Where the engineering decision log lives is still open.
 
 <a id="od-p-03"></a>
 ### OD-P-03: The Tushe specification was referenced but absent
 
-- **Status:** [CLOSED]
+- **Status:** [CLOSED] by [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4); the specification was added in PR #3.
 - **Update:** the issued v1.0 specification is now in the repository as a frozen record: [`poc/tushe/`](poc/tushe/README.md).
-- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tuche Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
+- **Missing decision:** SoT §36 and §0.4 (item 4) rely on *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*, which is not in this repository. That document defines:
   - acceptance tests AT-01 to AT-20;
   - the twenty-scenario pack;
   - the documented transitions and invariants of the domain lifecycles.
@@ -94,7 +95,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
   - Do not write AT-xx definitions or scenario content from memory or inference.
   - Add the specification to the repository (for example under `docs/poc/`) once it is available.
 - **What would invalidate it:** the specification is added, or the founders decide to keep it outside the repository and link to it.
-- **Note (v1.2):** additions requested by SoT v1.2 are listed in [`poc/tushe-spec-delta-v1.2.md`](poc/tushe-spec-delta-v1.2.md).
+- **Note:** requested changes to the specification (v1.0 → v1.1) are listed in [`poc/tushe/tushe-spec-delta-v1.1.md`](poc/tushe/tushe-spec-delta-v1.1.md).
 
 <a id="od-p-04"></a>
 ### OD-P-04: Runbooks named by the SoT do not exist
@@ -122,7 +123,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-06"></a>
 ### OD-P-06: The Intent Object `status` values are not enumerated
 
-- **Status:** [CLOSED] · Enums decided in DEC-2026-10-06-architecture-and-contracts
+- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The value list is normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §6.
 - **Missing decision:** the Intent Object example (§43.1) has `"status": "VALIDATED"`, but the SoT lists no other value and no lifecycle for this field. The SoT does define:
   - the versioning rules (`version`, `supersedes`, immutable once admitted to Trust);
   - clarification binding (POC-FR-13).
@@ -147,7 +148,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-08"></a>
 ### OD-P-08: Value sets for authority-layer results and reason codes are not enumerated
 
-- **Status:** [CLOSED] · Enums decided in DEC-2026-10-06-architecture-and-contracts
+- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The value lists are normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §2.
 - **Missing decision:** the SoT gives these values only as examples:
   - the Decision Record's `authority` layer results: `PASS`, `NOT_EVALUATED` (§43.2);
   - Trust reason codes: `AMBIGUOUS_COUNTERPARTY` (§43.2), `PROHIBITED_CAPABILITY` (US-10), `DECLINED_BY_APPROVER` (§43.2a, since v1.2).
@@ -206,3 +207,12 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 | Organisational and tenant hierarchy detail | `archive/legacy-canon-2026-09/enterprise/organizational-boundaries.md` | PLAT-FR-16 |
 
 - **Proposed default:** do not build any of these. If a POC case needs one, raise a specific entry under AGENT-02.
+
+<a id="od-p-13"></a>
+### OD-P-13: Which repository hosts each deployable and `/contracts`
+
+- **Status:** [OPEN] · NON-CANONICAL · decide before Phase B
+- **Missing decision:** DEC-2026-10-06-architecture-and-contracts names four repositories (`docs`, `brain`, `backend`, `intent-engine`), and DEC-2026-10-09 defines two deployables (the Python model service and the Go core service). No record says which repository hosts which deployable, which one hosts `/contracts`, or what `brain` contains. SoT v1.3 §51 marks this [OPEN].
+- **Why it matters:** `/contracts` must live in exactly one repository, with the others consuming generated packages pinned by version (§51). The CI boundary checks in §51 run per repository.
+- **Proposed default (inference, not a decision):** `intent-engine` hosts the model service; `backend` hosts the core service and `/contracts`. The role of `brain` is unknown.
+- **What would invalidate it:** a decision record that maps the repositories differently.

@@ -6,6 +6,7 @@ Tushe provides the synthetic enterprise environment the Noema POC is built and b
 |---|---|---|---|
 | [Technical Requirements & Acceptance Specification](Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md) | 1.0 | Issued to Tushe — frozen | 85 requirements (73 P0, 12 P1); acceptance tests AT-01 to AT-20; 20-scenario readiness pack |
 | [Original export](source/) | 1.0 | Unchanged source | Kept for provenance |
+| [Requested changes v1.0 → v1.1](tushe-spec-delta-v1.1.md) | 1.1 (draft) | Draft — not sent to Tushe until the founder approves it | CON-01 and API-05 raised to P0; idempotency-key lookup and simulated-time reporting (proposed IDP-07, TIM-05); extended fault classes; proposed AT-21 to AT-25 |
 
 **Rules**
 - Issued versions are never edited. Changes go into a delta file (`tushe-spec-delta-vX.Y.md`) and become a new version only when re-issued to Tushe.
