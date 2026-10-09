@@ -2,7 +2,7 @@
 
 This repository is Noema's documentation and organisational memory.
 
-**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.2, 2 October 2026). It defines:
+**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.3, 9 October 2026). It defines:
 
 - what Noema is and is not;
 - what we are building first, and why;
@@ -28,6 +28,7 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
 | `docs/archive/` | **Non-authoritative** historical material |
+| `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), frozen-file hashes, CI workflow, PR template and code owners |
 | `AGENTS.md`, `CLAUDE.md` | Operating instructions for coding agents |
 
 The repository is documentation-first. It contains no application code ([OD-P-01](docs/open-decisions.md#od-p-01)).

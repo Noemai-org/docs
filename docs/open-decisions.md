@@ -2,7 +2,7 @@
 
 This is the register that SoT AGENT-02 points to (`/docs/open-decisions.md`). It tracks the **status** of open decisions. It does not define them.
 
-- **Canonical open decisions (OD-01 to OD-16)** are defined in [`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) §46. Their text below is copied from §46 for convenience. If the two differ, §46 wins.
+- **Canonical open decisions (OD-01 to OD-16)** are defined in [`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) §46. Their table below is generated from §46 by `python3 tools/check_docs_consistency.py --write` and must not be edited by hand. If the two differ, §46 wins.
 - **Provisional migration items (OD-P-01 onwards)** were raised by the October 2026 documentation migration. They are **NON-CANONICAL**. They are not requirements and they do not authorise any work. Each one stays provisional until a founder decision adopts it into a future SoT revision (where it would get a canonical OD number) or closes it.
 
 ## How the process works
@@ -17,7 +17,7 @@ These rules come from SoT §0.4, §44 (AGENT-02) and §46.
    5. add an entry here marked [OPEN];
    6. do not expand scope until it is decided.
 2. Each canonical open decision has a recommended default, and that default applies until the decision is made (§46).
-3. Changing a [DECISION] or [CONVICTION] item needs a new version of the SoT (§46). Binding decisions BD-01 to BD-15 (§0.5) change only that way.
+3. Changing a [DECISION] or [CONVICTION] item needs a new version of the SoT (§46). Binding decisions BD-01 to BD-16 (§0.5) change only that way.
 4. Every decision is recorded with its date, owner, rationale and evidence. A decision that is not written down does not exist (§0.4). Decision records go in [`decisions/`](decisions/README.md).
 5. When an entry is decided, update its **Status** and **Record** columns and link the decision record. Do not delete the row.
 
@@ -143,7 +143,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
   - Security work (§47) and performance work (§48) can currently be traced only to PLAT-NFR, POC-NFR, INV or AGENT IDs, or to section numbers.
 - **Proposed default:**
   - Do not mint `SEC-` or `PERF-` IDs.
-  - Trace security work to PLAT-NFR-14, PLAT-NFR-20, BD-11, INV-01 to INV-28 and AGENT-09/10/13, plus a §47 reference.
+  - Trace security work to PLAT-NFR-14, PLAT-NFR-20, BD-11, INV-01 to INV-30 and AGENT-09/10/13, plus a §47 reference.
   - Trace performance work to PLAT-NFR-13, POC-NFR-09 and a §48 reference.
 - **What would invalidate it:** a SoT revision that defines these ID families.
 

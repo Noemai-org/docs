@@ -28,8 +28,8 @@ Read, in this order:
 - SoT §0.1 (the five distinctions);
 - SoT §0.3 (notes for coding agents);
 - SoT §0.4–0.6;
-- SoT §44 (AGENT-01 to AGENT-27);
-- SoT §45 (INV-01 to INV-28);
+- SoT §44 (AGENT-01 to AGENT-29);
+- SoT §45 (INV-01 to INV-30);
 - the SoT section that your task's requirement ID points to. Use [`docs/requirements-index.md`](docs/requirements-index.md) to find it.
 
 ## 3. Rules you will most often need
@@ -39,11 +39,11 @@ The rules are defined in the SoT. This is a reminder list, not a restatement.
 - **Every change traces to at least one SoT requirement ID** (AGENT-01). If no ID covers what you are about to do, stop. Follow AGENT-02: add an [OPEN] entry to [`docs/open-decisions.md`](docs/open-decisions.md) and do not expand scope.
 - **Build the POC, not the platform** (AGENT-03, SoT Part VII). Keeping an interface clean for later is required. Implementing the later feature is not. Mode 2 is not built in the POC (POC-FR-16).
 - **Keep the four powers separate** (BD-05, §13). Understanding proposes; Trust determines; Execution does exactly what a grant allows, once; Outcome proves the result. No component authorises itself (AGENT-22).
-- **No language model in Trust, Execution or the Outcome verdict** (INV-01, AGENT-05). Model output is untrusted input (BD-11).
+- **No language model in Trust, Execution or the Outcome verdict** (INV-01). Models and speech providers are reachable only from the model service, never from the core service (§35.6, INV-29, AGENT-05), and only through their provider adapters (AGENT-28). No single provider dependence (BD-16). Model output is untrusted input (BD-11).
 - **No industry or country terms in core** (INV-14, AGENT-04). They belong in packs and adapters.
 - **Unknown is a real result.** A timeout, a 5xx or silence is `OUTCOME_UNKNOWN` (INV-07, AGENT-07). Retry a write only under a new grant (AGENT-08). An HTTP 200 is not an outcome (AGENT-21).
 - **No money movement in the POC** (BD-08, §34.2). Prohibited capabilities have no adapter and no callable path.
-- **No new dependency, service, datastore or framework without an [OPEN] entry and approval** (AGENT-14). The POC does not use Temporal (§34.5, OD-07).
+- **No new dependency, service, datastore or framework without an [OPEN] entry and approval** (AGENT-14). Temporal is the durable workflow engine, but it is never the authoritative record; Postgres is (§35.6, INV-30).
 - **No external numbers** unless they appear in the SoT with a source (AGENT-18). Never turn [HYPOTHESIS] into fact, [TARGET] into achieved, or [ILLUSTRATIVE] into a plan (§0.2, §0.6).
 - **When the SoT is ambiguous,** implement the safer reading, note the ambiguity and ask (AGENT-20).
 - **Never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit** (AGENT-27). If the specification and the implementation conflict, stop and write in the PR: CONFLICT DETECTED · affected IDs · evidence · proposed alternatives · blast radius · decision required.
