@@ -1,5 +1,6 @@
 # DEC-2026-10-06-architecture-and-contracts
 
+- Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (deployment shape); Temporal confirmed
 - Date: 6 October 2026
 - Owner: Founders (Technical Co-founder)
 - Decision:
@@ -17,3 +18,4 @@
 - Affected requirement IDs / SoT sections:
   - Closes: OD-07, OD-11, OD-P-01, OD-P-03, OD-P-06, OD-P-08.
 - Supersedes: The recommended SoT defaults for OD-07 and OD-11.
+- Migration notes: SoT updated to v1.3 to match (§34.5, §35, §45.1, §46, §51). No code existed at the time of this record. Any per-component service scaffolding must be consolidated into the two deployables defined in DEC-2026-10-09. Temporal runs locally through Docker Compose; Postgres remains the authoritative store.

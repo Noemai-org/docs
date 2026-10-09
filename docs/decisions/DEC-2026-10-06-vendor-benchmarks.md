@@ -1,5 +1,6 @@
 # DEC-2026-10-06-vendor-benchmarks
 
+- Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (provider selection)
 - Date: 6 October 2026
 - Owner: Founders (Technical Co-founder)
 - Decision:
@@ -11,3 +12,4 @@
 - Affected requirement IDs / SoT sections:
   - Closes: OD-04, OD-05.
 - Supersedes: The recommended open defaults for OD-04 and OD-05.
+- Migration notes: The candidate shortlists in this record were replaced by DEC-2026-10-09 (three model providers and three speech providers, all integrated). SoT updated to v1.3 (§17, §35.3, §46). No data or code migration required.

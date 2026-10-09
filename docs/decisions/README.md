@@ -9,6 +9,9 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | Record | Subject |
 |---|---|
 | [DEC-2026-10-02-sot-v1.2](DEC-2026-10-02-sot-v1.2.md) | SoT v1.2: pre-development fixes |
+| [DEC-2026-10-06-architecture-and-contracts](DEC-2026-10-06-architecture-and-contracts.md) | Temporal, repository layout, contract value lists (superseded in part by DEC-2026-10-09) |
+| [DEC-2026-10-06-vendor-benchmarks](DEC-2026-10-06-vendor-benchmarks.md) | Benchmark candidates for Understanding and speech (superseded in part by DEC-2026-10-09) |
+| [DEC-2026-10-09-deployment-temporal-providers](DEC-2026-10-09-deployment-temporal-providers.md) | Two deployables, Temporal, multi-provider Understanding and speech |
 
 ## Where decisions already live
 
@@ -39,6 +42,7 @@ Name files `DEC-YYYY-MM-DD-<slug>.md`.
 ```markdown
 # DEC-YYYY-MM-DD-<slug>
 
+- Status:
 - Date:
 - Owner:
 - Decision:
