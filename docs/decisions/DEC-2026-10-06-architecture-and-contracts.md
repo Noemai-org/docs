@@ -2,6 +2,7 @@
 
 - Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (deployment shape); Temporal confirmed
 - Date: 6 October 2026
+- Closes: OD-07, OD-11
 - Owner: Founders (Technical Co-founder)
 - Decision:
   1. **Orchestration & Language (Overrides OD-07 & OD-11 defaults):** Noema will use Temporal as the durable execution engine from Day 1 to avoid a Phase 3 rewrite. The architecture will be a multi-language microservice split: the Understanding/Intent layer in Python, and the Trust/Execution/Outcome layers in Go, communicating via strict JSON contracts over Temporal.

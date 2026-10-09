@@ -2,6 +2,7 @@
 
 - Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (provider selection)
 - Date: 6 October 2026
+- Closes: OD-04, OD-05 (selection completed by DEC-2026-10-09)
 - Owner: Founders (Technical Co-founder)
 - Decision:
   1. **Understanding/LLM Providers (Closes OD-05):** The Phase A benchmark for Intent extraction on the code-switched suite will compare **Google Gemini (Latest Pro)** against **Anthropic Claude (Latest Sonnet)**.

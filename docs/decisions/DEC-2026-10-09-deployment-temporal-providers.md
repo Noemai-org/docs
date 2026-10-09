@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 9 October 2026
+- Closes: OD-04, OD-05, OD-07, OD-11
 - Owner: Founders (Founder and Technical Co-founder)
 - Decision:
   1. **Two deployables, split at the model boundary.**

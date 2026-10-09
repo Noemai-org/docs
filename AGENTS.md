@@ -56,6 +56,9 @@ The rules are defined in the SoT. This is a reminder list, not a restatement.
 - **Do not create implementation directories** (`/core`, `/contracts`, `/packs`, …) unless a POC requirement needs them. The repository is documentation-first ([OD-P-01](docs/open-decisions.md#od-p-01)).
 - **Provisional items (`OD-P-xx`) are NON-CANONICAL.** Never cite one as authority for building something.
 - **Preserve requirement IDs and status tags exactly** as the SoT writes them.
+- **One change, one pull request** (AGENT-29). A change that opens, decides or closes a decision includes, in the same pull request, the decision record in [`docs/decisions/`](docs/decisions/README.md), the matching SoT edit and the regenerated register.
+- **Never hand-edit the generated register section** in [`docs/open-decisions.md`](docs/open-decisions.md). Run `python3 tools/check_docs_consistency.py --write`.
+- **Run `python3 tools/check_docs_consistency.py --check` before every push.** CI runs the same check (`docs-consistency`) on every pull request.
 - **Issued external documents are frozen.** Files marked "frozen record" (for example the Tushe specification in `docs/poc/tushe/`) must never be edited. Propose changes in a delta file next to them, and do not put internal strategy, benchmark details or hidden test material in any document meant for an external partner.
 
 ## 5. Where things are

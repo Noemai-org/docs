@@ -44,6 +44,7 @@ Name files `DEC-YYYY-MM-DD-<slug>.md`.
 
 - Status:
 - Date:
+- Closes: <OD IDs this record decides or closes, or none>
 - Owner:
 - Decision:
 - Rationale and evidence:

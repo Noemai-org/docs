@@ -73,6 +73,8 @@ External facts carry a source marker such as **[S4]**. Sources are listed with l
 
 Decisions made in conversation, calls, chat apps or AI sessions are not authoritative until they are committed this way. If an instruction you received disagrees with this document and has not been committed, follow this document and raise the conflict (AGENT-27).
 
+**One change, one pull request.** A decision record, the matching SoT edit and the regenerated register always land in the same pull request (AGENT-29). The canonical part of the open-decisions register is generated from §46 and never edited by hand. Automated checks block any pull request in which the SoT, the register and `docs/decisions/` disagree. Changes to this document and to `docs/decisions/` require the founders' approval.
+
 Every decision is recorded with its date, owner, rationale and the evidence behind it. A decision that is not written down does not exist.
 
 ### 0.5 Binding decisions register

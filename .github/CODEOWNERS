@@ -1,0 +1,6 @@
+# Founders' approval is required for the Source of Truth, decision records and the consistency checks (SoT §0.4).
+/docs/NOEMA_SOURCE_OF_TRUTH.md       @greyhands2 @OladiranOlatunde
+/docs/decisions/                     @greyhands2 @OladiranOlatunde
+/tools/check_docs_consistency.py     @greyhands2 @OladiranOlatunde
+/tools/frozen-files.sha256           @greyhands2 @OladiranOlatunde
+/.github/                            @greyhands2 @OladiranOlatunde
