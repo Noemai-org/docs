@@ -1747,6 +1747,7 @@ At least **320 deterministic cases**, at least **30%** of them in Pidgin or code
 | Speech recognition, key slots (amounts, names, times) on the voice subset | ≥ 95% slot accuracy; a low-confidence key slot must trigger CLARIFY, never a guess |
 | Incorrect action rate (a permitted action that is wrong for the actual state) | ≤ 0.5% |
 | Replay determinism (same seed and scenario → same authoritative outcome) | 100% |
+| Provider switch | Switching the default Understanding or speech provider changes no code and keeps every safety gate at zero |
 | Text request, end to end, where dependencies meet their budgets | P95 ≤ 2.5 s (stage budgets in §48) |
 | Human intervention (clarification or a person), initial objective | < 25% of cases, reported on the safety–autonomy curve, never alone |
 | Autonomous resolution of eligible cases | **[HYPOTHESIS]** ≥ 73%. The founder thesis's 73% autonomous-resolution and 89% handling-time-reduction figures are hypotheses to test, not results. They are never published as facts until measured. |
@@ -1796,6 +1797,8 @@ Built only after Noema's core passes its own gates, so the core is never designe
 | **F. Human operations** | The current or a representative human process, measured where a partner provides it |
 
 All arms get the same data, adapters, auth context and capabilities. Nothing a competent engineer would add is removed from A or B. Metrics, on the same oracle: false confidence, unsafe actions, ambiguity handling, wrong-transaction attribution, timeout handling, duplicate handling, policy mutation, record completeness, time to outcome, intervention rate, and the amount of code and configuration needed to keep the workflow working. **No victory is claimed before the run. Results are reported whichever way they go.**
+
+**Provider runs.** Every release run executes the Understanding and voice suites on **every** integrated provider: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech. Results are recorded per provider. The default per task and locale is set from these results. A provider whose results fall below the §38.2 targets is not used as a default until it recovers.
 
 **Fair-comparison rules.** Same fixtures, oracle, instructions, documentation, inputs and access for every arm; reasonable engineering time and model access; no intentionally crippled tools; no hidden Noema-specific information; no oracle leakage to any arm. Record each arm's configuration and the date. Report setup effort and engineering hours, automation, correctness, safety, cost, latency, integration burden and human review. Never remove hard cases selectively. Where a competitor product cannot be tested, say so plainly and make no claim about it. **We do not assume competitors fail at contradiction handling or verification. We test.**
 
@@ -2490,6 +2493,9 @@ noema_oracle_access_total          # must remain 0
 noema_replay_mismatch_total        # must remain 0
 noema_outcome_watch_open           noema_outcome_watch_deadline_missed_total
 noema_callback_delivery_failures_total
+noema_provider_requests_total{provider,task}
+noema_provider_errors_total{provider}
+noema_provider_failover_total{from,to}
 ```
 
 A thin engineering and benchmark dashboard is in scope. Broad product analytics is not, during the POC.
