@@ -1,6 +1,8 @@
 # DEC-2026-10-06-architecture-and-contracts
 
+- Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (deployment shape); Temporal confirmed
 - Date: 6 October 2026
+- Closes: OD-07, OD-11
 - Owner: Founders (Technical Co-founder)
 - Decision:
   1. **Orchestration & Language (Overrides OD-07 & OD-11 defaults):** Noema will use Temporal as the durable execution engine from Day 1 to avoid a Phase 3 rewrite. The architecture will be a multi-language microservice split: the Understanding/Intent layer in Python, and the Trust/Execution/Outcome layers in Go, communicating via strict JSON contracts over Temporal.
@@ -17,3 +19,4 @@
 - Affected requirement IDs / SoT sections:
   - Closes: OD-07, OD-11, OD-P-01, OD-P-03, OD-P-06, OD-P-08.
 - Supersedes: The recommended SoT defaults for OD-07 and OD-11.
+- Migration notes: SoT updated to v1.3 to match (§34.5, §35, §45.1, §46, §51). No code existed at the time of this record. Any per-component service scaffolding must be consolidated into the two deployables defined in DEC-2026-10-09. Temporal runs locally through Docker Compose; Postgres remains the authoritative store.

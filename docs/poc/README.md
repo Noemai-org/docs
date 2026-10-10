@@ -36,7 +36,7 @@ The test for every feature request (§33): *does this help prove that a probabil
 | Non-goals, with reasons | §34.5 |
 | What is built and what is deferred, by power | §35.1 |
 | The POC loop | §35.2 |
-| Technology choices [DECISION], and OD-11 on language and framework | §35.3, §46 |
+| Technology choices [DECISION]; deployment shape (two deployables) and Temporal rules | §35.3, §35.6, §46 |
 | Idempotency key, state classifications, recovery types, revalidation | §35.5 (see also [`../engineering/state-registry.md`](../engineering/state-registry.md)) |
 | Synthetic environment | §36 |
 | Synthetic environment (Tushe) | [`tushe/README.md`](tushe/README.md): the issued requirements and acceptance specification for the Tushe environment; frozen; changes go through delta files. |
@@ -56,9 +56,8 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
 - Studio, and natural-language policy authoring.
 - An agent builder, MCP server product or agent gateway.
 - Fine-tuning or learning from production data.
-- Microservices or Kubernetes "for appearance".
+- More application services than the two agreed deployables (the Python model service and the Go core service); Kubernetes "for appearance".
 - Vector databases, graph databases or Kafka, and Redis as authoritative state.
-- **Temporal.** Postgres is the POC system of record; under OD-07 a durable workflow engine is adopted only when measured needs exceed what the Postgres controller can safely guarantee.
 - WhatsApp, SMS or other channels.
 - A consumer banking app.
 - Broad analytics dashboards.

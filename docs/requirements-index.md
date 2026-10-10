@@ -2,7 +2,7 @@
 
 > **Derived, non-normative.** This index exists for traceability (AGENT-01). Every requirement is *defined* only in [`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the SoT). The "Summary" column is a verbatim prefix of the SoT text, cut at a word boundary and marked "…" where truncated. Read the SoT section before acting on any ID. If this file and the SoT disagree, the SoT wins and this file is wrong.
 
-Generated from SoT v1.2 (2 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
+Generated from SoT v1.3 (9 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
 
 ## How to read this index
 
@@ -37,6 +37,7 @@ SoT §0.5. Settled [CONVICTION] or [DECISION] items; changed only by a new SoT v
 | BD-13 | §0.5 | Mode 1 is built first. Mode 2 shapes the architecture now and ships only when earned. | §16, §41 | ALL |
 | BD-14 | §0.5 | Correctness is benchmarked text-first; the voice front door is built in parallel on the same core. | §32, §40 | ALL |
 | BD-15 | §0.5 | Engineering is global-grade from day one; certifications are claimed only once completed. | §47, §50 | ALL |
+| BD-16 | §0.5 | No single provider dependence. Understanding integrates at least GPT, Gemini and Claude, and speech integrates at least … | §17, §35.3 | ALL |
 
 ## Platform functional requirements (PLAT-FR)
 
@@ -196,7 +197,7 @@ SoT §45. Each is enforced in code and asserted as a property test on every merg
 | INV-10 | §45 | Every consequential decision is reconstructable from the Record alone. | Record | ALL | Property test on every merge |
 | INV-11 | §45 | The Record is append-only and hash-chained; any break in the chain raises a security alert. | Record | ALL | Property test on every merge |
 | INV-12 | §45 | Identity is never derived from model output or user text. | Understanding, Trust | ALL | Property test on every merge |
-| INV-13 | §45 | No user-facing statement presents a non-KNOWN fact as certain. | Explanation (separate component) | ALL | Property test on every merge |
+| INV-13 | §45 | No user-facing statement presents a non-KNOWN fact as certain. | Explanation (model service) | ALL | Property test on every merge |
 | INV-14 | §45 | `/core` contains no vertical or country terms; all four packs pass contract tests. | Core / packs (CI lint, conformance) | ALL | Property test on every merge |
 | INV-15 | §45 | Every non-ACHIEVED verdict returns to Trust; Execution never re-runs on its own. | Outcome → Trust | ALL | Property test on every merge |
 | INV-16 | §45 | Any dependency failure that prevents a safe decision results in ESCALATE or UNKNOWN, never ALLOW. | Trust | ALL | Property test on every merge |
@@ -205,13 +206,15 @@ SoT §45. Each is enforced in code and asserted as a property test on every merg
 | INV-19 | §45 | Absence of evidence is never recorded as a negative fact; a missing record yields UNAVAILABLE or UNKNOWN. | Trust (State Reconciliation), Evidence Layer | ALL | Property test on every merge |
 | INV-20 | §45 | A CONTRADICTORY_STATE classification freezes all consequential writes on that target until Trust records a resolution … | Trust, Execution | ALL | Property test on every merge |
 | INV-21 | §45 | Replay determinism: the same scenario, seed, evidence, policy and pack versions produce the same Trust decisions and … | All powers (benchmark replay) | ALL | Property test on every merge |
-| INV-22 | §45 | No runtime credential can read the benchmark oracle; `/core/explanation` cannot write to any store except its own … | Benchmark; Explanation (`/core/explanation`) | ALL | Property test on every merge |
+| INV-22 | §45 | No runtime credential can read the benchmark oracle; `/core/explanation` cannot write to any store except its own … | Benchmark; Explanation (model service) | ALL | Property test on every merge |
 | INV-23 | §45 | Trust and Execution apply the stricter of the source's freshness limit and the trust profile's limit (including any … | Trust, Execution | ALL | Property test on every merge |
 | INV-24 | §45 | A capability whose retry_safety is NONE is never retried automatically. Any uncertain result for it is recorded as … | Execution | ALL | Property test on every merge |
 | INV-25 | §45 | A Decision Grant can be issued only by an ALLOW evaluation. For a CONFIRM decision, that requires a valid, unexpired … | Trust | ALL | Property test on every merge |
 | INV-26 | §45 | Publishing a new policy version voids every outstanding, unspent Decision Grant governed by an earlier version of that … | Trust, Execution | ALL | Property test on every merge |
 | INV-27 | §45 | When a capability declares CONDITIONAL_WRITE, every write passes the grant's target version tokens to the target; a … | Execution | ALL | Property test on every merge |
 | INV-28 | §45 | No PENDING_EXTERNAL verdict exists without a durable watch and a deadline. At the deadline the verdict becomes UNKNOWN … | Outcome (Outcome Watch) → Trust | ALL | Property test on every merge |
+| INV-29 | §45 | Model and speech providers are reachable only from the model service. The core service contains no provider SDK, holds … | Model service and core service (deployment boundary) | ALL | Property test on every merge |
+| INV-30 | §45 | Temporal workflow history is never authoritative. Every decision, grant, idempotency key, confirmation request, outcome … | Core service (Temporal workflows), Record | ALL | Property test on every merge |
 
 ## Rules for coding agents (AGENT)
 
@@ -223,7 +226,7 @@ SoT §44. Apply to every AI coding agent and every human working with one. See a
 | AGENT-02 | §44 | If a task needs something this document does not specify, do not invent it, even if it looks useful. Instead: (1) … | ALL |
 | AGENT-03 | §44 | Build the POC (Part VII). Do not implement full-platform features unless a POC requirement explicitly asks for them. … | ALL |
 | AGENT-04 | §44 | Never put industry-specific or country-specific terms, rules or constants in `/core`. They go in `/packs` or … | ALL |
-| AGENT-05 | §44 | Never call a language model from /core/trust, /core/execution or /core/outcome. Models are allowed only in … | ALL |
+| AGENT-05 | §44 | Never add a model or speech provider SDK, credential or network route to the core service. Models are called only from … | ALL |
 | AGENT-06 | §44 | Never add a capability to the registry without risk class, consequence profile, retry safety, concurrency control, … | ALL |
 | AGENT-07 | §44 | Never treat a timeout, a 5xx or silence as success or failure. It is `OUTCOME_UNKNOWN` until Outcome says otherwise. | ALL |
 | AGENT-08 | §44 | Never retry a write without a new Decision Grant. | ALL |
@@ -246,10 +249,12 @@ SoT §44. Apply to every AI coding agent and every human working with one. See a
 | AGENT-25 | §44 | Label synthetic fixtures as synthetic (for example switch response codes); never present them as real NIBSS or other … | ALL |
 | AGENT-26 | §44 | When two sources of instruction conflict, follow the order of authority in §0.4 and record the conflict in the PR. | ALL |
 | AGENT-27 | §44 | Never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit. … | ALL |
+| AGENT-28 | §44 | Never hard-code or call a model or speech provider outside its provider adapter. Changing the default provider for any … | ALL |
+| AGENT-29 | §44 | A change that opens, decides or closes a decision must include, in the same pull request, the decision record in … | ALL |
 
 ## Open decisions (OD)
 
-SoT §46. Sixteen canonical open decisions, OD-01 to OD-16, each with a recommended default that applies until decided (OD-09 is closed in v1.2). Their status is tracked in [`open-decisions.md`](open-decisions.md). They are not requirements.
+SoT §46. Sixteen canonical open decisions, OD-01 to OD-16. OD-04, OD-05, OD-07, OD-09 and OD-11 are closed; the others have a recommended default that applies until decided. The register in [`open-decisions.md`](open-decisions.md) is generated from §46. They are not requirements.
 
 ## Other ID families
 
@@ -263,9 +268,9 @@ SoT §46. Sixteen canonical open decisions, OD-01 to OD-16, each with a recommen
 
 | Prefix | IDs defined in SoT | IDs listed here |
 |---|---|---|
-| AGENT- | 27 | 27 |
-| BD- | 15 | 15 |
-| INV- | 28 | 28 |
+| AGENT- | 29 | 29 |
+| BD- | 16 | 16 |
+| INV- | 30 | 30 |
 | OD- | 16 | 16 (in open-decisions.md) |
 | PLAT-FR- | 17 | 17 |
 | PLAT-NFR- | 21 | 21 |

@@ -9,12 +9,15 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | Record | Subject |
 |---|---|
 | [DEC-2026-10-02-sot-v1.2](DEC-2026-10-02-sot-v1.2.md) | SoT v1.2: pre-development fixes |
+| [DEC-2026-10-06-architecture-and-contracts](DEC-2026-10-06-architecture-and-contracts.md) | Temporal, repository layout, contract value lists (superseded in part by DEC-2026-10-09) |
+| [DEC-2026-10-06-vendor-benchmarks](DEC-2026-10-06-vendor-benchmarks.md) | Benchmark candidates for Understanding and speech (superseded in part by DEC-2026-10-09) |
+| [DEC-2026-10-09-deployment-temporal-providers](DEC-2026-10-09-deployment-temporal-providers.md) | Two deployables, Temporal, multi-provider Understanding and speech |
 
 ## Where decisions already live
 
 | Kind | Where it is defined | Changed by |
 |---|---|---|
-| Binding decisions BD-01 to BD-15 ([CONVICTION] or [DECISION]) | [SoT](../NOEMA_SOURCE_OF_TRUTH.md) §0.5 | A new SoT version only |
+| Binding decisions BD-01 to BD-16 ([CONVICTION] or [DECISION]) | [SoT](../NOEMA_SOURCE_OF_TRUTH.md) §0.5 | A new SoT version only |
 | [DECISION] and [CONVICTION] items in the SoT body | SoT, at the tagged statement | [DECISION]: the open-decisions process (§46). [CONVICTION]: new evidence plus a version change (§0.2). |
 | Open decisions OD-01 to OD-16 | SoT §46. Status in [`../open-decisions.md`](../open-decisions.md). | A decision record here, then a SoT revision if it changes a [DECISION] or [CONVICTION] |
 | Provisional migration items OD-P-xx (NON-CANONICAL) | [`../open-decisions.md`](../open-decisions.md) | Adoption into a SoT revision, or closure by a decision record |
@@ -39,7 +42,9 @@ Name files `DEC-YYYY-MM-DD-<slug>.md`.
 ```markdown
 # DEC-YYYY-MM-DD-<slug>
 
+- Status:
 - Date:
+- Closes: <OD IDs this record decides or closes, or none>
 - Owner:
 - Decision:
 - Rationale and evidence:

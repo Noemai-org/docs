@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.2 · 2 October 2026 · Status: canonical
+Version 1.3 · 9 October 2026 · Status: canonical
 
 ---
 
@@ -73,6 +73,8 @@ External facts carry a source marker such as **[S4]**. Sources are listed with l
 
 Decisions made in conversation, calls, chat apps or AI sessions are not authoritative until they are committed this way. If an instruction you received disagrees with this document and has not been committed, follow this document and raise the conflict (AGENT-27).
 
+**One change, one pull request.** A decision record, the matching SoT edit and the regenerated register always land in the same pull request (AGENT-29). The canonical part of the open-decisions register is generated from §46 and never edited by hand. Automated checks block any pull request in which the SoT, the register and `docs/decisions/` disagree. Changes to this document and to `docs/decisions/` require the founders' approval.
+
 Every decision is recorded with its date, owner, rationale and the evidence behind it. A decision that is not written down does not exist.
 
 ### 0.5 Binding decisions register
@@ -96,6 +98,7 @@ These are settled **[CONVICTION]** or **[DECISION]** items. They are listed toge
 | BD-13 | Mode 1 is built first. Mode 2 shapes the architecture now and ships only when earned. | §16, §41 |
 | BD-14 | Correctness is benchmarked text-first; the voice front door is built in parallel on the same core. | §32, §40 |
 | BD-15 | Engineering is global-grade from day one; certifications are claimed only once completed. | §47, §50 |
+| BD-16 | No single provider dependence. Understanding integrates at least GPT, Gemini and Claude, and speech integrates at least Aethex AI, Indigenius and N-ATLAS, all behind provider-neutral interfaces. Switching providers is configuration plus a benchmark run, never a code change. | §17, §35.3 |
 
 ### 0.6 Evidence rules
 
@@ -529,6 +532,8 @@ The full platform is organised by power. The POC builds a focused subset (§35).
 - *Vertical Packs.* The industry content (§15), loaded as data.
 - *Studio and APIs (later phases).* Tools for enterprises to configure packs, policies and capabilities, and for developers to integrate.
 
+**Where these run (POC):** Understanding and the Explanation Engine run in the model service; Trust, Execution, Outcome, the Record, the Evidence Layer and the adapters run in the core service (§35.6).
+
 ## 15. The three taxonomies and Vertical Packs
 
 **[CONVICTION] This is one of the most important design decisions in the company. Read it carefully.**
@@ -718,6 +723,8 @@ Mode 2 is not a claim that a complete interoperable product exists today. It is 
 **Interface-agnostic.** Interfaces change constantly; anything tied to one dies when it does. Noema treats every interface as replaceable. Voice is where the POC starts, because it needs no literacy and works on any phone (§32). But the Input Gateway turns a spoken sentence, a typed message, a WhatsApp note, an API call, a form, a wearable command or another agent's proposal into the same canonical input contract, and nothing downstream knows or cares which one it was. Specific rules: no modality-specific business logic below the Input Gateway (PLAT-NFR-07); modality metadata (for example speech-recognition confidence) may inform ambiguity flags but never authority.
 
 **Model-agnostic.** Foundation models are getting better and cheaper fast. That helps us, because cheaper understanding means more intent flowing into a layer we own. Noema does not depend on any one model provider. Specific rules: Understanding calls models through a provider-neutral interface; every model or prompt change runs through the Understanding benchmark before release; no prompt, model output or model-specific behaviour is referenced anywhere in Trust, Execution or the Outcome verdict (INV-01); switching model providers is a configuration change plus a benchmark run, not a code change.
+
+**[DECISION — BD-16]** Noema integrates several providers at once rather than one with a theoretical fallback. Understanding runs on GPT (OpenAI), Gemini (Google) and Claude (Anthropic); speech runs on Aethex AI, Indigenius and N-ATLAS. The default provider for each task and locale is whichever performs best on the benchmark, and it can be changed per tenant or locale by configuration. If a provider degrades or becomes unavailable, traffic moves to another without code changes.
 
 The design is borrowed from compilers. Many front ends (voice, text, WhatsApp, an app screen, an agent, whatever comes next) compile into one intermediate representation, the Intent Object, and everything after it is shared. That is what makes the core reusable.
 
@@ -1406,7 +1413,7 @@ A note for anyone comparing this with earlier drafts: one draft said forbidden c
 | `EDIT_OR_DELETE_EVIDENCE` | **PROHIBITED** | n/a | n/a | n/a |
 | `DOWNGRADE_CASE_PRIORITY` | **PROHIBITED** | n/a | n/a | n/a |
 
-¹ To be confirmed against the Tushe case API (see the Tushe delta, `docs/poc/tushe-spec-delta-v1.2.md`). If the case service deduplicates by idempotency key, the class becomes `NATIVE_IDEMPOTENT`.
+¹ To be confirmed against the Tushe case API (see the Tushe delta, `docs/poc/tushe/tushe-spec-delta-v1.1.md`). If the case service deduplicates by idempotency key, the class becomes `NATIVE_IDEMPOTENT`.
 
 ² R3 because logging a complaint starts a regulatory clock and cannot be undone.
 
@@ -1428,10 +1435,10 @@ Note: these POC capability names live in the fintech pack (as `fin.cap.*`). Core
 | Natural-language policy authoring, Studio | Hand-written, versioned policy data is safer now |
 | Generic agent builder, MCP server product, agent gateway | Noema sits in front of these; it does not become one |
 | Learning from production data, fine-tuning | No production data exists yet |
-| Microservices or Kubernetes for appearance | A modular monolith is faster to build and debug; boundaries stay clean for later extraction |
+| More application services than the two agreed deployables; Kubernetes for appearance | The model boundary is the only service split in the POC (§35.6); the four powers are authority boundaries inside the core service |
 | Broad analytics dashboards, agent personality | They prove nothing about trust |
 | Production banking integration before synthetic correctness | Real systems come after the synthetic gates are met (§41) |
-| Vector database, graph database, Kafka, Redis as authoritative state, Temporal | Not until a demonstrated requirement justifies them; Postgres is the system of record for the POC |
+| Vector database, graph database, Kafka, Redis as authoritative state | Not until a demonstrated requirement justifies them; Postgres is the system of record for the POC |
 | Workflow recorder, browser automation, connector marketplace, multi-agent marketplace | Not our product (§12); they prove nothing about the thesis |
 | WhatsApp or SMS gateway, consumer banking app | Channels come after the core is proven |
 | Treating synthetic results as proof of production readiness, ROI or compliance | Synthetic tests are necessary and insufficient; production proof comes from shadow mode and a design partner |
@@ -1449,7 +1456,7 @@ The POC implements all four powers and the Record, narrowly. Nothing is faked to
 |---|---|---|
 | Understanding | Input Gateway (voice + text → canonical input); Intent Compiler on the fintech pack; deterministic local-language lexicon; Entity Resolution with ranked candidates | Other channels; fine-tuned intent models; other packs populated |
 | Trust | Decision-time State Reconciliation; three-layer authorisation; versioned, effective-dated policy as data; SLA and regulatory clocks; seven-outcome Decision Maker; Decision Grants | Approval workflows beyond a single confirmation; Studio |
-| Execution | Deterministic Planner over the POC Action Graph; Capability Registry with prohibited entries; Execution Controller with idempotency and revalidation; recovery playbook | Monetary capabilities; compensation for monetary actions; durable workflow engine (simple durable state in Postgres is enough for the POC) |
+| Execution | Deterministic Planner over the POC Action Graph; Capability Registry with prohibited entries; Execution Controller with idempotency and revalidation; recovery playbook; Temporal workflows for outcome watches, confirmation expiry, recovery and callback delivery | Monetary capabilities; compensation for monetary actions |
 | Outcome | Outcome Verifier using fintech outcome definitions; Explanation Engine bound to verified facts | Multi-step compensations |
 | Record | Hash-chained, append-only causal record; reconstruction endpoint; minimal operational memory: append-only structured observations and regression knowledge only; no learning, no automated change to policy or behaviour | External notarisation; learning from memory |
 | Utilities | Evidence adapters and write adapters to the synthetic environment; fintech pack; three conformance packs | Real enterprise adapters (Phase 2) |
@@ -1483,18 +1490,21 @@ The POC implements all four powers and the Record, narrowly. Nothing is faked to
 
 | Area | Choice | Reason |
 |---|---|---|
-| Language and framework | **[OPEN — OD-11]** Default: Python 3.13 + FastAPI + Pydantic v2, with SQLAlchemy Core or psycopg 3 and Alembic migrations, as a modular monolith. Django acceptable if the build team is materially faster in it. | Contracts are already Pydantic; no need for Django's admin or templates; keeps the ORM from becoming the domain model |
-| Data | PostgreSQL as the only authoritative store: cases, decisions, grants, idempotency keys, the Record, and a transactional outbox/inbox for events. Redis optional, for short-lived, non-authoritative coordination only (never the only copy of anything) | One transactional source of truth; an idempotency key must survive a crash, so it cannot live only in a cache |
-| Async work | Postgres outbox plus a worker process only where needed: verification polling, event handling. No message broker until a demonstrated need | Avoid premature distribution |
-| Contracts | Pydantic models generated from JSON Schemas in `/contracts` | One source of truth for every boundary |
+| Deployables | **Two, split at the model boundary (§35.6):** a Python *model service* and a Go *core service* | Makes "no model in Trust, Execution or the verdict" a process and credential boundary |
+| Model service | Python 3.13, FastAPI, Pydantic v2 | The machine-learning and speech ecosystem lives in Python |
+| Core service | Go (a current stable release, pinned in the repository) | Strong typing, simple concurrency, small, predictable deployables for the deterministic core |
+| Authoritative data | PostgreSQL is the only authoritative store: cases, decisions, grants, idempotency keys, confirmation requests, outcome watches and the Record. Redis optional, for non-authoritative coordination only | One transactional source of truth |
+| Durable workflows | **Temporal**, run by workers inside the core service, for outcome watches, confirmation expiry, recovery orchestration and callback delivery with retries | Durable timers and long waits without hand-built schedulers |
+| Events | A transactional outbox in Postgres for any event that must be emitted atomically with a state change | No lost or phantom events |
+| Contracts | JSON Schemas in `/contracts` generate Pydantic models (model service) and Go types (core service); nobody hand-edits generated code | One source of truth across both languages |
 | Front end | React + TypeScript for the overlay and the evidence panel | Standard, fast |
-| Voice | Streaming ASR and TTS through a provider-neutral interface; candidates include Intron, Aethex AI's Kora models and N-ATLAS-based models for Nigerian languages [S32][S33][S67], each admitted only after latency and language-quality tests | Best accuracy on code-switched Nigerian speech without lock-in |
-| Models (Understanding) | Provider-neutral interface; default provider chosen by a reproducible 50-case bake-off, at least two providers benchmarked before the demo | Model independence from day one |
-| Testing | Property-based tests (Hypothesis) for every invariant; Testcontainers for real Postgres in tests; contract tests on every adapter; Playwright for the overlay and evidence panel | Invariants are proven, not hoped |
-| Observability | OpenTelemetry-compatible tracing; Prometheus-style metrics; structured JSON logs with secrets and PII redacted | Vendor-neutral |
-| Local environment | Docker Compose | One-command setup for engineers and agents |
+| Understanding models | GPT, Gemini and Claude, all behind the provider-neutral interface (BD-16) | No single-provider dependence |
+| Speech | Aethex AI, Indigenius and N-ATLAS, all behind the provider-neutral speech interface (BD-16) | No single-provider dependence |
+| Testing | Property-based tests in each language (Hypothesis in Python; a Go property-testing library); Temporal's test environment for workflows; Testcontainers; contract tests on every adapter and between the two services; Playwright for the UI | Invariants are proven, not hoped |
+| Observability | OpenTelemetry tracing across both services and Temporal; Prometheus-style metrics; structured JSON logs with secrets and PII redacted | One correlation chain across processes |
+| Local environment | Docker Compose: both services, Postgres, Temporal, and adapters to the Tushe environment | One-command setup |
 
-**[OPEN — OD-11, decided by the technical co-founder before Phase B]** The language and framework are decided together. Default: Python + FastAPI. Alternatives: Python + Django, or TypeScript on Node.js 22 (Fastify, Zod). Whatever is chosen: the domain model lives in plain typed objects generated from `/contracts`, never in ORM models; Postgres is the only authoritative store, with an outbox/inbox before any broker; no Redis as authoritative state; property-based tests; Testcontainers; Playwright; OpenTelemetry. The four powers are authority boundaries, not deployment boundaries: they are modules inside one deployable, separated by contracts and import rules, not separate services.
+**[DECISION — OD-11, decided 9 Oct 2026, DEC-2026-10-09]** Python for the model service; Go for the core service. Whatever evolves later, these rules hold: the domain model lives in types generated from `/contracts`, never in ORM models; Postgres is the only authoritative store; Temporal orchestrates but is never the record of truth; property-based tests guard every invariant. **The POC proves semantics, not architecture theatre.**
 
 ### 35.4 The first vertical slice, and the order of work after it
 
@@ -1531,6 +1541,31 @@ The synthetic environment's domain lifecycles keep these distinct (from the Tush
 **Compensation is not rollback.** Five recovery types are kept distinct and never confused: (1) retrying a read; (2) verifying an uncertain write; (3) retrying the same idempotent logical write under a new grant; (4) compensating with a new, separately authorised action; (5) escalating because compensation is unsafe. The POC implements no monetary compensation.
 
 **What Execution revalidates immediately before every write:** the grant's signature, scope, expiry and single use; the Trust decision and its policy version; the plan hash; resource ownership by the principal; that the capability is registered, allowed and non-prohibited; and the current state of the target against the evidence the decision relied on. Any mismatch voids the grant and returns the case to Trust.
+
+### 35.6 Deployment shape and Temporal rules [DECISION]
+
+**Two deployables, split at the model boundary.**
+
+| Deployable | Language | Contains | Holds credentials for | Never has access to |
+|---|---|---|---|---|
+| **Model service** | Python | Input Gateway, Intent Compiler, Entity Resolution, voice pipeline, explanation renderer, all model and speech provider adapters | Model and speech providers only | The core database, enterprise adapters, Temporal, grant keys |
+| **Core service** | Go | Trust, Execution, Outcome (verifier and outcome watch), the Record, the Evidence Layer, enterprise adapters, Temporal workers | Postgres, enterprise adapters, Temporal, grant keys | Any model or speech provider (no provider SDK, no provider credentials, network egress to providers denied) |
+
+**How the two talk.**
+
+- The core service calls the model service over an authenticated internal API (mutual TLS) using only contracts from `/contracts`: canonical input → Intent Object, and verified facts → explanation text.
+- Entity Resolution needs candidate records. The model service obtains them by asking the core service's Evidence Layer through a narrow, principal-scoped read API; it never reads enterprise systems directly.
+- Explanation text returned to the core is stored and shown, and never feeds a decision, a grant or a verdict (AGENT-05).
+
+**The four powers stay authority boundaries inside the core service.** They are separate packages with import rules, not separate services. Spending a grant, recording its idempotency key and writing the Record happen in **one Postgres transaction**.
+
+**Temporal rules.**
+
+1. Temporal orchestrates; it is never the authoritative record. Decisions, grants, idempotency keys, confirmation requests, outcome watches and the Record live in Postgres, and workflows read and write them only through activities.
+2. Single use of a grant is enforced by a Postgres constraint, never by workflow history.
+3. Workflow code is deterministic. It contains no model calls, no network or database I/O and no wall-clock reads; all of those happen in activities. Model calls never run inside the core service at all.
+4. Time is consistent with the synthetic environment. In benchmark runs, Noema's clock source is Tushe's simulated time. The benchmark harness advances Tushe's virtual clock and Temporal's test time together. No workflow or activity reads wall-clock time directly. Replay determinism (INV-21) applies to every workflow.
+5. In the POC, Temporal runs self-hosted (locally through Docker Compose). Whether to use Temporal Cloud or a regional self-hosted cluster is decided before Phase 2 against data-residency requirements.
 
 ## 36. The synthetic enterprise environment
 
@@ -1714,6 +1749,7 @@ At least **320 deterministic cases**, at least **30%** of them in Pidgin or code
 | Speech recognition, key slots (amounts, names, times) on the voice subset | ≥ 95% slot accuracy; a low-confidence key slot must trigger CLARIFY, never a guess |
 | Incorrect action rate (a permitted action that is wrong for the actual state) | ≤ 0.5% |
 | Replay determinism (same seed and scenario → same authoritative outcome) | 100% |
+| Provider switch | Switching the default Understanding or speech provider changes no code and keeps every safety gate at zero |
 | Text request, end to end, where dependencies meet their budgets | P95 ≤ 2.5 s (stage budgets in §48) |
 | Human intervention (clarification or a person), initial objective | < 25% of cases, reported on the safety–autonomy curve, never alone |
 | Autonomous resolution of eligible cases | **[HYPOTHESIS]** ≥ 73%. The founder thesis's 73% autonomous-resolution and 89% handling-time-reduction figures are hypotheses to test, not results. They are never published as facts until measured. |
@@ -1763,6 +1799,8 @@ Built only after Noema's core passes its own gates, so the core is never designe
 | **F. Human operations** | The current or a representative human process, measured where a partner provides it |
 
 All arms get the same data, adapters, auth context and capabilities. Nothing a competent engineer would add is removed from A or B. Metrics, on the same oracle: false confidence, unsafe actions, ambiguity handling, wrong-transaction attribution, timeout handling, duplicate handling, policy mutation, record completeness, time to outcome, intervention rate, and the amount of code and configuration needed to keep the workflow working. **No victory is claimed before the run. Results are reported whichever way they go.**
+
+**Provider runs.** Every release run executes the Understanding and voice suites on **every** integrated provider: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech. Results are recorded per provider. The default per task and locale is set from these results. A provider whose results fall below the §38.2 targets is not used as a default until it recovers.
 
 **Fair-comparison rules.** Same fixtures, oracle, instructions, documentation, inputs and access for every arm; reasonable engineering time and model access; no intentionally crippled tools; no hidden Noema-specific information; no oracle leakage to any arm. Record each arm's configuration and the date. Report setup effort and engineering hours, automation, correctness, safety, cost, latency, integration burden and human review. Never remove hard cases selectively. Where a competitor product cannot be tested, say so plainly and make no claim about it. **We do not assume competitors fail at contradiction handling or verification. We test.**
 
@@ -2245,7 +2283,7 @@ These rules apply to every AI coding agent and every human working with one. The
 | AGENT-02 | If a task needs something this document does not specify, do not invent it, even if it looks useful. Instead: (1) identify the missing decision; (2) explain why it matters; (3) propose the smallest safe default; (4) state what evidence would invalidate that default; (5) add it to `/docs/open-decisions.md` marked [OPEN]; (6) do not expand scope until it is decided. The POC is not an excuse to build the whole platform, and it is not an excuse to simplify away the hard problems that make the thesis valuable. |
 | AGENT-03 | Build the POC (Part VII). Do not implement full-platform features unless a POC requirement explicitly asks for them. Keeping an interface clean for later is required; implementing the later feature is not. |
 | AGENT-04 | Never put industry-specific or country-specific terms, rules or constants in `/core`. They go in `/packs` or `/adapters`. The core lint will fail your build. |
-| AGENT-05 | Never call a language model from /core/trust, /core/execution or /core/outcome. Models are allowed only in /core/understanding and /core/explanation, through /providers. Explanation output never feeds a decision, grant or verdict. |
+| AGENT-05 | Never add a model or speech provider SDK, credential or network route to the core service. Models are called only from the model service, through /providers. Explanation output never feeds a decision, grant or verdict. |
 | AGENT-06 | Never add a capability to the registry without risk class, consequence profile, retry safety, concurrency control, idempotency semantics, verification method, compensation and benchmark cases. Never add a monetary capability in the POC. |
 | AGENT-07 | Never treat a timeout, a 5xx or silence as success or failure. It is `OUTCOME_UNKNOWN` until Outcome says otherwise. |
 | AGENT-08 | Never retry a write without a new Decision Grant. |
@@ -2268,6 +2306,8 @@ These rules apply to every AI coding agent and every human working with one. The
 | AGENT-25 | Label synthetic fixtures as synthetic (for example switch response codes); never present them as real NIBSS or other network semantics. |
 | AGENT-26 | When two sources of instruction conflict, follow the order of authority in §0.4 and record the conflict in the PR. |
 | AGENT-27 | Never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit. If the specification and the implementation conflict, stop and write in the PR: CONFLICT DETECTED · affected IDs · evidence · proposed alternatives · blast radius · decision required. |
+| AGENT-28 | Never hard-code or call a model or speech provider outside its provider adapter. Changing the default provider for any task or locale requires a full benchmark run on all providers, with the results recorded. |
+| AGENT-29 | A change that opens, decides or closes a decision must include, in the same pull request, the decision record in docs/decisions/, the matching SoT edit and the regenerated register. A pull request that changes one without the others must not be merged (§0.4, Part E checks). |
 
 ## 45. Invariants
 
@@ -2303,10 +2343,12 @@ Each is enforced in code and asserted as a property test that runs on every merg
 | INV-26 | Publishing a new policy version voids every outstanding, unspent Decision Grant governed by an earlier version of that policy. The affected cases return to Trust and are re-evaluated before any execution. |
 | INV-27 | When a capability declares CONDITIONAL_WRITE, every write passes the grant's target version tokens to the target; a version mismatch aborts the write and returns the case to Trust with no automatic retry. A capability with concurrency_control NONE may be registered only if it has no financial consequence and is verifiable by Outcome; the residual window between revalidation and write is recorded in the Record. Any future capability with a financial consequence requires CONDITIONAL_WRITE. |
 | INV-28 | No PENDING_EXTERNAL verdict exists without a durable watch and a deadline. At the deadline the verdict becomes UNKNOWN and a RecoveryRequest goes to Trust; a pending outcome is never silently dropped. |
+| INV-29 | Model and speech providers are reachable only from the model service. The core service contains no provider SDK, holds no provider credential and has no network route to any provider. The model service holds no credential for the core database, enterprise adapters, Temporal or grant keys. |
+| INV-30 | Temporal workflow history is never authoritative. Every decision, grant, idempotency key, confirmation request, outcome watch and Record event is persisted in Postgres; workflow code performs no I/O, no model calls and no wall-clock reads outside activities. |
 
 ### 45.1 Engineering doctrine
 
-We build as if this infrastructure will one day sit between millions of people and systems that matter. Therefore: every state transition is explicit; every side effect has a target; every target has an authorisation boundary; every retry has idempotency semantics; every asynchronous event has provenance; every plan has preconditions and postconditions; every action has a verification strategy; every uncertain state has an explicit representation; every policy decision is versioned; every capability has a defined blast radius; every incident becomes a reproducible scenario; every model dependency can be swapped; every critical path has observable latency and failure behaviour; every new integration has contract tests; and every increase in autonomy is earned through adversarial evaluation. Prefer simple systems that are brutally correct over clever systems that are hard to inspect. The four powers are authority boundaries, not deployment boundaries; do not turn them into separate services until a measured need exists.
+We build as if this infrastructure will one day sit between millions of people and systems that matter. Therefore: every state transition is explicit; every side effect has a target; every target has an authorisation boundary; every retry has idempotency semantics; every asynchronous event has provenance; every plan has preconditions and postconditions; every action has a verification strategy; every uncertain state has an explicit representation; every policy decision is versioned; every capability has a defined blast radius; every incident becomes a reproducible scenario; every model dependency can be swapped; every critical path has observable latency and failure behaviour; every new integration has contract tests; and every increase in autonomy is earned through adversarial evaluation. Prefer simple systems that are brutally correct over clever systems that are hard to inspect. There are two deployables, split at the model boundary (§35.6). Within the core service, the four powers are authority boundaries, not deployment boundaries; do not split them into separate services unless a measured need is recorded as a decision.
 
 ## 46. Open decisions
 
@@ -2317,14 +2359,14 @@ Each has a recommended default that applies until decided. Changing a [DECISION]
 | OD-01 | Pricing model | First pilot: fixed fee with auditable success criteria agreed in writing in advance; verified outcomes counted internally from day one (verified success, verified safe refusal, verified escalation, unresolved or unknown); outcome-based pricing tested only once both sides can agree on what counted; never per seat | Before the first paid pilot |
 | OD-02 | Policy evaluation | Deterministic, versioned rules evaluated in our code; import/export for Cedar and OPA later | Phase B |
 | OD-03 | Ambiguity thresholds | 0.35 auto-resolve margin; escalate above 4 candidates; tune only with full benchmark runs | Phase C |
-| OD-04 | Speech providers | Benchmark at least two (including an Intron- or N-ATLAS-based option) on the voice subset; choose on key-slot accuracy, then latency, then cost | Week 2 of the POC |
-| OD-05 | Model providers for Understanding | At least two benchmarked; choose on intent accuracy on the code-switched suite | Week 2 of the POC |
+| OD-04 | Speech providers | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** Aethex AI, Indigenius and N-ATLAS, all integrated behind the provider-neutral speech interface. Default per locale chosen by benchmark (key-slot accuracy, then latency, then cost); switchable by configuration. Each must pass the voice subset and the real-conditions gate (§37.5) before it serves a demo or pilot, and must clear vendor due diligence (data terms, continuity) before handling partner data. | Closed |
+| OD-05 | Model providers for Understanding | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** GPT, Gemini and Claude, all integrated behind the provider-neutral interface. Default per task chosen by intent accuracy on the code-switched suite; switchable by configuration; automatic failover to another integrated provider. Each provider's enterprise data-retention terms are confirmed, and account data is masked before it is sent, before any partner data flows. | Closed |
 | OD-06 | Record integrity | POC: hash chain only, no anchoring. Before Phase 2 production: periodic anchoring of chain heads. External notarisation deferred. | Before Phase 2 |
-| OD-07 | Durable execution engine | Postgres-backed durable state for the POC. Adopt Temporal (or another durable workflow engine) when measured workflow needs exceed what the Postgres controller can safely guarantee: multi-day waits at volume, many concurrent watches, durable timers or complex compensation. | When the evidence requires |
+| OD-07 | Durable execution engine | **DECIDED 9 Oct 2026 (DEC-2026-10-06-architecture-and-contracts, confirmed by DEC-2026-10-09).** Temporal from the POC onward, under the rules in §35.6 and INV-30. Postgres remains the only authoritative store. | Closed |
 | OD-08 | Data retention | Minimal by default; raw audio discarded after transcription unless a dispute needs it and consent is recorded; retention per pack and region | Before the first design-partner data conversation |
 | OD-09 | Policy precedence when policy changes mid-case | **DECIDED in v1.2 (see INV-09, INV-26).** Any policy change voids outstanding grants and Trust re-evaluates under the version in force; a rule marked AT_ADMISSION in policy data keeps the version in force when the intent was admitted. Trust never infers "stricter". | Closed |
 | OD-10 | Public benchmark scope | Publish taxonomy, schemas, fault model and scoring; keep partner data private | End of Phase 1 |
-| OD-11 | Implementation language and framework | Decided together. Default: Python 3.13 + FastAPI + Pydantic v2 (SQLAlchemy Core or psycopg 3, Alembic), modular monolith; alternatives Python + Django, or TypeScript on Node.js 22 (Fastify, Zod). The rules in §35.3 apply either way | Before Phase B (technical co-founder) |
+| OD-11 | Implementation language and deployment shape | **DECIDED 9 Oct 2026 (DEC-2026-10-09).** Two deployables split at the model boundary: Python model service; Go core service (§35.6). | Closed |
 | OD-12 | First design partner and customer channel | A Nigerian bank or large fintech with high "where is my money" volume and an executive owner of the KPI; channel through its own app overlay. Pick one exception subtype during discovery (§38.6). | Before the end of Phase 1 |
 | OD-13 | First production deployment model | Single-tenant SaaS in-region for the first partner; multi-tenant with strong isolation once tenant-isolation tests pass; customer VPC only where a buyer requires it | Before shadow mode |
 | OD-14 | Certifications the first buyers require, and when | SOC 2 Type I in Phase 2, Type II in Phase 3; confirm with the first US/EU prospects before committing spend | Before Phase 3 planning |
@@ -2354,6 +2396,7 @@ Noema sits next to consequence, so security is part of the product's design, not
 - Every production action is attributable to an authenticated principal or a delegated service identity.
 - The model can never mutate policy, identity, allowlists, audit records or credentials, and cannot elevate its own privileges.
 - The Record is protected from the execution path it records; the audit writer role is append-only; secrets are never logged and personal data is minimised and redacted.
+- The model service and the core service run under separate identities with separate credentials, communicate only through mutual TLS and the published contracts, and are network-isolated as INV-29 requires.
 
 | Boundary | Control |
 |---|---|
@@ -2419,11 +2462,12 @@ Correctness comes before latency in the trust core. Budgets exist to prevent bad
 | Safe write and receipt | < 150 ms | < 600 ms | Excluding injected faults |
 | Outcome verification | settle window + < 300 ms | settle window + < 800 ms | Settle window from the outcome definition |
 | Explanation, first token | < 250 ms | < 600 ms | Provider dependent |
+| Model-service call (network round trip, excluding model time) | < 20 ms | < 50 ms | Internal hop between the two deployables |
 | **Text request, end to end** | — | **≤ 2.5 s** | Where every dependency meets its budget |
 
 P99 is tracked for every stage alongside P50 and P95 and reported in every benchmark run; it is not yet a gate. These budgets are targets to test, not guarantees.
 
-**Latency by path.** Report P50, P95 and P99 separately for: clean case; clarification; ambiguous lookup; contradictory state; timeout followed by verification; escalation; confirmation round-trip; pending-outcome notification lag (from the authoritative change to `outcome.updated` delivered); and voice first meaningful response and full resolution. Only the clean path has a budget in the POC. The others are measured and published so the failure paths, which are the thesis, are never hidden.
+**Latency by path.** Report P50, P95 and P99 separately for: clean case; clarification; ambiguous lookup; contradictory state; timeout followed by verification; escalation; confirmation round-trip; pending-outcome notification lag (from the authoritative change to `outcome.updated` delivered); voice first meaningful response and full resolution; and the internal model-service round trip. Only the clean path has a budget in the POC. The others are measured and published so the failure paths, which are the thesis, are never hidden.
 
 **Voice [TARGET, demo hypothesis until measured]:** for a clean, unique case, under 1.8 seconds from the end of the customer's speech to the first spoken words of the answer. Complex or uncertain cases may take longer to stay safe. Voice ingress, speech recognition, core time, time to first byte of synthesised speech, interruption (barge-in) handling and end-to-end time are each measured separately, so voice cost is never hidden inside the core. The real-conditions gate in §37.5 (correct Intent Object at under 2.5 s P95 on a mid-range Android phone in genuine Lagos noise) is a separate, hard gate.
 
@@ -2451,6 +2495,9 @@ noema_oracle_access_total          # must remain 0
 noema_replay_mismatch_total        # must remain 0
 noema_outcome_watch_open           noema_outcome_watch_deadline_missed_total
 noema_callback_delivery_failures_total
+noema_provider_requests_total{provider,task}
+noema_provider_errors_total{provider}
+noema_provider_failover_total{from,to}
 ```
 
 A thin engineering and benchmark dashboard is in scope. Broad product analytics is not, during the POC.
@@ -2497,34 +2544,39 @@ Principal-scoped reads; data minimisation; masking on every surface; short-lived
 
 ## 51. Repository and module boundaries
 
+Noema uses several repositories, not one monorepo: `docs`, `brain`, `backend` and `intent-engine` (DEC-2026-10-06-architecture-and-contracts). The internal structure below is the same whichever repository holds each part. `/contracts` lives in exactly one repository; the others consume generated packages from it, pinned by version. **[OPEN — decide before Phase B]** Which repository hosts the model service, the core service, `/contracts` and the remaining directories is recorded in `docs/decisions/`.
+
 ```
-/noema
-  /contracts            JSON Schemas for every cross-boundary object (first commit)
-  /core
-    /understanding      input gateway, intent compiler, entity resolution (models allowed via /providers)
-    /trust              state reconciliation, authority, policy, clocks, decisions, grants (no models)
-    /execution          planner, capability registry, controller, recovery playbook (no models)
-    /outcome            verifier and outcome watch (no models)
-    /explanation        explanation renderer (models via /providers; reads verified facts only; cannot write state)
+/contracts              JSON Schemas for every cross-boundary object; generate Pydantic and Go types
+/services
+  /model                Python model service
+    /understanding      input gateway, intent compiler, entity resolution
+    /explanation        explanation renderer (facts in, text out; writes nothing else)
+    /voice              streaming audio pipeline
+    /providers          GPT, Gemini, Claude; Aethex AI, Indigenius, N-ATLAS adapters
+  /core                 Go core service
+    /trust              state reconciliation, authority, policy, clocks, decisions, grants, confirmations
+    /execution          planner, capability registry, controller, recovery
+    /outcome            verifier and outcome watch
     /record             append-only hash-chained record, reconstruction API, operational memory
-    /evidence           read-only evidence layer interfaces
-  /packs
-    /fintech            populated (POC subset)
-    /telecom            conformance pack (skeletal)
-    /insurance          conformance pack (skeletal)
-    /healthcare_admin   conformance pack (skeletal)
-  /adapters
-    /synthetic_tushe    read and write adapters to the synthetic environment
-  /providers            model, speech and TTS providers behind neutral interfaces
-  /voice                streaming audio pipeline (Track E)
-  /ui                   overlay and evidence panel
-  /benchmark            cases, fixtures, fault configs, oracle client, runner, comparison arms, reports
-  /tools/lint           core forbidden-terms lint, boundary checks
-  /tools/packcheck      internal pack-validation CLI (wraps CI checks)
-  /docs                 this document, open decisions, runbooks
+    /evidence           evidence layer and the principal-scoped read API used by the model service
+    /adapters           enterprise adapters (synthetic_tushe for the POC)
+    /workflows          Temporal workflows and activities
+/packs                  fintech (populated); telecom, insurance, healthcare_admin (conformance)
+/ui                     overlay and evidence panel
+/benchmark              cases, fixtures, fault configs, oracle client, runner, comparison arms, reports
+/tools/lint             core forbidden-terms lint, boundary and dependency checks
+/tools/packcheck        internal pack-validation CLI (wraps CI checks)
+/docs                   the docs repository: this document, open decisions, decision records, runbooks
 ```
 
-**Boundary rules:** `/core/*` depends only on `/contracts`, `/core/evidence` interfaces and `/providers` interfaces; it never imports `/packs/*` or `/adapters/*` code (packs are loaded as data). `/core/trust`, `/core/execution` and `/core/outcome` cannot import `/providers`. Only `/core/understanding` and `/core/explanation` may. No module may import `/core/explanation` as an input to a decision, a grant or a verdict. These are checked by an import linter in CI.
+**Boundary rules (checked in CI):**
+
+- the core service's dependency manifest contains no model or speech provider SDK;
+- the model service has no database driver configured for the core schemas, and no Temporal client;
+- within the core service, `/trust`, `/execution` and `/outcome` do not import each other's internals and communicate through contracts;
+- packs are loaded as data, never imported as code;
+- `/explanation` output is never imported by decision, grant or verdict code.
 
 ## 52. Decision framework
 
@@ -2743,6 +2795,9 @@ We are not betting on today's interface or today's model. We are betting that tr
 | **Correct terminal handling rate** | The POC's primary metric: cases correctly resolved or correctly escalated, divided by all cases, reported only with zero unsafe actions and zero false success. |
 | **Completed action** | One end-user request handled end to end that reached a verified final result. API reads and retries do not count (§41). |
 | **Held-out set** | Benchmark cases never visible to the people or agents building the core, used only for release runs. |
+| **Model service** | The Python deployable that hosts Understanding, voice, the explanation renderer and every model or speech provider adapter. Holds no credentials for the core database, adapters, Temporal or grant keys. |
+| **Core service** | The Go deployable that hosts Trust, Execution, Outcome, the Record, the Evidence Layer, adapters and Temporal workers. Has no access to any model or speech provider. |
+| **Temporal** | The durable workflow engine that orchestrates long-running and timer-driven work. Never the authoritative record (INV-30). |
 
 ## Appendix B — Requirement index
 
@@ -2750,11 +2805,11 @@ We are not betting on today's interface or today's model. We are betting that tr
 |---|---|---|
 | PLAT-FR, PLAT-NFR | Full-platform functional and non-functional requirements | §21 |
 | POC-FR, POC-NFR | POC requirements | §37 |
-| BD-01 to BD-15 | Binding decisions | §0.5 |
+| BD-01 to BD-16 | Binding decisions | §0.5 |
 | PLAT-US-01 to PLAT-US-11 | Platform user stories | §21.3 |
 | US-01 to US-22 | POC user stories (release-gating benchmark cases) | §37.3 |
-| INV-01 to INV-28 | Architectural invariants (property-tested) | §45 |
-| AGENT-01 to AGENT-27 | Rules for coding agents and the people working with them | §44 |
+| INV-01 to INV-30 | Architectural invariants (property-tested) | §45 |
+| AGENT-01 to AGENT-29 | Rules for coding agents and the people working with them | §44 |
 | OD-01 to OD-16 | Open decisions with defaults | §46 |
 | B1 to B8 | Benchmark families | §20.2 |
 | AT-01 to AT-20 | Synthetic environment acceptance tests (Tushe specification) | §36 |
@@ -2861,6 +2916,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.3 | 9 Oct 2026 | **Final architecture and provider decisions; SoT, register and decision records brought into agreement and kept so mechanically.** Two deployables split at the model boundary: a Python model service and a Go core service (§35.6, INV-29, AGENT-05). Temporal adopted as the durable workflow engine, with Postgres as the only authoritative store (§35.3, §35.6, INV-30). No single provider dependence: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech (BD-16, §17, AGENT-28), all benchmarked on every release run (§38.5). OD-04, OD-05, OD-07 and OD-11 closed (DEC-2026-10-09; the two 6 October records amended with migration notes and status). Leftovers fixed: remaining old spelling of Tushe; the Tushe delta moved to `docs/poc/tushe/tushe-spec-delta-v1.1.md` and extended with simulated-time reporting (proposed AT-25); value lists no longer described as examples. Mechanical sync: AGENT-29; the register generated from §46; `tools/check_docs_consistency.py` with the `docs-consistency` CI check; a PR template; code owners and branch-protection settings. |
 | 1.2 | 2 Oct 2026 | Pre-development fixes from external review. Semantics: "exactly once" replaced by no duplicate effect where provable, with retry-safety classes and INV-24 (§13, §43.8); policy changes void outstanding grants and Trust never infers "stricter" (INV-09, INV-26, OD-09 closed); the CONFIRM and approval contract (§43.2a, INV-25); version tokens and conditional writes (INV-27, INV-17); consequence profiles, with closing cases and changing clocks prohibited in the POC and LOG_COMPLAINT_REFERENCE moved to R3 (§34); the pending-outcome watch and outcome.updated callback (§14, §43.4a, INV-28); explanation split into /core/explanation (§51, AGENT-05, INV-22); founder decisions count only once committed, plus docs/decisions/ and AGENT-27 (§0.4); HMAC grants and a hash-chained Record for the POC, with per-power keys before Phase 2 (§43, §47.4); framework decided with language under OD-11, defaulting to FastAPI. Earlier specification: risk-based evidence freshness (INV-23), an internal pack checker, and the partner's name corrected to Tushe. Benchmark: rule-of-three claim scoping (§38.8); a held-out set and versioned generator (OD-16); integration-hostility faults and 20 cases (now at least 320); unknown outcome built first; a tiered scorecard with one primary metric; latency by path; arm B strengthened; US-17 to US-22. Phases and commercial: gate definitions (completed action, failure-family coverage, value bands); voice slips before the core; operational memory minimal; Temporal adopted on evidence; conformance packs capped; $52B internal only; fixed-fee first pilot; one exception subtype; operator-facing stages named. |
 | 1.1 | 2 Oct 2026 | **Merged review of three peer drafts written from the same brief** ("Noema — Company, Product, Architecture, Market & Execution Source of Truth" v1.0; "Noema Master Product & Infrastructure Blueprint" v1.0; "NOEMA — The Trusted Enterprise Execution Infrastructure" v2.0, whose file ends partway through its section 76, so its promised sections 77–96 and source appendices could not be reviewed). Every new external figure was re-checked against its source. **Added:** order of authority, binding-decisions register and evidence rules (§0.4–0.6); the thesis line and Intent Computing (§1, §3.1); Meta, Muse, Paystack Index, A2A and Gartner's agentic forecast in why-now (§5); the software literacy tax, domain examples and four-failures table (§6.1, §7.1); finer separation rules, plan-hash and evidence-set binding, Action Graph, capability descriptor, evidence fields and operational memory (§12–14, §43); taxonomy minimums and the HTTP-200 rule (§15.1); Mode 2 principle and earning conditions (§16); compiler analogy and litmus test (§17); experience rules and the Delegation Curve (§18.4–18.5); the ROI formula, buyers and pricing mix (§19); the standard we set and extra platform NFRs and user stories (§20.4, §21); verified Gartner AI, software, payments and mobile-money figures, bottom-up revenue ladders and "what we are not claiming" (§22); CBN complaint, refund and fintech-report data (§23, §31); Meta, Akai, Cerbos, Paystack Index, Aethex, protocol and system-of-record rows, the rules we compete by, the flywheel (§25–29); the POC proposition, under/overbuilding, extended prohibitions and non-goals (§33–34); idempotency derivation, state and recovery classification, compensation types, revalidation, logical mock services, fault union, US-13 to US-16, the real-conditions voice gate (§35–37); new targets, safety gates, comparison arms D–F, fair-comparison rules, discovery metrics, the adversarial standard and the merged definition of done (§38–40); phases restructured around the founder thesis gates (100,000 actions; $10M volume; three sectors, three markets, $100M), the year map, stop conditions and the post-POC steps (§41–42); AGENT-21 to 26, INV-17 to 22, OD-11 to 15, engineering doctrine (§44–46); boundary table, approval binding, P99, reference frameworks, readiness and deployment models, merged decision filter (§47–52); risks, assumptions, shutdown conditions, principles, the long view and final definition (§53–57). **Changed:** idempotency keys and all authoritative state now live in Postgres (Redis non-authoritative only); ISO certifications sit in Phase 4. **Peer-draft figures corrected or excluded:** AI software 2026 is $461.6B and AI services $576.5B (not $453.2B and $585.5B); an "agentic AI $985B by 2030 at 62.7% CAGR" figure could not be verified and is replaced by Gartner's 2Q26 forecast of about $1T embedded agentic AI by 2030; Partech's 2025 enterprise and healthtech figures are $238M and $215M (not $274M and $224M); "16,527 complaints in H1 2024" is contradicted by the CBN's 4,398 and excluded; "4,111 complaints / 45.22% failed transactions in H1 2023", "$722B/$740B enterprise application software by 2029", "$4.8T vertical IT spend", "35,453 complaints / ₦115.45B refunded over ten years", "~80% lack mature governance" (Deloitte's figure is 21% mature), "37.5% / 62.5%" fintech-report shares (the report's 62.5% concerns regional expansion plans) and "acknowledge within 24 hours" could not be confirmed against a primary source and are excluded or replaced with the verified wording. NIBSS's "more than 12 billion" transfers and the 11.2 billion NIP figure are shown separately because their definitions differ. |
 | 1.0 | 1 Oct 2026 | First canonical version. Supersedes the Founding Canon v4.0, the Master Company Document (Final), and the POC Specification v2.0 where they differ. New in this version: the separation of powers (§13); the three taxonomies and conformance packs (§15); voice as the POC front door (§32); global launch and compliance roadmap (§41, §50); rules for coding agents (§44). Corrections to earlier documents: the September 2024 NIBSS incident credited accounts without debiting senders (it was not a 2026 event); an unsourced "0.75% NIP failure rate" has been removed; the manual-touch baseline is now a hypothesis to be measured with a design partner. |

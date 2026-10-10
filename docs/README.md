@@ -2,7 +2,7 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.2, 2 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.3, 9 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
@@ -47,7 +47,7 @@ docs/
   NOEMA_SOURCE_OF_TRUTH.md     canonical (do not edit in place)
   README.md                    this map
   requirements-index.md        ID → SoT section, scope, verification (derived)
-  open-decisions.md            OD-01..15 status + provisional OD-P-xx items (NON-CANONICAL)
+  open-decisions.md            OD-01..16 generated from SoT §46 + provisional OD-P-xx items (NON-CANONICAL)
   engineering/
     boundary-map.md            powers, components, may / must-never, enforcing IDs (derived)
     state-registry.md          every state and status value with its SoT source (derived)
@@ -58,13 +58,17 @@ docs/
       Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md
                                Tushe requirements & acceptance spec v1.0 — issued, frozen
       source/                  original v1.0 export, unchanged
+      tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
   decisions/
     README.md                  decision-record process and template
     DEC-2026-10-02-sot-v1.2.md the v1.2 amendment record
+    DEC-2026-10-06-*.md        architecture and vendor-benchmark records (superseded in part)
+    DEC-2026-10-09-deployment-temporal-providers.md
+                               two deployables, Temporal, multi-provider (the v1.3 decisions)
   archive/                     NON-AUTHORITATIVE legacy material and the migration report
 ```
 
-This repository is documentation-first. It contains no application code. The module layout in SoT §51 is not created here until a POC requirement needs it ([OD-P-01](open-decisions.md#od-p-01)).
+This repository is documentation-first. It contains no application code. Noema uses several repositories (SoT §51, [OD-P-01](open-decisions.md#od-p-01)); which one hosts each of the two deployables and `/contracts` is still open ([OD-P-13](open-decisions.md#od-p-13)).
 
 ## Changing documentation
 
