@@ -19,3 +19,5 @@ jobs:
           python-version: "3.12"
       - name: Check SoT, register, decision records and frozen files agree
         run: python3 tools/check_docs_consistency.py --check
+      - name: Check the PERD requirements index is current
+        run: python3 tools/perd_index.py --check

@@ -1,0 +1,39 @@
+# Threat-to-test map (POC)
+
+Tracks whether each threat in [`threat-model.md`](threat-model.md) (PERD §42) has a passing test. Proposed with the PERD ([DEC-2026-10-11-poc-perd-v1.1](../decisions/DEC-2026-10-11-poc-perd-v1.1.md)).
+
+- **Control (REQ IDs):** only the REQ IDs that the PERD §42 row itself names. Where §42 names none, the cell is a TODO; do not fill it by inference.
+- **Test / benchmark case:** copied verbatim from the `Test` column of PERD §42.
+- **Status:** `Not started` until a test exists and runs in CI or the benchmark. Change it only with a link to the passing run.
+
+| TM | Control (REQ IDs) | Test / benchmark case | Status |
+|---|---|---|---|
+| TM-01 | TODO(security reviewer): §42 names no REQ for this control | EC-U05, EC-X01 | Not started |
+| TM-02 | TODO(security reviewer): §42 names no REQ for this control | EC-X05, EC-X08, EC-X10 | Not started |
+| TM-03 | TODO(security reviewer): §42 names no REQ for this control | US-09, EC-X02..X04 | Not started |
+| TM-04 | TODO(security reviewer): §42 names no REQ for this control | EC-X13 | Not started |
+| TM-05 | TODO(security reviewer): §42 names no REQ for this control | EC-U03 | Not started |
+| TM-06 | TODO(security reviewer): §42 names no REQ for this control | EC-X08 | Not started |
+| TM-07 | TODO(security reviewer): §42 names no REQ for this control | EC-X07, PUS-07 | Not started |
+| TM-08 | TODO(security reviewer): §42 names no REQ for this control | US-05, US-06 | Not started |
+| TM-09 | TODO(security reviewer): §42 names no REQ for this control | Tamper test | Not started |
+| TM-10 | REQ-AUD-005 | REQ-AUD-005 | Not started |
+| TM-11 | REQ-SEC-003 | REQ-SEC-003 | Not started |
+| TM-12 | TODO(security reviewer): §42 names no REQ for this control | US-07 | Not started |
+| TM-13 | TODO(security reviewer): §42 names no REQ for this control | US-19, US-20 | Not started |
+| TM-14 | TODO(security reviewer): §42 names no REQ for this control | Authorisation-matrix test | Not started |
+| TM-15 | REQ-ENV-002 | REQ-ENV-002 | Not started |
+| TM-16 | TODO(security reviewer): §42 names no REQ for this control | CI scan | Not started |
+| TM-17 | TODO(security reviewer): §42 names no REQ for this control | EC-X09 | Not started |
+| TM-18 | TODO(security reviewer): §42 names no REQ for this control | EC-E08 | Not started |
+| TM-19 | REQ-EXP-002 | REQ-EXP-002 corpus | Not started |
+| TM-20 | TODO(security reviewer): §42 names no REQ for this control | INV-05 test | Not started |
+| TM-21 | TODO(security reviewer): §42 names no REQ for this control | EC-X08 variant | Not started |
+| TM-22 | REQ-API-006 | REQ-API-006 | Not started |
+| TM-23 | TODO(security reviewer): §42 names no REQ for this control | EC-X16 | Not started |
+| TM-24 | TODO(security reviewer): §42 names no REQ for this control | EC-X17 | Not started |
+| TM-25 | REQ-SEC-009 | SSRF test set | Not started |
+| TM-26 | TODO(security reviewer): §42 names no REQ for this control | Permission matrix; evil-provider run | Not started |
+| TM-27 | TODO(security reviewer): §42 names no REQ for this control | US-19, EC-K01 | Not started |
+
+Owner: Security reviewer (TODO: name).

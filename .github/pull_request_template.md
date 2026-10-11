@@ -4,7 +4,7 @@
 
 ## Requirement IDs touched
 
-<!-- For example BD-16, INV-29, OD-05 (AGENT-01). -->
+<!-- SoT IDs and, for POC build work, PERD REQ IDs (see docs/poc/perd/requirements-index.csv). For example BD-16, INV-29, OD-05 (AGENT-01). -->
 
 ## Checklist
 

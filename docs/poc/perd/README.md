@@ -1,0 +1,39 @@
+# POC PERD (Product & Engineering Requirements Document)
+
+> **Status: Proposed.** The PERD becomes the POC's detailed engineering specification (SoT §0.4, item 4) only when [DEC-2026-10-11-poc-perd-v1.1](../../decisions/DEC-2026-10-11-poc-perd-v1.1.md) is accepted. It **ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md)**: where they disagree, the SoT wins (PERD P.1).
+
+| File | What it is |
+|---|---|
+| [`NOEMA_POC_PERD_v1.1.md`](NOEMA_POC_PERD_v1.1.md) | The PERD, v1.1, committed byte-for-byte as issued. Do not edit it. |
+| [`requirements-index.csv`](requirements-index.csv) | Generated index of every `REQ-` ID. Run `python3 tools/perd_index.py --write`; CI runs `--check`. Never edit by hand. |
+| [`conflicts-register.md`](conflicts-register.md) | PERD §72 conflicts (SOT-C-01 to SOT-C-29) with their status. |
+| [`templates/`](templates/) | Task card, conflict block and benchmark-case templates. |
+
+## How to read it
+
+Start with the reading path for your role in PERD **P.4** (founders, engineers, AI coding agents, benchmark owner, security reviewer). Every material statement carries a label (PERD P.2):
+
+- **`[SoT §x]`**: a Source of Truth fact; binding.
+- **`[INF]`**: an inference from the SoT; binding only through the SoT text it reads.
+- **`[REC]`**: a recommended default; not binding until adopted (PERD §67).
+- **`[ASM]`**: an assumption, with an owner and a check in PERD §67.
+- **`[OQ]`**: an open question, with a minimum default to use meanwhile.
+
+## Rules for coding agents
+
+1. Cite at least one PERD `REQ-` ID **and** the SoT IDs that REQ cites (REQ-AGT-001, AGENT-01). Look them up in [`requirements-index.csv`](requirements-index.csv).
+2. Work from a [task card](templates/task-card.md) (PERD §61.4). Touch only the modules on its allowlist (REQ-AGT-002).
+3. On any conflict between the PERD, the SoT and the implementation: **stop** and put a [conflict block](templates/conflict-block.md) in the PR (REQ-AGT-003, AGENT-27). Check [`conflicts-register.md`](conflicts-register.md) first.
+
+## Changing the PERD
+
+One pull request (AGENT-29) that contains:
+
+- a new version file `NOEMA_POC_PERD_v<x.y>.md` (the old version is kept, never edited);
+- a decision record in [`docs/decisions/`](../../decisions/README.md);
+- the regenerated `requirements-index.csv`;
+- the updated statuses in `conflicts-register.md`.
+
+## Where open items live
+
+PERD §67 (open questions OQ-01 to OQ-14 and the [REC] defaults awaiting adoption) is mirrored as provisional, NON-CANONICAL entries OD-P-14 to OD-P-41 in [`docs/open-decisions.md`](../../open-decisions.md#od-p-14).

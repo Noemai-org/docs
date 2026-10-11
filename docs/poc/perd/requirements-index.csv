@@ -1,0 +1,153 @@
+req_id,title,priority,area,perd_section,sot_ids,dependencies
+REQ-INP-001,Canonical input contract,P0,INP,19. Module responsibilities and the model boundary,POC-FR-01;PLAT-NFR-07,REQ-SEC-001
+REQ-INP-002,Identity from the session only,P0,INP,19. Module responsibilities and the model boundary,INV-12;AGENT-10,REQ-SEC-001
+REQ-INP-003,Inbound deduplication,P1,INP,19. Module responsibilities and the model boundary,POC-NFR-04,REQ-DATA-001
+REQ-INP-004,Conversation continuity,P0,INP,19. Module responsibilities and the model boundary,POC-FR-13;US-11,REQ-AMB-006
+REQ-INT-001,"Schema gate, twice",P0,INT,20. Canonical Intent Object,INV-02;POC-FR-03,REQ-INP-002
+REQ-INT-002,Provider-neutral compilation with failover,P0,INT,20. Canonical Intent Object,BD-16;OD-05;AGENT-28;INV-29,REQ-OBS-001
+REQ-INT-003,Deterministic lexicon normalisation,P0,INT,20. Canonical Intent Object,POC-FR-02,
+REQ-INT-004,Versioning and supersession,P0,INT,20. Canonical Intent Object,POC-FR-13,REQ-EXE-003
+REQ-INT-005,Out-of-scope and prohibited-intent recognition,P0,INT,20. Canonical Intent Object,US-10;US-22,REQ-CAP-002
+REQ-CTX-001,Evidence items carry full provenance,P0,CTX,21. Context and evidence model,POC-FR-05;INV-10;PLAT-FR-04,REQ-DATA-001
+REQ-CTX-002,FactStatus assignment rules,P0,CTX,21. Context and evidence model,INV-19;BD-10,
+REQ-CTX-003,Effective freshness enforced at decision and at revalidation,P0,CTX,21. Context and evidence model,INV-23;US-15;INV-16,REQ-EXE-003
+REQ-CTX-004,Sealed context snapshots,P0,CTX,21. Context and evidence model,INV-17,REQ-AUD-005
+REQ-CTX-005,Event time and ingestion time both kept,P0,CTX,21. Context and evidence model,,REQ-RES-001
+REQ-CTX-006,Principal-scoped candidate read API for the model service,P0,CTX,21. Context and evidence model,POC-FR-07;US-07,REQ-SEC-003
+REQ-CTX-007,"Enterprise strings are data, never instructions",P0,CTX,21. Context and evidence model,AGENT-09;US-09,REQ-SEC-007
+REQ-CTX-008,Integration hostility handling in reads,P0,CTX,21. Context and evidence model,US-21,REQ-ENV-004
+REQ-AMB-001,Material ambiguity is unrepresentable as action,P0,AMB,22. Transaction resolution and state reconciliation,INV-06;US-02,REQ-TRU-001
+REQ-AMB-002,Candidate generation is principal-scoped and bounded,P0,AMB,22. Transaction resolution and state reconciliation,POC-FR-04;POC-FR-07;US-07,REQ-CTX-006
+REQ-AMB-003,Deterministic ranking and the auto-resolve rule,P0,AMB,22. Transaction resolution and state reconciliation,POC-FR-04;OD-03;AGENT-16,
+REQ-AMB-004,Clarification request contract,P0,AMB,22. Transaction resolution and state reconciliation,US-02,REQ-UI-002
+REQ-AMB-005,Answer binding,P0,AMB,22. Transaction resolution and state reconciliation,POC-FR-13,REQ-INT-004
+REQ-AMB-006,"Timeout, abandonment and resume",P0,AMB,22. Transaction resolution and state reconciliation,US-11;POC-FR-13,REQ-STM-001
+REQ-AMB-007,Key-slot speech confidence forces clarification,P0,AMB,22. Transaction resolution and state reconciliation,OD-03,REQ-VOI-003
+REQ-RES-001,"Deterministic, versioned reconciliation",P0,RES,22. Transaction resolution and state reconciliation,POC-FR-05;INV-21;POC-NFR-01,REQ-CTX-005
+REQ-RES-002,Contradiction freeze,P0,RES,22. Transaction resolution and state reconciliation,INV-20;US-14;US-03,
+REQ-RES-003,Resend advice,P0,RES,22. Transaction resolution and state reconciliation,POC-FR-14;US-04,REQ-EXP-002
+REQ-RES-004,Reversal precedence,P0,RES,22. Transaction resolution and state reconciliation,US-13,REQ-EXE-003
+REQ-TRU-001,"Exactly one outcome, fully attributed",P0,TRU,23. Trust Engine,POC-FR-06;PLAT-FR-05,REQ-AUD-001
+REQ-TRU-002,Fail-closed gate order,P0,TRU,23. Trust Engine,INV-16;POC-NFR-03;POC-FR-07;US-10,
+REQ-TRU-003,Target-bound three-layer authority,P0,TRU,23. Trust Engine,POC-FR-07;US-07,REQ-CTX-006
+REQ-TRU-004,"Versioned, effective-dated policy evaluation",P0,TRU,23. Trust Engine,OD-02;INV-09;US-08,REQ-SEC-006
+REQ-TRU-005,Policy publication voids grants,P0,TRU,23. Trust Engine,INV-26;US-20;US-08,REQ-EXE-001
+REQ-TRU-006,Clock evaluation,P1,TRU,23. Trust Engine,,REQ-ENV-003
+REQ-TRU-007,Decision determinism,P0,TRU,23. Trust Engine,POC-NFR-01;INV-21;AGENT-14,
+REQ-TRU-008,Decision Grant issuance,P0,TRU,23. Trust Engine,INV-03;INV-25;POC-FR-08,REQ-PLN-002
+REQ-TRU-009,Confirmation contract,P0,TRU,23. Trust Engine,INV-25;US-18,REQ-UI-002
+REQ-TRU-010,Escalation disposition linkage,P0,TRU,23. Trust Engine,US-03;US-14;US-17;INV-25,REQ-TRU-008
+REQ-TRU-011,Mode 2-compatible Trust interface,P1,TRU,23. Trust Engine,POC-FR-16;BD-13;OD-15,
+REQ-TRU-012,Tenant rate limits and per-principal limits,P1,TRU,23. Trust Engine,,
+REQ-AG-001,Graph as validated data,P0,AG,24. Enterprise Action Graph,INV-18,REQ-CAP-001
+REQ-AG-002,Routing targets are allowlisted,P0,AG,24. Enterprise Action Graph,AGENT-09,
+REQ-CAP-001,Complete descriptors only,P0,CAP,25. Capability Registry,INV-27;AGENT-06,REQ-AG-001
+REQ-CAP-002,"Prohibited: registered, rejecting, unreachable",P0,CAP,25. Capability Registry,INV-18;BD-08,REQ-ENV-001
+REQ-CAP-003,"Limits, timeouts and circuit breakers per capability",P1,CAP,25. Capability Registry,AGENT-16,
+REQ-PLN-001,Deterministic plans from registered nodes only,P0,PLN,26. Deterministic Planner,INV-18,REQ-AG-001
+REQ-PLN-002,Canonical plan hash,P0,PLN,26. Deterministic Planner,INV-18,
+REQ-PLN-003,"Compound requests are planned, not executed beyond scope",P2,PLN,26. Deterministic Planner,,REQ-INT-005
+REQ-EXE-001,Grant verification and single use,P0,EXE,27. Execution Controller,INV-30;INV-03;INV-17;POC-FR-08,REQ-TRU-008;REQ-SEC-005
+REQ-EXE-002,Idempotency key derived and persisted before dispatch,P0,EXE,27. Execution Controller,INV-08;US-05;US-06,
+REQ-EXE-003,Revalidation immediately before every write,P0,EXE,27. Execution Controller,INV-17;US-19,REQ-CTX-003
+REQ-EXE-004,Conditional writes,P0,EXE,27. Execution Controller,INV-27;US-19,
+REQ-EXE-005,Silence is OUTCOME_UNKNOWN,P0,EXE,27. Execution Controller,INV-07;AGENT-07;POC-FR-10,
+REQ-EXE-006,No retry without a new grant,P0,EXE,27. Execution Controller,INV-24;AGENT-08;INV-15,REQ-RCV-001
+REQ-EXE-007,Adapter response normalisation,P0,EXE,27. Execution Controller,AGENT-24,REQ-ENV-001
+REQ-EXE-008,Tenant kill switch,P0,EXE,27. Execution Controller,,REQ-SEC-006
+REQ-STM-001,Executable transition table,P0,STM,28. State machine,,
+REQ-STM-002,Never collapse pending or unknown into terminal,P0,STM,28. State machine,BD-10,
+REQ-VER-001,Independent verification after the settle window,P0,VER,29. Outcome verification,INV-04;AGENT-21;POC-FR-09;AGENT-16;US-06;US-16,REQ-VER-002
+REQ-VER-002,Predicate language,P0,VER,29. Outcome verification,,
+REQ-VER-003,Verdict values and RecoveryRequest,P0,VER,29. Outcome verification,INV-15;PLAT-FR-10;US-16,REQ-RCV-001
+REQ-VER-004,Durable outcome watch,P0,VER,29. Outcome verification,INV-28;US-17,REQ-ENV-003
+REQ-VER-005,`outcome.updated` callback,P0,VER,29. Outcome verification,,REQ-API-006
+REQ-RCV-001,Recovery only through Trust,P0,RCV,30. Recovery and reconciliation,INV-15,REQ-EXE-006
+REQ-RCV-002,Verify-by-key before any retry,P0,RCV,30. Recovery and reconciliation,POC-FR-10;US-06,
+REQ-RCV-003,Recovery budget and escalation,P0,RCV,30. Recovery and reconciliation,,
+REQ-RCV-004,Late evidence after escalation,P1,RCV,30. Recovery and reconciliation,,REQ-VER-005
+REQ-EXP-001,"Facts-in, text-out renderer in the model service",P0,EXP,31. Explanation Engine,INV-22;AGENT-05;INV-13,REQ-EXP-002
+REQ-EXP-002,Claim validator and fallback,P0,EXP,31. Explanation Engine,INV-13;AGENT-17,
+REQ-EXP-003,Register and language,P1,EXP,31. Explanation Engine,POC-FR-11,
+REQ-EXP-004,Operator evidence packet,P0,EXP,31. Explanation Engine,US-03;US-14,REQ-CAP-001
+REQ-AUD-001,Append-only hash-chained Record,P0,AUD,32. Audit and provenance,INV-11;POC-FR-12,REQ-SEC-006
+REQ-AUD-002,Completeness per consequential decision,P0,AUD,32. Audit and provenance,,REQ-BEN-001
+REQ-AUD-003,Reconstruction endpoint,P0,AUD,32. Audit and provenance,US-12;POC-FR-12;INV-10,
+REQ-AUD-004,Correlation chain everywhere,P0,AUD,32. Audit and provenance,PLAT-NFR-15,REQ-OBS-002
+REQ-AUD-005,Nightly and on-demand chain verification,P0,AUD,32. Audit and provenance,INV-11,
+REQ-MEM-001,"Memory is data, never authority",P0,MEM,33. Operational memory,,
+REQ-MEM-002,Every failure becomes a regression case,P0,MEM,33. Operational memory,AGENT-23,REQ-TST-005
+REQ-ENV-001,"Adapters per logical service, behind interfaces",P0,ENV,34. Synthetic enterprise,POC-NFR-05;AGENT-24,
+REQ-ENV-002,Oracle isolation,P0,ENV,34. Synthetic enterprise,,REQ-OPS-001
+REQ-ENV-003,One clock,P0,ENV,34. Synthetic enterprise,INV-21,
+REQ-ENV-004,Deterministic fault plans,P0,ENV,34. Synthetic enterprise,POC-NFR-08,
+REQ-ENV-005,Hostility proxy contingency,P1,ENV,34. Synthetic enterprise,,
+REQ-ENV-006,Synthetic labelling,P0,ENV,34. Synthetic enterprise,AGENT-25,
+REQ-ENV-007,Phase A acceptance before integration,P0,ENV,34. Synthetic enterprise,,REQ-ENV-001;REQ-ENV-002;REQ-ENV-004
+REQ-VOI-001,Voice compiles to the same canonical input,P0,VOI,35. Voice and input workstream,POC-FR-01;BD-14,REQ-INP-001
+REQ-VOI-002,Provider-neutral streaming speech,P0,VOI,35. Voice and input workstream,OD-04;BD-16,
+REQ-VOI-003,Confidence propagation,P0,VOI,35. Voice and input workstream,,
+REQ-VOI-004,Raw audio handling,P0,VOI,35. Voice and input workstream,OD-08;POC-NFR-07;AGENT-13,
+REQ-VOI-005,Real-conditions gate,P0,VOI,35. Voice and input workstream,,
+REQ-DATA-001,Schema ownership and migrations,P0,DATA,38. Data model,AGENT-19;POC-NFR-04,REQ-SEC-006
+REQ-DATA-002,Money and time representation,P0,DATA,38. Data model,OD-08,
+REQ-DATA-003,Retention and minimisation,P1,DATA,38. Data model,OD-08,REQ-SEC-003
+REQ-API-001,"Contracts are generated, versioned and tested",P0,API,39. API and event contracts,AGENT-15,
+REQ-API-002,Error envelope and safe messages,P0,API,39. API and event contracts,AGENT-13,
+REQ-API-003,Public request idempotency,P0,API,39. API and event contracts,POC-NFR-04,REQ-INP-003
+REQ-API-004,Session authentication on every public call,P0,API,39. API and event contracts,,REQ-SEC-001
+REQ-API-005,Internal APIs: mTLS and contract-only,P0,API,39. API and event contracts,INV-29,REQ-SEC-002
+REQ-API-007,Overlay and host result message,P1,API,39. API and event contracts,,REQ-API-006;REQ-UI-001
+REQ-API-008,Inbound event inbox,P0,API,39. API and event contracts,,REQ-VER-004
+REQ-API-006,Signed outbound events,P0,API,39. API and event contracts,,
+REQ-UI-001,Customer overlay,P1,UI,40. UI and UX requirements,POC-FR-11,REQ-API-001
+REQ-UI-002,Clarification and confirmation cards,P0,UI,40. UI and UX requirements,US-02;US-18,
+REQ-UI-003,Evidence panel,P0,UI,40. UI and UX requirements,POC-FR-17,REQ-AUD-003
+REQ-UI-004,Benchmark inspector,P1,UI,40. UI and UX requirements,,REQ-BEN-004
+REQ-SEC-001,Authenticated principals from a synthetic IdP,P0,SEC,41. Security architecture and standards,INV-12,
+REQ-SEC-002,mTLS and network isolation between deployables,P0,SEC,41. Security architecture and standards,INV-29,REQ-OPS-001
+REQ-SEC-003,Masking and PII redaction on every surface,P0,SEC,41. Security architecture and standards,POC-NFR-06;AGENT-13,
+REQ-SEC-004,Tenant isolation,P0,SEC,41. Security architecture and standards,PLAT-FR-16,
+REQ-SEC-005,Key management,P0,SEC,41. Security architecture and standards,,
+REQ-SEC-006,Control plane separated from data plane,P0,SEC,41. Security architecture and standards,,
+REQ-SEC-007,Supply chain and secure development lifecycle,P1,SEC,41. Security architecture and standards,AGENT-14,
+REQ-SEC-008,Abuse limits at the edge,P1,SEC,41. Security architecture and standards,,
+REQ-SEC-009,Egress control and callback safety,P0,SEC,41. Security architecture and standards,INV-29,REQ-SEC-002;REQ-OPS-001
+REQ-NFR-001,Determinism and replay,P0,NFR,43. Functional and non-functional requirements index,INV-21;POC-NFR-01,REQ-ENV-003;REQ-TRU-007
+REQ-NFR-002,Fail closed,P0,NFR,43. Functional and non-functional requirements index,INV-16;POC-NFR-03,REQ-TRU-002
+REQ-NFR-003,Latency budgets on the clean path,P1,NFR,43. Functional and non-functional requirements index,POC-NFR-09,
+REQ-NFR-004,One-command reproducible environment,P0,NFR,43. Functional and non-functional requirements index,,
+REQ-NFR-005,Generality: no vertical or country terms in core,P0,NFR,43. Functional and non-functional requirements index,POC-NFR-10;INV-14;POC-FR-15,
+REQ-NFR-006,Replaceable adapters,P0,NFR,43. Functional and non-functional requirements index,POC-NFR-05,REQ-ENV-001
+REQ-NFR-007,Cost accounting per case,P1,NFR,43. Functional and non-functional requirements index,,
+REQ-NFR-008,Demo and benchmark environment availability,P2,NFR,43. Functional and non-functional requirements index,,
+REQ-OBS-001,Required metrics and must-be-zero alerts,P0,OBS,44. Observability,,
+REQ-OBS-002,End-to-end traces and structured logs,P0,OBS,44. Observability,PLAT-NFR-15,REQ-AUD-004
+REQ-OBS-003,Thin engineering and benchmark dashboard,P2,OBS,44. Observability,,
+REQ-TST-001,Failing test first,P0,TST,45. Test strategy,AGENT-11,
+REQ-TST-002,Property tests for every invariant,P0,TST,45. Test strategy,,
+REQ-TST-003,Contract tests at every boundary,P0,TST,45. Test strategy,AGENT-24,
+REQ-TST-004,No mocked failure modes,P0,TST,45. Test strategy,AGENT-12,
+REQ-TST-005,CI gates and rhythm,P0,TST,45. Test strategy,,
+REQ-TST-006,No benchmark-only branches,P0,TST,45. Test strategy,,
+REQ-TST-007,Operational and load tests,P1,TST,45. Test strategy,INV-28;INV-30,REQ-NFR-004;REQ-NFR-008
+REQ-BEN-001,"Fully specified, versioned cases",P0,BEN,48. Benchmark design,,
+REQ-BEN-002,Runner and oracle client,P0,BEN,48. Benchmark design,,REQ-ENV-002
+REQ-BEN-003,Held-out custody,P0,BEN,48. Benchmark design,OD-16,
+REQ-BEN-004,Tiered scorecard and reports,P0,BEN,48. Benchmark design,,
+REQ-BEN-005,Provider runs,P0,BEN,48. Benchmark design,AGENT-28,
+REQ-BEN-006,Every failure becomes a regression case,P0,BEN,48. Benchmark design,AGENT-23,REQ-MEM-002
+REQ-BEN-008,Release evidence bundle,P0,BEN,48. Benchmark design,,REQ-BEN-002;REQ-BEN-004
+REQ-BEN-007,"Competent, fair arms built after the core passes",P1,BEN,50. Comparison baselines,,
+REQ-BIZ-003,Implementation economics measured,P1,BIZ,51. Business-value measurement,,REQ-BEN-007
+REQ-BIZ-001,Business metrics from runs only,P0,BIZ,51. Business-value measurement,,
+REQ-BIZ-002,No invented ROI,P0,BIZ,51. Business-value measurement,,
+REQ-OPS-001,Network policy enforces the boundaries,P0,OPS,65. Deployment,INV-29;INV-22,REQ-SEC-002
+REQ-OPS-002,"Kill switch, rollback and incident playbook",P0,OPS,65. Deployment,,
+REQ-OPS-003,Configuration as versioned data,P1,OPS,65. Deployment,AGENT-16;AGENT-28,
+REQ-OPS-004,"Debt is registered, never hidden",P1,OPS,65. Deployment,,REQ-BEN-008
+REQ-AGT-001,Every change traces to IDs,P0,AGT,71. Engineering philosophy and standards,AGENT-01,
+REQ-AGT-002,Module allowlist per task,P0,AGT,71. Engineering philosophy and standards,AGENT-03;AGENT-19,
+REQ-AGT-003,Stop on conflict,P0,AGT,71. Engineering philosophy and standards,AGENT-27;AGENT-20;AGENT-26,
+REQ-AGT-004,Agents never see held-out cases or the oracle,P0,AGT,71. Engineering philosophy and standards,OD-16,REQ-BEN-003
+REQ-AGT-005,Agents do not tune safety thresholds,P0,AGT,71. Engineering philosophy and standards,AGENT-16;AGENT-28,REQ-OPS-003

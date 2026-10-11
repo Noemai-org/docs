@@ -59,12 +59,18 @@ docs/
                                Tushe requirements & acceptance spec v1.0 — issued, frozen
       source/                  original v1.0 export, unchanged
       tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
+      acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
+    perd/                      POC PERD v1.1 (Proposed; ranks below the SoT), generated REQ index, conflicts, templates
+  security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
+  runbooks/                    runbook scaffolds (headings and TODOs only)
   decisions/
     README.md                  decision-record process and template
     DEC-2026-10-02-sot-v1.2.md the v1.2 amendment record
     DEC-2026-10-06-*.md        architecture and vendor-benchmark records (superseded in part)
     DEC-2026-10-09-deployment-temporal-providers.md
                                two deployables, Temporal, multi-provider (the v1.3 decisions)
+    DEC-2026-10-11-poc-perd-v1.1.md
+                               adopt the POC PERD v1.1 (Proposed)
   archive/                     NON-AUTHORITATIVE legacy material and the migration report
 ```
 
