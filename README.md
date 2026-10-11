@@ -27,8 +27,10 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
+| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.1. Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
+| `docs/security/`, `docs/runbooks/` | Threat model, trust-boundary and threat-to-test maps (from the PERD, Proposed); runbook scaffolds (no steps yet) |
 | `docs/archive/` | **Non-authoritative** historical material |
-| `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), frozen-file hashes, CI workflow, PR template and code owners |
+| `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), the PERD index check (`tools/perd_index.py`), frozen-file hashes, CI workflow, PR template and code owners |
 | `AGENTS.md`, `CLAUDE.md` | Operating instructions for coding agents |
 
 The repository is documentation-first. It contains no application code ([OD-P-01](docs/open-decisions.md#od-p-01)).
