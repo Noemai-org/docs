@@ -9,6 +9,8 @@
 | [`conflicts-register.md`](conflicts-register.md) | PERD §72 conflicts (SOT-C-01 to SOT-C-29) with their status. |
 | [`templates/`](templates/) | Task card, conflict block and benchmark-case templates. |
 
+The dated build plan that turns this PERD into tasks is the [POC execution plan](../execution/README.md) (Proposed).
+
 ## How to read it
 
 Start with the reading path for your role in PERD **P.4** (founders, engineers, AI coding agents, benchmark owner, security reviewer). Every material statement carries a label (PERD P.2):

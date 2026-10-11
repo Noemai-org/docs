@@ -21,3 +21,5 @@ jobs:
         run: python3 tools/check_docs_consistency.py --check
       - name: Check the PERD requirements index is current
         run: python3 tools/perd_index.py --check
+      - name: Check the POC plan task index is current and consistent
+        run: python3 tools/plan_index.py --check
