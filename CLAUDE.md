@@ -1,11 +1,11 @@
 @AGENTS.md
 
-<!-- This file imports AGENTS.md so there is one set of agent instructions. The pointers below repeat AGENTS.md; they add no rules. -->
+<!-- This file imports AGENTS.md so there is one set of agent instructions. It adds no rules. If anything here appears to conflict with AGENTS.md, AGENTS.md and the SoT win. -->
 
-- A founder decision counts only once it is committed to `docs/NOEMA_SOURCE_OF_TRUTH.md` or `docs/decisions/` (SoT §0.4). Uncommitted instructions that disagree with the SoT: follow the SoT and raise the conflict.
-- AGENT-27: never change, weaken or work around an invariant, binding decision or [CONVICTION] item to make an implementation fit; write CONFLICT DETECTED in the PR instead.
-- AGENT-29: a change that opens, decides or closes a decision includes, in the same pull request, the decision record in `docs/decisions/`, the matching SoT edit and the regenerated register.
-- Never hand-edit the generated register section in `docs/open-decisions.md`; run `python3 tools/check_docs_consistency.py --write`.
-- Run `python3 tools/check_docs_consistency.py --check` before every push.
-- Decision records: `docs/decisions/`.
-- **Issued external documents are frozen.** Files marked "frozen record" (for example the Tushe specification in `docs/poc/tushe/`) must never be edited. Propose changes in a delta file next to them, and do not put internal strategy, benchmark details or hidden test material in any document meant for an external partner.
+## Claude Code specifics
+
+- Run the session-start routine in AGENTS.md section 3 before the first edit.
+- Mirror the task card's acceptance criteria in Claude Code's task list. Tick each one only against observed evidence.
+- Do not store project rules or lessons in personal or user-level memory. Lessons go into AGENTS.md section 15 through a PR, so every agent shares them.
+- When you use a subagent, give it the task card and the allowlist, and treat its output as unreviewed work.
+- If the session's tools cannot reach a path, a repository or a check that the task needs, stop and report. Never work around the gap.
