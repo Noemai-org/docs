@@ -530,3 +530,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §38.2 (retention column); §38.3 (retention and data-handling defaults). Real-data retention stays SoT OD-08.
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
 - **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+
+<a id="od-p-42"></a>
+### OD-P-42: Schedule compression: Phase A in parallel with build week 1
+
+- **Status:** [OPEN] · NON-CANONICAL · decide by: Mon 12 Oct 2026
+- **Missing decision:** SoT §40.2 [TARGET] plans four weeks of build *after* Phase A exits. The [four-week plan](poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md) §3 runs Phase A in parallel with build week 1, with G0 due Thu 15 Oct (task GOV-04).
+- **Why it matters:** Phase B results produced before G0 would rest on unproven Tushe semantics.
+- **Minimum safe default:** gates outrank dates; no Phase B result counts before G0.
+- **What would invalidate it:** a founder decision to keep Phase A before the four-week clock, or G0 failing so that week-1 results are unusable.
+- **Owner:** Founders
+- **Deadline:** Mon 12 Oct 2026
+- **Source:** plan §3; proposed in [DEC-2026-10-11-poc-4week-plan](decisions/DEC-2026-10-11-poc-4week-plan.md).
