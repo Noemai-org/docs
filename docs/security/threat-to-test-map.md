@@ -36,4 +36,15 @@ Tracks whether each threat in [`threat-model.md`](threat-model.md) (PERD §42) h
 | TM-26 | TODO(security reviewer): §42 names no REQ for this control | Permission matrix; evil-provider run | Not started |
 | TM-27 | TODO(security reviewer): §42 names no REQ for this control | US-19, EC-K01 | Not started |
 
+## Proposed additions, pending review
+
+These threats come from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-environment-scope.md) and are not in PERD §42, so they carry provisional IDs (`PA-`) until a PERD revision adds them to the threat model. Each control is the REQ named; each test is that REQ's acceptance criterion (PERD v1.2).
+
+| ID | Threat | Control (REQ IDs) | Test / benchmark case | Status |
+|---|---|---|---|---|
+| PA-01 | The Tushe administrator credential leaks into the runtime | REQ-ENV-002 | A call by any runtime identity to a Tushe `/partner/...` route or to the `mock-case` truth endpoint SHALL be refused. | Not started |
+| PA-02 | A core engineer alters `mock-case` or the hostility proxy (separation of duties) | REQ-ENV-008 | It SHALL be built and maintained by someone who does not build services/core, and its fault plans SHALL be owned by the benchmark owner. | Not started |
+| PA-03 | The system under test sees Tushe test account numbers | REQ-ENV-005 | Every proxy fault family SHALL reproduce from a scenario and seed; the same Tushe number SHALL always map to the same synthetic number; no `9999` test-number pattern SHALL appear in any response delivered to a system under test. | Not started |
+| PA-04 | Tushe changes sandbox behaviour without notice | TODO(security reviewer): no REQ names this control; see PERD v1.2 R-22 and plan v1.2 SR-20 | TODO(security reviewer) | Not started |
+
 Owner: Security reviewer (TODO: name).

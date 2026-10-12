@@ -33,3 +33,5 @@ TODO(owner): name the owner (PERD §61.2, "Who does what first").
 ## Source
 
 PERD §34 (Synthetic enterprise); PERD REQ-ENV-004 (Deterministic fault plans; §34). PERD: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md).
+
+Added 12 Oct 2026 (PERD v1.2; DEC-2026-10-12): Tushe scenario apply, reset and seed; one tenant per run; `mock-case` reset (REQ-ENV-008).
