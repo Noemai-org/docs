@@ -6,11 +6,10 @@
 | **Date** | 12 October 2026 |
 | **Owner** | Founders (TODO: name). Reviewer: engineering lead (TODO: name) |
 | **Prepared by** | Engineering lead, with the integration lead |
-| **Amends** | SoT §36 "The synthetic enterprise environment" [DECISION], and its Phase A exit line |
+| **Amends** | SoT §36 "The synthetic enterprise environment" [DECISION] and its Phase A exit line; SoT §35.6 rule 4 [DECISION] (the time-source sentence only); SoT §40.1 (Phase A row); SoT §41 (Phase 0 exit gate) |
 | **Closes** | The OD-P entries mirroring PERD OQ-03 (Tushe case API semantics) and OQ-10 (CI access to Tushe): OD-P-16 and OD-P-23 |
 | **Supersedes** | None. Withdraws the proposed AT-25 (simulated-time reporting) in `docs/poc/tushe/tushe-spec-delta-v1.1.md`, because Tushe will not run a global clock |
 | **Evidence** | *Tushe × Noema: Response to the Synthetic Enterprise Environment requirements*, Tushe engineering, 7 October 2026 (received 8 October 2026). To be committed unchanged as `docs/poc/tushe/responses/2026-10-07-tushe-draft-response.pdf` |
-
 
 **Record fields (decisions README template).** The table above already gives Status, Date, Owner, Closes and Supersedes; the template headings it lacks point to the sections below.
 
@@ -56,7 +55,7 @@ None of this weakens a safety rule. No money moves, the oracle stays out of the 
   - append-only evidence attachments;
   - a complaint reference.
 
-  It implements exactly the case, complaint and evidence rows of PERD §34.4, and nothing more. There are no disputes, because no POC capability touches a dispute.
+  It implements exactly the case, complaint and evidence rows of PERD §34.4, and nothing more. It offers **no** operation to close or resolve a case, downgrade priority, change an SLA or clock, or edit or delete evidence: those capabilities are prohibited in the POC, so they don't exist on the target either. There are no disputes, because no POC capability touches a dispute.
 - **Faults.** The service can be told by the benchmark runner to:
   - commit, then drop the response;
   - return a 5xx;
@@ -169,7 +168,7 @@ Replace these parts of SoT §36. Everything else in §36 stays as written.
 
 ## 4. What stays exactly the same
 
-- **No money moves.** No Noema credential can create, reverse or alter a payment. The fixture key that creates test payouts belongs to the benchmark owner and never reaches the runtime (BD-08).
+- **No money moves.** No Noema runtime credential can create, reverse or alter a payment (BD-08). The one exception is the test-mode fixture key (D6): it can create test payouts, only to build scenario histories; it is held by the benchmark owner, used only by the fixture loader on the benchmark network, and never reaches the runtime. No Noema credential of any kind can reverse or alter a payment.
 - **The oracle stays out of the runtime's reach** (INV-22).
 - **The benchmark owner keeps the held-out set** (OD-16).
 - **Every fault remains reproducible from a scenario and a seed.**
