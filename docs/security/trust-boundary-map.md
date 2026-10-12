@@ -71,3 +71,23 @@ All content below is copied verbatim from [`../poc/perd/NOEMA_POC_PERD_v1.1.md`]
 | `admin` (control plane) | Policy publish; pack load; kill switch; key rotation | Admin APIs | The data plane except through admin APIs |
 
 **[REC] Identity granularity in the POC.** Postgres roles are split per power as shown. At the network and certificate level, core runs as one service identity, because it is one deployable. Per-power OS-level identities would mean splitting processes, which the SoT does not require for the POC. See SOT-C-16.
+
+## Hosted Tushe sandbox and credentials (DEC-2026-10-12)
+
+Added 12 Oct 2026 from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-environment-scope.md) (D1, D2, D6) and PERD v1.2 §34.2. The sections above are copied from PERD v1.1 and are unchanged.
+
+**Additional boundary.**
+
+| Boundary | Control | REQ |
+|---|---|---|
+| Noema ↔ hosted Tushe sandbox (internet, egress allowlist, read-only key) | The runtime API key reads only, in test mode; core egress is allowlisted to the Tushe API host; Tushe `/partner/...` routes refuse runtime identities | REQ-ENV-002 |
+
+**Credentials (DEC-2026-10-12, D6).**
+
+| Credential | Scope | Held by | Network |
+|---|---|---|---|
+| Runtime API key | Tushe **reads only**, test mode | Core service | Egress allowlisted to the Tushe API host only |
+| Fixture key | Test-mode payout creation, to build transaction histories for scenarios | Benchmark owner; fixture loader only | Benchmark network only |
+| Administrator credential | Read-only partner-administrator surface | Benchmark owner; benchmark runner only | Benchmark network only |
+| `mock-case` write | Non-monetary case operations | Core service, through its adapter | Internal |
+| `mock-case` truth | Read of the case service's true state | Benchmark runner only | Benchmark network only |

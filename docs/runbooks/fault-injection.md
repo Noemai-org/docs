@@ -33,3 +33,5 @@ TODO(owner): name the owner (PERD §61.2, "Who does what first").
 ## Source
 
 PERD §37 (Fault injection). PERD: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md).
+
+Added 12 Oct 2026 (PERD v1.2; DEC-2026-10-12, D4): the three fault sources (Tushe test values and replay, the Noema hostility proxy, `mock-case`) and the FaultPlan `source` field (`TUSHE | PROXY | MOCK_CASE`) (REQ-ENV-004, REQ-ENV-005, REQ-ENV-008).

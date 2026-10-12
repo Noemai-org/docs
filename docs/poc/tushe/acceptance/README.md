@@ -5,8 +5,22 @@ This folder holds the Phase A acceptance evidence for the Tushe synthetic enviro
 ## Where each test is defined
 
 - **AT-01 to AT-20** are defined only in the issued, frozen Tushe specification, [`../Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md`](../Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md), §22. The text below is imported verbatim from it. The titles in PERD §34.5 are only a working summary; where they differ, the specification's wording is the test.
-- **TEN-01 to TEN-08** are defined in [PERD](../../perd/NOEMA_POC_PERD_v1.1.md) §34.5 [REC]. They are Noema's own checks and are not sent to Tushe.
-- **AT-25** (simulated time reported consistently) is proposed, not issued, in [`../tushe-spec-delta-v1.1.md`](../tushe-spec-delta-v1.1.md). AT-21 to AT-25 become tests only when a new specification version is issued.
+- **TEN-01 to TEN-08** are defined in [PERD](../../perd/NOEMA_POC_PERD_v1.2.md) §34.5 [REC]. They are Noema's own checks and are not sent to Tushe.
+- **AT-25** (simulated time reported consistently), proposed in [`../tushe-spec-delta-v1.1.md`](../tushe-spec-delta-v1.1.md), is **withdrawn** (12 Oct 2026): Tushe will not run a global clock (DEC-2026-10-12, D3).
+
+## The pass rule (REQ-ENV-007)
+
+Each of AT-01 to AT-20 passes as written, passes under an amended condition signed by both sides, or is covered by an agreed exception naming owner, method and date, recorded in this folder (PERD v1.2 REQ-ENV-007; SoT §36, §40.1). An exception stays an exception in the record; it is never counted as a pass.
+
+Noema-covered exceptions are shown on **Fri 16 Oct 2026**, and their evidence is added to this folder the same day.
+
+## Files in this folder
+
+| File | What it is |
+|---|---|
+| [`G0-worksheet-2026-10-12-DRAFT.pdf`](G0-worksheet-2026-10-12-DRAFT.pdf) | The acceptance worksheet, **draft for agreement on Tue 13 Oct**. Not signed; not yet sent |
+| `G0-worksheet-2026-10-13-SIGNED.md` and `G0-worksheet-2026-10-13-SIGNED.pdf` | The worksheet signed by both sides on Tue 13 Oct, in Markdown and PDF. Committed as separate files after the call (plan task ENV-12); the draft is never overwritten. Do not exist yet |
+| `AT-TEN-report-2026-10-15.md` | The record of the joint session on Thu 15 Oct (plan task ENV-07). Does not exist yet |
 
 ## AT-01 to AT-20 (verbatim)
 

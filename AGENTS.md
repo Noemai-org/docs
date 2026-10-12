@@ -475,6 +475,7 @@ Entries:
 | Templates: task card, conflict block | [`docs/poc/perd/templates/`](docs/poc/perd/templates/task-card.md) |
 | Tushe specification (frozen) and delta | [`docs/poc/tushe/`](docs/poc/tushe/README.md) |
 | Tushe acceptance (AT, TEN) | [`docs/poc/tushe/acceptance/`](docs/poc/tushe/acceptance/README.md) |
+| Tushe correspondence | [`docs/poc/tushe/responses/`](docs/poc/tushe/responses/README.md) |
 | Security | [`docs/security/`](docs/security/README.md) |
 | Runbooks | [`docs/runbooks/`](docs/runbooks/README.md) |
 | Daily notes | [`docs/poc/execution/daily/`](docs/poc/execution/daily/README.md) |

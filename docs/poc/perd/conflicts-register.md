@@ -2,7 +2,7 @@
 
 > **Status changes only through a decision record.** A status here moves only when a record in [`docs/decisions/`](../../decisions/README.md) decides it, in the same pull request (AGENT-29). Where the resolution needs a SoT edit, that edit lands in the same pull request too.
 
-Source: [`NOEMA_POC_PERD_v1.1.md`](NOEMA_POC_PERD_v1.1.md) §72, lines 5883–5911. The first five columns are copied verbatim; only the `Status` column is added. "SoT §" references are to the [Source of Truth](../../NOEMA_SOURCE_OF_TRUTH.md); bare "§" references are to the PERD. The SoT v1.3 wins every conflict (PERD P.1, §72 rule).
+Source: [`NOEMA_POC_PERD_v1.1.md`](NOEMA_POC_PERD_v1.1.md) §72, lines 5883–5911. SOT-C-30 is copied from [`NOEMA_POC_PERD_v1.2.md`](NOEMA_POC_PERD_v1.2.md) §72. The first five columns are copied verbatim; only the `Status` column is added. "SoT §" references are to the [Source of Truth](../../NOEMA_SOURCE_OF_TRUTH.md); bare "§" references are to the PERD. The SoT v1.3 wins every conflict (PERD P.1, §72 rule).
 
 Status values:
 
@@ -40,6 +40,7 @@ Status values:
 | SOT-C-27 | Earlier POC PDFs (three drafts, Sept 2026) | TypeScript, Django, Celery or Redis stacks; a monolith; capability names (CREATE_COMPLAINT_CASE, UPDATE_CASE_METADATA, VERIFY_*); "absent from the registry"; R1/R2 risk-label collision; 0.15 margin; admission-time policy keying; P0–P4 severities; US-ID collisions; a single baseline; Phase A inside four weeks; en and pcm only; 30% intervention target; ESCALATE authorising writes; Redis-held keys | Superseded drafts could mislead agents | **The SoT wins on every item.** Only their additive mechanics are used here, renamed into SoT vocabulary and marked [REC]. The PDFs must not be given to coding agents as specifications | Resolved by SoT |
 | SOT-C-28 | "No technical debt" | The brief asks for no technical debt; the SoT asks for simple, brutally correct systems and no architecture theatre [SoT §45.1, §55] | Read literally it either stalls delivery or encourages hiding compromises | No unbounded or undocumented debt: every shortcut is registered with an owner, risk and removal condition, and none may touch a Tier 0 gate (REQ-OPS-004) | Open |
 | SOT-C-29 | "Insanely easy, without back-and-forth" integration | The brief's integration ambition vs SoT §39 (the partner builds one listener) and the stop condition when integration cost overwhelms value | Overclaiming ease would damage trust with the first buyer | Keep the partner's side to the three items in §39.5, measure integration effort in every pilot, and never claim "zero integration" | Open |
+| SOT-C-30 | Tushe scope | SoT §36 (v1.3) assumed Tushe provides every domain, a global clock and an on-platform oracle. Tushe's response of 7 Oct 2026 provides no case/dispute domain, no environment-wide clock and no on-platform oracle endpoint | Without a resolution G0 cannot be held and G1 has no write target | **Resolved by DEC-2026-10-12 and SoT v1.4:** `mock-case` (D1), the partner-administrator surface for ground truth (D2), per-object time plus Noema's simulated clock (D3) | Resolved by DEC-2026-10-12 and SoT v1.4 |
 
 ## SoT editorial fixes needed
 

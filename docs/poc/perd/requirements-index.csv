@@ -81,9 +81,10 @@ REQ-ENV-001,"Adapters per logical service, behind interfaces",P0,ENV,34. Synthet
 REQ-ENV-002,Oracle isolation,P0,ENV,34. Synthetic enterprise,,REQ-OPS-001
 REQ-ENV-003,One clock,P0,ENV,34. Synthetic enterprise,INV-21,
 REQ-ENV-004,Deterministic fault plans,P0,ENV,34. Synthetic enterprise,POC-NFR-08,
-REQ-ENV-005,Hostility proxy contingency,P1,ENV,34. Synthetic enterprise,,
+REQ-ENV-005,Hostility proxy contingency,P0,ENV,34. Synthetic enterprise,,
 REQ-ENV-006,Synthetic labelling,P0,ENV,34. Synthetic enterprise,AGENT-25,
 REQ-ENV-007,Phase A acceptance before integration,P0,ENV,34. Synthetic enterprise,,REQ-ENV-001;REQ-ENV-002;REQ-ENV-004
+REQ-ENV-008,Synthetic case service (mock-case),P0,ENV,34. Synthetic enterprise,US-05;US-06;US-19,REQ-ENV-004;REQ-ENV-002;REQ-NFR-006
 REQ-VOI-001,Voice compiles to the same canonical input,P0,VOI,35. Voice and input workstream,POC-FR-01;BD-14,REQ-INP-001
 REQ-VOI-002,Provider-neutral streaming speech,P0,VOI,35. Voice and input workstream,OD-04;BD-16,
 REQ-VOI-003,Confidence propagation,P0,VOI,35. Voice and input workstream,,
