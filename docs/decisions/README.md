@@ -14,6 +14,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-09-deployment-temporal-providers](DEC-2026-10-09-deployment-temporal-providers.md) | Two deployables, Temporal, multi-provider Understanding and speech |
 | [DEC-2026-10-11-poc-perd-v1.1](DEC-2026-10-11-poc-perd-v1.1.md) | Adopt the POC PERD v1.1 as the POC engineering specification (Proposed) |
 | [DEC-2026-10-11-poc-4week-plan](DEC-2026-10-11-poc-4week-plan.md) | Adopt the four-week POC execution plan; Phase A in parallel with week 1 (Proposed) |
+| [DEC-2026-10-12-tushe-environment-scope](DEC-2026-10-12-tushe-environment-scope.md) | How the POC uses Tushe: `mock-case`, ground truth, time, faults, credentials and the G0 gate; amends SoT §36 (SoT v1.4) (Proposed) |
 
 ## Where decisions already live
 

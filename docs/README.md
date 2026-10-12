@@ -2,7 +2,7 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.3, 9 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.4, 12 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
