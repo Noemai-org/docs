@@ -70,7 +70,7 @@ These come from SoT §34.5 and §35.1. Each has a reason in the SoT.
    - contracts and schemas first;
    - fixtures.
 
-   Exits when AT-01 to AT-20 pass, `/contracts` v1 is frozen, and at least 50 adversarial fixtures run reproducibly.
+   Exits when AT-01 to AT-20 pass, pass under an amended condition, or are covered by an agreed exception (REQ-ENV-007), `/contracts` v1 is frozen, and at least 50 adversarial fixtures run reproducibly.
 2. **First vertical slice, on text, no faults:** Text → Input Gateway → Intent Object → Entity Resolution → evidence reads → State Reconciliation → Trust decision → Planner → Execution → Outcome verdict → Explanation → Record.
 3. **Then, in this order:**
    - timeout after write → `OUTCOME_UNKNOWN` → independent verification by idempotency key;

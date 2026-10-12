@@ -2,7 +2,7 @@
 
 This repository is Noema's documentation and organisational memory.
 
-**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.3, 9 October 2026). It defines:
+**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.4, 12 October 2026). It defines:
 
 - what Noema is and is not;
 - what we are building first, and why;
@@ -27,8 +27,8 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
-| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.1. Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
-| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.1 (12 Oct to 6 Nov 2026) and its task index. Status: Proposed, pending [DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md). Ranks below the SoT and the PERD. |
+| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.2 (applies [DEC-2026-10-12](docs/decisions/DEC-2026-10-12-tushe-environment-scope.md)). Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
+| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.2 (12 Oct to 6 Nov 2026) and its task index. Status: Proposed, pending [DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md). Ranks below the SoT and the PERD. |
 | `docs/security/`, `docs/runbooks/` | Threat model, trust-boundary and threat-to-test maps (from the PERD, Proposed); runbook scaffolds (no steps yet) |
 | `docs/archive/` | **Non-authoritative** historical material |
 | `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), the PERD and plan index checks (`tools/perd_index.py`, `tools/plan_index.py`), frozen-file hashes, CI workflow, PR template and code owners |

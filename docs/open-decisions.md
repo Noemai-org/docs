@@ -249,7 +249,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-16"></a>
 ### OD-P-16: Does the Tushe case API support idempotency keys, query-by-key and version tokens? (OQ-03)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: Phase A
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md) §8 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-12 §8):** Yes, because the case API is now ours (D1). The case capabilities keep the PERD §25.1 retry-safety class QUERYABLE_BY_KEY and concurrency CONDITIONAL_WRITE.
 - **Question:** Does the Tushe case API support idempotency keys, query-by-key and version tokens?
 - **Why it matters:** Retry safety; conditional writes
 - **Minimum safe default (meanwhile):** Resolve in Phase A. Until proven, register the case capabilities with retry safety NONE (one dispatch at most, escalate on uncertainty) and concurrency NONE where INV-27 allows
@@ -334,7 +335,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-23"></a>
 ### OD-P-23: CI access to Tushe (live or recorded) (OQ-10)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: P2
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md) §8 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-12 §8):** Pull requests use recorded Tushe responses replayed through the proxy; the nightly and release runs use live Tushe in test mode.
 - **Question:** CI access to Tushe (live or recorded)
 - **Why it matters:** Merge gates
 - **Minimum safe default (meanwhile):** Recorded Tushe responses for merges; live for nightly runs

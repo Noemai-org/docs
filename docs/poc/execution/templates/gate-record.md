@@ -18,22 +18,22 @@ Copied from plan §3.1 ("Must be true", "Evidence shown", "Decides" and "If it f
 
 ### G0 Phase A exit
 
-<!-- Plan §3.1, row G0. Scheduled: Thu 15 Oct 17:00 WAT (calendar.md). -->
+<!-- Plan v1.2 §3.1, row G0 (DEC-2026-10-12). Scheduled: Thu 15 Oct 17:00 WAT (calendar.md). -->
 
 - Deciders: Engineering lead, integration lead, benchmark owner, Tushe lead
 - Evidence to show: Signed AT/TEN report; contracts tag; fixture run log twice with identical output
 
 Must be true (all of it):
 
-- [ ] Tushe AT-01 to AT-20 pass in a joint session
-- [ ] TEN-01 to TEN-08 pass
-- [ ] Tushe OpenAPI and event schemas frozen at v1
-- [ ] `/contracts` v1 tagged
-- [ ] ≥ 50 adversarial fixtures run reproducibly
-- [ ] OQ-03 answered
-- [ ] Network isolation tests pass
+Run against the signed worksheet in `docs/poc/tushe/acceptance/`; record each AT as Pass, Pass amended, Noema covers or Tushe by date.
 
-If it fails (quoted): "Phase B work continues on adapters and core logic, but **no G1 attempt** until G0 passes. Hostility proxy covers missing faults (REQ-ENV-005)"
+- [ ] Each of AT-01 to AT-20 passes, passes under the amended conditions in the signed worksheet, or is covered by an agreed exception with owner and date (REQ-ENV-007)
+- [ ] TEN-01 to TEN-08 pass
+- [ ] `/contracts` v1 tagged
+- [ ] ≥ 50 fixtures reproducible
+- [ ] Isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and the `mock-case` truth endpoint
+
+If it fails (quoted): "Phase B work continues on adapters and core logic, but **no G1 attempt** until G0 passes. Hostility proxy covers missing faults (REQ-ENV-005). Noema-covered exceptions not shown by Fri 16 Oct block G1"
 
 ### G1 Unknown-outcome slice
 

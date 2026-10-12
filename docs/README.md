@@ -2,7 +2,7 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.3, 9 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.4, 12 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
@@ -60,8 +60,10 @@ docs/
       source/                  original v1.0 export, unchanged
       tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
       acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
-    perd/                      POC PERD v1.1 (Proposed; ranks below the SoT), generated REQ index, conflicts, templates
-    execution/                 four-week plan v1.1 (Proposed), generated tasks.csv, calendar, templates, daily/gate/release records
+      responses/               Tushe correspondence: received and sent records, with checksums
+    perd/                      POC PERD v1.2 (current, Proposed; ranks below the SoT; v1.1 kept unchanged), generated REQ index, conflicts, templates
+    execution/                 four-week plan v1.2 (current, Proposed; v1.1 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
+      task-cards/              task cards for the tasks added by plan v1.2 (GOV-19, ENV-08 to ENV-12)
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
   runbooks/                    runbook scaffolds (headings and TODOs only)
   decisions/

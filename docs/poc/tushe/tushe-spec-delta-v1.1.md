@@ -1,5 +1,7 @@
 # Requested changes to the Noema × Tushe specification (v1.0 → v1.1)
 
+> **12 Oct 2026:** the proposed AT-25 (simulated-time reporting) is withdrawn; Tushe will not run a global clock (DEC-2026-10-12, D3).
+
 > **Status: draft, not yet sent to Tushe.** This delta is shared with the Tushe team only after the founder approves it. Once agreed and re-issued, it becomes specification v1.1; the issued v1.0 ([`Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md`](Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md)) stays unchanged.
 
 These are the changes we would like to make to the *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0*. Requirement and test IDs refer to v1.0. IDs marked "proposed" are new and are confirmed only when v1.1 is issued.
