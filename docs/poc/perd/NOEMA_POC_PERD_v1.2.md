@@ -10,7 +10,7 @@ Version 1.2 · 12 October 2026 · Status: proposed for founder approval · Gover
 
 ## How to use this document
 
-This PERD turns the Noema Single Source of Truth (SoT) v1.3 into something engineers and AI coding agents can build from without guessing. It specifies every component, contract, state, failure path, test, benchmark and gate the POC needs. It adds nothing to the product's ambition and takes nothing away from it.
+This PERD turns the Noema Single Source of Truth (SoT) v1.4 into something engineers and AI coding agents can build from without guessing. It specifies every component, contract, state, failure path, test, benchmark and gate the POC needs. It adds nothing to the product's ambition and takes nothing away from it.
 
 **Version 1.2** applies DEC-2026-10-12-tushe-environment-scope (how the POC uses Tushe), which amends SoT §36 in SoT v1.4. The changes are listed under "Changes in v1.2" at the end of this front matter.
 
@@ -18,7 +18,7 @@ This PERD turns the Noema Single Source of Truth (SoT) v1.3 into something engin
 
 The SoT (§0.4) sets the order of authority, and this PERD does not change it.
 
-1. **The SoT v1.3 wins every conflict with this PERD.** Wherever this PERD restates the SoT, the SoT text governs. Wherever the two seem to disagree, follow the SoT and raise the conflict (AGENT-26, AGENT-27). Every disagreement found while writing this PERD is listed in §72, never resolved silently.
+1. **The SoT v1.4 wins every conflict with this PERD.** Wherever this PERD restates the SoT, the SoT text governs. Wherever the two seem to disagree, follow the SoT and raise the conflict (AGENT-26, AGENT-27). Every disagreement found while writing this PERD is listed in §72, never resolved silently.
 2. **This PERD is the detailed engineering specification for the POC** (SoT §0.4, item 4) once it is committed to the docs repository with a decision record. Until then it is a proposal.
 3. **Items tagged [REC] are proposed defaults.** They fill gaps the SoT leaves open, using AGENT-02: the missing decision is named, the smallest safe default proposed, and the evidence that would overturn it stated. Each [REC] becomes binding only when adopted through the open-decisions process. §67 lists them, and §72 gives the adoption record to write.
 4. Nothing here authorises scope beyond SoT Part VII. If a requirement here seems to ask for full-platform work, it is a drafting error. Implement the narrower reading and raise it (AGENT-03, AGENT-20).
@@ -27,7 +27,7 @@ The SoT (§0.4) sets the order of authority, and this PERD does not change it.
 
 | Label | Meaning |
 |---|---|
-| **[SoT §x]** | Source-of-truth fact. Taken from SoT v1.3, with the section, ID or invariant cited. Binding. |
+| **[SoT §x]** | Source-of-truth fact. Taken from SoT v1.4, with the section, ID or invariant cited. Binding. |
 | **[INF]** | Inference. A direct reading of what the SoT implies, where the SoT does not say it in so many words. Binding only through the SoT text it reads. |
 | **[REC]** | Recommendation. A default this PERD proposes, filling a gap. Not binding until adopted (§67). It never loosens a SoT rule. |
 | **[ASM]** | Assumption. Something we are taking as true without having verified it. Each has an owner and a check in §67. |
@@ -131,7 +131,7 @@ It moves no money. Money-moving and loop-closing capabilities are registered as 
 - typed contracts for every object the SoT names (§38–39);
 - an edge-case catalogue with an expected outcome per case (§12);
 - a threat model with a test per threat (§42);
-- an index of 152 requirements, each traced to the SoT (§43);
+- an index of 153 requirements, each traced to the SoT (§43);
 - a build plan inside the SoT's four-week time box (§61);
 - a list of every conflict found in the sources, with a minimum resolution for each (§72).
 
@@ -2995,7 +2995,7 @@ Each observation is linked to the benchmark case ID it produced, through AGENT-2
 
 ### 34.1 Substrate [SoT §36, BD-07]
 
-Tushe is the substrate, specified by *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0* plus the delta `docs/poc/tushe/tushe-spec-delta-v1.1.md` (simulated-time reporting, proposed AT-25). It has **ten independently observable logical domains**:
+Tushe is the substrate, specified by *Noema × Tushe Synthetic Enterprise Environment: Technical Requirements & Acceptance Specification v1.0* plus the delta `docs/poc/tushe/tushe-spec-delta-v1.1.md` (simulated-time reporting, AT-25 (withdrawn, DEC-2026-10-12)). It has **ten independently observable logical domains**:
 
 1. customer/identity
 2. accounts/ledger
@@ -3030,7 +3030,7 @@ For the POC, Tushe hosts every domain except case/dispute. Noema provides the ca
 |---|---|---|---|
 | Ledger, switch, destination, settlement, beneficiary, customer reads | Read, principal-scoped | Read | **None** (only via the core Evidence API) |
 | Case and complaint create, route, append evidence (non-monetary) | **None on Tushe.** These go to `mock-case` (REQ-ENV-008) through the core's case adapter; the runtime's Tushe credential is reads only | — | None |
-| Case close, priority downgrade, clock change, evidence edit or delete | **Denied by Tushe** | Fault controller only | None |
+| Case close, priority downgrade, clock change, evidence edit or delete | Not offered by `mock-case`, and no Noema adapter exists. The runtime's Tushe key is read-only. | Fault controller only (Tushe) | None |
 | Any monetary operation | **Denied by Tushe**, and no Noema adapter exists | Fault controller only | None |
 | Ground-truth oracle | **Unreachable** (network and credential) | Read | None |
 | Clock control, reset, snapshot, replay, fault plans | None | Yes | None |
@@ -3062,7 +3062,7 @@ For the POC, Tushe hosts every domain except case/dispute. Noema provides the ca
 
 #### REQ-ENV-002 · Oracle isolation · P0
 
-- **Requirement:** The oracle is reachable only by the benchmark runner's credential, on a network segment the core and model services cannot route to. Any oracle access from a runtime identity is an S0 event. For Tushe-held state, ground truth is read through Tushe's partner-administrator surface with a programmatic, read-only credential held only by the benchmark owner and used only by the benchmark runner; for `mock-case`, through its truth endpoint on `bench_net`.
+- **Requirement:** The oracle is reachable only by the benchmark runner's credential. Isolation is by network for Noema-hosted components and by credential for the hosted Tushe sandbox. Any oracle access from a runtime identity is an S0 event. For Tushe-held state, ground truth is read through Tushe's partner-administrator surface with a programmatic, read-only credential held only by the benchmark owner and used only by the benchmark runner; for `mock-case`, through its truth endpoint on `bench_net`.
 - **Rationale:** SoT §38 gate "runtime access to the ground-truth oracle: 0".
 - **Inputs:** —
 - **Expected behaviour:** —
@@ -3070,7 +3070,7 @@ For the POC, Tushe hosts every domain except case/dispute. Noema provides the ca
 - **Security:** Compose network isolation plus credential separation. `noema_oracle_access_total` is fed by Tushe's access log, which is ingested by the harness.
 - **Audit:** —
 - **Acceptance criteria:**
-  - A negative test from each runtime container SHALL fail to connect.
+  - Network connections from the core or model service to the `mock-case` truth endpoint, the proxy control API or the benchmark runner SHALL fail.
   - Tushe's oracle access log SHALL show only the benchmark identity.
   - A call by any runtime identity to a Tushe `/partner/...` route or to the `mock-case` truth endpoint SHALL be refused.
 - **Tests:** Network tests in CI.
@@ -3090,7 +3090,7 @@ For the POC, Tushe hosts every domain except case/dispute. Noema provides the ca
   - Replay determinism SHALL be 100%.
   - Every benchmark case whose outcome depends on a time boundary SHALL run on the simulated clock against recorded responses.
 - **Tests:** Lint; replay.
-- **Dependencies:** Tushe delta AT-25 (simulated-time reporting).
+- **Dependencies:** —
 
 #### REQ-ENV-004 · Deterministic fault plans · P0
 
@@ -3151,7 +3151,7 @@ Exact routes follow Tushe's own interface. The **semantics** below are mandatory
 | Complaints (served by `mock-case`, REQ-ENV-008) | Create reference; read back | Same idempotency and readback rules as cases |
 | Evidence (served by `mock-case`, REQ-ENV-008) | Append attachment; read back | Append-only, with a payload hash |
 | Policy | Read version | Immutable versions with effective times (the synthetic policy store; Noema's own policy data lives in the pack) |
-| Control plane (benchmark only) | Scenario setup, fault injection, clock, reset, snapshot, replay, oracle export | Separate credentials and network; never reachable by the runtime |
+| Control plane (benchmark only) | Scenario setup, fault injection, clock, reset, snapshot, replay, oracle export | Tushe: scenario apply, reset and seed, test-value faults, `simulate/advance`. Noema: proxy and `mock-case` fault plans. Ground truth through Tushe's administrator surface and the `mock-case` truth endpoint. No snapshot or restore. Benchmark credentials and network only; never reachable by the runtime. |
 
 **Mapping of PERD source families to Tushe objects (DEC-2026-10-12, section 7).**
 
@@ -3238,7 +3238,7 @@ The *Noema × Tushe Synthetic Enterprise Environment* specification v1.0 defines
 
 #### REQ-ENV-008 · Synthetic case service (mock-case) · P0
 
-- **Requirement:** Noema provides the POC's case domain as a synthetic service implementing exactly the case, complaint and evidence rows of §34.4: create with idempotency key (same key and payload returns the original case; same key with a different payload is a deterministic conflict), find by idempotency key, a version token on every read, route with expected version (mismatch returns a distinct error and applies nothing), append-only evidence with payload hash, and a complaint reference with the same idempotency rules. No dispute lifecycle.
+- **Requirement:** Noema provides the POC's case domain as a synthetic service implementing exactly the case, complaint and evidence rows of §34.4: create with idempotency key (same key and payload returns the original case; same key with a different payload is a deterministic conflict), find by idempotency key, a version token on every read, route with expected version (mismatch returns a distinct error and applies nothing), append-only evidence with payload hash, and a complaint reference with the same idempotency rules. No dispute lifecycle. It offers no operation to close or resolve a case, downgrade priority, change an SLA or clock, or edit or delete evidence.
 - **Rationale:** Tushe does not provide a case domain (Tushe response, 7 Oct 2026); every POC write targets a case system (§25.1). DEC-2026-10-12, D1.
 - **Inputs:** Case commands from the core's case adapter; fault plans from the benchmark runner.
 - **Expected behaviour:** Behaves as the documented contract on every call unless a fault plan applies.
@@ -3250,6 +3250,7 @@ The *Noema × Tushe Synthetic Enterprise Environment* specification v1.0 defines
   - Commit-then-drop SHALL be reproducible from a fault plan and seed.
   - Its truth endpoint SHALL refuse every runtime identity.
   - It SHALL be built and maintained by someone who does not build services/core, and its fault plans SHALL be owned by the benchmark owner.
+  - Those operations SHALL have no route and SHALL be absent from its API description.
 - **Tests:** Contract tests; US-05, US-06, US-19; EC-E01, EC-E02, EC-E05, EC-E06, EC-E11, EC-E12, EC-E13, EC-E14, EC-K01.
 - **Dependencies:** REQ-ENV-004, REQ-ENV-002, REQ-NFR-006.
 
@@ -5415,7 +5416,7 @@ The POC is accepted when every statement below is true for the release run. Ever
 | **E. Voice** (parallel from Phase A) | Speech providers, streaming pipeline, TTS, field gate | No. It slips first [SoT §40.1] | Product/ML engineer |
 | **U. UI** | Overlay, cards, panels | After contracts stabilise | Full-stack engineer (part-time) |
 | **BM. Benchmark** | Case generator, held-out set, runner, oracle client, scoring, arms, reports | Yes, for the gates | Benchmark owner (separate from the builders; OD-16) |
-| **ENV. Tushe** | Environment delivery to spec; AT-01..AT-20 (+ AT-25 proposed) | Yes (Phase A) | Tushe team plus a Noema integration lead |
+| **ENV. Tushe** | Environment delivery to spec; AT-01..AT-20 | Yes (Phase A) | Tushe team plus a Noema integration lead |
 
 **[ASM] Staffing.** At least two strong engineers plus founder and product support, plus a benchmark owner. A single engineer cannot responsibly deliver this depth in four weeks without cutting the comparison arms or voice. If staffing is lower, the SoT rule applies: the gates win and the date moves [SoT §40.2].
 
@@ -5727,8 +5728,8 @@ These risks are specific to delivering this POC. SoT §53 holds the company-leve
 | R-18 | Provider data terms block partner data | M | H | Confirm each provider's retention terms and mask data before partner data flows (OD-04, OD-05) | Due-diligence checklist | Restrict partner traffic to providers that pass |
 | R-19 | Model variance hides regressions | M | M | Three runs per provider; report spread; deterministic core unaffected | Variance report | Pin model versions for release runs |
 | R-20 | Partner integration effort larger than expected | M | H | Small integration contract (§39.5); Noema builds adapters | Integration hours measured | Narrow to fewer sources; shadow mode first |
-| R-21 | We grade a system we partly built (`mock-case`, the proxy) | TODO(owner) | TODO(owner) | The builders are not core engineers; the benchmark owner owns the fault plans and the truth endpoints; contract tests run in CI; every fault plan records its source (DEC-2026-10-12, section 6) | TODO(owner) | TODO(owner) |
-| R-22 | Tushe changes behaviour mid-build (v1.32 to v1.34 shipped recently) | TODO(owner) | TODO(owner) | Ask for no behaviour change between 13 October and 6 November without 48 hours' notice, and the sandbox version on every response. Record the version in every run manifest (DEC-2026-10-12, section 6) | TODO(owner) | TODO(owner) |
+| R-21 | We grade a system we partly built (`mock-case`, the proxy) | M | H | The builders are not core engineers; the benchmark owner owns the fault plans and the truth endpoints; contract tests run in CI; every fault plan records its source (DEC-2026-10-12, section 6) | CODEOWNERS blocks core-engineer changes to `synthetic/mock_case/` and `benchmark/hostility_proxy/`; the benchmark owner reviews every fault plan | Revert the change; re-run the affected cases; record it in the debt register |
+| R-22 | Tushe changes behaviour mid-build (v1.32 to v1.34 shipped recently) | M | H | Ask for no behaviour change between 13 October and 6 November without 48 hours' notice, and the sandbox version on every response. Record the version in every run manifest (DEC-2026-10-12, section 6) | A nightly failure with an unchanged commit; the sandbox version on responses changes | Recorded-response mode for that run; incident logged in `docs/poc/tushe/responses/`; raised with Tushe the same day |
 
 ## 67. Open decisions and open questions
 
@@ -5957,7 +5958,7 @@ The SoT's doctrine governs [SoT §45.1, §55, §56]. The working rules:
 
 ## 72. Source-of-truth conflicts and resolution recommendations
 
-**Rule:** the SoT v1.3 wins. Each conflict below is surfaced, not resolved silently. "Minimum resolution" is the smallest change that removes the ambiguity. Where it needs a SoT edit, the edit lands with a decision record and the regenerated register in one PR (AGENT-29).
+**Rule:** the SoT v1.4 wins. Each conflict below is surfaced, not resolved silently. "Minimum resolution" is the smallest change that removes the ambiguity. Where it needs a SoT edit, the edit lands with a decision record and the regenerated register in one PR (AGENT-29).
 
 | ID | Conflict | Competing statements | Why it matters | Minimum resolution |
 |---|---|---|---|---|

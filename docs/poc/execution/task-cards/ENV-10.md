@@ -7,7 +7,7 @@ TASK-P2-010  ENV-10 · Event-feed poller on Tushe `GET /v1/events` by sequence c
 Priority: P0
 Requirement IDs: REQ-API-008, REQ-ENV-001; SoT IDs: POC-NFR-05, AGENT-24; SoT §35.5
 Rationale: Tushe treats the feed as the source of truth and webhooks as pointers; Tushe will not deliver to private addresses; polling makes event faults deterministic on Noema's own read path. DEC-2026-10-12, D5.
-Modules touched (allowlist): services/core/adapters/synthetic_tushe/ (event-feed client); TODO(EL): name the module for the poller loop and the inbox write (PERD §64.2 names no poller module)   ← nothing else may change
+Modules touched (allowlist) [REC, pending engineering-lead approval]: services/core/adapters/synthetic_tushe/events/ (the poller); its tests; the inbox migration, only if PLT-06 has not created the inbox table   ← nothing else may change
 Contracts: inbound event (PERD §39.6); bump required? N
 Inputs/outputs: Tushe `GET /v1/events` pages by sequence cursor → inbox rows; persisted cursor
 Acceptance criteria:

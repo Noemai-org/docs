@@ -991,6 +991,7 @@ The requests below are those in the acceptance worksheet (`docs/poc/tushe/accept
 | R5 | No behaviour change on the sandbox between 13 October and 6 November without 48 hours' notice, and the sandbox version returned on every response | From Tue 13 Oct |
 | R6 | Written confirmation that the status-query endpoint can never move money, reverse a debit or change balances | Tue 13 Oct |
 | R7 | Rate limits and quotas for test mode, and the region the sandbox runs in | Tue 13 Oct |
+| R8 | Answers to the worksheet questions (section 6) | Tue 13 Oct |
 
 **Defects.** Every discrepancy is logged with Tushe version, fixture ID and the redacted request and response, and is classed as a Tushe defect or a Noema adapter defect before anyone fixes anything. The retest happens in the next joint session or nightly run, never on verbal assurance.
 

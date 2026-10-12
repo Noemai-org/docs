@@ -19,7 +19,7 @@ Noema-covered exceptions are shown on **Fri 16 Oct 2026**, and their evidence is
 | File | What it is |
 |---|---|
 | [`G0-worksheet-2026-10-12-DRAFT.pdf`](G0-worksheet-2026-10-12-DRAFT.pdf) | The acceptance worksheet, **draft for agreement on Tue 13 Oct**. Not signed; not yet sent |
-| `G0-worksheet-2026-10-13-SIGNED.pdf` | The worksheet signed by both sides on Tue 13 Oct. Committed as a separate file after the call (plan task ENV-12). Does not exist yet |
+| `G0-worksheet-2026-10-13-SIGNED.md` and `G0-worksheet-2026-10-13-SIGNED.pdf` | The worksheet signed by both sides on Tue 13 Oct, in Markdown and PDF. Committed as separate files after the call (plan task ENV-12); the draft is never overwritten. Do not exist yet |
 | `AT-TEN-report-2026-10-15.md` | The record of the joint session on Thu 15 Oct (plan task ENV-07). Does not exist yet |
 
 ## AT-01 to AT-20 (verbatim)
