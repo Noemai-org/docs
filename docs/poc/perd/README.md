@@ -4,7 +4,8 @@
 
 | File | What it is |
 |---|---|
-| [`NOEMA_POC_PERD_v1.2.md`](NOEMA_POC_PERD_v1.2.md) | **Current.** The PERD, v1.2 (12 October 2026): v1.1 with the changes of [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) (how the POC uses Tushe), listed in its "Changes in v1.2". Proposed until that record is accepted. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.3.md`](NOEMA_POC_PERD_v1.3.md) | **Current.** The PERD, v1.3 (13 October 2026): v1.2 with the changes of [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) Amendment 1 (the joint G0 session on Fri 16 Oct, webhooks kept active, OQ-15), listed in its "Changes in v1.3". Proposed until that record is accepted. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.2.md`](NOEMA_POC_PERD_v1.2.md) | The PERD, v1.2 (12 October 2026): v1.1 with the changes of [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) (how the POC uses Tushe), listed in its "Changes in v1.2". Superseded by v1.3; kept unchanged. Do not edit it. |
 | [`NOEMA_POC_PERD_v1.1.md`](NOEMA_POC_PERD_v1.1.md) | The PERD, v1.1, committed byte-for-byte as issued. Superseded by v1.2; kept unchanged. Do not edit it. |
 | [`requirements-index.csv`](requirements-index.csv) | Generated index of every `REQ-` ID. Run `python3 tools/perd_index.py --write`; CI runs `--check`. Never edit by hand. |
 | [`conflicts-register.md`](conflicts-register.md) | PERD §72 conflicts (SOT-C-01 to SOT-C-29) with their status. |
