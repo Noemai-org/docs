@@ -82,6 +82,7 @@ Added 12 Oct 2026 from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-enviro
 |---|---|---|
 | Noema ↔ hosted Tushe sandbox (internet, egress allowlist, read-only key) | The runtime API key reads only, in test mode; core egress is allowlisted to the Tushe API host; Tushe `/partner/...` routes refuse runtime identities | REQ-ENV-002 |
 | Internet (Tushe) → Noema public webhook receiver (DEC-2026-10-12, Amendment 1) | HTTPS only, signature and timestamp verified, proxy in front, writes only to the inbox. Hosting decided by GOV-20 (PERD OQ-15) | REQ-API-008, REQ-SEC-002 |
+| CI (GitHub Actions) | Per-service GitHub Environments; no repository-level secrets (DEC-2026-10-13 R3) | REQ-SEC-005 |
 
 **Credentials (DEC-2026-10-12, D6).**
 

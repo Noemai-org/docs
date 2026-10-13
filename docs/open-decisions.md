@@ -214,7 +214,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-13"></a>
 ### OD-P-13: Which repository hosts each deployable and `/contracts`
 
-- **Status:** [OPEN] · NON-CANONICAL · decide before Phase B
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-13-code-monorepo](decisions/DEC-2026-10-13-code-monorepo.md) R1 and R2 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-13 R1, R2):** All POC code lives in one repository, `noema`. The model service is `services/model/` and the core service is `services/core/`, two separate deployables with separate manifests, build contexts, images, credentials and networks. `/contracts` lives at `contracts/` in `noema`; generated Go and Python types are committed inside each service and checked by CI. `backend` and `intent-engine` are archived. SoT v1.5 §51 no longer carries the [OPEN] mapping note.
 - **Missing decision:** DEC-2026-10-06-architecture-and-contracts names four repositories (`docs`, `brain`, `backend`, `intent-engine`), and DEC-2026-10-09 defines two deployables (the Python model service and the Go core service). No record says which repository hosts which deployable, which one hosts `/contracts`, or what `brain` contains. SoT v1.3 §51 marks this [OPEN].
 - **Why it matters:** `/contracts` must live in exactly one repository, with the others consuming generated packages pinned by version (§51). The CI boundary checks in §51 run per repository.
 - **Proposed default (inference, not a decision):** `intent-engine` hosts the model service; `backend` hosts the core service and `/contracts`. The role of `brain` is unknown.
@@ -262,20 +263,22 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-17"></a>
 ### OD-P-17: Repository mapping (SoT §51 [OPEN]) (OQ-04)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: Before Phase B
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-13-code-monorepo](decisions/DEC-2026-10-13-code-monorepo.md) R1 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-13 R1 to R8):** One code repository, `noema`, with the layout of DEC R1 and PERD §64.2. `docs` keeps governance; `benchmark-heldout` (private) holds the held-out set; `brain` keeps its non-build purpose; `backend` and `intent-engine` are archived after inspection.
 - **Question:** Repository mapping (SoT §51 [OPEN])
 - **Why it matters:** Phase B cannot start cleanly
 - **Minimum safe default (meanwhile):** §64.1 recommendation
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Founders
 - **Deadline:** Before Phase B
-- **Note:** the same decision is already tracked as [OD-P-13](#od-p-13); this entry only mirrors the PERD question and its §64.1 recommendation. Decide both together.
+- **Note:** the same decision was tracked as [OD-P-13](#od-p-13); this entry only mirrors the PERD question and its §64.1 recommendation. Both are closed together.
 - **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-04. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-18"></a>
 ### OD-P-18: Purpose of the `brain` repository (OQ-05)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: Before Phase B
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-13-code-monorepo](decisions/DEC-2026-10-13-code-monorepo.md) R7 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-13 R7):** `brain` holds founder documentation outside the build. It is not part of the build's chain of authority: nothing in it is a specification, a requirement or a decision for the POC unless first moved into `docs` through a decision record. Coding agents do not read or cite it for build work. Nothing about it is archived or changed.
 - **Question:** Purpose of the `brain` repository
 - **Why it matters:** Avoid misplaced code
 - **Minimum safe default (meanwhile):** No POC code there

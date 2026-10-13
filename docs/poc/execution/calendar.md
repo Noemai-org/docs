@@ -1,6 +1,6 @@
 # POC build calendar (WAT)
 
-Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.3.md), Mon 12 Oct to Fri 6 Nov 2026. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2).
+Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.4.md), Mon 12 Oct to Fri 6 Nov 2026. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2).
 
 | Day | Time (WAT) | Event | Plan section |
 |---|---|---|---|

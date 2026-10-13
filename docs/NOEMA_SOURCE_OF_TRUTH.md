@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.4 · 12 October 2026 · Status: canonical
+Version 1.5 · 13 October 2026 · Status: canonical
 
 ---
 
@@ -2544,7 +2544,7 @@ Principal-scoped reads; data minimisation; masking on every surface; short-lived
 
 ## 51. Repository and module boundaries
 
-Noema uses several repositories, not one monorepo: `docs`, `brain`, `backend` and `intent-engine` (DEC-2026-10-06-architecture-and-contracts). The internal structure below is the same whichever repository holds each part. `/contracts` lives in exactly one repository; the others consume generated packages from it, pinned by version. **[OPEN — decide before Phase B]** Which repository hosts the model service, the core service, `/contracts` and the remaining directories is recorded in `docs/decisions/`.
+Noema uses four repositories: `docs` (governing documents), `noema` (all POC code), `benchmark-heldout` (held-out cases and oracles; benchmark owner only) and `brain` (founder documentation outside the build's chain of authority). `backend` and `intent-engine` are archived (DEC-2026-10-13-code-monorepo, superseding the repository list in DEC-2026-10-06-architecture-and-contracts). The internal structure below lives in the `noema` repository. `/contracts` is the single source; generated Go and Python types are committed inside each service and checked by CI. The Go core and the Python model service remain separate deployables with separate manifests, build contexts, images, credentials and networks.
 
 ```
 /contracts              JSON Schemas for every cross-boundary object; generate Pydantic and Go types
@@ -2567,7 +2567,7 @@ Noema uses several repositories, not one monorepo: `docs`, `brain`, `backend` an
 /benchmark              cases, fixtures, fault configs, oracle client, runner, comparison arms, reports
 /tools/lint             core forbidden-terms lint, boundary and dependency checks
 /tools/packcheck        internal pack-validation CLI (wraps CI checks)
-/docs                   the docs repository: this document, open decisions, decision records, runbooks
+/docs (in `noema`): as-built documentation and session files. Governing documents live in the `docs` repository.
 ```
 
 **Boundary rules (checked in CI):**
@@ -2576,7 +2576,9 @@ Noema uses several repositories, not one monorepo: `docs`, `brain`, `backend` an
 - the model service has no database driver configured for the core schemas, and no Temporal client;
 - within the core service, `/trust`, `/execution` and `/outcome` do not import each other's internals and communicate through contracts;
 - packs are loaded as data, never imported as code;
-- `/explanation` output is never imported by decision, grant or verdict code.
+- `/explanation` output is never imported by decision, grant or verdict code;
+- each service's container image is built from that service's folder only;
+- CI secrets are scoped to GitHub Environments per service, never to the repository.
 
 ## 52. Decision framework
 
@@ -2916,6 +2918,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.5 | 13 Oct 2026 | **One code repository for the POC (DEC-2026-10-13-code-monorepo).** Why: with one small team, coding agents and a Go-Python contract that changes often in weeks 1 and 2, two code repositories would make every contract change a package release and two ordered pull requests, and would protect nothing that CI boundary checks, separate credentials and separate networks do not already protect. What changed: §51 only: the opening paragraph (four repositories, `docs`, `noema`, `benchmark-heldout` and `brain`; `backend` and `intent-engine` archived; the [OPEN] mapping note removed), the `/docs` line of the tree, and two added boundary rules (each service's image is built from that service's folder only; CI secrets are scoped to GitHub Environments per service). Binding decisions: none of BD-01 to BD-16 is affected. The repository list in DEC-2026-10-06-architecture-and-contracts is superseded; every other decision in that record stands. The two-deployable split of §35.6 is unchanged. No invariant changes. |
 | 1.4 | 12 Oct 2026 | **How the POC uses Tushe (DEC-2026-10-12-tushe-environment-scope).** Why: Tushe's response of 7 October 2026 (received 8 October) showed that Tushe provides no case or dispute domain, will not host a privileged oracle endpoint, and will not run an environment-wide clock; DEC-2026-10-12 decides how the POC works with that. What changed: §36 domains bullet (Tushe provides every domain except case/dispute; Noema provides `mock-case`; disputes not modelled), ground-truth bullet (Tushe's read-only partner-administrator surface, held by the benchmark owner), time bullet (per-object time in Tushe; Noema's simulated clock elsewhere; no snapshot and restore), the acceptance-test bullet and the Exit of Phase A line (pass, pass under an amended condition, or agreed exception); the case and dispute lifecycles in §36 and §35.5; §34.2 (who can cause modelled monetary changes in the simulation); §34.3 footnote 1 (case capabilities keep `QUERYABLE_BY_KEY` and `CONDITIONAL_WRITE`); §35.6 rule 4 (wall clock against live Tushe, simulated clock in tests and replays); the §40.1 Phase A exit condition and the §41 Phase 0 exit gate; the glossary entry for the synthetic enterprise environment. Binding decisions: the §36 [DECISION] is amended. §35.6 [DECISION] rule 4 changes only its time-source sentence to follow D3; nothing else in §35.6 changes. No other binding decision (BD-01 to BD-16) is affected; BD-07 is unchanged. No invariant changes. |
 | 1.3 | 9 Oct 2026 | **Final architecture and provider decisions; SoT, register and decision records brought into agreement and kept so mechanically.** Two deployables split at the model boundary: a Python model service and a Go core service (§35.6, INV-29, AGENT-05). Temporal adopted as the durable workflow engine, with Postgres as the only authoritative store (§35.3, §35.6, INV-30). No single provider dependence: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech (BD-16, §17, AGENT-28), all benchmarked on every release run (§38.5). OD-04, OD-05, OD-07 and OD-11 closed (DEC-2026-10-09; the two 6 October records amended with migration notes and status). Leftovers fixed: remaining old spelling of Tushe; the Tushe delta moved to `docs/poc/tushe/tushe-spec-delta-v1.1.md` and extended with simulated-time reporting (proposed AT-25); value lists no longer described as examples. Mechanical sync: AGENT-29; the register generated from §46; `tools/check_docs_consistency.py` with the `docs-consistency` CI check; a PR template; code owners and branch-protection settings. |
 | 1.2 | 2 Oct 2026 | Pre-development fixes from external review. Semantics: "exactly once" replaced by no duplicate effect where provable, with retry-safety classes and INV-24 (§13, §43.8); policy changes void outstanding grants and Trust never infers "stricter" (INV-09, INV-26, OD-09 closed); the CONFIRM and approval contract (§43.2a, INV-25); version tokens and conditional writes (INV-27, INV-17); consequence profiles, with closing cases and changing clocks prohibited in the POC and LOG_COMPLAINT_REFERENCE moved to R3 (§34); the pending-outcome watch and outcome.updated callback (§14, §43.4a, INV-28); explanation split into /core/explanation (§51, AGENT-05, INV-22); founder decisions count only once committed, plus docs/decisions/ and AGENT-27 (§0.4); HMAC grants and a hash-chained Record for the POC, with per-power keys before Phase 2 (§43, §47.4); framework decided with language under OD-11, defaulting to FastAPI. Earlier specification: risk-based evidence freshness (INV-23), an internal pack checker, and the partner's name corrected to Tushe. Benchmark: rule-of-three claim scoping (§38.8); a held-out set and versioned generator (OD-16); integration-hostility faults and 20 cases (now at least 320); unknown outcome built first; a tiered scorecard with one primary metric; latency by path; arm B strengthened; US-17 to US-22. Phases and commercial: gate definitions (completed action, failure-family coverage, value bands); voice slips before the core; operational memory minimal; Temporal adopted on evidence; conformance packs capped; $52B internal only; fixed-fee first pilot; one exception subtype; operator-facing stages named. |

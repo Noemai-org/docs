@@ -2,7 +2,7 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.4, 12 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.5, 13 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
@@ -61,8 +61,8 @@ docs/
       tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
       acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
       responses/               Tushe correspondence: received and sent records, with checksums
-    perd/                      POC PERD v1.3 (current, Proposed; ranks below the SoT; v1.1 and v1.2 kept unchanged), generated REQ index, conflicts, templates
-    execution/                 four-week plan v1.3 (current, Proposed; v1.1 and v1.2 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
+    perd/                      POC PERD v1.4 (current, Proposed; ranks below the SoT; v1.1 to v1.3 kept unchanged), generated REQ index, conflicts, templates
+    execution/                 four-week plan v1.4 (current, Proposed; v1.1 to v1.3 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
       task-cards/              task cards for the tasks added by plans v1.2 and v1.3 (GOV-19, GOV-20, ENV-08 to ENV-13)
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
   runbooks/                    runbook scaffolds (headings and TODOs only)
@@ -79,7 +79,16 @@ docs/
   archive/                     NON-AUTHORITATIVE legacy material and the migration report
 ```
 
-This repository is documentation-first. It contains no application code. Noema uses several repositories (SoT §51, [OD-P-01](open-decisions.md#od-p-01)); which one hosts each of the two deployables and `/contracts` is still open ([OD-P-13](open-decisions.md#od-p-13)).
+This repository is documentation-first. It contains no application code ([OD-P-01](open-decisions.md#od-p-01)). Noema uses four repositories (SoT §51; [DEC-2026-10-13](decisions/DEC-2026-10-13-code-monorepo.md)):
+
+| Repository | Job | Change |
+|---|---|---|
+| `docs` | Governing documents: SoT, PERD, plan, decisions, Tushe correspondence | None |
+| **`noema`** (new) | All POC code | Created |
+| **`benchmark-heldout`** (new, private) | Held-out cases and oracles. Benchmark owner only; no agent access | Created, if GOV-03 has not already created it |
+| `brain` | Founder documentation outside the build. Not part of the build's chain of authority | None. Its purpose is now recorded |
+| `backend`, `intent-engine` | Superseded by `noema` | Archived read-only, after any code built under the current architecture is moved into `noema` with its history |
+
 
 ## Changing documentation
 
