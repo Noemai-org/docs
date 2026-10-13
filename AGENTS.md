@@ -1,6 +1,6 @@
 # Instructions for AI agents (and the humans working with them)
 
-This file is the operating contract for every AI coding agent, and every person working with one, on the Noema POC build. It covers this `docs` repository and the code repositories that plan task PLT-01 creates (`backend` and `intent-engine`, subject to the repository-mapping decision, task GOV-02).
+This file is the operating contract for every AI coding agent, and every person working with one, on the Noema POC build. It covers this `docs` repository and the `noema` repository that plan task PLT-01 creates (all POC code; DEC-2026-10-13).
 
 This file adds no product rules. It adds the working practice for applying the [Source of Truth](docs/NOEMA_SOURCE_OF_TRUTH.md), the [PERD](docs/poc/perd/NOEMA_POC_PERD_v1.1.md) and the [four-week plan](docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md). Where a rule below is working practice, it says so. Every other rule points to its source.
 
@@ -45,6 +45,7 @@ The hard part is thinking, not typing. Plan before you edit. Prefer the simplest
 7. **`docs/archive/` is non-authoritative.** Never implement, cite or quote from it. Its vocabulary is superseded. That includes READY / WAITING / BLOCKED trust states, Execution and Action Contracts, a Validation layer, "intent infrastructure" and "Intent OS", card-replacement and account-inquiry wedges, and the archive's Temporal-as-a-requirement framing. The current position is different and is set by the SoT: Temporal is the durable workflow engine (SoT §35.6, PERD §36.1), and it is never authoritative (INV-30).
 8. **Existing code is evidence of what was built, never authority for what should be built.** If code and specification disagree, raise CONFLICT DETECTED.
 9. **This file (and `CLAUDE.md`, which only imports it) does not override the SoT, the PERD or the plan.** If this file and any of them disagree, they win.
+10. **`brain` holds founder documentation outside the build.** It is not a specification; do not use it for build work (DEC-2026-10-13 R7).
 
 **Conflict procedure.**
 
@@ -152,7 +153,7 @@ Excluded: Redis (until a REQ needs it), vector databases, graph databases, Kafka
 
 Before suggesting any library, check this table. If it is not here, it needs approval; do not add it.
 
-Internal layout of the code repositories: PERD §64.2. Networks and Compose profiles: PERD §65.1.
+Internal layout of the `noema` repository: PERD §64.2. Networks and Compose profiles: PERD §65.1.
 
 ## 7. Coding standards
 
@@ -274,7 +275,7 @@ All of this section is **working practice**.
 
 - Write one file per session, in the repository where the work happened:
   - in the `docs` repository: `docs/poc/execution/sessions/YYYY-MM-DD-HHMM-<task-id>.md`;
-  - in a code repository: `docs/sessions/YYYY-MM-DD-HHMM-<task-id>.md`.
+  - in the `noema` repository: `docs/sessions/YYYY-MM-DD-HHMM-<task-id>.md`.
 - Neither folder exists yet. The first session that writes a file creates the folder.
 - Never overwrite another session's file. Parallel agents each write their own.
 - Use this template:
@@ -300,7 +301,7 @@ All of this section is **working practice**.
 
 **The daily note** is written after the 17:00 review in `docs/poc/execution/daily/YYYY-MM-DD.md`, using the plan §15 close-out ([template](docs/poc/execution/templates/daily-note.md)). It links that day's session files.
 
-**As-built documentation in code repositories.**
+**As-built documentation in the `noema` repository.**
 
 - A README in each module (PLT-01 creates them): what the module does, which REQs it implements, and how to run its tests.
 - `docs/architecture.md`: an as-built map of module to REQ to SoT section, plus any deviation, with a link to its decision record.
@@ -380,7 +381,7 @@ The sources are SoT §47, PERD §41 and §42, and the threat-to-test map in [`do
 - **Issued external documents are frozen.** Files marked "frozen record" (for example the Tushe specification in `docs/poc/tushe/`) must never be edited. Propose changes in a delta file next to them, and do not put internal strategy, benchmark details or hidden test material in any document meant for an external partner.
 - Never edit the PERD or the plan file in place. A change is a new version file plus a decision record ([PERD README](docs/poc/perd/README.md), [execution README](docs/poc/execution/README.md)).
 
-**In code repositories.** No code-repository work starts until the repository-mapping decision record (task GOV-02, OQ-04) is committed. After that, the layout is PERD §64.2.
+**In the `noema` repository.** No work in `noema` starts until the repository-mapping decision record (DEC-2026-10-13, task GOV-02, OQ-04) is committed. After that, the layout is PERD §64.2.
 
 ## 12. Before every commit, PR and task completion
 
@@ -439,7 +440,7 @@ Stop, write down what you found, and ask, when:
 - a safety gate, invariant or must-be-zero metric fails;
 - a secret or real personal data appears;
 - the task card is missing a required field;
-- the work is in a code repository and the repository-mapping decision is not committed;
+- the work is in the `noema` repository and the repository-mapping decision is not committed;
 - a decision you need is past its date in plan §17 and no default exists (plan §17, "Safe interim rule");
 - you are unsure. Uncertainty is a stop condition, not a reason to guess.
 
@@ -487,4 +488,4 @@ Entries:
 
 The full map of which document owns which question is [`docs/README.md`](docs/README.md).
 
-**Copies in code repositories.** Each code repository carries a copy of this file. Task PLT-01 places it. The copy states the `docs` commit it was taken from. If a copy and this `docs` original differ, this original wins.
+**Copies in the `noema` repository.** The `noema` repository carries a copy of this file and of `CLAUDE.md`. Task PLT-01 places them. Each copy states the `docs` commit it was taken from. If a copy and this `docs` original differ, this original wins.

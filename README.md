@@ -2,7 +2,7 @@
 
 This repository is Noema's documentation and organisational memory.
 
-**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.4, 12 October 2026). It defines:
+**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.5, 13 October 2026). It defines:
 
 - what Noema is and is not;
 - what we are building first, and why;
@@ -27,11 +27,24 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
-| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.3 (applies [DEC-2026-10-12](docs/decisions/DEC-2026-10-12-tushe-environment-scope.md) and its Amendment 1). Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
-| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.3 (12 Oct to 6 Nov 2026) and its task index. Status: Proposed, pending [DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md). Ranks below the SoT and the PERD. |
+| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.4 (applies [DEC-2026-10-13](docs/decisions/DEC-2026-10-13-code-monorepo.md); earlier versions kept). Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
+| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.4 (12 Oct to 6 Nov 2026) and its task index. Status: Proposed, pending [DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md). Ranks below the SoT and the PERD. |
 | `docs/security/`, `docs/runbooks/` | Threat model, trust-boundary and threat-to-test maps (from the PERD, Proposed); runbook scaffolds (no steps yet) |
 | `docs/archive/` | **Non-authoritative** historical material |
 | `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), the PERD and plan index checks (`tools/perd_index.py`, `tools/plan_index.py`), frozen-file hashes, CI workflow, PR template and code owners |
 | `AGENTS.md`, `CLAUDE.md` | Operating instructions for coding agents |
 
 The repository is documentation-first. It contains no application code ([OD-P-01](docs/open-decisions.md#od-p-01)).
+
+## The repositories
+
+Noema uses four repositories (SoT §51; [DEC-2026-10-13](docs/decisions/DEC-2026-10-13-code-monorepo.md)):
+
+| Repository | Job | Change |
+|---|---|---|
+| `docs` | Governing documents: SoT, PERD, plan, decisions, Tushe correspondence | None |
+| **`noema`** (new) | All POC code | Created |
+| **`benchmark-heldout`** (new, private) | Held-out cases and oracles. Benchmark owner only; no agent access | Created, if GOV-03 has not already created it |
+| `brain` | Founder documentation outside the build. Not part of the build's chain of authority | None. Its purpose is now recorded |
+| `backend`, `intent-engine` | Superseded by `noema` | Archived read-only, after any code built under the current architecture is moved into `noema` with its history |
+

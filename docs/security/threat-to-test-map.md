@@ -47,5 +47,7 @@ These threats come from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-envir
 | PA-03 | The system under test sees Tushe test account numbers | REQ-ENV-005 | Every proxy fault family SHALL reproduce from a scenario and seed; the same Tushe number SHALL always map to the same synthetic number; no `9999` test-number pattern SHALL appear in any response delivered to a system under test. | Not started |
 | PA-05 | Forged, replayed or flooding webhook deliveries at the public receiver | REQ-API-008, REQ-SEC-002 | EC-X17 plus a rate-limit case | Not started |
 | PA-04 | Tushe changes sandbox behaviour without notice | TODO(security reviewer): no REQ names this control; see PERD v1.2 R-22 and plan v1.2 SR-20 | TODO(security reviewer) | Not started |
+| PA-06 | CI secret reachable by another service's workflow | REQ-SEC-005 | Canary (PLT-02): a workflow that references another area's environment fails CI; a secret defined at repository level fails CI | Not started |
+| PA-07 | Service image contains the other service's code or configuration | REQ-SEC-002 | Canary (PLT-02): a cross-service file planted in an image fails CI | Not started |
 
 Owner: Security reviewer (TODO: name).
