@@ -18,7 +18,7 @@ Copied from plan §3.1 ("Must be true", "Evidence shown", "Decides" and "If it f
 
 ### G0 Phase A exit
 
-<!-- Plan v1.3 §3.1, row G0 (DEC-2026-10-12, Amendment 1). Scheduled: Fri 16 Oct 18:00–20:30 WAT, the joint session with Tushe (calendar.md). -->
+<!-- The current plan (named in ../README.md), §3.1, row G0 (DEC-2026-10-12, Amendment 1). Scheduled: Fri 16 Oct 18:00–20:30 WAT, the joint session with Tushe (calendar.md). -->
 
 Held as one joint session: walkthrough and sign-off first, then the tests, then the signed record.
 
@@ -39,7 +39,7 @@ If it fails (quoted): "Phase B work continues on adapters and core logic, but **
 
 ### G1 Unknown-outcome slice
 
-<!-- Plan v1.3 §3.1, row G1. Scheduled: Mon 19 Oct 10:00 WAT (calendar.md). -->
+<!-- The current plan (named in ../README.md), §3.1, row G1. Scheduled: Mon 19 Oct 10:00 WAT (calendar.md). -->
 
 - Deciders: Engineering lead
 - Evidence to show: Live run plus Record reconstruction plus CI

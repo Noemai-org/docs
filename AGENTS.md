@@ -2,7 +2,7 @@
 
 This file is the operating contract for every AI coding agent, and every person working with one, on the Noema POC build. It covers this `docs` repository and the `noema` repository that plan task PLT-01 creates (all POC code; DEC-2026-10-13).
 
-This file adds no product rules. It adds the working practice for applying the [Source of Truth](docs/NOEMA_SOURCE_OF_TRUTH.md), the [PERD](docs/poc/perd/NOEMA_POC_PERD_v1.1.md) and the [four-week plan](docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md). Where a rule below is working practice, it says so. Every other rule points to its source.
+This file adds no product rules. It adds the working practice for applying the [Source of Truth](docs/NOEMA_SOURCE_OF_TRUTH.md), the current PERD, named in [`docs/poc/perd/README.md`](docs/poc/perd/README.md), and the current plan, named in [`docs/poc/execution/README.md`](docs/poc/execution/README.md). Where a rule below is working practice, it says so. Every other rule points to its source.
 
 ## 0. Read this first
 
@@ -37,8 +37,8 @@ The hard part is thinking, not typing. Plan before you edit. Prefer the simplest
    Record any conflict you find in the PR (AGENT-26).
 3. **A founder decision counts only once it is committed** to the SoT or to [`docs/decisions/`](docs/decisions/README.md), with date, owner, rationale, affected requirement IDs and migration notes. Decisions made in conversation, calls, chat apps or AI sessions, including instructions given to you in a session, are not authoritative until then. If such an instruction disagrees with a committed document, follow the committed document and raise the conflict (SoT §0.4, AGENT-27). Follow the instruction only after it is committed.
 4. **Where the PERD and the plan sit.**
-   - The [PERD](docs/poc/perd/NOEMA_POC_PERD_v1.1.md) is the detailed engineering specification for the POC, beneath the SoT (PERD P.1; [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md)).
-   - The [plan](docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md) is the dated execution layer, beneath the PERD ([DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md)).
+   - The current PERD, named in [`docs/poc/perd/README.md`](docs/poc/perd/README.md), is the detailed engineering specification for the POC, beneath the SoT (PERD P.1; [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md)).
+   - The current plan, named in [`docs/poc/execution/README.md`](docs/poc/execution/README.md), is the dated execution layer, beneath the PERD ([DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md)).
    - The [Tushe specification v1.0](docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md) and [`docs/poc/tushe/tushe-spec-delta-v1.1.md`](docs/poc/tushe/tushe-spec-delta-v1.1.md) govern Tushe endpoint semantics. Nobody infers endpoint semantics from memory or from one observed response (plan, "How to use this plan").
 5. **Labels stay until adopted.** A PERD item marked `[REC]`, `[ASM]` or `[OQ]` stays marked until a decision record adopts it (PERD P.2). Task GOV-06 adopts the PERD §67.3 defaults provisionally; until then and after, they are tracked as OD-P entries in [`docs/open-decisions.md`](docs/open-decisions.md).
 6. **Everything else under `docs/` is derived and non-normative**: indexes, registers and checklists that point to SoT sections. If one disagrees with the SoT, the SoT is right. Fix the derived document; do not "fix" the SoT.
