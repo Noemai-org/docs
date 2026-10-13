@@ -18,7 +18,9 @@ Copied from plan §3.1 ("Must be true", "Evidence shown", "Decides" and "If it f
 
 ### G0 Phase A exit
 
-<!-- Plan v1.2 §3.1, row G0 (DEC-2026-10-12). Scheduled: Thu 15 Oct 17:00 WAT (calendar.md). -->
+<!-- Plan v1.3 §3.1, row G0 (DEC-2026-10-12, Amendment 1). Scheduled: Fri 16 Oct 18:00–20:30 WAT, the joint session with Tushe (calendar.md). -->
+
+Held as one joint session: walkthrough and sign-off first, then the tests, then the signed record.
 
 - Deciders: Engineering lead, integration lead, benchmark owner, Tushe lead
 - Evidence to show: Signed AT/TEN report; contracts tag; fixture run log twice with identical output
@@ -33,11 +35,11 @@ Run against the signed worksheet in `docs/poc/tushe/acceptance/`; record each AT
 - [ ] ≥ 50 fixtures reproducible
 - [ ] Isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and the `mock-case` truth endpoint
 
-If it fails (quoted): "Phase B work continues on adapters and core logic, but **no G1 attempt** until G0 passes. Hostility proxy covers missing faults (REQ-ENV-005). Noema-covered exceptions not shown by Fri 16 Oct block G1"
+If it fails (quoted): "Phase B work continues on adapters and core logic, but **no G1 attempt** until G0 passes. Hostility proxy covers missing faults (REQ-ENV-005). Noema-covered exceptions AT-04, AT-05, AT-07 and AT-14 not shown internally before the G1 review (Mon 19 Oct, 10:00) block G1"
 
 ### G1 Unknown-outcome slice
 
-<!-- Plan §3.1, row G1. Scheduled: Fri 16 Oct 16:00 WAT (calendar.md). -->
+<!-- Plan v1.3 §3.1, row G1. Scheduled: Mon 19 Oct 10:00 WAT (calendar.md). -->
 
 - Deciders: Engineering lead
 - Evidence to show: Live run plus Record reconstruction plus CI

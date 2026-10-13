@@ -1,12 +1,12 @@
 # POC execution plan
 
-> **Status: Proposed.** [`NOEMA_POC_4WEEK_PLAN_v1.2.md`](NOEMA_POC_4WEEK_PLAN_v1.2.md) (current; 12 Oct 2026, applying [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md)) is the dated execution plan for the POC build, **Mon 12 Oct to Fri 6 Nov 2026**. It becomes the execution plan only when [DEC-2026-10-11-poc-4week-plan](../../decisions/DEC-2026-10-11-poc-4week-plan.md) is accepted. It ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md) and the [PERD](../perd/README.md): if it disagrees with either, stop the affected task, keep the safe behaviour and follow the governing document (plan, "How to use this plan").
+> **Status: Proposed.** [`NOEMA_POC_4WEEK_PLAN_v1.3.md`](NOEMA_POC_4WEEK_PLAN_v1.3.md) (current; 13 Oct 2026, applying [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) and its Amendment 1) is the dated execution plan for the POC build, **Mon 12 Oct to Fri 6 Nov 2026**. It becomes the execution plan only when [DEC-2026-10-11-poc-4week-plan](../../decisions/DEC-2026-10-11-poc-4week-plan.md) is accepted. It ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md) and the [PERD](../perd/README.md): if it disagrees with either, stop the affected task, keep the safe behaviour and follow the governing document (plan, "How to use this plan").
 >
-> Version 1.1, [`NOEMA_POC_4WEEK_PLAN_v1.1.md`](NOEMA_POC_4WEEK_PLAN_v1.1.md), is kept unchanged.
+> Versions 1.1, [`NOEMA_POC_4WEEK_PLAN_v1.1.md`](NOEMA_POC_4WEEK_PLAN_v1.1.md), and 1.2, [`NOEMA_POC_4WEEK_PLAN_v1.2.md`](NOEMA_POC_4WEEK_PLAN_v1.2.md), are kept unchanged.
 
 | File | What it is |
 |---|---|
-| [`tasks.csv`](tasks.csv) | All 207 tasks, generated from the plan for the board. Run `python3 tools/plan_index.py --write`; CI runs `--check`. Never edit by hand. |
+| [`tasks.csv`](tasks.csv) | All 209 tasks, generated from the plan for the board. Run `python3 tools/plan_index.py --write`; CI runs `--check`. Never edit by hand. |
 | [`calendar.md`](calendar.md) | Fixed meetings, gates and deadlines (WAT). |
 | [`daily/`](daily/README.md) · [`gates/`](gates/README.md) · [`release/`](release/README.md) | Daily notes, gate records and the release evidence bundle, written when they happen. |
 | [`debt.md`](debt.md) · [`discovery-log.md`](discovery-log.md) | Debt register (REQ-OPS-004) and founder discovery log (GOV-09). |

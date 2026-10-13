@@ -544,3 +544,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founders
 - **Deadline:** Mon 12 Oct 2026
 - **Source:** plan §3; proposed in [DEC-2026-10-11-poc-4week-plan](decisions/DEC-2026-10-11-poc-4week-plan.md).
+
+<a id="od-p-43"></a>
+### OD-P-43: Public webhook receiver hosting and security (OQ-15)
+
+- **Status:** [OPEN] · NON-CANONICAL · decide by: Wed 14 Oct 2026
+- **Question:** Where does the public webhook receiver run, and how is it secured?
+- **Why it matters:** Tushe delivers webhooks only to public HTTPS endpoints; AT-06 needs it on Fri 16 Oct.
+- **Minimum safe default (meanwhile):** One small public HTTPS host that runs only the receiver and the proxy in front of it; no other Noema component is exposed.
+- **What would change it:** — (none stated)
+- **Owner:** Engineering lead
+- **Deadline:** Wed 14 Oct 2026 (plan task GOV-20)
+- **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15; [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.

@@ -7,7 +7,7 @@
 | **Owner** | Founders (TODO: name). Reviewer: engineering lead (TODO: name) |
 | **Prepared by** | Engineering lead, with the integration lead |
 | **Amends** | SoT §36 "The synthetic enterprise environment" [DECISION] and its Phase A exit line; SoT §35.6 rule 4 [DECISION] (the time-source sentence only); SoT §40.1 (Phase A row); SoT §41 (Phase 0 exit gate) |
-| **Closes** | The OD-P entries mirroring PERD OQ-03 (Tushe case API semantics) and OQ-10 (CI access to Tushe): OD-P-16 and OD-P-23 |
+| **Closes** | The OD-P entries mirroring PERD OQ-03 (Tushe case API semantics) and OQ-10 (CI access to Tushe): OD-P-16 and OD-P-23. Amendment 1 opens OD-P-43 (PERD OQ-15, webhook receiver hosting), to be closed by plan task GOV-20 |
 | **Supersedes** | None. Withdraws the proposed AT-25 (simulated-time reporting) in `docs/poc/tushe/tushe-spec-delta-v1.1.md`, because Tushe will not run a global clock |
 | **Evidence** | *Tushe × Noema: Response to the Synthetic Enterprise Environment requirements*, Tushe engineering, 7 October 2026 (received 8 October 2026). To be committed unchanged as `docs/poc/tushe/responses/2026-10-07-tushe-draft-response.pdf` |
 
@@ -264,3 +264,18 @@ Replace these parts of SoT §36. Everything else in §36 stays as written.
 | Founder | TODO | Approve / amend / reject | |
 | Engineering lead | TODO | Reviewed | |
 | Benchmark owner | TODO | Accepts ownership of fault plans and truth endpoints | |
+
+## Amendment 1 · 13 October 2026
+
+Recorded after Noema's amended response and worksheet were sent to Tushe on 13 October 2026 (docs/poc/tushe/responses/2026-10-13-noema-response.md).
+
+Every section above stays as written. This amendment changes the following.
+
+- **D7.** The joint session moves to Friday 16 October, 18:00–20:30 WAT. It combines the walkthrough of the worksheet, its sign-off and the acceptance tests in one sitting; the Tuesday call and the Thursday 10:00 session no longer take place. The Noema-covered exceptions are AT-04, AT-05, AT-07, AT-14 and AT-17. Noema shows them to Tushe once each is complete, and holds itself to internal targets: AT-04, AT-05, AT-07 and AT-14 before the G1 review on Monday 19 October at 10:00, and AT-17 within two working days of Tushe delivering R2. AT-09 and AT-20 become "Tushe, by date (Fri 30 Oct)".
+- **D4.** The diagnostics view (E5) is requested from Tushe by Friday 30 October. Until then, Tushe's existing fault markers serve as the interim, and Noema still records every fault it injects. Stale reads (through the proxy) and stale-write detection (in `mock-case`) stay with Noema.
+- **D5.** Webhooks are kept active on Noema's test tenants alongside the event feed, so that replay and deduplication can be tested. They are never needed for correctness; the feed remains the main source. This needs a public HTTPS receiver, reachable from the internet before Friday's session, which verifies the Standard Webhooks signature with its five-minute tolerance, sits behind the hostility proxy and feeds the inbox. Where it runs is an open decision (PERD OQ-15, OD-P-43, plan task GOV-20).
+- **Requests to Tushe.** Tenants and credentials (R1) now come in two batches: 3 to 5 tenants and all the credentials by Thursday 15 October, and the rest, to about 10, by Tuesday 20 October. The read surfaces (R2), seeded transaction histories (R3) and switch state (R4) are due no later than Friday 23 October. New requests: ambiguous name enquiry (R9), payout approval states (R10), the rest of the scenario richness work (R11) and the diagnostics view (R12), all by Friday 30 October; and webhooks kept active on Noema's tenants (R13), with batch 1 on Thursday 15 October. R6, R7 and R8 are due Friday 16 October.
+- **G1** moves to Monday 19 October at 10:00 WAT, because G0 must pass before G1.
+- **Check-ins.** The 30-minute Friday check-ins with Tushe are removed.
+
+No SoT change is needed. The status of this record is unchanged (Proposed).

@@ -45,6 +45,7 @@ These threats come from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-envir
 | PA-01 | The Tushe administrator credential leaks into the runtime | REQ-ENV-002 | A call by any runtime identity to a Tushe `/partner/...` route or to the `mock-case` truth endpoint SHALL be refused. | Not started |
 | PA-02 | A core engineer alters `mock-case` or the hostility proxy (separation of duties) | REQ-ENV-008 | It SHALL be built and maintained by someone who does not build services/core, and its fault plans SHALL be owned by the benchmark owner. | Not started |
 | PA-03 | The system under test sees Tushe test account numbers | REQ-ENV-005 | Every proxy fault family SHALL reproduce from a scenario and seed; the same Tushe number SHALL always map to the same synthetic number; no `9999` test-number pattern SHALL appear in any response delivered to a system under test. | Not started |
+| PA-05 | Forged, replayed or flooding webhook deliveries at the public receiver | REQ-API-008, REQ-SEC-002 | EC-X17 plus a rate-limit case | Not started |
 | PA-04 | Tushe changes sandbox behaviour without notice | TODO(security reviewer): no REQ names this control; see PERD v1.2 R-22 and plan v1.2 SR-20 | TODO(security reviewer) | Not started |
 
 Owner: Security reviewer (TODO: name).
