@@ -141,19 +141,20 @@ Must be true (all of it):
 
 If it fails (quoted): "The demo shows the real result; external claims are limited to what the bundle permits"
 
-### G7 Demo readiness
+### G7 External readiness
 
 <!-- Plan §3.1, row G7. Scheduled: Fri 13 Nov 2026, 09:00 (dry run); the demo follows at 14:00 (calendar.md). Record: gates/G7.md. -->
 
 - Deciders: Founders
-- Evidence to show: Dry run at 09:00 Fri 13 Nov
+- Evidence to show: Dry run at 09:00 Fri 13 Nov; the signed DoD
 
 Must be true (all of it):
 
-- [ ] D1 to D10 run from the engine
+- [ ] DoD signed
 - [ ] Every number has n, method, bound and CI
 - [ ] Clocks labelled SYNTHETIC
 - [ ] No ROI claim
+- [ ] D1 to D10 run from the engine
 - [ ] Kill switch, rollback and incident playbook drilled
 
 If it fails (quoted): "Drop any demo scenario that is not real. Never script one"
