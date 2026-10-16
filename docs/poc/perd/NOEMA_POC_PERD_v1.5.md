@@ -3277,11 +3277,11 @@ The *Noema × Tushe Synthetic Enterprise Environment* specification v1.0 defines
   G0 passes when both halves pass (DEC-2026-10-16 E4). G0-T is the Tushe half: AT-01 to AT-20 as above, in the joint session. G0-N is the Noema half: TEN-01 to TEN-08 pass, `/contracts` v1 is tagged, at least 50 fixtures are reproducible and the isolation tests pass. The twenty-scenario pack runs, the OpenAPI and event schemas are frozen at v1, and OQ-03 (case idempotency, query-by-key and version tokens) is answered before Phase B starts.
 - **Rationale:** SoT §36 ("milestone one, blocking"), §40.1 Phase A exit.
 - **Inputs:** Tushe environment; the AT and TEN suites.
-- **Expected behaviour:** A joint session (G0-T) produces a signed pass report stored in the docs repository. The G0-N results are recorded in the same report, kept apart from the worksheet results.
+- **Expected behaviour:** A joint session (G0-T) produces a signed pass report stored in the docs repository. The G0-N results (TEN-01 to TEN-08) are internal: they are recorded in the G0-N gate record in `docs/poc/execution/gates/`, never in a file meant for Tushe (DEC-2026-10-16 E4).
 - **Failure behaviour:** Phase A does not exit. If a capability's idempotency semantics are still unknown at Phase B, it is registered with retry safety NONE (at most one dispatch, escalate on uncertainty) until the semantics are proven.
 - **Security:** TEN-01 and TEN-08 prove the isolation the safety gates depend on.
 - **Audit:** The pass report is referenced from the release evidence bundle (REQ-BEN-008).
-- **Acceptance criteria:** The report SHALL list every AT and TEN result with the run seed and Tushe version.
+- **Acceptance criteria:** The AT report SHALL list every AT result, and the G0-N gate record every TEN result, each with the run seed and Tushe version.
 - **Tests:** The AT and TEN suites.
 - **Dependencies:** REQ-ENV-001, REQ-ENV-002, REQ-ENV-004.
 
