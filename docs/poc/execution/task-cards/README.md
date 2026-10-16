@@ -1,12 +1,12 @@
 # Task cards
 
 - A task card is required before a task starts (plan §4.1; REQ-AGT-002).
-- Cards use the PERD template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Acceptance criteria are copied verbatim from the PERD REQ blocks (PERD v1.2; GOV-20 and ENV-13 from PERD v1.3; PLT-01 to PLT-04 from PERD v1.4; the ENV-13 relay wording from PERD v1.5; PCK-01, PCK-02 and UND-05 from PERD v1.6).
+- Cards use the PERD template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Acceptance criteria are copied verbatim from the PERD REQ blocks (PERD v1.2; GOV-20 and ENV-13 from PERD v1.3; PLT-01 to PLT-04 from PERD v1.4; the ENV-13 relay wording from PERD v1.5; PCK-01, PCK-02 and UND-05 from PERD v1.6 and v1.7).
 - File name: `<TASK-ID>.md`, for example `ENV-08.md`.
 - A card is changed only by its owner, in a PR, and says what changed and why.
 - This index is generated from the card files and the plan by `python3 tools/plan_index.py --write`; CI runs `--check`. Never edit it by hand.
 
-| Card | Task | Day (plan v1.6) |
+| Card | Task | Day (plan v1.7) |
 |---|---|---|
 | [GOV-19](GOV-19.md) | Founders approve, amend or reject DEC-2026-10-12 and SoT v1.4 | Mon 12 Oct |
 | [PLT-01](PLT-01.md) | Create the `noema` skeleton per DEC-2026-10-13 R1 and PERD v1.5 §64.2 | Fri 16 Oct |

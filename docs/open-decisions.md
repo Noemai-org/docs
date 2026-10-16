@@ -126,7 +126,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-06"></a>
 ### OD-P-06: The Intent Object `status` values are not enumerated
 
-- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The value list is normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §6.
+- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4); one value removed and the lifecycle written by [DEC-2026-10-16-money-and-value-lists](decisions/DEC-2026-10-16-money-and-value-lists.md) §2.1. The value list is normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §6.
 - **Missing decision:** the Intent Object example (§43.1) has `"status": "VALIDATED"`, but the SoT lists no other value and no lifecycle for this field. The SoT does define:
   - the versioning rules (`version`, `supersedes`, immutable once admitted to Trust);
   - clarification binding (POC-FR-13).
@@ -151,7 +151,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-08"></a>
 ### OD-P-08: Value sets for authority-layer results and reason codes are not enumerated
 
-- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The value lists are normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §2.
+- **Status:** [CLOSED] · Enums decided in [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4); one value removed and the reason codes completed by [DEC-2026-10-16-money-and-value-lists](decisions/DEC-2026-10-16-money-and-value-lists.md) §2.2 and §2.3. The value lists are normative; see [`engineering/state-registry.md`](engineering/state-registry.md) §2.
 - **Missing decision:** the SoT gives these values only as examples:
   - the Decision Record's `authority` layer results: `PASS`, `NOT_EVALUATED` (§43.2);
   - Trust reason codes: `AMBIGUOUS_COUNTERPARTY` (§43.2), `PROHIBITED_CAPABILITY` (US-10), `DECLINED_BY_APPROVER` (§43.2a, since v1.2).
@@ -290,7 +290,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-19"></a>
 ### OD-P-19: Quantity units in the Intent Object (major vs minor) (OQ-06)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: P1
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-16-money-and-value-lists](decisions/DEC-2026-10-16-money-and-value-lists.md) M1 to M10 (takes effect when that record is approved and merged). Closes OQ-06 and SOT-C-11.
+- **Answer (DEC-2026-10-16-money-and-value-lists M1 to M10):** Every currency amount is an integer count of the currency's minor unit (NGN 20,000.00 is `2000000`), with an ISO 4217 currency in its own field and the exponent from one versioned table, `contracts/currencies.json`. There is no marker: in `/contracts` v1 every amount is in minor units. Bounds are 0 to 9,007,199,254,740,991 (2⁵³ − 1), the JCS ceiling; no floating point at any layer; conversion only at the edges, by deterministic code, never by a model; addition, subtraction and comparison only, within one currency. SoT §43.1 is corrected in SoT v1.7. Tests are the M10 table (CON-01 fixtures and CON-04 vectors).
 - **Question:** Quantity units in the Intent Object (major vs minor)
 - **Why it matters:** Money correctness
 - **Minimum safe default (meanwhile):** Minor units plus a marker (contract minor version)
@@ -375,7 +376,8 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-26"></a>
 ### OD-P-26: Do the value lists in DEC-2026-10-06-architecture-and-contracts differ from this PERD's lists? (OQ-13)
 
-- **Status:** [OQ] [OPEN] · NON-CANONICAL · decide by: P1
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-16-money-and-value-lists](decisions/DEC-2026-10-16-money-and-value-lists.md) §2 (takes effect when that record is approved and merged). Closes OQ-13 and SOT-C-26.
+- **Answer (DEC-2026-10-16-money-and-value-lists §2):** The diff is the record's reconciliation. Intent Object `status` is `EXTRACTED`, `VALIDATED`, `REJECTED_AT_GATE` (`SUPERSEDED` removed; the PERD's `INADMISSIBLE` renamed). Authority results are `PASS`, `FAIL`, `NOT_EVALUATED` (`OVERRIDDEN` removed). Trust reason codes are two tiers: a closed core enum with producers, and pack codes in the `<vertical>.reason.<name>` namespace. `docs/engineering/state-registry.md` is the single normative home of the core lists, and CON-01 adds a CI check that fails on any difference between it and `/contracts`.
 - **Question:** Do the value lists in DEC-2026-10-06-architecture-and-contracts differ from this PERD's lists?
 - **Why it matters:** Contract drift
 - **Minimum safe default (meanwhile):** The DEC record governs. Agents must diff before P1

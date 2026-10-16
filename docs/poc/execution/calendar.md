@@ -1,6 +1,6 @@
 # POC build calendar (WAT)
 
-Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.6.md), re-baselined by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E3: Mon 19 Oct to Fri 13 Nov 2026, with the work delivered on 12 to 16 Oct shown as week 0. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2). Tushe's own dates (R1 to R13) do not move.
+Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.7.md), re-baselined by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E3: Mon 19 Oct to Fri 13 Nov 2026, with the work delivered on 12 to 16 Oct shown as week 0. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2). Tushe's own dates (R1 to R13) do not move.
 
 | Day | Time (WAT) | Event | Plan section |
 |---|---|---|---|

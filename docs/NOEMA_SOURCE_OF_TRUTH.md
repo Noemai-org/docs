@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.6 · 16 October 2026 · Status: canonical
+Version 1.7 · 16 October 2026 · Status: canonical
 
 ---
 
@@ -2045,7 +2045,7 @@ Vertical-agnostic: it refers to pack nodes and abstract slot types, never to ind
   "intent_node": "fin.payments.exception.investigate",
   "slots": {
     "subject_resource": { "type": "Resource", "status": "UNRESOLVED", "candidates_ref": null },
-    "amount": { "type": "Quantity", "value": 20000, "unit": "NGN", "confidence": 0.97 },
+    "amount": { "type": "Quantity", "value": 2000000, "unit": "NGN", "confidence": 0.97 },
     "counterparty": { "type": "Party", "surface_form": "Tunde", "confidence": 0.99 },
     "when": { "type": "TimeRef", "surface_form": "this morning", "window": ["2026-10-01T05:00:00Z", "2026-10-01T09:00:00Z"] }
   },
@@ -2055,6 +2055,8 @@ Vertical-agnostic: it refers to pack nodes and abstract slot types, never to ind
   "sig": { "key_id": "und-2026-10", "value": "..." }
 }
 ```
+
+Currency amounts are integer minor units (DEC-2026-10-16-money-and-value-lists).
 
 Rules: immutable once admitted to Trust (changes create a new `version` with `supersedes`); `principal` is copied from the authenticated session, never extracted from the user's words or a model's output; unknown fields are rejected at the schema gate.
 
@@ -2922,6 +2924,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.7 | 16 Oct 2026 | **Money in minor units (DEC-2026-10-16-money-and-value-lists).** Why: the §43.1 example showed `"value": 20000` for NGN 20,000.00, which read as major units, while the decision record fixes every currency amount as an integer count of the minor unit (OD-P-19). What changed: §43.1 only: the example amount is `"value": 2000000`, and a one-line note under the example says currency amounts are integer minor units. No other SoT text changed; the contract value lists (OD-P-26) are decided in the same record and live in `docs/engineering/state-registry.md`. |
 | 1.6 | 16 Oct 2026 | **Execution reset (DEC-2026-10-16-execution-reset).** Why: the repositories moved to one organisation, the team was confirmed as two people working with coding agents, G0 could not hold on its planned date, and three test-environment components needed a place in the architecture that does not make them Noema services. What changed: §35.6 (a paragraph after the table of the two deployables: `synthetic/mock_case`, `benchmark/hostility_proxy` and `synthetic/webhook_relay` are test-environment components, not deployables, holding no decision, grant, Record, provider or core-database credential, and never running in a production profile); §40.3 (the environment-and-reproducibility line now says Noema's simulated clock is controllable and Tushe time is controlled per object, instead of "the virtual clock is controllable"); §51 (the tree gains `/synthetic` and `/deploy`). Binding decisions: none of BD-01 to BD-16 is affected. The two-deployable split of §35.6 is unchanged. No invariant changes and no requirement changes. |
 | 1.5 | 13 Oct 2026 | **One code repository for the POC (DEC-2026-10-13-code-monorepo).** Why: with one small team, coding agents and a Go-Python contract that changes often in weeks 1 and 2, two code repositories would make every contract change a package release and two ordered pull requests, and would protect nothing that CI boundary checks, separate credentials and separate networks do not already protect. What changed: §51 only: the opening paragraph (four repositories, `docs`, `noema`, `benchmark-heldout` and `brain`; `backend` and `intent-engine` archived; the [OPEN] mapping note removed), the `/docs` line of the tree, and two added boundary rules (each service's image is built from that service's folder only; CI secrets are scoped to GitHub Environments per service). Binding decisions: none of BD-01 to BD-16 is affected. The repository list in DEC-2026-10-06-architecture-and-contracts is superseded; every other decision in that record stands. The two-deployable split of §35.6 is unchanged. No invariant changes. |
 | 1.4 | 12 Oct 2026 | **How the POC uses Tushe (DEC-2026-10-12-tushe-environment-scope).** Why: Tushe's response of 7 October 2026 (received 8 October) showed that Tushe provides no case or dispute domain, will not host a privileged oracle endpoint, and will not run an environment-wide clock; DEC-2026-10-12 decides how the POC works with that. What changed: §36 domains bullet (Tushe provides every domain except case/dispute; Noema provides `mock-case`; disputes not modelled), ground-truth bullet (Tushe's read-only partner-administrator surface, held by the benchmark owner), time bullet (per-object time in Tushe; Noema's simulated clock elsewhere; no snapshot and restore), the acceptance-test bullet and the Exit of Phase A line (pass, pass under an amended condition, or agreed exception); the case and dispute lifecycles in §36 and §35.5; §34.2 (who can cause modelled monetary changes in the simulation); §34.3 footnote 1 (case capabilities keep `QUERYABLE_BY_KEY` and `CONDITIONAL_WRITE`); §35.6 rule 4 (wall clock against live Tushe, simulated clock in tests and replays); the §40.1 Phase A exit condition and the §41 Phase 0 exit gate; the glossary entry for the synthetic enterprise environment. Binding decisions: the §36 [DECISION] is amended. §35.6 [DECISION] rule 4 changes only its time-source sentence to follow D3; nothing else in §35.6 changes. No other binding decision (BD-01 to BD-16) is affected; BD-07 is unchanged. No invariant changes. |
