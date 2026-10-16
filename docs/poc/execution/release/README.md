@@ -30,4 +30,4 @@ Nothing else goes in this folder until the release run happens.
 | `claims.md` | The exact external claim wording the results permit |
 | `clean-room.md` | REL-02 report |
 
-Source: `docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md`, lines 834–851.
+Source: `docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md`, lines 834–851 (current: see the [README](../README.md)).

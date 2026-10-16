@@ -10,7 +10,7 @@ Prepared 13 Oct 2026 for task [PLT-01](PLT-01.md) from [DEC-2026-10-13](../../..
 | [ ] | GitHub Environment `bench` | Holds: Tushe administrator and fixture credentials; `mock-case` truth access. Used only by benchmark workflows |
 | [ ] | Required reviewers on `bench` | The benchmark owner |
 | [ ] | No repository-level secrets | The repository's Actions secrets list is empty |
-| [ ] | Branch protection on `main` | Required checks (TODO(EL): the check names, once PLT-02 defines them); required CODEOWNER review; no force-push |
+| [ ] | Branch protection on `main` | Required checks (TODO(EL, PLT-02): the check names, once PLT-02 defines them); required CODEOWNER review; no force-push |
 | [ ] | `.github/CODEOWNERS` is active | The DEC R4 paths, committed by PLT-01 |
 
-Evidence: TODO(EL): who applied each setting, and when.
+Evidence: TODO(EL, GOV-22): who applied each setting, and when.

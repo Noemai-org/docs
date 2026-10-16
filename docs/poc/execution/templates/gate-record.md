@@ -2,44 +2,51 @@
 
 <!-- Save as docs/poc/execution/gates/G<n>.md. Copy the matching checklist from "Checklists by gate" below into "Must be true". Fill only at the gate meeting, from evidence on the screen (plan §3.1). Never pre-fill. -->
 
-- Gate: <!-- G0 to G7 and its name, as in plan §3.1. -->
+- Gate: <!-- G0-T, G0-N and G1 to G7, with the name, as in plan §3.1. -->
 - Date and time (WAT): <!-- When the review actually took place; scheduled times are in ../calendar.md. -->
-- Deciders: <!-- Names for the roles in the gate's "Decides" column (plan §3.1). -->
+- Deciders: <!-- The roles in the gate's "Decides" column (plan §3.1). Titles only: sign-offs read "Founder" and/or "Technical Co-Founder" (DEC-2026-10-16 E2). -->
 - Must be true (checklist): <!-- Paste the gate's checklist from below; tick a line only with an evidence link beside it. -->
 - Evidence links: <!-- Run IDs, CI links, reports and Record reconstructions shown at the meeting. -->
 - Outcome: `PASS | FAIL | BLOCKED` <!-- Exactly one. Never "mostly done" or "pass with actions" (plan §3.1 gate rules). -->
 - If it failed, what happens next: <!-- Quote the gate's "If it fails" text from below, then name the owners and dates. -->
 - Regression cases added: <!-- Case IDs added because of this review; a fix after a failed gate gets its regression case first. -->
-- Signatures: <!-- Each decider's name and date. -->
+- Signatures: <!-- Each decider's title (Founder, Technical Co-Founder) and the date. No personal names. -->
 
 ## Checklists by gate
 
-Copied from plan §3.1 ("Must be true", "Evidence shown", "Decides" and "If it fails" columns), split into one checkbox per sentence.
+Copied from plan §3.1 ("Must be true", "Evidence shown", "Decides" and "If it fails" columns), split into one checkbox per sentence. G0 has two records, G0-T and G0-N (DEC-2026-10-16 E4). G0-N is also recorded in [`../gates/G0-N.md`](../gates/G0-N.md), which holds the internal TEN checks.
 
-### G0 Phase A exit
+### G0-T Phase A exit, Tushe half
 
-<!-- The current plan (named in ../README.md), §3.1, row G0 (DEC-2026-10-12, Amendment 1). Scheduled: Fri 16 Oct 18:00–20:30 WAT, the joint session with Tushe (calendar.md). -->
-
-Held as one joint session: walkthrough and sign-off first, then the tests, then the signed record.
+<!-- Plan §3.1, row G0-T. Scheduled: to be confirmed by Tushe (DEC-2026-10-16 E3, E4). Our request for the date goes to Tushe by Thu 22 Oct (calendar.md). Record: gates/G0-T.md. -->
 
 - Deciders: Engineering lead, integration lead, benchmark owner, Tushe lead
-- Evidence to show: Signed AT/TEN report; contracts tag; fixture run log twice with identical output
+- Evidence to show: Signed AT report; the signed worksheet
 
 Must be true (all of it):
 
-Run against the signed worksheet in `docs/poc/tushe/acceptance/`; record each AT as Pass, Pass amended, Noema covers or Tushe by date.
+- [ ] Each of AT-01 to AT-20 passes, passes under the amended conditions in the signed worksheet, or is covered by an agreed exception with owner and date (REQ-ENV-007), in the joint session on the date Tushe confirms
 
-- [ ] Each of AT-01 to AT-20 passes, passes under the amended conditions in the signed worksheet, or is covered by an agreed exception with owner and date (REQ-ENV-007)
-- [ ] TEN-01 to TEN-08 pass
-- [ ] `/contracts` v1 tagged
-- [ ] ≥ 50 fixtures reproducible
+If it fails (quoted): "Hostility proxy covers missing faults (REQ-ENV-005). No Phase B result counts until G0 passes. Our request for the date goes to Tushe by Thu 22 Oct (DEC-2026-10-16 E3)"
+
+### G0-N Phase A exit, Noema half
+
+<!-- Plan §3.1, row G0-N. Scheduled: Thu 22 Oct 2026, 17:00 (calendar.md). Record: gates/G0-N.md. -->
+
+- Deciders: Engineering lead, integration lead, benchmark owner
+- Evidence to show: Noema-side TEN report; contracts tag; fixture run log twice with identical output; isolation test log
+
+Must be true (all of it):
+
+- [ ] TEN-01 to TEN-08 pass (Noema-side checks against Tushe; internal, not in the worksheet and not sent to Tushe)
+- [ ] `/contracts` v1 tagged. ≥ 50 fixtures reproducible
 - [ ] Isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and the `mock-case` truth endpoint
 
-If it fails (quoted): "Phase B work continues on adapters and core logic, but **no G1 attempt** until G0 passes. Hostility proxy covers missing faults (REQ-ENV-005). Noema-covered exceptions AT-04, AT-05, AT-07 and AT-14 not shown internally before the G1 review (Mon 19 Oct, 10:00) block G1"
+If it fails (quoted): "Phase B work continues on adapters and core logic. Noema-covered exceptions AT-04, AT-05, AT-07 and AT-14 not shown internally before the G1 review (Mon 26 Oct, 10:00) block G1"
 
 ### G1 Unknown-outcome slice
 
-<!-- The current plan (named in ../README.md), §3.1, row G1. Scheduled: Mon 19 Oct 10:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G1. Scheduled: evidence run Fri 23 Oct 2026; review Mon 26 Oct 2026, 10:00 (calendar.md). Record: gates/G1.md. -->
 
 - Deciders: Engineering lead
 - Evidence to show: Live run plus Record reconstruction plus CI
@@ -55,7 +62,7 @@ If it fails (quoted): "Week 2 starts with the slice. Ambiguity work waits"
 
 ### G2 Trust depth
 
-<!-- Plan §3.1, row G2. Scheduled: Fri 23 Oct 16:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G2. Scheduled: Fri 30 Oct 2026, 16:00 (calendar.md). Record: gates/G2.md. -->
 
 - Deciders: Engineering lead and benchmark owner
 - Evidence to show: Benchmark smoke run by family; CI
@@ -71,7 +78,7 @@ If it fails (quoted): "Week 3 hardening starts only on the passing families; fai
 
 ### G3 Hardened
 
-<!-- Plan §3.1, row G3. Scheduled: Fri 30 Oct 16:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G3. Scheduled: Fri 6 Nov 2026, 16:00 (calendar.md). Record: gates/G3.md. -->
 
 - Deciders: Engineering lead, benchmark owner, security reviewer
 - Evidence to show: Scorecard; replay diff; chaos and scanner logs; drill records
@@ -91,7 +98,7 @@ If it fails (quoted): "**No comparison arm starts** until G3 passes (SoT §38.5)
 
 ### G4 Comparison
 
-<!-- Plan §3.1, row G4. Scheduled: Wed 4 Nov 16:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G4. Scheduled: Wed 11 Nov 2026, 16:00 (calendar.md). Record: gates/G4.md. -->
 
 - Deciders: Benchmark owner and arm reviewer
 - Evidence to show: Arm manifests; reviewer sign-off; comparison tables
@@ -106,7 +113,7 @@ If it fails (quoted): "The release run proceeds; the comparison is reported as i
 
 ### G5 Voice
 
-<!-- Plan §3.1, row G5. Scheduled: Wed 4 Nov 16:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G5. Scheduled: Wed 11 Nov 2026, 16:00 (calendar.md). Record: gates/G5.md. -->
 
 - Deciders: Voice engineer and engineering lead
 - Evidence to show: Field-session report
@@ -120,7 +127,7 @@ If it fails (quoted): "The demo runs in text; voice is shown only as a recorded 
 
 ### G6 Release run
 
-<!-- Plan §3.1, row G6. Scheduled: Thu 5 Nov 18:00 WAT (calendar.md). -->
+<!-- Plan §3.1, row G6. Scheduled: Thu 12 Nov 2026, 18:00 (calendar.md). Record: gates/G6.md. -->
 
 - Deciders: Founders
 - Evidence to show: Signed evidence bundle
@@ -136,10 +143,10 @@ If it fails (quoted): "The demo shows the real result; external claims are limit
 
 ### G7 Demo readiness
 
-<!-- Plan §3.1, row G7. Scheduled: Fri 6 Nov 09:00 (dry run) WAT (calendar.md). -->
+<!-- Plan §3.1, row G7. Scheduled: Fri 13 Nov 2026, 09:00 (dry run); the demo follows at 14:00 (calendar.md). Record: gates/G7.md. -->
 
 - Deciders: Founders
-- Evidence to show: Dry run at 09:00 Fri 6 Nov
+- Evidence to show: Dry run at 09:00 Fri 13 Nov
 
 Must be true (all of it):
 
