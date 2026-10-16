@@ -1,6 +1,6 @@
 # Gate records
 
-One record per gate review, `gates/G<n>.md` (G0 to G7), using [`../templates/gate-record.md`](../templates/gate-record.md). The gates, what must be true, the evidence, the deciders and what happens on failure are defined in plan [§3.1](../NOEMA_POC_4WEEK_PLAN_v1.1.md#31-gate-definitions); dates and times are in [`../calendar.md`](../calendar.md).
+One record per gate review, `gates/G<n>.md` (G1 to G7; G0 has two records, `G0-T.md` and `G0-N.md`), using [`../templates/gate-record.md`](../templates/gate-record.md). The gates, what must be true, the evidence, the deciders and what happens on failure are defined in plan [§3.1](../NOEMA_POC_4WEEK_PLAN_v1.1.md#31-gate-definitions); dates and times are in [`../calendar.md`](../calendar.md).
 
 **Gate rules (plan §3.1, quoted):**
 

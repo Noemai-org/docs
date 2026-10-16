@@ -1,16 +1,16 @@
 # Tushe acceptance (Phase A gate)
 
-This folder holds the Phase A acceptance evidence for the Tushe synthetic environment: the AT-01 to AT-20 pass report and the Noema-side checks TEN-01 to TEN-08 (PERD REQ-ENV-007, SoT §36, §40.1).
+This folder holds the Phase A acceptance evidence for the Tushe synthetic environment: the AT-01 to AT-20 pass report (PERD REQ-ENV-007, SoT §36, §40.1). Noema's own checks are internal and are recorded elsewhere (below).
 
 ## Where each test is defined
 
 - **AT-01 to AT-20** are defined only in the issued, frozen Tushe specification, [`../Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md`](../Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md), §22. The text below is imported verbatim from it. The titles in PERD §34.5 are only a working summary; where they differ, the specification's wording is the test.
-- **TEN-01 to TEN-08** are defined in [PERD](../../perd/NOEMA_POC_PERD_v1.3.md) §34.5 [REC]. They are Noema's own checks and are not sent to Tushe.
+- **TEN-01 to TEN-08** are Noema's own checks, defined in the current PERD §34.5 [REC]. They are internal and are not sent to Tushe. Their wording and results are kept outside this folder, in the [G0-N gate record](../../execution/gates/G0-N.md) (DEC-2026-10-16 E4).
 - **AT-25** (simulated time reported consistently), proposed in [`../tushe-spec-delta-v1.1.md`](../tushe-spec-delta-v1.1.md), is **withdrawn** (12 Oct 2026): Tushe will not run a global clock (DEC-2026-10-12, D3).
 
 ## The session
 
-One joint session with Tushe on **Fri 16 Oct 2026, 18:00–20:30 WAT**: walk through the worksheet, agree and sign it, then run the acceptance tests against it and sign the record (worksheet section 7).
+One joint session with Tushe: walk through the worksheet, agree and sign it, then run the acceptance tests against it and sign the record (worksheet section 7). It was planned for **Fri 16 Oct 2026, 18:00–20:30 WAT** and is **postponed**: Tushe has not confirmed a new date, and this README records none. This is the Tushe half of G0 (G0-T); G0 passes only when G0-T and the Noema half (G0-N) both pass (DEC-2026-10-16 E4).
 
 ## The pass rule (REQ-ENV-007)
 
@@ -32,8 +32,8 @@ The worksheet records each test as Pass, Pass amended, Noema covers or Tushe by 
 | [`G0-worksheet-2026-10-13-SENT.pdf`](G0-worksheet-2026-10-13-SENT.pdf) | `842bc6b4a402cd3eb75f9281bf4234718f12835df83a2f11dcca0dd087a4f56d` | The acceptance worksheet **as sent to Tushe on 13 Oct 2026**. **This PDF is the record.** Frozen record (listed in `tools/frozen-files.sha256`); not signed |
 | [`G0-worksheet-2026-10-13-SENT.md`](G0-worksheet-2026-10-13-SENT.md) | `7c8d5986c3f90422dcaee6e8b444db2d555b1c8d34e21aae8e2c9783c27bbf52` | A Markdown source copy. Its text matches the PDF (layout differs). It has not been verified byte for byte against what was sent, so it is **not** a frozen record and is not on the frozen list. If it disagrees with the PDF, the PDF is right |
 | [`G0-worksheet-2026-10-12-DRAFT.pdf`](G0-worksheet-2026-10-12-DRAFT.pdf) | `7a2339ece9e24e67391c3f3a5520b216d96986c725c34abfad3dfcc37244e1d9` | **Superseded draft, never sent.** Superseded by the 13 Oct worksheet above. Kept unchanged |
-| `G0-worksheet-2026-10-16-SIGNED.md` and `G0-worksheet-2026-10-16-SIGNED.pdf` | — | The worksheet signed by both sides at the joint session on Fri 16 Oct, in Markdown and PDF. Committed as separate files after the session (plan task ENV-12); the sent copy is never overwritten. Do not exist yet |
-| `AT-TEN-report-2026-10-16.md` | — | The record of the joint session on Fri 16 Oct (plan task ENV-07). Does not exist yet |
+| `G0-worksheet-<date>-SIGNED.md` and `G0-worksheet-<date>-SIGNED.pdf` | — | The worksheet signed by both sides at the joint session (date to be confirmed by Tushe), in Markdown and PDF. Committed as separate files after the session (plan task ENV-12); the sent copy is never overwritten. Do not exist yet |
+| `AT-report-<date>.md` | — | The record of the joint session (plan task ENV-07, G0-T). Does not exist yet |
 
 ## AT-01 to AT-20 (verbatim)
 
@@ -64,34 +64,8 @@ Source: `docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.m
 | AT-19 | Audit completeness | Inspect a material transition. | Actor / request / correlation / state / timestamp metadata all present. |
 | AT-20 | Simulator diagnostics | Trigger an injected fault and a genuine platform error separately. | Privileged diagnostics tell them apart. |
 
-## TEN-01 to TEN-08 (PERD §34.5)
-
-Source: `docs/poc/perd/NOEMA_POC_PERD_v1.1.md`, §34.5, lines 3156–3165, verbatim.
-
-| ID | Check |
-|---|---|
-| TEN-01 | No runtime container can reach the oracle (network and credential) |
-| TEN-02 | A replayed scenario gives identical Trust decisions and verdicts |
-| TEN-03 | Every case read returns a version token, and a stale expected version is rejected with no change |
-| TEN-04 | A case committed with its response dropped is found by idempotency key |
-| TEN-05 | The virtual clock and Temporal test time advance together |
-| TEN-06 | Every integration-hostility fault (429, pagination, schema drift, near-timeout, skew) can be produced on demand |
-| TEN-07 | Every evidence response carries the provenance fields of §21.1 |
-| TEN-08 | The Noema integration credential cannot perform any prohibited operation in Tushe |
-
 ## The signed report
 
-The pass report from the joint session is stored here as `AT-TEN-report-<date>.md` (REQ-ENV-007). It lists every AT and TEN result with the run seed and the Tushe version (REQ-ENV-007 acceptance criteria), and is referenced from the release evidence bundle (REQ-BEN-008). No report exists yet.
+The pass report from the joint session is stored here as `AT-report-<date>.md` (REQ-ENV-007). It lists every AT result with the run seed and the Tushe version, and is referenced from the release evidence bundle (REQ-BEN-008). The Noema-side TEN results are not recorded here (see above). No report exists yet.
 
-Do not put benchmark details, hidden test material or held-out cases in this folder or in anything sent to Tushe (AGENTS.md §4).
-
-## Internal notes (Noema only; do not share)
-
-> **Internal.** This section is for Noema only. Never copy it into anything sent to Tushe.
-
-Internal targets for showing the Noema-covered tests (DEC-2026-10-12, Amendment 1):
-
-- AT-04, AT-05, AT-07 and AT-14: before the G1 review (Mon 19 Oct, 10:00 WAT);
-- AT-17: within two working days of Tushe delivering R2.
-
-Tushe hears only "once complete".
+Do not put benchmark details, hidden test material, TEN details or held-out cases in this folder or in anything sent to Tushe (AGENTS.md §4).
