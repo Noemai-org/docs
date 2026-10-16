@@ -17,6 +17,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-12-tushe-environment-scope](DEC-2026-10-12-tushe-environment-scope.md) | How the POC uses Tushe: `mock-case`, ground truth, time, faults, credentials and the G0 gate; amends SoT §36 (SoT v1.4) (Accepted; Amendments 1 and 2) |
 | [DEC-2026-10-13-code-monorepo](DEC-2026-10-13-code-monorepo.md) | One code repository (`noema`) for the POC; what every other repository is for; amends SoT §51 (SoT v1.5) (Accepted; Amendment 1 re-points it to `Noemai-org`) |
 | [DEC-2026-10-16-execution-reset](DEC-2026-10-16-execution-reset.md) | Execution reset: `Noemai-org` canonical, two-person team, schedule to 13 Nov, G0-T and G0-N, test-environment components, webhook relay, what leaves `docs`, `brain`'s purpose, the Tushe delta v1.2, the port to `noema`, no direct pushes; amends SoT §35.6, §40.3, §51 (SoT v1.6) (Accepted) |
+| [DEC-2026-10-16-contract-and-pack-clarifications](DEC-2026-10-16-contract-and-pack-clarifications.md) | The `evidence_set_hash` construction (C1), the two-node intent model (C2), the status of CON-04, PCK-01 and PCK-02 (C3), noema#1 as a pure port (C4), G7 "External readiness" (C6), the repository mapping closed (C7), team rules and the cut line (C8); amends DEC-2026-10-16-execution-reset E2 and E12; no SoT change (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
 
 ## Where decisions already live
 
