@@ -1,6 +1,6 @@
 # Trust-boundary map (POC)
 
-All content below is copied verbatim from [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md) and is **Proposed** with the PERD ([DEC-2026-10-11-poc-perd-v1.1](../decisions/DEC-2026-10-11-poc-perd-v1.1.md)). The [SoT](../NOEMA_SOURCE_OF_TRUTH.md) governs: §35.6 (two deployables), §45 (INV-29, INV-30), §47 (security boundaries).
+All content below is copied verbatim from [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md) (current PERD: see [README](../poc/perd/README.md)) and is **Proposed** with the PERD ([DEC-2026-10-11-poc-perd-v1.1](../decisions/DEC-2026-10-11-poc-perd-v1.1.md)). The [SoT](../NOEMA_SOURCE_OF_TRUTH.md) governs: §35.6 (two deployables), §45 (INV-29, INV-30), §47 (security boundaries).
 
 ## Shape (PERD §18.1, lines 651–683)
 

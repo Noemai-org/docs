@@ -221,7 +221,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Proposed default (inference, not a decision):** `intent-engine` hosts the model service; `backend` hosts the core service and `/contracts`. The role of `brain` is unknown.
 - **What would invalidate it:** a decision record that maps the repositories differently.
 
-**OD-P-14 to OD-P-41** mirror the [POC PERD v1.1](poc/perd/README.md) open questions (§67.2, tagged [OQ]) and its [REC] defaults awaiting adoption (§67.3), proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md). Field text is quoted from the PERD; in quoted text, a bare "§" points to the PERD and "SoT §" to the SoT (PERD P.2). Like every OD-P entry, they authorise no work on their own.
+**OD-P-14 to OD-P-41** mirror the open questions of [POC PERD v1.1](poc/perd/README.md) (current: see README) (§67.2, tagged [OQ]) and its [REC] defaults awaiting adoption (§67.3), proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md). Field text is quoted from the PERD; in quoted text, a bare "§" points to the PERD and "SoT §" to the SoT (PERD P.2). Like every OD-P entry, they authorise no work on their own.
 
 <a id="od-p-14"></a>
 ### OD-P-14: Who is the benchmark owner? (OQ-01)
@@ -233,7 +233,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Founders
 - **Deadline:** Before P3
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-01. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-01. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-15"></a>
 ### OD-P-15: Who reviews arm competence? (OQ-02)
@@ -245,7 +245,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Founders
 - **Deadline:** Before P13
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-02. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-02. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-16"></a>
 ### OD-P-16: Does the Tushe case API support idempotency keys, query-by-key and version tokens? (OQ-03)
@@ -258,7 +258,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** Tushe API and the delta
 - **Owner:** Integration lead
 - **Deadline:** Phase A
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-03. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-03. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-17"></a>
 ### OD-P-17: Repository mapping (SoT §51 [OPEN]) (OQ-04)
@@ -272,7 +272,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founders
 - **Deadline:** Before Phase B
 - **Note:** the same decision was tracked as [OD-P-13](#od-p-13); this entry only mirrors the PERD question and its §64.1 recommendation. Both are closed together.
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-04. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-04. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-18"></a>
 ### OD-P-18: Purpose of the `brain` repository (OQ-05)
@@ -285,7 +285,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** Founder intent
 - **Owner:** Founders
 - **Deadline:** Before Phase B
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-05. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-05. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-19"></a>
 ### OD-P-19: Quantity units in the Intent Object (major vs minor) (OQ-06)
@@ -297,7 +297,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Tech lead
 - **Deadline:** P1
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-06. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-06. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-20"></a>
 ### OD-P-20: Which speech providers offer streaming TTS for all five locales? (OQ-07)
@@ -309,7 +309,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** Vendor documentation and tests
 - **Owner:** Voice lead
 - **Deadline:** Week 1
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-07. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-07. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-21"></a>
 ### OD-P-21: Field protocol owner, devices and SIMs (OQ-08)
@@ -321,7 +321,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Voice lead
 - **Deadline:** Week 3
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-08. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-08. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-22"></a>
 ### OD-P-22: Secrets manager for shared environments (OQ-09)
@@ -333,7 +333,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Tech lead
 - **Deadline:** P0
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-09. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-09. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-23"></a>
 ### OD-P-23: CI access to Tushe (live or recorded) (OQ-10)
@@ -346,7 +346,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Integration lead
 - **Deadline:** P2
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-10. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-10. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-24"></a>
 ### OD-P-24: How is an ESCALATE handoff without a case delivered to the partner? (The SoT listener has no handoff event) (OQ-11)
@@ -358,7 +358,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** Partner requirements
 - **Owner:** Product
 - **Deadline:** Before the first partner demo
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-11. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-11. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-25"></a>
 ### OD-P-25: Tenant time zone and lexicon reviewers (native speakers for yo, ha, ig, pcm) (OQ-12)
@@ -370,7 +370,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Founders
 - **Deadline:** P5
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-12. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-12. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-26"></a>
 ### OD-P-26: Do the value lists in DEC-2026-10-06-architecture-and-contracts differ from this PERD's lists? (OQ-13)
@@ -382,7 +382,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated in PERD §67.2)
 - **Owner:** Tech lead
 - **Deadline:** P1
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-13. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-13. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-27"></a>
 ### OD-P-27: Legal validation of synthetic clocks before any external claim (OQ-14)
@@ -394,7 +394,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** Counsel review
 - **Owner:** Founders
 - **Deadline:** Before any external demo
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.2, OQ-14. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.2, OQ-14. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-28"></a>
 ### OD-P-28: PERD [REC] defaults: Trust semantics
@@ -402,9 +402,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for trust semantics. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** WAIT and UNKNOWN definitions (§23.1); disposition and action decision linkage plus a `disposition_decision_id` field; R0 reads without grants
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §23.1 (the seven outcomes; disposition and action decisions, REQ-TRU-010); §25.1 (R0 reads and grants). Conflicts SOT-C-03, SOT-C-04, SOT-C-05.
+- **Where they are specified:** [PERD](poc/perd/README.md) §23.1 (the seven outcomes; disposition and action decisions, REQ-TRU-010); §25.1 (R0 reads and grants). Conflicts SOT-C-03, SOT-C-04, SOT-C-05.
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-29"></a>
 ### OD-P-29: PERD [REC] defaults: Investigation state
@@ -412,9 +412,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for investigation state. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** The investigation state machine (§28.2)
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §28.2 (investigation state machine); §28.3 (REQ-STM-001, REQ-STM-002).
+- **Where they are specified:** [PERD](poc/perd/README.md) §28.2 (investigation state machine); §28.3 (REQ-STM-001, REQ-STM-002).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-30"></a>
 ### OD-P-30: PERD [REC] defaults: Resolution
@@ -422,9 +422,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for resolution. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Ranking weights; 0.70 floor; 0.85 key-slot threshold; clarification 10 min; 2 rounds; dormancy 30 min; resume 72 h
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §22.1 (ambiguity lifecycle: REQ-AMB-003 ranking and floor, REQ-AMB-004 to REQ-AMB-006 clarification, rounds, dormancy and resume, REQ-AMB-007 key-slot threshold). Touches SoT OD-03.
+- **Where they are specified:** [PERD](poc/perd/README.md) §22.1 (ambiguity lifecycle: REQ-AMB-003 ranking and floor, REQ-AMB-004 to REQ-AMB-006 clarification, rounds, dormancy and resume, REQ-AMB-007 key-slot threshold). Touches SoT OD-03.
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-31"></a>
 ### OD-P-31: PERD [REC] defaults: Grants and confirmations
@@ -432,9 +432,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for grants and confirmations. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Grant TTL 10 min; confirmation TTL 10 min
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §23.6 (REQ-TRU-008 Decision Grant issuance; REQ-TRU-009 confirmation contract).
+- **Where they are specified:** [PERD](poc/perd/README.md) §23.6 (REQ-TRU-008 Decision Grant issuance; REQ-TRU-009 confirmation contract).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-32"></a>
 ### OD-P-32: PERD [REC] defaults: Recovery
@@ -442,9 +442,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for recovery. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Recovery budget of 2 dispatches; verification read schedule
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §30.2 (recovery decision table); §30.3 (REQ-RCV-003 recovery budget); §29.2 (REQ-VER-001 verification read retries).
+- **Where they are specified:** [PERD](poc/perd/README.md) §30.2 (recovery decision table); §30.3 (REQ-RCV-003 recovery budget); §29.2 (REQ-VER-001 verification read retries).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-33"></a>
 ### OD-P-33: PERD [REC] defaults: Watches and callbacks
@@ -452,9 +452,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for watches and callbacks. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Watch schedule; callback retry schedule
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §29.2 (REQ-VER-004 durable outcome watch; REQ-VER-005 `outcome.updated` callback).
+- **Where they are specified:** [PERD](poc/perd/README.md) §29.2 (REQ-VER-004 durable outcome watch; REQ-VER-005 `outcome.updated` callback).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-34"></a>
 ### OD-P-34: PERD [REC] defaults: Contracts and identifiers
@@ -462,9 +462,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for contracts and identifiers. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** JCS canonicalisation; length-prefixed key encoding; `policy_scope` = `policy_id`; ID scheme; Record event additions
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §27.2 (idempotency key and `policy_scope`, SOT-C-13); §32.1 to §32.3 (Record event, event types, ID scheme).
+- **Where they are specified:** [PERD](poc/perd/README.md) §27.2 (idempotency key and `policy_scope`, SOT-C-13); §32.1 to §32.3 (Record event, event types, ID scheme).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-35"></a>
 ### OD-P-35: PERD [REC] defaults: Policy
@@ -472,9 +472,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for policy. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Policy schema and precedence ladder
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §23.4 (policy as data, precedence).
+- **Where they are specified:** [PERD](poc/perd/README.md) §23.4 (policy as data, precedence).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-36"></a>
 ### OD-P-36: PERD [REC] defaults: Freeze
@@ -482,9 +482,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for freeze. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Freeze allow-list
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §22.3 (REQ-RES-002 contradiction freeze). Conflict SOT-C-12.
+- **Where they are specified:** [PERD](poc/perd/README.md) §22.3 (REQ-RES-002 contradiction freeze). Conflict SOT-C-12.
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-37"></a>
 ### OD-P-37: PERD [REC] defaults: Explanation
@@ -492,9 +492,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for explanation. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Facts contract and claim validator
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §31.2 (facts contract); §31.3 (REQ-EXP-002 claim validator).
+- **Where they are specified:** [PERD](poc/perd/README.md) §31.2 (facts contract); §31.3 (REQ-EXP-002 claim validator).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-38"></a>
 ### OD-P-38: PERD [REC] defaults: Fault injection
@@ -502,9 +502,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for fault injection. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** FaultPlan contract
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §37.1 (FaultPlan contract and effect enum).
+- **Where they are specified:** [PERD](poc/perd/README.md) §37.1 (FaultPlan contract and effect enum).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-39"></a>
 ### OD-P-39: PERD [REC] defaults: Benchmark
@@ -512,9 +512,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for benchmark. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Case schema; evil provider; A0 diagnostic arm
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §48.2 (case contract); §49 (the evil provider); §50.1 (A0 diagnostic, SOT-C-18).
+- **Where they are specified:** [PERD](poc/perd/README.md) §48.2 (case contract); §49 (the evil provider); §50.1 (A0 diagnostic, SOT-C-18).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-40"></a>
 ### OD-P-40: PERD [REC] defaults: Infrastructure
@@ -522,9 +522,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for infrastructure. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Temporal persistence database; per-power DB roles; network topology
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §36.1 (Temporal persistence, SOT-C-14); §41.1 (per-power DB roles, SOT-C-16); §65.1 (POC network topology).
+- **Where they are specified:** [PERD](poc/perd/README.md) §36.1 (Temporal persistence, SOT-C-14); §41.1 (per-power DB roles, SOT-C-16); §65.1 (POC network topology).
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-41"></a>
 ### OD-P-41: PERD [REC] defaults: Retention
@@ -532,15 +532,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [REC] [OPEN] · NON-CANONICAL · provisional default until accepted or replaced by a decision record
 - **Missing decision:** whether to adopt the PERD [REC] defaults for retention. PERD §67.3 proposes adopting all §67.3 groups through one decision record, with any matching SoT edit and the regenerated register (AGENT-29).
 - **Defaults (PERD §67.3, quoted):** Retention defaults
-- **Where they are specified:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §38.2 (retention column); §38.3 (retention and data-handling defaults). Real-data retention stays SoT OD-08.
+- **Where they are specified:** [PERD](poc/perd/README.md) §38.2 (retention column); §38.3 (retention and data-handling defaults). Real-data retention stays SoT OD-08.
 - **What would invalidate them:** not stated in PERD §67.3. A decision record that accepts or replaces them. Thresholds, TTLs, budgets and provider defaults change only with a linked full benchmark run and human approval (AGENT-16, REQ-AGT-005).
-- **Source:** [PERD](poc/perd/NOEMA_POC_PERD_v1.1.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
+- **Source:** [PERD](poc/perd/README.md) §67.3. Proposed with [DEC-2026-10-11-poc-perd-v1.1](decisions/DEC-2026-10-11-poc-perd-v1.1.md).
 
 <a id="od-p-42"></a>
 ### OD-P-42: Schedule compression: Phase A in parallel with build week 1
 
 - **Status:** [OPEN] · NON-CANONICAL · decide by: Mon 12 Oct 2026
-- **Missing decision:** SoT §40.2 [TARGET] plans four weeks of build *after* Phase A exits. The [four-week plan](poc/execution/NOEMA_POC_4WEEK_PLAN_v1.1.md) §3 runs Phase A in parallel with build week 1, with G0 due Thu 15 Oct (task GOV-04).
+- **Missing decision:** SoT §40.2 [TARGET] plans four weeks of build *after* Phase A exits. The [four-week plan](poc/execution/README.md) §3 runs Phase A in parallel with build week 1, with G0 due Thu 15 Oct (task GOV-04).
 - **Why it matters:** Phase B results produced before G0 would rest on unproven Tushe semantics.
 - **Minimum safe default:** gates outrank dates; no Phase B result counts before G0.
 - **What would invalidate it:** a founder decision to keep Phase A before the four-week clock, or G0 failing so that week-1 results are unusable.
