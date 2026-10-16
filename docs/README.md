@@ -62,7 +62,7 @@ docs/
       acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
       responses/               Tushe correspondence: received and sent records, with checksums
     perd/                      POC PERD v1.5 (current, Accepted; ranks below the SoT; v1.1 to v1.4 kept unchanged), generated REQ index, conflicts, templates
-    execution/                 four-week plan v1.4 (current, Proposed; v1.1 to v1.3 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
+    execution/                 four-week plan v1.5 (current, Accepted; v1.1 to v1.4 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
       task-cards/              task cards for the tasks added by plans v1.2 and v1.3 (GOV-19, GOV-20, ENV-08 to ENV-13)
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
   runbooks/                    runbook scaffolds (headings and TODOs only)

@@ -1,6 +1,6 @@
 # Task card: GOV-19
 
-Plan v1.2 task GOV-19. Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-12](../../../decisions/DEC-2026-10-12-tushe-environment-scope.md).
+Plan v1.5 task GOV-19 (delivered 12 Oct 2026; keeps its actual date under DEC-2026-10-16 E3). Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-12](../../../decisions/DEC-2026-10-12-tushe-environment-scope.md).
 
 ```
 TASK-P0-019  GOV-19 · Founders approve, amend or reject DEC-2026-10-12 and SoT v1.4 (PR A)
@@ -13,7 +13,7 @@ Inputs/outputs: PR A (DEC-2026-10-12, SoT v1.4, register, Tushe correspondence) 
 Acceptance criteria:
   REQ-ENV-007:
   - The report SHALL list every AT and TEN result with the run seed and Tushe version.
-  Task "Done when" (plan v1.2): PR A merged, or amendments recorded
+  Task "Done when" (plan v1.5): PR A merged, or amendments recorded; delivered 12 Oct 2026 (originally PR #10, merge commit 88f59f9)
 Tests to write FIRST (AGENT-11): none (decision task); docs-consistency, perd_index and plan_index checks green on PR A
 Faults to exercise (AGENT-12): none
 Dependencies: GOV-01; REQ-ENV-007

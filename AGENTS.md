@@ -8,7 +8,7 @@ This file adds no product rules. It adds the working practice for applying the [
 
 - **Noema:** models understand; Noema makes understanding safe to act on, makes the action happen correctly, and proves the outcome (SoT §0.1, item 4).
 - **What we are building now:** the POC, one narrow, hostile workflow. Noema is not its POC (SoT §0.1, item 1).
-- **Dates:** build from Mon 12 Oct to Fri 6 Nov 2026. If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
+- **Dates:** build from Mon 19 Oct to Fri 13 Nov 2026 (re-baselined by DEC-2026-10-16 E3). If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
 - **The three documents, in order:** the SoT, then the PERD, then the plan. Code comes last.
 - **The one rule:** when in doubt, take the safer reading, write the ambiguity down, and ask (AGENT-20). Never invent.
 
@@ -67,10 +67,10 @@ Run this at the start of every session.
 3. **Check that the task may start.**
    - Every task in its Needs column is Done.
    - Its gate's conditions hold:
-     - no Phase B result counts before G0 passes (plan §3);
+     - no Phase B result counts before G0 passes, and G0 passes only when both halves, G0-T and G0-N, pass (plan §3, DEC-2026-10-16 E4);
      - if G1 failed, week 2 starts with the slice and ambiguity work waits (plan §3.1);
      - no comparison arm starts before G3 passes (SoT §38.5, plan §3.1);
-     - after the code freeze (Wed 4 Nov 12:00 WAT), only the fixes plan §11 allows merge.
+     - after the code freeze (Wed 11 Nov 12:00 WAT), only the fixes plan §11 allows merge.
    - The work-in-progress limit holds: one active P0 task per engineer, at most two active tasks per person (plan §5).
 
    If any check fails, stop and report.
