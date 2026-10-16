@@ -26,6 +26,9 @@ BEGIN = ("<!-- BEGIN GENERATED: canonical-open-decisions (source: docs/NOEMA_SOU
          "Do not edit by hand. Run: python3 tools/check_docs_consistency.py --write -->")
 END = "<!-- END GENERATED: canonical-open-decisions -->"
 
+# The retired GitHub organisation. Built from parts so this file does not contain it (DEC-2026-10-16 E1).
+RETIRED_ORG_URL = "github.com/" + "noema" + "-org"
+
 # Built from parts so this file does not itself contain the misspelling it looks for.
 OLD_SPELLING = "tu" + "che"
 
@@ -198,6 +201,21 @@ def check_spelling(fail):
                 fail(f"{path}:{n}: old spelling of Tushe")
 
 
+def check_links_to_retired_org(fail):
+    """No URL may point to the retired organisation, except inside frozen records."""
+    frozen = set(frozen_listed())
+    for path in tracked_files():
+        if path.startswith(FROZEN_SOURCE_DIR) or path in frozen:
+            continue
+        try:
+            text = read(path)
+        except (UnicodeDecodeError, OSError):
+            continue
+        for n, line in enumerate(text.splitlines(), 1):
+            if RETIRED_ORG_URL in line.lower():
+                fail(f"{path}:{n}: link to the retired organisation (use github.com/Noemai-org/...)")
+
+
 def check(fail):
     sot = read(SOT)
     register = read(REGISTER)
@@ -283,6 +301,9 @@ def check(fail):
 
     # 6. Spelling
     check_spelling(fail)
+
+    # 6b. No links to the retired organisation
+    check_links_to_retired_org(fail)
 
     # 7. Relative Markdown links resolve
     md = [p for p in tracked_files() if p.endswith(".md") and (p.startswith("docs/") or p in ("README.md", "AGENTS.md", "CLAUDE.md"))]

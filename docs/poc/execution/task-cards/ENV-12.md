@@ -7,7 +7,7 @@ TASK-P2-012  ENV-12 · Walk through, agree and sign the acceptance worksheet wit
 Priority: P0
 Requirement IDs: REQ-ENV-007; SoT §36, §40.1
 Rationale: the joint session on Fri 16 Oct, 18:00–20:30 WAT, combines walkthrough, sign-off and the tests; the worksheet is signed first, so the tests that follow (ENV-07) are a demonstration, not a negotiation: each AT passes as written, under an amended condition both sides sign, or as an agreed exception with owner and date. DEC-2026-10-12, D7 and Amendment 1.
-Modules touched (allowlist): docs/poc/tushe/acceptance/ (noema-org/docs)   ← nothing else may change
+Modules touched (allowlist): docs/poc/tushe/acceptance/ (Noemai-org/docs)   ← nothing else may change
 Contracts: none; bump required? N
 Inputs/outputs: G0-worksheet-2026-10-13-SENT.md and .pdf → the signed worksheet, committed as G0-worksheet-2026-10-16-SIGNED.md and .pdf
 Acceptance criteria:

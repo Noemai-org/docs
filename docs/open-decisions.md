@@ -57,7 +57,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 ### OD-P-01: Repository layout (documentation-first vs. monorepo)
 
 - **Status:** [CLOSED] · Multi-repo layout confirmed by [DEC-2026-10-06-architecture-and-contracts](decisions/DEC-2026-10-06-architecture-and-contracts.md) (PR #4). The mapping of repositories to deployables is tracked in [OD-P-13](#od-p-13).
-- **Missing decision:** SoT §51 describes a `/noema` monorepo with `/contracts`, `/core`, `/packs`, `/adapters`, `/providers`, `/voice`, `/ui`, `/benchmark`, `/tools/lint` and `/docs`. The SoT does not say whether *this* repository (`noema-org/docs`) is that monorepo or a separate documentation repository.
+- **Missing decision:** SoT §51 describes a `/noema` monorepo with `/contracts`, `/core`, `/packs`, `/adapters`, `/providers`, `/voice`, `/ui`, `/benchmark`, `/tools/lint` and `/docs`. The SoT does not say whether *this* repository (`Noemai-org/docs`) is that monorepo or a separate documentation repository.
 - **Why it matters:**
   - SoT §43 places the JSON Schemas in `/contracts`.
   - The core lint (§15.4) and the import linter (§51) operate on `/core`.
