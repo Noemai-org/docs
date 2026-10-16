@@ -147,9 +147,16 @@ def current_register_block(register):
 # ------------------------------------------------------------------ the checks
 
 def tracked_files():
+    """Every file in the working tree: tracked plus untracked, honouring .gitignore.
+
+    The name is kept for the callers; scanning only tracked files let an untracked file with the
+    old spelling pass locally and fail nowhere, so the scan covers the working tree.
+    """
     try:
-        res = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True)
-        return [l for l in res.stdout.splitlines() if l]
+        res = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+                             cwd=ROOT, capture_output=True, text=True, check=True)
+        files = sorted({l for l in res.stdout.splitlines() if l})
+        return [f for f in files if os.path.isfile(os.path.join(ROOT, f))]
     except (OSError, subprocess.CalledProcessError):
         out = []
         for dp, dn, fn in os.walk(ROOT):
@@ -157,6 +164,38 @@ def tracked_files():
             for f in fn:
                 out.append(os.path.relpath(os.path.join(dp, f), ROOT).replace(os.sep, "/"))
         return out
+
+
+def frozen_listed():
+    """{path: sha256} from the frozen-files list; empty if the list is missing."""
+    listed = {}
+    if os.path.exists(os.path.join(ROOT, FROZEN_LIST)):
+        for line in read(FROZEN_LIST).splitlines():
+            if line.strip() and not line.startswith("#"):
+                digest, path = line.split(None, 1)
+                listed[path.strip()] = digest
+    return listed
+
+
+def check_spelling(fail):
+    """The old spelling of Tushe may not appear in any working-tree file or path.
+
+    Exempt: paths on the frozen-files list and the partner's own source documents.
+    """
+    frozen = set(frozen_listed())
+    for path in tracked_files():
+        if path.startswith(FROZEN_SOURCE_DIR) or path in frozen:
+            continue
+        if OLD_SPELLING in path.lower():
+            fail(f"{path}: path contains the old spelling of Tushe")
+            continue
+        try:
+            text = read(path)
+        except (UnicodeDecodeError, OSError):
+            continue
+        for n, line in enumerate(text.splitlines(), 1):
+            if OLD_SPELLING in line.lower():
+                fail(f"{path}:{n}: old spelling of Tushe")
 
 
 def check(fail):
@@ -243,19 +282,7 @@ def check(fail):
                     fail(f"{path}: states SoT v{v}, but the SoT is v{sot_version}")
 
     # 6. Spelling
-    for path in tracked_files():
-        if path.startswith(FROZEN_SOURCE_DIR):
-            continue
-        if OLD_SPELLING in path.lower():
-            fail(f"{path}: path contains the old spelling of Tushe")
-            continue
-        try:
-            text = read(path)
-        except (UnicodeDecodeError, OSError):
-            continue
-        for n, line in enumerate(text.splitlines(), 1):
-            if OLD_SPELLING in line.lower():
-                fail(f"{path}:{n}: old spelling of Tushe")
+    check_spelling(fail)
 
     # 7. Relative Markdown links resolve
     md = [p for p in tracked_files() if p.endswith(".md") and (p.startswith("docs/") or p in ("README.md", "AGENTS.md", "CLAUDE.md"))]
@@ -274,11 +301,7 @@ def check(fail):
     if not os.path.exists(os.path.join(ROOT, FROZEN_LIST)):
         fail(f"{FROZEN_LIST}: missing")
     else:
-        listed = {}
-        for line in read(FROZEN_LIST).splitlines():
-            if line.strip() and not line.startswith("#"):
-                digest, path = line.split(None, 1)
-                listed[path.strip()] = digest
+        listed = frozen_listed()
         required = ["docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md"]
         required += [p for p in tracked_files() if p.startswith(FROZEN_SOURCE_DIR)]
         for path in required:

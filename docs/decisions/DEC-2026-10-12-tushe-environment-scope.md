@@ -267,7 +267,7 @@ Replace these parts of SoT §36. Everything else in §36 stays as written.
 
 ## Amendment 1 · 13 October 2026
 
-Recorded after Noema's amended response and worksheet were sent to Tushe on 13 October 2026 (docs/poc/tushe/responses/2026-10-13-noema-response.md).
+Recorded after Noema's amended response and worksheet were sent to Tushe on 13 October 2026 ([the PDF record](../poc/tushe/responses/2026-10-13-noema-response.pdf)).
 
 Every section above stays as written. This amendment changes the following.
 

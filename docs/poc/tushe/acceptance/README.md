@@ -29,8 +29,8 @@ The worksheet records each test as Pass, Pass amended, Noema covers or Tushe by 
 
 | File | SHA-256 | What it is |
 |---|---|---|
-| [`G0-worksheet-2026-10-13-SENT.md`](G0-worksheet-2026-10-13-SENT.md) | `7c8d5986c3f90422dcaee6e8b444db2d555b1c8d34e21aae8e2c9783c27bbf52` | The acceptance worksheet **as sent to Tushe on 13 Oct 2026**. Frozen record; not signed |
-| [`G0-worksheet-2026-10-13-SENT.pdf`](G0-worksheet-2026-10-13-SENT.pdf) | `842bc6b4a402cd3eb75f9281bf4234718f12835df83a2f11dcca0dd087a4f56d` | The same worksheet, PDF, as sent. Frozen record |
+| [`G0-worksheet-2026-10-13-SENT.pdf`](G0-worksheet-2026-10-13-SENT.pdf) | `842bc6b4a402cd3eb75f9281bf4234718f12835df83a2f11dcca0dd087a4f56d` | The acceptance worksheet **as sent to Tushe on 13 Oct 2026**. **This PDF is the record.** Frozen record (listed in `tools/frozen-files.sha256`); not signed |
+| [`G0-worksheet-2026-10-13-SENT.md`](G0-worksheet-2026-10-13-SENT.md) | `7c8d5986c3f90422dcaee6e8b444db2d555b1c8d34e21aae8e2c9783c27bbf52` | A Markdown source copy. Its text matches the PDF (layout differs). It has not been verified byte for byte against what was sent, so it is **not** a frozen record and is not on the frozen list. If it disagrees with the PDF, the PDF is right |
 | [`G0-worksheet-2026-10-12-DRAFT.pdf`](G0-worksheet-2026-10-12-DRAFT.pdf) | `7a2339ece9e24e67391c3f3a5520b216d96986c725c34abfad3dfcc37244e1d9` | **Superseded draft, never sent.** Superseded by the 13 Oct worksheet above. Kept unchanged |
 | `G0-worksheet-2026-10-16-SIGNED.md` and `G0-worksheet-2026-10-16-SIGNED.pdf` | — | The worksheet signed by both sides at the joint session on Fri 16 Oct, in Markdown and PDF. Committed as separate files after the session (plan task ENV-12); the sent copy is never overwritten. Do not exist yet |
 | `AT-TEN-report-2026-10-16.md` | — | The record of the joint session on Fri 16 Oct (plan task ENV-07). Does not exist yet |
