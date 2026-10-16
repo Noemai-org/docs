@@ -1,3 +1,5 @@
 # SHA-256 of frozen files. Changing a frozen file requires updating its hash here in the same PR.
 f926e841dd501ece1368d6a9aa3e52dbefaac42614a658baa132d927d2a3180e  docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md
 915d63cd2daaeeba6bc118be3328ac49d4e6d620afc2bee6237ee8510612deb3  docs/poc/tushe/source/Noema_Tushe_Synthetic_Enterprise_Environment_Technical_Requirements_v1_0.md
+c1f1e33a7295a1b16998c5aff26d06a92bea5dbefd30613712f673f71f2c3e6a  docs/poc/tushe/responses/2026-10-13-noema-response.pdf
+842bc6b4a402cd3eb75f9281bf4234718f12835df83a2f11dcca0dd087a4f56d  docs/poc/tushe/acceptance/G0-worksheet-2026-10-13-SENT.pdf
