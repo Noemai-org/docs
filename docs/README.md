@@ -61,7 +61,7 @@ docs/
       tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
       acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
       responses/               Tushe correspondence: received and sent records, with checksums
-    perd/                      POC PERD v1.4 (current, Proposed; ranks below the SoT; v1.1 to v1.3 kept unchanged), generated REQ index, conflicts, templates
+    perd/                      POC PERD v1.5 (current, Accepted; ranks below the SoT; v1.1 to v1.4 kept unchanged), generated REQ index, conflicts, templates
     execution/                 four-week plan v1.4 (current, Proposed; v1.1 to v1.3 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
       task-cards/              task cards for the tasks added by plans v1.2 and v1.3 (GOV-19, GOV-20, ENV-08 to ENV-13)
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
@@ -73,7 +73,7 @@ docs/
     DEC-2026-10-09-deployment-temporal-providers.md
                                two deployables, Temporal, multi-provider (the v1.3 decisions)
     DEC-2026-10-11-poc-perd-v1.1.md
-                               adopt the POC PERD v1.1 (Proposed)
+                               adopt the POC PERD (Accepted; re-pointed to the current PERD)
     DEC-2026-10-11-poc-4week-plan.md
                                four-week execution plan and schedule change (Proposed)
   archive/                     NON-AUTHORITATIVE legacy material and the migration report

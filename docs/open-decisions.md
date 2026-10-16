@@ -559,4 +559,4 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **What would change it:** — (none stated)
 - **Owner:** Engineering lead
 - **Deadline:** Wed 14 Oct 2026 (plan task GOV-20); decided 16 Oct 2026
-- **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15; [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.
+- **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15 (answered in [PERD v1.5](poc/perd/NOEMA_POC_PERD_v1.5.md)); [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.

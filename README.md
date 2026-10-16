@@ -27,7 +27,7 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
-| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.4 (applies [DEC-2026-10-13](docs/decisions/DEC-2026-10-13-code-monorepo.md); earlier versions kept). Status: Accepted ([DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md), re-pointed by [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md)). Ranks below the SoT. |
+| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.5 (applies [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md); earlier versions kept). Status: Accepted ([DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md), re-pointed by [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md)). Ranks below the SoT. |
 | `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.4 (12 Oct to 6 Nov 2026) and its task index. Status: Accepted ([DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md), re-pointed by [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md)). Ranks below the SoT and the PERD. |
 | `docs/security/`, `docs/runbooks/` | Threat model, trust-boundary and threat-to-test maps (from the PERD, Proposed); runbook scaffolds (no steps yet) |
 | `docs/archive/` | **Non-authoritative** historical material |
