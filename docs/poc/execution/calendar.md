@@ -1,6 +1,6 @@
 # POC build calendar (WAT)
 
-Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.5.md), re-baselined by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E3: Mon 19 Oct to Fri 13 Nov 2026, with the work delivered on 12 to 16 Oct shown as week 0. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2). Tushe's own dates (R1 to R13) do not move.
+Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.6.md), re-baselined by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E3: Mon 19 Oct to Fri 13 Nov 2026, with the work delivered on 12 to 16 Oct shown as week 0. Times are West Africa Time. Gates outrank dates: if a gate and the calendar conflict, the gate wins and the date moves (SoT §40.2). Tushe's own dates (R1 to R13) do not move.
 
 | Day | Time (WAT) | Event | Plan section |
 |---|---|---|---|
@@ -25,17 +25,17 @@ Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.5.md), re-baselined by [
 | Fri 23 Oct | all day | **G1** evidence run (BEN-05) | §3, §8 |
 | Sat 24 Oct | — | Reserve only, called by EL | §3 |
 | Mon 26 Oct | before 10:00 | Noema-covered AT exceptions AT-04, AT-05, AT-07 and AT-14 shown internally (internal target) | §3.1 (G0-N) |
-| Mon 26 Oct | 10:00 | **G1** Unknown-outcome slice review (GOV-07). Counts only once G0 passes | §3, §9 |
+| Mon 26 Oct | 10:00 | **G1** Unknown-outcome slice review (GOV-07). Counts only once G0 passes; if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 are applied that day (DEC C8) | §3, §9 |
 | Fri 30 Oct | all day | Tushe R9 to R12 due (ambiguous name enquiry, approval states, scenario richness, diagnostics view) | §18 |
-| Fri 30 Oct | 16:00 | **G2** Trust depth | §3 |
+| Fri 30 Oct | before 16:00 | The two external people for the comparison arms, ARM and REV, engaged under NDA (GOV-21; DEC-2026-10-16 contract-and-pack-clarifications C8) | §3, §4 |
+| Fri 30 Oct | 16:00 | **G2** Trust depth; ARM and REV confirmed (GOV-11) | §3 |
 | Sat 31 Oct | — | Reserve only, called by EL | §3 |
 | Fri 6 Nov | 16:00 | **G3** Hardened | §3 |
-| Fri 6 Nov | by end of day | External comparison-arm engineer engaged under NDA, before Mon 9 Nov (GOV-21) | §3, §4 |
 | Sat 7 Nov | — | Reserve only, called by EL | §3 |
 | Wed 11 Nov | 12:00 | Code freeze: release candidate tagged (REL-01) | §11 |
 | Wed 11 Nov | 16:00 | **G4** Comparison and **G5** Voice reviews (GOV-13) | §3, §11 |
 | Thu 12 Nov | 18:00 | **G6** Release run review (GOV-16) | §3, §11 |
-| Fri 13 Nov | 09:00 | **G7** Demo readiness: dry run (DEM-02) | §3.1, §11 |
+| Fri 13 Nov | 09:00 | **G7** External readiness: dry run (DEM-02), how G7 is met for the demo (DoD pre-demo items signed at G6) | §3.1, §11 |
 | Fri 13 Nov | 13:00 | Demo pre-flight | §14 |
 | Fri 13 Nov | 14:00 | Demo (DEM-03) | §3, §11, §14 |
 | Fri 13 Nov | 16:00 | POC-done review (GOV-17) | §11 |
