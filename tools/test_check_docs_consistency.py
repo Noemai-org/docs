@@ -119,5 +119,42 @@ class RetiredOrgLinks(TempRepoCase):
         self.assertEqual(len(self.failures()), 1)
 
 
+class NoCodeInDocs(TempRepoCase):
+    def failures(self):
+        out = []
+        cdc.check_no_code(out.append)
+        return out
+
+    def test_contracts_and_packs_directories_fail(self):
+        self.put("contracts/schema.json", "{}\n")
+        self.put("packs/fintech_v1.json", "{}\n")
+        self.assertEqual(len(self.failures()), 2)
+
+    def test_source_code_outside_the_exempt_places_fails(self):
+        self.put("docs/example.py", "print('x')\n")
+        self.put("services/core/main.go", "package main\n")
+        self.assertEqual(len(self.failures()), 2)
+
+    def test_untracked_code_is_found(self):
+        self.put("tools/packcheck.py", "x = 1\n")
+        self.assertIn("tools/packcheck.py", self.failures()[0])
+
+    def test_own_checkers_and_their_tests_are_exempt(self):
+        for name in sorted(cdc.OWN_CHECKERS):
+            self.put(name, "x = 1\n")
+        self.assertEqual(self.failures(), [])
+
+    def test_archive_is_exempt(self):
+        self.put("docs/archive/2026-10-pre-poc-drafts/example.py", "x = 1\n")
+        self.put("docs/archive/2026-10-pre-poc-drafts/contracts/schema.yaml", "a: 1\n")
+        self.assertEqual(self.failures(), [])
+
+    def test_documents_pass(self):
+        self.put("docs/README.md", "text\n")
+        self.put("tools/frozen-files.sha256", "")
+        self.put(".github/workflows/docs-consistency.yml", "name: x\n")
+        self.assertEqual(self.failures(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

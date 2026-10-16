@@ -14,6 +14,7 @@
 |---|---|---|
 | [`legacy-canon-2026-09/`](legacy-canon-2026-09/) | The former `noema-canonical/` tree: 174 Markdown documents (CANON, glossary, thesis, ontology, architecture, trust, intent, execution, contracts, interfaces, data, graph, integrations, loops, ai, engineering, enterprise, taxonomy, strategy, product, reference workflow, ADR-001 to ADR-019). Written September 2026, versions 0.1–0.3. | It predates SoT v1.0/v1.1 and is built on a different model of Noema. It contradicts the SoT on the definition of Noema, the architecture, the Trust model, contracts, the first wedge and the taxonomies (see below). |
 | [`source-drafts-2026-09/`](source-drafts-2026-09/) | Four PDFs dated 3–8 September 2026: two variants of the *Noema POC — Product + Engineering Specification* (files `_2` and `_3`; `_2` is labelled v1.0, 3 Sep 2026), *NOEMA POC Specification* v1.0 ("Complete Synthesis"), and *Noema Master Company Document FINAL* | Drafts that the SoT superseded (SoT Appendix D). |
+| [`2026-10-pre-poc-drafts/`](2026-10-pre-poc-drafts/README.md) | The draft OpenAPI `schema.yaml` and its one fixture | Their mismatches with the SoT are listed in its README (DEC-2026-10-16 E7). Code and packs moved to `noema` |
 | [`migration-2026-10.md`](migration-2026-10.md) | The report of the October 2026 documentation migration | A historical record of what moved, why, and what is still open. |
 
 Git history is preserved: everything was moved with `git mv`. Use `git log --follow <path>` to see each file's earlier history.

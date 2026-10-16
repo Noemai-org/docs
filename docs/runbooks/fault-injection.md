@@ -8,30 +8,30 @@ Run a deterministic fault plan against the synthetic environment.
 
 ## When to use
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Preconditions
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Steps
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Verification
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Rollback or recovery
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Owner
 
-TODO(owner): name the owner (PERD §61.2, "Who does what first").
+IL (PERD §61.2: the integration lead owns the FaultPlan agreement). Both roles are held by the Founder and the Technical Co-Founder (DEC-2026-10-16 E2).
 
 ## Source
 
-PERD §37 (Fault injection). PERD: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md).
+PERD §37 (Fault injection). PERD: [`../poc/perd/README.md`](../poc/perd/README.md) (the current PERD).
 
 Added 12 Oct 2026 (PERD v1.2; DEC-2026-10-12, D4): the three fault sources (Tushe test values and replay, the Noema hostility proxy, `mock-case`) and the FaultPlan `source` field (`TUSHE | PROXY | MOCK_CASE`) (REQ-ENV-004, REQ-ENV-005, REQ-ENV-008).

@@ -8,7 +8,7 @@ Priority: P0
 Requirement IDs: REQ-ENV-008, REQ-ENV-001, REQ-ENV-004, REQ-TST-003; SoT IDs: US-05, US-06, US-19, POC-NFR-05, POC-NFR-08, AGENT-24; SoT §36
 Rationale: Tushe does not provide a case domain (Tushe response, 7 Oct 2026); every POC write targets a case system (PERD §25.1). DEC-2026-10-12, D1.
 Modules touched (allowlist; all paths in the `noema` repository, DEC-2026-10-13): synthetic/mock_case/ (PERD v1.5 §64.2; a test-environment component, DEC-2026-10-16 E5); services/core/adapters/synthetic_tushe/ (the case client only); benchmark/fault_plans/ (mock-case fault plans, authored and owned by the benchmark owner)   ← nothing else may change
-Contracts: case, complaint and evidence payloads `fin.case`, `fin.complaint_ref`, `fin.evidence_attachment` (PERD §34.4); bump required? TODO(EL): confirm against /contracts v1 (CON-01)
+Contracts: case, complaint and evidence payloads `fin.case`, `fin.complaint_ref`, `fin.evidence_attachment` (PERD §34.4); bump required? TODO(EL, CON-01): confirm against /contracts v1 (CON-01)
 Inputs/outputs: case commands from the core's case adapter → case, complaint and evidence records with version tokens; fault plans from the benchmark runner
 Acceptance criteria:
   REQ-ENV-008:

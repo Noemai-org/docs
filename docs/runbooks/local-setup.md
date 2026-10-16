@@ -8,32 +8,32 @@ Bring up the POC environment on one machine with one command.
 
 ## When to use
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Preconditions
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Steps
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Verification
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Rollback or recovery
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Owner
 
-TODO(owner): name the owner (PERD §61.2, "Who does what first").
+EL (PERD §61.2: the engineering lead locks the module boundaries and CI and owns the environment). Both roles are held by the Founder and the Technical Co-Founder (DEC-2026-10-16 E2).
 
 ## Source
 
-PERD §65.1 (POC topology, Docker Compose); PERD REQ-NFR-004 (One-command reproducible environment; §43). PERD: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md).
+PERD §65.1 (POC topology, Docker Compose); PERD REQ-NFR-004 (One-command reproducible environment; §43). PERD: [`../poc/perd/README.md`](../poc/perd/README.md) (the current PERD).
 
-Updated 13 Oct 2026 (DEC-2026-10-13): `noema` repository; `make` targets (PLT-04). Steps stay TODO.
+Updated 13 Oct 2026 (DEC-2026-10-13): `noema` repository; `make` targets (PLT-04). Steps are not written yet (TODO(EL, PLT-02)).
 
 Added 12 Oct 2026 (PERD v1.2; DEC-2026-10-12, D6): the Tushe test key (read-only), the hostility proxy and `mock-case` in Docker Compose (PERD v1.2 §65.1).
