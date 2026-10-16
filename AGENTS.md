@@ -71,7 +71,7 @@ Run this at the start of every session.
      - if G1 failed, week 2 starts with the slice and ambiguity work waits (plan §3.1);
      - no comparison arm starts before G3 passes (SoT §38.5, plan §3.1);
      - after the code freeze (Wed 11 Nov 12:00 WAT), only the fixes plan §11 allows merge.
-   - The work-in-progress limit holds: one active P0 task per engineer, at most two active tasks per person (plan §5).
+   - The work-in-progress limit holds: at most 4 open PRs per driving founder, at most 2 of them P0; see the current plan §5.
 
    If any check fails, stop and report.
 4. **Read or write the task card** (PERD §61.4; template [`docs/poc/perd/templates/task-card.md`](docs/poc/perd/templates/task-card.md)). Read the PERD REQ blocks it cites ([`requirements-index.csv`](docs/poc/perd/requirements-index.csv) lists them) and the SoT IDs those REQs cite. Use [`docs/requirements-index.md`](docs/requirements-index.md) to find the SoT section each ID points to.

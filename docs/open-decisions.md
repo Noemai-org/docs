@@ -560,3 +560,29 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Engineering lead
 - **Deadline:** Wed 14 Oct 2026 (plan task GOV-20); decided 16 Oct 2026
 - **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15 (answered in [PERD v1.5](poc/perd/NOEMA_POC_PERD_v1.5.md)); [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.
+
+<a id="od-p-44"></a>
+### OD-P-44: How `evidence_set_hash` is built
+
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-16-contract-and-pack-clarifications](decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) C1 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-16 contract-and-pack-clarifications C1):** Sort the `(evidence_id, payload_hash)` pairs by the UTF-8 bytes of `evidence_id`, join `LP(evidence_id) ‖ LP(payload_hash)` for each pair, and take SHA-256. `LP()` is the 4-byte big-endian length plus UTF-8 bytes of PERD §27.2. The whole input is rejected on an empty or duplicate `evidence_id` or a `payload_hash` that is not `sha256:` plus 64 lowercase hex characters. Trust never issues a grant over an empty evidence set. Four golden vectors and five negative fixtures are in PERD v1.6 §21.3.
+- **Missing decision:** the construction of `evidence_set_hash` (PERD v1.5 §21.3 gave only "SHA-256 over the sorted list of `(evidence_id, payload_hash)`"), so that Go and Python implement the committed vectors the same way (task CON-04).
+- **Why it matters:** the hash is bound into every grant (SoT §13.2, INV-17). Two implementations that differ by one byte reject each other's grants.
+- **Minimum safe default (meanwhile):** the C1 construction, which reproduces both committed vectors.
+- **What would change it:** a committed vector that the construction does not reproduce, or an implementation that cannot reproduce all four vectors in CI.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before CON-04 is done; decided 16 Oct 2026
+- **Source:** [PERD v1.6](poc/perd/NOEMA_POC_PERD_v1.6.md) §21.3, REQ-CTX-004; [DEC-2026-10-16-contract-and-pack-clarifications](decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) C1.
+
+<a id="od-p-45"></a>
+### OD-P-45: Intent model of the fintech pack
+
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-16-contract-and-pack-clarifications](decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) C2 (takes effect when that record is approved and merged)
+- **Answer (DEC-2026-10-16 contract-and-pack-clarifications C2):** The fintech pack has exactly two intent nodes, `fin.payments.exception.investigate` and `fin.meta.out_of_scope`. Question types and requested remedies are slots, never nodes. The ten upper-case classes of the ported pack are mapped (PERD v1.6 §20.4) and deleted; `SELECT_BENEFICIARY` is counterparty resolution inside the node. The conformance packs follow the same shapes within the SoT §15.4 cap.
+- **Missing decision:** which intent model the pack uses: the ported pack's ten classes (two of which, `TRANSFER_FUNDS` as a write intent and `REQUEST_REFUND`, contradict the money boundary) or the two nodes of SoT §15.3 and PERD §20.4 (E12 review item 4).
+- **Why it matters:** Trust, the compiler and the benchmark are built against the pack's shapes in week 1.
+- **Minimum safe default (meanwhile):** the two-node model; the ported classes are not built against (task PCK-01 is in progress, DEC C3).
+- **What would change it:** a change to SoT §15.3.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before PCK-01 and UND-05 start the rewrite; decided 16 Oct 2026
+- **Source:** [PERD v1.6](poc/perd/NOEMA_POC_PERD_v1.6.md) §20.4, REQ-INT-005; [DEC-2026-10-16-contract-and-pack-clarifications](decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) C2, C3.
