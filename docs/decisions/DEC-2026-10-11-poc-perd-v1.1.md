@@ -1,21 +1,28 @@
 # DEC-2026-10-11-poc-perd-v1.1
 
-- Status: Proposed (founder approval required)
+- Status: Accepted. The Founder approved it on 16 Oct 2026 (written instruction); the Technical Co-Founder confirms by approving the pull request that applies DEC-2026-10-16
 - Date: 2026-10-11
 - Closes: none
-- Owner: Founders (TODO: name), with the technical co-founder as reviewer
+- Owner: Founder and Technical Co-Founder
 - Decision:
-  - Adopt [`docs/poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md) as the POC's detailed engineering specification (SoT §0.4, item 4), subordinate to SoT v1.3. Where the two disagree, the SoT wins (PERD P.1).
+  - Adopt the current PERD, named in [`docs/poc/perd/README.md`](../poc/perd/README.md) (v1.5; 153 requirements), as the POC's detailed engineering specification (SoT §0.4, item 4), subordinate to the SoT. Where the two disagree, the SoT wins (PERD P.1). This record first adopted v1.1; DEC-2026-10-16 E11 re-pointed it to the current PERD, so that it does not name a superseded file.
   - Its `[REC]` defaults apply as provisional defaults, mirrored as NON-CANONICAL entries [OD-P-14 to OD-P-41](../open-decisions.md#od-p-14), until each is accepted or replaced by its own decision record.
 - Rationale and evidence:
   - The SoT defines what and why.
-  - The PERD defines how, with 152 testable requirements traced to SoT IDs, an executable investigation state machine, contracts, an edge-case catalogue, a threat model and a build plan.
+  - The PERD defines how, with 153 testable requirements (v1.5) traced to SoT IDs, an executable investigation state machine, contracts, an edge-case catalogue, a threat model and a build plan.
   - Every disagreement with the SoT is listed in PERD §72 and none is resolved silently. They are tracked in [`docs/poc/perd/conflicts-register.md`](../poc/perd/conflicts-register.md).
 - Affected requirement IDs / SoT sections: SoT Part VII and Part IX (no SoT text changes in this record or its pull request).
 - Migration notes:
   - None for code; no code exists yet.
   - Future PERD versions follow [`docs/poc/perd/README.md`](../poc/perd/README.md): a new version file, a decision record, the regenerated requirements index and updated conflict statuses, in one pull request (AGENT-29).
-- Supersedes: none. Older POC specification files in this repository (the drafts under [`docs/archive/source-drafts-2026-09/`](../archive/README.md)) are historical. They must not be given to coding agents as specifications (PERD §72, SOT-C-27; AGENTS.md §1.4). They are not moved or deleted.
+- Supersedes: none. Re-pointed by [DEC-2026-10-16](DEC-2026-10-16-execution-reset.md) E11. Older POC specification files in this repository (the drafts under [`docs/archive/source-drafts-2026-09/`](../archive/README.md)) are historical. They must not be given to coding agents as specifications (PERD §72, SOT-C-27; AGENTS.md §1.4). They are not moved or deleted.
+
+## Sign-off
+
+| Role | Name | Decision | Date |
+|---|---|---|---|
+| Founder | — | Approved, 16 Oct 2026 (written instruction) | 16 Oct 2026 |
+| Technical Co-Founder | — | Confirms by approving this PR | Date of the approving review |
 
 ## SoT §52 questions
 

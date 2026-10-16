@@ -1,6 +1,6 @@
 # POC PERD (Product & Engineering Requirements Document)
 
-> **Status: Proposed.** The PERD becomes the POC's detailed engineering specification (SoT §0.4, item 4) only when [DEC-2026-10-11-poc-perd-v1.1](../../decisions/DEC-2026-10-11-poc-perd-v1.1.md) is accepted. It **ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md)**: where they disagree, the SoT wins (PERD P.1).
+> **Status: Accepted** ([DEC-2026-10-11-poc-perd-v1.1](../../decisions/DEC-2026-10-11-poc-perd-v1.1.md), re-pointed to the current PERD by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E11). The PERD is the POC's detailed engineering specification (SoT §0.4, item 4). It **ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md)**: where they disagree, the SoT wins (PERD P.1).
 
 | File | What it is |
 |---|---|
