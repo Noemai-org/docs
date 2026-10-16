@@ -14,13 +14,15 @@ Version 1.4 applies DEC-2026-10-13-code-monorepo (one code repository, `noema`):
 
 Version 1.5 applies DEC-2026-10-16-execution-reset: every date moves forward seven days (E3), except work already done, which keeps its actual date, and Tushe's R-dates, which do not move; G0 is split into G0-N and G0-T (E4), so ENV-07 becomes two rows (ENV-07 is G0-T, the new ENV-14 is G0-N); ENV-13 becomes the webhook relay (E6); GOV-20 is done (E6); three GOV tasks are added (GOV-21 to GOV-23); the roles are held by the two founders (E2). Task cards, calendar and index are regenerated. Version 1.4 stays unchanged.
 
-Version 1.6 applies DEC-2026-10-16 contract-and-pack-clarifications (16 October 2026). No SoT change is needed. The task count stays 213, and Version 1.5 stays unchanged. The changes:
+Version 1.6 applies DEC-2026-10-16 contract-and-pack-clarifications (16 October 2026), including its settlement (C10). No SoT change is needed. The task count is 214 (BEN-17 is split in two), and Version 1.5 stays unchanged. The changes:
 
-1. **G7 is named "External readiness"** everywhere, and its conditions are the union of the PERD's and this plan's wording; the Fri 13 Nov 09:00 dry run (DEM-02) is how G7 is met for the demo (C6).
-2. **CON-04 stays open; PCK-01 and PCK-02 are in progress** (C3). PCK-01 and PCK-02 leave the week-0 "delivered" group and are dated in week 1, after CON-01 (Tue 20 and Wed 21 Oct). Their Done when is rewritten to C3. CON-01 now names the pack schema they depend on. GOV-23 no longer needs PCK-02: PR N1 merged on 16 Oct 2026, so the dependency it stood for is met.
+1. **G7 is named "External readiness"** everywhere, and its conditions are the union of the PERD's and this plan's wording; the Fri 13 Nov 09:00 dry run (DEM-02) is how G7 is met for the demo (C6). Its "DoD signed" condition is assessed at G6 for every PERD §68 item that does not depend on the demo itself (C10); GOV-17 closes the rest.
+2. **CON-04 stays open; PCK-01 and PCK-02 are in progress** (C3). PCK-01 and PCK-02 leave the week-0 "delivered" group and are dated in week 1, after CON-01 (Tue 20 and Wed 21 Oct). Their Done when is rewritten to C3. CON-01 owns the pack schema and delivers it in its first PR on Mon 19 Oct, so that PCK-01 can start (C10). GOV-23 no longer needs PCK-02: PR N1 merged on 16 Oct 2026, so the task is ready.
 3. **UND-05 compiles to exactly two nodes**, `fin.payments.exception.investigate` and `fin.meta.out_of_scope`, with `question_type` and `requested_remedy` as slots (C2).
-4. **Team (C8).** The Founder holds B and does not drive the C1 and C2 build areas (§4). ARM and REV are two external people, confirmed by GOV-11 on Fri 30 Oct, so GOV-21 moves from Fri 6 Nov to Fri 30 Oct and GOV-11 needs it. Work in progress is counted per founder (§5). Cut-line items 1 to 3 are applied now under SR-03 (§2); items 4 and 5 are reviewed at the G1 review (GOV-07).
-5. Task cards PCK-01, PCK-02 and UND-05 are written; the calendar, the index and Appendices A and B are regenerated.
+4. **Team (C8).** The Founder holds B and does not drive the C1 and C2 build areas (§4). ARM and REV are two external people, confirmed by GOV-11 on Fri 30 Oct, so GOV-21 moves from Fri 6 Nov to Fri 30 Oct and GOV-11 needs it. BEN-17 is split into BEN-17a (B, triage) and BEN-17b (C1, C2, fixes) to keep B independent (C10).
+5. **Work in progress is a flow limit on open pull requests** (§5): each founder drives at most 4 open PRs, at most 2 of them P0. Slippage is handled by gates, not daily dates: at the G1 review (GOV-07), if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 are applied that day (C8, point 3).
+6. **Cut line (C8, C10).** Items 1 to 3 are applied now under SR-03 (§2): VOI-04 (English and Pidgin TTS only), UI-01 to UI-06 (scope: PERD §40 minimum only) and ARM-04 (arms E and F "not tested").
+7. Task cards PCK-01, PCK-02 and UND-05 are written; the calendar, the index and Appendices A and B are regenerated.
 
 > The objective is not to ship the most code in four weeks. It is to produce the strongest reproducible evidence that Noema can safely turn an ambiguous human request into a governed, independently verified and reconstructable enterprise outcome.
 
@@ -170,13 +172,13 @@ These hold on every day of the four weeks. Breaking one stops the line.
 
 **Out of scope for the whole build** [SoT §34, PERD §16]: monetary writes, refunds, reversals, payment instructions and beneficiary changes, or any callable path to them; `CLOSE_OR_RESOLVE_CASE`, clock changes, evidence edits or deletes, priority downgrades; Mode 2 as a product; a generic agent builder, an MCP gateway or product, a policy studio or DSL; extra deployables, Kafka, Kubernetes, vector or graph databases, Redis as authoritative state; WhatsApp or SMS channels; a broad analytics dashboard; populated non-fintech packs; real bank integration. Any request to add one needs a SoT ID and an approved decision record.
 
-**The cut line.** If we fall behind, things are cut in this order, and **only** in this order. With two people the team is below the §4 staffing table, so SR-03 applies: items 1 to 3 are cut now (DEC-2026-10-16 contract-and-pack-clarifications C8, item 4); items 4 and 5 are reviewed at the G1 review on Mon 26 Oct (GOV-07) against measured progress.
+**The cut line.** If we fall behind, things are cut in this order, and **only** in this order. With two people the team is below the §4 staffing table, so SR-03 applies: items 1 to 3 are cut now (DEC-2026-10-16 contract-and-pack-clarifications C8, item 4); items 4 and 5 are applied at the G1 review on Mon 26 Oct (GOV-07) if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged (§5).
 
-1. Voice breadth beyond English and Pidgin for the demo (the other three locales are still measured). **Cut now (DEC C8):** VOI-04 is cut in part.
-2. UI polish beyond the PERD §40 minimum. **Cut now (DEC C8):** no task row is UI polish; UI-01 to UI-06 deliver the §40 minimum only, and nothing beyond it is added.
-3. Comparison arms E and F, which are optional and reported as "not tested". **Cut now (DEC C8):** ARM-04 is cut in part.
-4. Arm D, then the A0 diagnostic. Reviewed at the G1 review (GOV-07).
-5. P2 requirements (REQ-PLN-003, REQ-NFR-008, REQ-OBS-003). Reviewed at the G1 review (GOV-07).
+1. Voice breadth beyond English and Pidgin for the demo (the other three locales are still measured). **Cut now (DEC C8):** VOI-04 is cut to TTS for English and Pidgin only; the other three locales are still recorded and measured (VOI-06, VOI-09, G5 unchanged).
+2. UI polish beyond the PERD §40 minimum. **Cut now (DEC C8):** UI-01 to UI-06 carry "Scope: PERD §40 minimum only (DEC C8)". WCAG 2.2 AA stays, because it is in the requirement.
+3. Comparison arms E and F, which are optional and reported as "not tested". **Cut now (DEC C8):** ARM-04 writes E and F up as "not tested"; A0 stays, pending the §5 trigger.
+4. Arm D, then the A0 diagnostic. Applied at the G1 review (GOV-07) if the §5 trigger fires.
+5. P2 requirements (REQ-PLN-003, REQ-NFR-008, REQ-OBS-003). Applied at the G1 review (GOV-07) if the §5 trigger fires.
 
 **Never cut:**
 
@@ -229,13 +231,14 @@ Each gate is a meeting with evidence on the screen. It is not a status update.
 | **G4 Comparison** | Arms A, B and D built, reviewed as competent by the independent reviewer, run on the frozen pack, and the report drafted. Curve and operating point reviewed. S2 budget agreed (PERD §69) | Arm manifests; reviewer sign-off; comparison tables | Benchmark owner and arm reviewer | The release run proceeds; the comparison is reported as incomplete; "POC done" waits |
 | **G5 Voice** | Voice subset meets SoT §38.2: key-slot accuracy ≥ 95%, intent accuracy within 3 percentage points of text, every low-confidence key slot clarifies. The real-conditions gate passes: Intent Object P95 ≤ 2.5 s on a Tecno Spark on Airtel 3G in Lagos noise, ≥ 100 sessions, ≥ 50% Pidgin, consent and retention rules met (PERD §45.4) | Field-session report | Voice engineer and engineering lead | The demo runs in text; voice is shown only as a recorded measurement; **no design-partner demo** until it passes [SoT §37.5] |
 | **G6 Release run** | Held-out plus full suite run by the benchmark owner on one release commit; results from different commits are never combined. All PERD §60 acceptance criteria met, or each miss written down. Clean-room reproduction passes. Evidence bundle complete and signed | Signed evidence bundle | Founders | The demo shows the real result; external claims are limited to what the bundle permits |
-| **G7 External readiness** | DoD signed. Every external number has n, method, bound and CI. Clocks labelled SYNTHETIC. No ROI claim. D1 to D10 run from the engine. Kill switch, rollback and incident playbook drilled. The Fri 13 Nov 09:00 dry run (DEM-02) is how G7 is met for the demo | Dry run at 09:00 Fri 13 Nov; the signed DoD | Founders (any external demo or publication) | Drop any demo scenario that is not real. Never script one |
+| **G7 External readiness** | DoD signed at G6 (GOV-16, Thu 12 Nov 18:00) for every PERD §68 item that does not depend on the demo itself. Every external number has n, method, bound and CI. Clocks labelled SYNTHETIC. No ROI claim. D1 to D10 run from the engine. Kill switch, rollback and incident playbook drilled. The Fri 13 Nov 09:00 dry run (DEM-02) is how G7 is met for the demo | Dry run at 09:00 Fri 13 Nov; the signed DoD | Founders (any external demo or publication) | Drop any demo scenario that is not real. Never script one |
 
 **Gate rules.**
 
 - A gate's outcome is PASS, FAIL or BLOCKED, written in `docs/poc/execution/gates/` with evidence links. A failed gate is never relabelled "mostly done" or "pass with actions".
 - A fix after a failed gate gets its regression case first, then the affected property tests and the full suite run again. The rerun is a new run with its own ID; it never silently replaces the failed one, and no case is cherry-picked.
 - A curated happy path never passes a gate.
+- If a gate after G1 fails, its date moves (SoT §40.2), and the founders set the new demo date in the gate record.
 
 ## 4. Team, roles and ownership
 
@@ -317,7 +320,7 @@ Agents must never:
 
 **Working rules.**
 
-- **Work in progress.** Counted per founder, not per role: each founder drives at most two active tasks, of which at most one is P0, and each coding-agent session belongs to exactly one task its founder drives (DEC-2026-10-16 contract-and-pack-clarifications C8, item 3).
+- **Work in progress.** A flow limit on open pull requests (DEC-2026-10-16 contract-and-pack-clarifications C8, point 3): each founder may have at most 4 open PRs they drive, of which at most 2 are P0, and the agent starts no new task for that founder until one of them merges. The other founder reviews each PR within the same working day, and by 09:00 the next day at the latest. Slippage is handled by gates, not daily dates: at the G1 review (GOV-07, Mon 26 Oct 10:00), if G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (§2) are applied that day.
 - **Schedule.** Any critical-path task more than one working day late triggers a same-day scope or dependency decision at 17:00. The answer is never less testing or an unverified safety path.
 - **Contracts.** After `/contracts` v1.0.0 is tagged (a G0-N condition), a change needs a version bump, regenerated types, contract tests in both languages and EL's approval.
 - **Pull requests.** One logical change per PR; small, vertical and reviewable. Main is always green.
@@ -419,13 +422,13 @@ These tasks keep their actual dates (DEC-2026-10-16 E3, exception 1). Some were 
 | GOV-05 | Confirm every role in §4; publish the ownership table on the board | FND, EL | REQ-AGT-001 | — | Each role has a named person |
 | GOV-06 | Adopt the PERD §67.3 [REC] defaults as provisional, so engineers can build; any rejected default is replaced the same day | FND, EL | REQ-OPS-003 | GOV-01 | OD-P entries marked "in force (provisional)" |
 | GOV-22 | Turn on branch protection on `docs`, `brain` and `noema`: a pull request is required; one approving review from the other founder; CODEOWNERS review on protected paths; status checks must pass; no force pushes (DEC-2026-10-16 E13). It applies to the founders as well | FND (Founder) | — | — | Each repository's settings are listed in the PLT-01 settings checklist; a direct push to `main` is refused on each |
-| GOV-23 | Archive `noema-org` read-only now that PR N1 (the port of the 14 and 15 October work to `noema`, E12) has merged (noema#1, merged 16 Oct 2026). A settings action, not an edit (DEC-2026-10-16 E1) | FND (Founder) | — | — | `noema-org` is archived; nothing was written to it |
+| GOV-23 | Archive `noema-org` read-only now that PR N1 (the port of the 14 and 15 October work to `noema`, E12) has merged (noema#1, merged 16 Oct 2026). A settings action, not an edit (DEC-2026-10-16 E1) | FND (Founder) | — | — | `noema-org` is archived; nothing was written to it. Ready: noema#1 has merged, and the Founder archives `noema-org` now |
 | PLT-02 | CI pipeline: build, unit tests, secret scan, dependency pinning check, SBOM, codegen diff, image file-list check (DEC R2), environment-reference check (DEC R3), PR trace-ID check (PERD REQ IDs plus SoT IDs) | EL+AG | REQ-TST-005, REQ-SEC-007, REQ-AGT-001 | PLT-01 | A PR without IDs fails; a planted test secret fails; a planted cross-service file in an image fails CI; a workflow referencing another area's environment fails CI. Re-baselined by DEC-2026-10-16 E3 |
 | PLT-03 | `tools/lint`: core forbidden terms; import boundaries (trust, execution and outcome; explanation never imported); no wall-clock outside the clock package; no float money; no mock libraries in integration or benchmark packages; no benchmark branches; no provider SDK in core manifests; no DB driver or Temporal client in the model service; no file in `services/core/` references a path in `services/model/`, or the reverse | EL+AG | REQ-NFR-005, REQ-TST-004, REQ-TST-006, REQ-DATA-002, REQ-SEC-002 | PLT-01 | Each rule has a canary file that fails CI. Re-baselined by DEC-2026-10-16 E3 |
 | PLT-04 | Docker Compose with the six networks of PERD §65.1 and the profiles `dev`, `ci`, `bench` and `demo`; `make up`, `make reset`, `make bench-smoke` targets | EL | REQ-OPS-001, REQ-NFR-004 | PLT-01 | `make up` starts Postgres, Temporal, empty services and the UI shell. Re-baselined by DEC-2026-10-16 E3 |
 | PLT-05 | Secrets: file-mounted locally; the secrets manager decision for shared environments (OQ-09); `.env.example` lists names only | SR | REQ-SEC-005 | PLT-04 | No secret in the repository; scan clean |
 | AGT-01 | Task-card and PR templates in both code repositories: trace IDs, module allowlist, tests-first list, faults to exercise, and the CONFLICT block; open conflicts go to the 17:00 review | EL+AG | REQ-AGT-003, REQ-AGT-002 | PLT-01 | A trial agent task that hits a planted conflict stops and files the block instead of guessing |
-| CON-01 | Draft JSON Schemas for every PERD §39 and SoT §43 object, each with positive and negative fixtures: canonical input, Intent Object (with the slot sub-schema), Decision Record (with `disposition_decision_id`), grant, confirmation request and event, plan, receipt, verdict, `outcome.updated`, evidence item and payload, context snapshot, Record event, capability descriptor, recovery request, clarification, explanation facts, inbound event, `noema.resolution`, errors, the domain pack (SoT §15.3 shapes: intent nodes, trust profiles, outcome definitions, evidence-source descriptors, policy rules, capability registry, Action Graph) | C1, C2+AG | REQ-API-001, REQ-API-002 | PLT-01 | Every schema validates its fixtures |
+| CON-01 | Draft JSON Schemas for every PERD §39 and SoT §43 object, each with positive and negative fixtures: canonical input, Intent Object (with the slot sub-schema), Decision Record (with `disposition_decision_id`), grant, confirmation request and event, plan, receipt, verdict, `outcome.updated`, evidence item and payload, context snapshot, Record event, capability descriptor, recovery request, clarification, explanation facts, inbound event, `noema.resolution`, errors, the domain pack (SoT §15.3 shapes: intent nodes, trust profiles, outcome definitions, evidence-source descriptors, policy rules, capability registry, Action Graph) | C1, C2+AG | REQ-API-001, REQ-API-002 | PLT-01 | Every schema validates its fixtures. The pack schema is delivered in CON-01's first PR on Mon 19 Oct, so that PCK-01 can start |
 | CON-02 | Diff the contract value lists against DEC-2026-10-06 (OQ-13); the decision record governs | EL | REQ-API-001 | CON-01 | Diff noted in the PR; conflicts resolved or raised |
 | ENV-01 | Tushe kickoff. Receive the OpenAPI and event schemas. Map every logical service (`mock-ledger`, `mock-switch`, `mock-destination`, `mock-customer`, `mock-policy`, `mock-case`, `mock-clock`, `fault-controller`, `fixture-loader`) to its documented endpoints, schemas and authority; log every unknown semantic instead of guessing. Agree the FaultPlan contract (PERD §37.1). Confirm per-object time control, reset, snapshot and replay. Issue the oracle credential to B only. Issue the integration credential with read plus non-monetary case scope only. Ask OQ-03 | IL | REQ-ENV-004, REQ-ENV-007 | PRE-03 | Minutes with owners and dates; OpenAPI in the docs repository |
 | ENV-02 | Import AT-01 to AT-20 verbatim from the Tushe specification into `docs/poc/tushe/acceptance/` | IL | REQ-ENV-007 | ENV-01 | File present with its source path |
@@ -552,7 +555,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
-| GOV-07 | **G1 review** at 10:00; Noema-covered exceptions AT-04, 05, 07, 14 shown internally before it | EL, FND | — | BEN-05, ENV-14 | Gate record committed. G1 may run before G0-T; its evidence counts only once G0 passes (DEC-2026-10-16 E4). Cut-line items 4 and 5 (arm D, then the A0 diagnostic; the P2 requirements) are reviewed against measured progress (DEC-2026-10-16 contract-and-pack-clarifications C8) |
+| GOV-07 | **G1 review** at 10:00; Noema-covered exceptions AT-04, 05, 07, 14 shown internally before it | EL, FND | — | BEN-05, ENV-14 | Gate record committed. G1 may run before G0-T; its evidence counts only once G0 passes (DEC-2026-10-16 E4). If G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (arm D, then the A0 diagnostic; the P2 requirements) are applied that day (DEC-2026-10-16 contract-and-pack-clarifications C8) |
 | GOV-08 | Contract the native-speaker reviewers for yo, ha, ig and pcm; confirm the tenant time zone Africa/Lagos (OQ-12) | FND | REQ-INT-003 | — | Reviewers named; review slots booked for Wed 28 Oct |
 | AMB-01 | Deterministic ranking (pack weights, tie-breaks), the 0.35 margin, the 0.70 floor and the more-than-4-candidates escalation; `CANDIDATES_RESOLVED` with scores | C2+AG | REQ-AMB-003, REQ-AMB-002 | EVD-04 | Same inputs give the same order 1,000 times; boundary tests at margin 0.349, 0.35 and 0.351 pass |
 | AMB-02 | Clarification request contract (PERD REQ-AMB-004): at most 4 options plus `allow_none`; labels built by core from pack templates, never by a model, carrying only amount, local time, last four digits and a masked recipient name the principal owns; option IDs bound to the candidate set version; 10 min expiry; at most 2 rounds; if labels cannot tell the options apart, ESCALATE (handoff) | C2+AG | REQ-AMB-004 | AMB-01, TRU-01, R3 received | US-02 and EC-A01 to EC-A04 pass; labels match the allowed-field regex; no label has more than 4 consecutive digits. If R3 is late, histories are built with the fixture loader (SR-18) |
@@ -562,7 +565,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | STM-02 | Pending or unknown never collapses into a terminal state; investigation and action states stay separate | C1+AG | REQ-STM-002 | STM-01 | Property test over random event orders finds no collapse |
 | SEC-03 | Masking and redaction on every surface: last four digits only; log redactor; trace attribute filter; a leak-scanner stub for CI | SR+AG | REQ-SEC-003 | REC-02 | Planted full account number in a fixture is caught in logs, traces and API output |
 | BEN-06 | Ambiguity and confused-deputy cases (EC-A01 to EC-A20, US-02, US-07, PUS-01, PUS-02, PUS-08), with oracles | B | REQ-BEN-001 | BEN-04 | Cases validate; each is linked to its EC or US ID |
-| VOI-04 | TTS options per provider for all five locales; answer OQ-07; text on screen where TTS is missing | V | REQ-VOI-002 | VOI-01 | OQ-07 answered in writing with the test samples. Cut in part (DEC C8, cut-line item 1): TTS for yo, ha and ig is not evaluated, and those locales show text on screen; en-NG and pcm are unchanged |
+| VOI-04 | TTS options per provider for all five locales; answer OQ-07; text on screen where TTS is missing | V | REQ-VOI-002 | VOI-01 | OQ-07 answered in writing with the test samples. Cut (DEC C8, cut-line item 1): TTS for English and Pidgin only; the other three locales are still recorded and measured (VOI-06, VOI-09, G5 unchanged) |
 
 ### Tuesday 27 October · Contradiction and dormancy
 
@@ -589,7 +592,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | GOV-10 | Native-speaker review of lexicon v0 and fallback template drafts in five locales | C2, reviewers | REQ-INT-003, REQ-EXP-003 | GOV-08, UND-06 | Review notes merged; every change has a golden test |
 | BEN-08 | Policy-mutation and clock cases (US-08, US-18, US-20, EC-T*) | B | REQ-BEN-001 | BEN-04 | Cases validate |
 | VOI-06 | Record the voice subset, first half (≥ 50 sessions) | V | REQ-VOI-001 | VOI-05 | Recordings stored with annotations and consent |
-| UI-01 | Overlay skeleton embedded in a host page: one text field and push-to-talk; message stream; progress shown only from real state transitions (thinking, clarifying, confirming, answering); reconnects and refetches state if the stream drops | FE+AG | REQ-UI-001 | CON-03 | Overlay renders a US-01 run on a mid-range Android webview |
+| UI-01 | Overlay skeleton embedded in a host page: one text field and push-to-talk; message stream; progress shown only from real state transitions (thinking, clarifying, confirming, answering); reconnects and refetches state if the stream drops | FE+AG | REQ-UI-001 | CON-03 | Overlay renders a US-01 run on a mid-range Android webview. Scope: PERD §40 minimum only (DEC C8) |
 
 ### Thursday 29 October · All writes, recovery and the kill switch
 
@@ -658,7 +661,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | RCV-03 | Late evidence after escalation: attach to the case and notify; never reopen a decision silently | C1 | REQ-RCV-004 | OUT-04 | EC case passes |
 | EXP-02 | Explanation facts contract and claim validator: every claim maps to a fact with status KNOWN; reassurance words blocked; fallback to template on any block | C2+AG | REQ-EXP-002 | EXP-01 | Validator blocks 100% of its seeded unit corpus; the BEN-14 corpus is added on Tuesday and must also block 100% |
 | EXP-03 | Renderer in the model service: facts in, text out; no tools; no evidence access | C2+AG | REQ-EXP-001 | EXP-02 | Import and network checks prove the renderer cannot read evidence |
-| UI-02 | Clarification and confirmation cards: bound only to server-issued clarification and confirmation IDs; selection or "none of these", never free text into a parameter; large accept and decline targets; masked target; policy version on tap; session-bound and CSRF-protected; prohibited actions never show a confirmation | FE+AG | REQ-UI-002 | UI-01, AMB-02, TRU-07 | Playwright J-cases for cards pass; a forged or replayed card submission is rejected |
+| UI-02 | Clarification and confirmation cards: bound only to server-issued clarification and confirmation IDs; selection or "none of these", never free text into a parameter; large accept and decline targets; masked target; policy version on tap; session-bound and CSRF-protected; prohibited actions never show a confirmation | FE+AG | REQ-UI-002 | UI-01, AMB-02, TRU-07 | Playwright J-cases for cards pass; a forged or replayed card submission is rejected. Scope: PERD §40 minimum only (DEC C8) |
 | SEC-05 | Egress control and callback safety: allowlisted callback hosts, HMAC-signed bodies, no redirects followed | SR+AG | REQ-SEC-009 | PLT-04 | SSRF and redirect fixtures blocked |
 | BEN-13 | Watch and callback cases (US-16, US-17, deadline paths) | B | REQ-BEN-001 | BEN-10 | Cases validate |
 | VOI-08 | Field-session protocol ready (OQ-08): devices and SIMs received, logging host with NTP, script, dB meter, consent | V | REQ-VOI-005 | PRE-05 | Dry-run checklist complete |
@@ -671,7 +674,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | API-01 | Overlay and host result message (the result handed back to the partner app) | C2 | REQ-API-007 | OUT-05 | Contract test with the host page passes |
 | EXP-04 | Register and language: templates in en-NG, pcm, yo, ha and ig; locale follows the conversation | C2+AG | REQ-EXP-003 | GOV-10 | Template coverage check green for all reason codes in all five locales |
 | EXP-05 | Operator evidence packet attached to every escalation | C2 | REQ-EXP-004 | EXP-02 | US-14 packet contains every listed element |
-| UI-03 | Evidence panel: Intent Object versions, candidates with exclusion reasons, evidence table, classification, three-layer authorisation strip, decision, confirmation, plan hash, grant, receipt, verdicts, watch, explanation claim map, Record chain with verification badge; all masked | FE+AG | REQ-UI-003 | REC-03 | PUS-05 passes: every element renders for any investigation ID |
+| UI-03 | Evidence panel: Intent Object versions, candidates with exclusion reasons, evidence table, classification, three-layer authorisation strip, decision, confirmation, plan hash, grant, receipt, verdicts, watch, explanation claim map, Record chain with verification badge; all masked | FE+AG | REQ-UI-003 | REC-03 | PUS-05 passes: every element renders for any investigation ID. Scope: PERD §40 minimum only (DEC C8) |
 | REC-04 | Completeness check per consequential decision: required events per path; `noema_audit_incomplete_total` | C1+AG | REQ-AUD-002 | REC-03 | Removing any required event in a test makes the check fail |
 | REC-05 | Chain verification: nightly job and on-demand endpoint; alert on mismatch | C1 | REQ-AUD-005 | REC-01 | Tampered row detected within one run |
 | BEN-14 | Hallucination corpus for the validator (B5): reassurance, invented amounts, invented times, unsupported success claims | B | REQ-EXP-002 | — | ≥ 100 bad explanations in the corpus |
@@ -689,14 +692,15 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | OBS-02 | Latency by stage and by path; P50, P95, P99; cost per case | C2+AG | REQ-NFR-003, REQ-NFR-007, REQ-OBS-002 | OBS-01 | Nightly performance report lists every PERD §47 stage |
 | BEN-15 | Injection and red-team cases (US-09, EC-X*, ADV-11 to ADV-13) | B | REQ-BEN-001 | BEN-10 | Cases validate |
 | BEN-16 | Assemble the full suite (≥ 320 cases, ≥ 300 hidden-oracle, ≥ 30% Pidgin or code-switched, every US, every EC in Appendix C, every fault family and every capability covered, the PERD §48.1 category counts met); first full scored run by family B1 to B8 | B | REQ-BEN-001, REQ-BEN-004 | BEN-06 to BEN-15 | Coverage report shows no empty cell; scorecard shows Tier 0 first |
-| UI-04 | Overlay complete: answer shape, do-not-resend advice, case reference only after `case_opened` is ACHIEVED, never-shown list enforced (no model confidence, full numbers, other customers' data, stack traces, thresholds, raw payloads or reason codes), WCAG 2.2 AA | FE+AG | REQ-UI-001 | UI-02 | Playwright J1 to J8 pass; axe scan clean; DOM scan finds no digit run longer than 4 |
+| UI-04 | Overlay complete: answer shape, do-not-resend advice, case reference only after `case_opened` is ACHIEVED, never-shown list enforced (no model confidence, full numbers, other customers' data, stack traces, thresholds, raw payloads or reason codes), WCAG 2.2 AA | FE+AG | REQ-UI-001 | UI-02 | Playwright J1 to J8 pass; axe scan clean; DOM scan finds no digit run longer than 4. Scope: PERD §40 minimum only (DEC C8) |
 | VOI-10 | Barge-in and provider failover in the voice path | V | REQ-VOI-002 | VOI-09 | Failover test passes mid-utterance |
 
 ### Thursday 5 November · Break it, then fix it
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
-| BEN-17 | Full-suite triage: every Tier 0 and S1 failure assigned, fixed with its regression case first | B, C1, C2 | REQ-BEN-006 | BEN-16 | 0 open Tier 0 or S1 failures at 17:00 |
+| BEN-17a | Triage the full-suite failures: assign every Tier 0 and S1 failure, and write its regression case first (development suite only; never held-out) | B | REQ-BEN-006 | BEN-16 | Every failure assigned, with a regression case |
+| BEN-17b | Fix each assigned failure until its regression case passes | C1, C2 | REQ-BEN-006 | BEN-17a | 0 open Tier 0 or S1 failures at 17:00 |
 | SEC-10 | Chaos matrix: each dependency (Postgres, Temporal, model service, each Tushe service, each provider) down at each step; plus process restart mid-write, mid-watch and mid-confirmation, Record append failure, idempotency collision, callback listener down, policy publish during an outage, and the EC-K04 composite (injection plus timeout plus duplicate webhook) | SR, C2 | REQ-NFR-002 | BEN-16 | No ALLOW under any failure; every UNKNOWN or escalation is honest and recoverable; each run resets deterministically |
 | TST-03 | Deep property run of all 30 invariants; invariant-to-test map complete | C1+AG | REQ-TST-002 | TST-01 | All 30 green in deep mode |
 | TST-04 | Audit of the test suite: no mocks in integration or benchmark packages; no benchmark-only branches; every invariant and REQ test written before its code (PR history) | EL | REQ-TST-001, REQ-TST-004, REQ-TST-006 | — | Audit note committed with any exceptions fixed |
@@ -712,11 +716,11 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
-| BEN-18 | Replay the full suite twice from a clean environment (`make reset`) | B | REQ-NFR-001, REQ-NFR-004 | BEN-17 | 0 mismatches in Tier 0 and Tier 1 |
+| BEN-18 | Replay the full suite twice from a clean environment (`make reset`) | B | REQ-NFR-001, REQ-NFR-004 | BEN-17b | 0 mismatches in Tier 0 and Tier 1 |
 | OPS-03 | Drills: kill switch on and off under load, rollback of a release, restore from backup, restart mid-workflow, 2-hour soak; incident playbook exercised once | EL, SR | REQ-OPS-002, REQ-TST-007 | EXE-06 | Drill records committed with timings |
 | SEC-11 | Network policy check across the six networks: oracle unreachable, model service isolated, core cannot reach providers | SR | REQ-OPS-001, REQ-ENV-002 | SEC-02 | Matrix passes on the `bench` and `demo` profiles |
 | BEN-19 | Held-out set complete (≥ 100 cases, ≥ 30% of the release suite); held-out dry run by B | B | REQ-BEN-003 | BEN-11 | Dry-run result seen by B and FND only |
-| UI-05 | Benchmark inspector: runs, Tier 0 first, per-family results, failure drill-down into the panel | FE+AG | REQ-UI-004 | BEN-16 | Renders the latest run |
+| UI-05 | Benchmark inspector: runs, Tier 0 first, per-family results, failure drill-down into the panel | FE+AG | REQ-UI-004 | BEN-16 | Renders the latest run. Scope: PERD §40 minimum only (DEC C8) |
 | OBS-03 | Thin engineering and benchmark dashboard | EL+AG | REQ-OBS-003 | OBS-01 | Dashboard shows last nightly run |
 | OPS-04 | Demo and benchmark environment availability: `demo` profile on a dedicated host, reset to a known seed in under 10 min | EL | REQ-NFR-008 | PLT-04 | Reset timed and recorded |
 | GOV-12 | **G3 review** at 16:00; week retro; freeze the week 4 plan; any G3 miss takes Monday | EL, B, SR, FND | — | BEN-18, SEC-10, SEC-06 | Gate record committed |
@@ -765,11 +769,11 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
 | ARM-03 | Arm B: agent plus harness with policy engine, idempotency store, verification reads, schema validation, retries and logging, within the same time budget; hours logged | ARM | REQ-BEN-007 | BEN-20 | Arm runs the smoke suite; hours recorded |
-| ARM-04 | Arm A0 (naive, diagnostic floor), only if ARM has time; labelled "not a competitor". Arms E and F written up as "not tested" unless access exists | ARM, B | REQ-BEN-007 | ARM-02 | Labelled result or a written "not tested" note. Arms E and F: cut (DEC C8, cut-line item 3), written up as "not tested"; A0 stays and is reviewed at the G1 review (item 4) |
+| ARM-04 | Arm A0 (naive, diagnostic floor), only if ARM has time; labelled "not a competitor". Arms E and F written up as "not tested" unless access exists | ARM, B | REQ-BEN-007 | ARM-02 | Labelled result or a written "not tested" note. Arms E and F: cut (DEC C8, cut-line item 3), written up as "not tested"; A0 stays, pending the G1-review trigger (item 4) |
 | ARM-05 | Independent review: REV signs off each arm as competent, or lists fixes that ARM makes before the runs | REV | REQ-BEN-007 | ARM-01 to ARM-03 | Signed review per arm |
 | BEN-23 | Provider runs: Aethex AI, Indigenius and N-ATLAS on the voice subset | B, V | REQ-BEN-005, REQ-VOI-002 | VOI-09 | Per-provider key-slot accuracy, latency and cost |
 | BIZ-02 | Implementation economics for Noema and arm B: adapter integration time, policy change time, new-failure time, glue code, five scripted changes | B, ARM | REQ-BIZ-003 | ARM-03 | Measures recorded from timed work |
-| UI-06 | Benchmark inspector complete: curve with operating point, comparison table across arms, latency by path | FE+AG | REQ-UI-004 | UI-05 | Renders run IDs from BEN-21 and BEN-22 |
+| UI-06 | Benchmark inspector complete: curve with operating point, comparison table across arms, latency by path | FE+AG | REQ-UI-004 | UI-05 | Renders run IDs from BEN-21 and BEN-22. Scope: PERD §40 minimum only (DEC C8) |
 | VOI-13 | Field sessions, second batch (total ≥ 100, ≥ 50% Pidgin) | V | REQ-VOI-005 | VOI-12 | Total session count reached |
 
 ### Wednesday 11 November · Compare, decide voice, freeze
@@ -794,7 +798,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | REL-02 | **Clean-room reproduction**: IL (who did not build the core path) checks out the release SHA on a clean machine, follows only the written commands, seeds Tushe, runs the suites, launches the UI, reproduces three scenarios and one Record reconstruction, and reproduces Tier 0 and Tier 1 from the bundle | IL | REQ-NFR-004, REQ-BEN-008 | BEN-27 | Report with exact commands; every deviation fixed or listed as a release blocker |
 | DEM-01 | Demo dry run 1: D1 to D10 live from the release build with the evidence panel; time each; record failures | FND, EL, C1, C2, V | REQ-UI-003 | BEN-26, R9 received | Every scenario either runs live or is dropped; none is scripted. D1 and its name-enquiry step depend on R9 (Fri 30 Oct); if R9 slips, EL raises it with Tushe the same day and the demo uses recorded responses for that step, labelled as recorded (SR-21) |
 | GOV-15 | External claim wording: every number with n, method, bound and CI; clocks labelled SYNTHETIC; OQ-14 status stated | FND | REQ-BIZ-002 | BEN-27 | Wording approved by FND and B |
-| GOV-16 | **G6 review** at 18:00: founders sign the evidence bundle or record the misses | FND | REQ-BEN-008 | BEN-27, GOV-14, REL-02 | Signed gate record |
+| GOV-16 | **G6 review** at 18:00: founders sign the evidence bundle or record the misses | FND | REQ-BEN-008 | BEN-27, GOV-14, REL-02 | Signed gate record. DoD (pre-demo items): every PERD §68 item that does not depend on the demo itself is signed here, as G7 requires |
 
 ### Friday 13 November · Demo
 
@@ -802,7 +806,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 |---|---|---|---|---|---|
 | DEM-02 | 09:00 **G7 dry run**: `make reset` on the demo host, then D1 to D10 in order | FND, EL | REQ-NFR-008 | GOV-16 | Every scenario run or dropped; the decision is written |
 | DEM-03 | 14:00 **Demo**, live and unscripted, evidence panel open; scoreboard and comparison shown from the run ID | FND | — | DEM-02 | Demo delivered; recording kept |
-| GOV-17 | 16:00 **POC-done review** against PERD §68 and SoT §40.3. Decision is GO (every mandatory gate passed), CONDITIONAL (every mandatory gate passed; only named non-gating work remains, with owners and dates) or NO-GO (name the date the last gate will pass). A demo that worked while a gate failed is NO-GO. FND, EL, SR and B sign | FND, EL, SR, B | — | DEM-03 | Decision record merged |
+| GOV-17 | 16:00 **POC-done review** against PERD §68 and SoT §40.3. Decision is GO (every mandatory gate passed), CONDITIONAL (every mandatory gate passed; only named non-gating work remains, with owners and dates) or NO-GO (name the date the last gate will pass). A demo that worked while a gate failed is NO-GO. This review closes the PERD §68 items that depend on the demo itself; the others were signed at G6 (GOV-16) FND, EL, SR and B sign | FND, EL, SR, B | — | DEM-03 | Decision record merged |
 | GOV-18 | Retro and handover: debt register, open questions, design-partner path (OD-12), next phase plan | All | REQ-OPS-004 | GOV-17 | Retro note committed |
 
 **Week 4 definition of done.**
@@ -887,7 +891,7 @@ The POC is done when every row of PERD §68 is demonstrated against the live ben
 |---|---|
 | Product | G2, G3; DEM-01 to DEM-03 |
 | Core | All P0 REQs green (coverage appendix); TST-03 |
-| Safety | BEN-17, BEN-26; SEC-06, SEC-10 |
+| Safety | BEN-17a, BEN-17b, BEN-26; SEC-06, SEC-10 |
 | Benchmark | BEN-16, BEN-18, BEN-19, BEN-26 |
 | Voice | VOI-12 to VOI-15; G5 |
 | Business | BEN-22, BEN-25, BIZ-01 to BIZ-03; GOV-09 |
@@ -1216,7 +1220,7 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-BEN-003 | Held-out custody | P0 | GOV-03, BEN-11, BEN-19, BEN-26 |
 | REQ-BEN-004 | Tiered scorecard and reports | P0 | BEN-12, BEN-16, BEN-22, BEN-24, BEN-25, BEN-26 |
 | REQ-BEN-005 | Provider runs | P0 | BEN-21, BEN-23 |
-| REQ-BEN-006 | Every failure becomes a regression case | P0 | MEM-02, BEN-17 |
+| REQ-BEN-006 | Every failure becomes a regression case | P0 | MEM-02, BEN-17a, BEN-17b |
 | REQ-BEN-008 | Release evidence bundle | P0 | BEN-27, GOV-14, REL-02, GOV-16 |
 | REQ-BEN-007 | Competent, fair arms built after the core passes | P1 | GOV-21, GOV-11, BEN-20, ARM-01, ARM-02, ARM-03, ARM-04, ARM-05, BEN-24 |
 | REQ-BIZ-003 | Implementation economics measured | P1 | BIZ-02 |
@@ -1234,7 +1238,7 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 
 ## Appendix B — Task count by workstream
 
-The plan holds **213 tasks**, including the five tasks before Monday.
+The plan holds **214 tasks**, including the five tasks before Monday.
 
 | Workstream | Tasks |
 |---|---|
@@ -1250,9 +1254,9 @@ The plan holds **213 tasks**, including the five tasks before Monday.
 | REC | 9 |
 | EXP | 12 |
 | VOI | 16 |
-| BEN | 35 |
+| BEN | 36 |
 | SEC | 20 |
-| **Total** | **213** |
+| **Total** | **214** |
 
 ## Appendix C — Edge cases to tasks
 

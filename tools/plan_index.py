@@ -5,7 +5,7 @@ Source: the newest docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v*.md.
 Output: docs/poc/execution/tasks.csv (board import; never edit by hand).
 
 A task row is a table line before "# APPENDICES" matching "| <ID> | ..." where
-<ID> is <PREFIX>-<NN> and the prefix is not SR, OQ or OD. Pre-Monday rows
+<ID> is <PREFIX>-<NN>, optionally followed by one lower-case letter for a split task (BEN-17a), and the prefix is not SR, OQ or OD. Pre-Monday rows
 (prefix PRE, under "## 7.") have no Needs column; their date is 2026-10-11 and
 week 0. Other rows take their date from the nearest "### <Weekday> <D> <Month> · ..."
 heading. Work delivered before the re-baseline (dates up to Sun 18 Oct) is week 0.
@@ -53,7 +53,7 @@ CARDS_DIR = PLAN_DIR / "task-cards"
 CARDS_README = CARDS_DIR / "README.md"
 
 VERSION_RE = re.compile(r"^NOEMA_POC_4WEEK_PLAN_v(\d+(?:\.\d+)*)\.md$")
-ROW_RE = re.compile(r"^\| ([A-Z]+-\d\d) \|")
+ROW_RE = re.compile(r"^\| ([A-Z]+-\d\d[a-z]?) \|")
 NOT_TASKS = {"SR", "OQ", "OD"}
 TBC = "TBC"
 TBC_RE = re.compile(r"^### To be confirmed by Tushe · ")
@@ -89,7 +89,7 @@ ROLLUP = {
     "OBS": "SEC", "OPS": "SEC", "DATA": "SEC",
     "DEM": "GOV", "REL": "GOV", "PRE": "GOV",
 }
-TASK_ID_RE = re.compile(r"\b([A-Z]+-\d\d)\b")
+TASK_ID_RE = re.compile(r"\b([A-Z]+-\d\d[a-z]?)\b")
 RANGE_RE = re.compile(r"\b([A-Z]+)-(\d\d) to (?:\1-)?(\d\d)\b")
 REQ_RE = re.compile(r"\bREQ-[A-Z]+-\d{3}\b")
 BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
@@ -97,7 +97,7 @@ GATE_RE = re.compile(r"\bG(0-T|0-N|[0-7])\b")
 EXTERNAL_RE = re.compile(r"\bR\d{1,2}(?: batch \d)? received\b")
 DELIVERED_RE = re.compile(r"\bdelivered \d{1,2} (?:Oct|Nov)", re.I)
 COLUMNS = ["task_id", "week", "date", "workstream", "task", "owner", "req_ids", "needs", "done_when", "gate"]
-EXPECTED = {"total": 213, "weeks": {0: 9, 1: 75, 2: 48, 3: 47, 4: 32, TBC: 2}, "edge_cases": 105, "stories": 22}
+EXPECTED = {"total": 214, "weeks": {0: 9, 1: 75, 2: 48, 3: 48, 4: 32, TBC: 2}, "edge_cases": 105, "stories": 22}
 MONTHS = {m: i for i, m in enumerate(
     ["January", "February", "March", "April", "May", "June", "July", "August",
      "September", "October", "November", "December"], 1)}
@@ -396,7 +396,7 @@ def cards_on_disk():
     if not CARDS_DIR.exists():
         return out
     for path in sorted(CARDS_DIR.glob("*.md")):
-        if not re.fullmatch(r"[A-Z]+-\d\d", path.stem):
+        if not re.fullmatch(r"[A-Z]+-\d\d[a-z]?", path.stem):
             continue
         m = re.search(rf"^TASK-P\d-\d+  {re.escape(path.stem)} · (.+)$", path.read_text(encoding="utf-8"), re.M)
         out[path.stem] = m.group(1) if m else ""
@@ -445,7 +445,7 @@ def main():
     if len(stats["tasks"]) != EXPECTED["total"] or dict(weeks) != EXPECTED["weeks"]:
         # Reported, never forced: the plan is the source.
         print("plan_index: note: task counts differ from the v1.6 baseline "
-              "(213: week 0 9, week 1 75, week 2 48, week 3 47, week 4 32, TBC 2)", file=sys.stderr)
+              "(214: week 0 9, week 1 75, week 2 48, week 3 48, week 4 32, TBC 2)", file=sys.stderr)
 
     cards_text = None
     if CARDS_DIR.exists():

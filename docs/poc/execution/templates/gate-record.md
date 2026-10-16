@@ -146,11 +146,11 @@ If it fails (quoted): "The demo shows the real result; external claims are limit
 <!-- Plan §3.1, row G7. Scheduled: Fri 13 Nov 2026, 09:00 (dry run); the demo follows at 14:00 (calendar.md). Record: gates/G7.md. -->
 
 - Deciders: Founders
-- Evidence to show: Dry run at 09:00 Fri 13 Nov; the signed DoD
+- Evidence to show: Dry run at 09:00 Fri 13 Nov; the DoD pre-demo items signed at G6
 
 Must be true (all of it):
 
-- [ ] DoD signed
+- [ ] DoD signed at G6 (GOV-16, Thu 12 Nov 18:00) for every PERD §68 item that does not depend on the demo itself
 - [ ] Every number has n, method, bound and CI
 - [ ] Clocks labelled SYNTHETIC
 - [ ] No ROI claim
