@@ -1,6 +1,6 @@
 # Task card template
 
-<!-- Source: PERD §61.4 (NOEMA_POC_PERD_v1.1.md lines 5438–5453), copied verbatim. Copy the block into the task or PR, fill every <…>, keep the field names unchanged. -->
+<!-- Source: PERD §61.4 (NOEMA_POC_PERD_v1.1.md lines 5438–5453; current: see the PERD README), copied verbatim. Copy the block into the task or PR, fill every <…>, keep the field names unchanged. -->
 
 Every task given to a coding agent uses this card (PERD §61.4, REQ-AGT-002). The block below is the PERD's card, unchanged.
 

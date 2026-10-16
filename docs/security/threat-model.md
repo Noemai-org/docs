@@ -4,7 +4,7 @@
 
 *Quoted from PERD §41 (opening paragraph), which quotes SoT §47.*
 
-Source: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md) §42, lines 4040–4068. The table is copied verbatim and is **Proposed** with the PERD ([DEC-2026-10-11-poc-perd-v1.1](../decisions/DEC-2026-10-11-poc-perd-v1.1.md)). If it disagrees with [SoT](../NOEMA_SOURCE_OF_TRUTH.md) §47, the SoT wins. PERD §42 introduces it as follows:
+Source: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md) §42, lines 4040–4068. (Current PERD: see [README](../poc/perd/README.md).) The table is copied verbatim and is **Proposed** with the PERD ([DEC-2026-10-11-poc-perd-v1.1](../decisions/DEC-2026-10-11-poc-perd-v1.1.md)). If it disagrees with [SoT](../NOEMA_SOURCE_OF_TRUTH.md) §47, the SoT wins. PERD §42 introduces it as follows:
 
 > The format follows the brief: for each threat, the attack, the asset at risk, the boundary it crosses, the expected behaviour, the mitigation, how it is detected, what is audited, and the test that proves it. The table extends SoT §47.3 and maps to OWASP ASI [SoT §47.2].
 
@@ -40,4 +40,4 @@ In the table, "US-" IDs are SoT user stories; "EC-", "PUS-" and "REQ-" IDs point
 | TM-26 | Partial compromise of one component | One service or credential is taken over | Everything that component touches | Any | The blast radius stays inside that component's privileges | Per-power DB roles; separate credentials; grants needed for every write; Record append-only | Role-permission tests; anomaly alerts | — | Permission matrix; evil-provider run |
 | TM-27 | Race between check and write | An operator or second request changes the target after Trust read it | Correctness | Execution → target | Write rejected; grant void; Trust re-runs | Conditional writes with version tokens | `REJECTED_STALE_VERSION` count | RECEIPT | US-19, EC-K01 |
 
-Owner: Security reviewer (TODO: name).
+Owner: Security reviewer (SR), a role held by the Founder and the Technical Co-Founder (DEC-2026-10-16 E2).
