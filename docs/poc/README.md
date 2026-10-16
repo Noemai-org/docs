@@ -143,7 +143,7 @@ None of these is demonstrated yet. This repository contains no implementation ([
 - [ ] At least 300 hidden-oracle cases with versioned fixtures.
 - [ ] Deterministic replay passes (INV-21).
 - [ ] The oracle is unreachable from runtime credentials (INV-22).
-- [ ] Controllable clock, reset and seed reproducibility.
+- [ ] Noema's simulated clock is controllable, and Tushe time is controlled per object (§36); reset and seed reproducibility.
 - [ ] Every fault family in §36 can be generated.
 - [ ] The non-monetary write boundary is enforced.
 - [ ] Baselines run on the same scenarios.

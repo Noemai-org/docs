@@ -2,7 +2,7 @@
 
 <!-- Any change to scope, a contract or a gate is a written change request before it is work (plan §19). No verbal approval changes a SoT decision. -->
 
-- Change ID: <!-- TODO(owner): the requester assigns it; plan §19 sets no format. -->
+- Change ID: <!-- The requester assigns it; plan §19 sets no format. -->
 - Requester: <!-- Name and role (plan §4). -->
 - REQ IDs affected: <!-- PERD REQ IDs, from docs/poc/perd/requirements-index.csv, and the plan task IDs. -->
 - Behaviour before: <!-- What happens today, from evidence. -->

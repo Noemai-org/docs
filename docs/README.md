@@ -20,7 +20,7 @@ Do not edit the SoT in place. A change to the SoT is a new SoT version with an e
 | What state, outcome and status values exist? | SoT §13.1, §35.5, §43 (lookup: [`engineering/state-registry.md`](engineering/state-registry.md)) |
 | What are the invariants and security boundaries? | SoT §45, §47 |
 | What is the POC, and where is the fence between Noema and the POC? What is the first wedge? | SoT Part VII, §30–40 (brief and checklist: [`poc/README.md`](poc/README.md)) |
-| What did we ask Tushe to build for the synthetic environment? | [`poc/tushe/`](poc/tushe/README.md): issued external specification — frozen (SoT §36) |
+| What did we ask Tushe to build for the synthetic environment? | [`poc/tushe/`](poc/tushe/README.md): issued external specification — frozen (SoT §36). Our response and the acceptance worksheet were sent on 13 Oct 2026; the joint session planned for Fri 16 Oct, 18:00 is postponed until Tushe confirms a date; G0 has two halves, G0-T and G0-N (DEC-2026-10-16 E4) |
 | What comes after the POC? | SoT Part VIII, §41–42 |
 | Which requirement IDs exist, and what is their scope? | SoT (definitions); [`requirements-index.md`](requirements-index.md) (traceability) |
 | What does each status tag mean? | SoT §0.2 |
@@ -58,12 +58,13 @@ docs/
       Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md
                                Tushe requirements & acceptance spec v1.0 — issued, frozen
       source/                  original v1.0 export, unchanged
-      tushe-spec-delta-v1.1.md requested changes v1.0 → v1.1 (draft, not yet sent)
-      acceptance/              AT/TEN Phase A acceptance: verbatim AT-01..20, TEN-01..08, signed report (none yet)
+      tushe-spec-delta-v1.1.md draft changes v1.0 → v1.1 (superseded by v1.2; never sent)
+      tushe-spec-delta-v1.2.md changes v1.0 → v1.2: what was agreed and withdrawn on 13 Oct 2026
+      acceptance/              Phase A acceptance: the worksheet as sent, verbatim AT-01..20, the signed report (none yet; the joint session date is to be confirmed by Tushe)
       responses/               Tushe correspondence: received and sent records, with checksums
     perd/                      POC PERD v1.5 (current, Accepted; ranks below the SoT; v1.1 to v1.4 kept unchanged), generated REQ index, conflicts, templates
-    execution/                 four-week plan v1.4 (current, Proposed; v1.1 to v1.3 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
-      task-cards/              task cards for the tasks added by plans v1.2 and v1.3 (GOV-19, GOV-20, ENV-08 to ENV-13)
+    execution/                 four-week plan v1.5 (current, Accepted; v1.1 to v1.4 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
+      task-cards/              task cards for the tasks added by plans v1.2 to v1.5 and for PLT-01 to PLT-04 (GOV-19, GOV-20, ENV-08 to ENV-14); the index is generated
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
   runbooks/                    runbook scaffolds (headings and TODOs only)
   decisions/

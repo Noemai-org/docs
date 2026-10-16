@@ -1,9 +1,13 @@
-# Founders' approval is required for the Source of Truth, decision records and the consistency checks (SoT §0.4).
+# Founders' approval is required for the Source of Truth, decision records, the checks and the frozen records (SoT §0.4; DEC-2026-10-16 E2, E13).
+# Both founders belong on every protected path, with "require review from code owners" switched on (GOV-22).
+# TODO(FND, GOV-22): add the second founder's GitHub handle to every line below. Only @OladiranOlatunde could be confirmed from the repository; @greyhands2 was removed on 14 Oct 2026 and must not return.
 /docs/NOEMA_SOURCE_OF_TRUTH.md       @OladiranOlatunde
 /docs/decisions/                     @OladiranOlatunde
 /docs/poc/perd/                      @OladiranOlatunde
 /docs/poc/execution/                 @OladiranOlatunde
+/docs/poc/tushe/                     @OladiranOlatunde
 /docs/security/                      @OladiranOlatunde
-/tools/check_docs_consistency.py     @OladiranOlatunde
-/tools/frozen-files.sha256           @OladiranOlatunde
+/AGENTS.md                           @OladiranOlatunde
+/CLAUDE.md                           @OladiranOlatunde
+/tools/                              @OladiranOlatunde
 /.github/                            @OladiranOlatunde

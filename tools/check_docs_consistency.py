@@ -29,6 +29,18 @@ END = "<!-- END GENERATED: canonical-open-decisions -->"
 # The retired GitHub organisation. Built from parts so this file does not contain it (DEC-2026-10-16 E1).
 RETIRED_ORG_URL = "github.com/" + "noema" + "-org"
 
+# `docs` holds documents, not product code (DEC-2026-10-16 E7). Exempt: the archive and this repository's own checkers.
+ARCHIVE_DIR = "docs/archive/"
+NO_CODE_DIRS = ("contracts/", "packs/")
+CODE_EXTENSIONS = {
+    ".py", ".go", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".rs", ".java", ".kt", ".rb", ".php",
+    ".c", ".cc", ".cpp", ".h", ".cs", ".swift", ".sh", ".sql",
+}
+OWN_CHECKERS = {
+    "tools/check_docs_consistency.py", "tools/perd_index.py", "tools/plan_index.py",
+    "tools/test_check_docs_consistency.py", "tools/test_plan_index.py",
+}
+
 # Built from parts so this file does not itself contain the misspelling it looks for.
 OLD_SPELLING = "tu" + "che"
 
@@ -201,6 +213,17 @@ def check_spelling(fail):
                 fail(f"{path}:{n}: old spelling of Tushe")
 
 
+def check_no_code(fail):
+    """No contracts/, packs/ or source code in this repository, except the archive and the checkers' own files."""
+    for path in tracked_files():
+        if path.startswith(ARCHIVE_DIR) or path in OWN_CHECKERS:
+            continue
+        if path.startswith(NO_CODE_DIRS):
+            fail(f"{path}: contracts/ and packs/ belong in the noema repository, not in docs (DEC-2026-10-16 E7)")
+        elif os.path.splitext(path)[1].lower() in CODE_EXTENSIONS:
+            fail(f"{path}: source code belongs in the noema repository, not in docs (DEC-2026-10-16 E7)")
+
+
 def check_links_to_retired_org(fail):
     """No URL may point to the retired organisation, except inside frozen records."""
     frozen = set(frozen_listed())
@@ -304,6 +327,9 @@ def check(fail):
 
     # 6b. No links to the retired organisation
     check_links_to_retired_org(fail)
+
+    # 6c. No contracts, packs or product code
+    check_no_code(fail)
 
     # 7. Relative Markdown links resolve
     md = [p for p in tracked_files() if p.endswith(".md") and (p.startswith("docs/") or p in ("README.md", "AGENTS.md", "CLAUDE.md"))]

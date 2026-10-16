@@ -1,6 +1,6 @@
 # Task card: ENV-11
 
-Plan v1.2 task ENV-11. Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-12](../../../decisions/DEC-2026-10-12-tushe-environment-scope.md).
+Plan v1.5 task ENV-11. Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-12](../../../decisions/DEC-2026-10-12-tushe-environment-scope.md).
 
 ```
 TASK-P2-011  ENV-11 · Tushe adapter mapping to PERD §34.4 payloads (ledger, payout `status`, `settlementStatus`, `arrivalStatus`, switch via status query and transition log); status query registered as an R0 read with its cooldown
@@ -17,10 +17,10 @@ Acceptance criteria:
   - The adapter contract tests SHALL cover every documented and every observed status.
   REQ-CAP-001:
   - `packcheck` SHALL reject each of 8 crafted invalid descriptors.
-  Task "Done when" (plan v1.2): mapping table versioned; contract tests against live Tushe pass
+  Task "Done when" (plan v1.5): mapping table versioned; contract tests against live Tushe pass
 Tests to write FIRST (AGENT-11): adapter contract tests per mapped object against live Tushe and recordings; status-query cooldown handling
 Faults to exercise (AGENT-12): Tushe test account values (source TUSHE) for each payout outcome; status query returning `unreachable` and `cooling_down`
-Dependencies: PLT-01, ENV-01; REQ-ENV-001, REQ-EXE-007, REQ-CAP-001
+Dependencies: PLT-01, ENV-01, R1 batch 1 received (Tushe credentials, due Thu 15 Oct; dated no earlier than the first working day after receipt); REQ-ENV-001, REQ-EXE-007, REQ-CAP-001
 Out of scope: case, complaint and evidence adapters (ENV-08); registering the status query as an R0 read before Tushe confirms in writing that it cannot move money or change balances (request R6)
 Definition of done: tests green; boundary/lint green; Record events asserted; docs updated; PR answers the SoT §52 questions
 If blocked or conflicting: STOP and emit the CONFLICT block (§71.3)
