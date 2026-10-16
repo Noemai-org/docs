@@ -2,7 +2,7 @@
 
 > **Derived, non-normative.** This index exists for traceability (AGENT-01). Every requirement is *defined* only in [`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the SoT). The "Summary" column is a verbatim prefix of the SoT text, cut at a word boundary and marked "…" where truncated. Read the SoT section before acting on any ID. If this file and the SoT disagree, the SoT wins and this file is wrong.
 
-Generated from SoT v1.5 (13 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
+Generated from SoT v1.6 (16 October 2026). IDs are stable and must not be renamed (SoT §0.3, Appendix B). This file adds no requirements.
 
 ## How to read this index
 

@@ -12,10 +12,11 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-06-architecture-and-contracts](DEC-2026-10-06-architecture-and-contracts.md) | Temporal, repository layout, contract value lists (superseded in part by DEC-2026-10-09; **repository list superseded by DEC-2026-10-13**) |
 | [DEC-2026-10-06-vendor-benchmarks](DEC-2026-10-06-vendor-benchmarks.md) | Benchmark candidates for Understanding and speech (superseded in part by DEC-2026-10-09) |
 | [DEC-2026-10-09-deployment-temporal-providers](DEC-2026-10-09-deployment-temporal-providers.md) | Two deployables, Temporal, multi-provider Understanding and speech |
-| [DEC-2026-10-11-poc-perd-v1.1](DEC-2026-10-11-poc-perd-v1.1.md) | Adopt the POC PERD v1.1 as the POC engineering specification (Proposed) |
-| [DEC-2026-10-11-poc-4week-plan](DEC-2026-10-11-poc-4week-plan.md) | Adopt the four-week POC execution plan; Phase A in parallel with week 1 (Proposed) |
-| [DEC-2026-10-12-tushe-environment-scope](DEC-2026-10-12-tushe-environment-scope.md) | How the POC uses Tushe: `mock-case`, ground truth, time, faults, credentials and the G0 gate; amends SoT §36 (SoT v1.4) (Proposed) |
-| [DEC-2026-10-13-code-monorepo](DEC-2026-10-13-code-monorepo.md) | One code repository (`noema`) for the POC; what every other repository is for; amends SoT §51 (SoT v1.5) (Proposed) |
+| [DEC-2026-10-11-poc-perd-v1.1](DEC-2026-10-11-poc-perd-v1.1.md) | Adopt the POC PERD as the POC engineering specification; re-pointed to the current PERD by DEC-2026-10-16 (Accepted) |
+| [DEC-2026-10-11-poc-4week-plan](DEC-2026-10-11-poc-4week-plan.md) | Adopt the four-week POC execution plan; Phase A in parallel with week 1; re-pointed to the current plan and the E3 schedule by DEC-2026-10-16 (Accepted) |
+| [DEC-2026-10-12-tushe-environment-scope](DEC-2026-10-12-tushe-environment-scope.md) | How the POC uses Tushe: `mock-case`, ground truth, time, faults, credentials and the G0 gate; amends SoT §36 (SoT v1.4) (Accepted; Amendments 1 and 2) |
+| [DEC-2026-10-13-code-monorepo](DEC-2026-10-13-code-monorepo.md) | One code repository (`noema`) for the POC; what every other repository is for; amends SoT §51 (SoT v1.5) (Accepted; Amendment 1 re-points it to `Noemai-org`) |
+| [DEC-2026-10-16-execution-reset](DEC-2026-10-16-execution-reset.md) | Execution reset: `Noemai-org` canonical, two-person team, schedule to 13 Nov, G0-T and G0-N, test-environment components, webhook relay, what leaves `docs`, `brain`'s purpose, the Tushe delta v1.2, the port to `noema`, no direct pushes; amends SoT §35.6, §40.3, §51 (SoT v1.6) (Accepted) |
 
 ## Where decisions already live
 

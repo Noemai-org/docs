@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| **Status** | Proposed. Founder approval required before merge |
+| **Status** | Accepted. The Founder approved it on 16 Oct 2026 (written instruction); the Technical Co-Founder confirms by approving the pull request that applies DEC-2026-10-16. Amendment 1 is part of the record |
 | **Date** | 13 October 2026 |
-| **Owner** | Founders (TODO: name). Reviewer: engineering lead (TODO: name) |
+| **Owner** | Founder and Technical Co-Founder |
 | **Amends** | SoT §51 "Repository and module boundaries" (the repository list and its [OPEN] mapping note) |
 | **Supersedes** | Only the repository list in DEC-2026-10-06-architecture-and-contracts. Every other decision in that record stands |
 | **Closes** | The OD-P entries mirroring PERD OQ-04 (repository mapping) and OQ-05 (purpose of `brain`): OD-P-17 and OD-P-18. OD-P-13 tracks the same mapping question (OD-P-17 says to decide both together) and is closed with them. Closes plan task GOV-02 |
@@ -12,7 +12,7 @@
 
 **Record fields (decisions README template).** The table above already gives Status, Date, Owner, Amends, Supersedes and Closes; the template headings it lacks point to the sections below.
 
-- Status: Proposed (see the table above)
+- Status: Accepted (see the table above)
 - Date: 13 October 2026 (see the table above)
 - Closes: OD-P-13, OD-P-17, OD-P-18 (see the table above)
 - Owner: see the table above
@@ -239,6 +239,18 @@ It holds the SoT, PERD, plan, decisions, registers and Tushe correspondence. Its
 
 | Role | Name | Decision | Date |
 |---|---|---|---|
-| Founder | TODO | Approve / amend / reject | |
-| Founder | TODO | Approve / amend / reject | |
-| Engineering lead | TODO | Reviewed | |
+| Founder | — | Approved, 16 Oct 2026 (written instruction) | 16 Oct 2026 |
+| Technical Co-Founder | — | Confirms by approving this PR | Date of the approving review |
+
+The engineering-lead row of the original sign-off is not kept: the role is held by the two founders (DEC-2026-10-16 E2).
+
+## Amendment 1 · 16 October 2026
+
+Applied by [DEC-2026-10-16](DEC-2026-10-16-execution-reset.md) (E1). Every section above stays as written, except where this amendment changes it.
+
+- **The organisation.** `Noemai-org` is the only GitHub organisation. Its repositories are `docs`, `brain`, `noema` and `benchmark-heldout`. Wherever this record names these repositories, it means the ones in `Noemai-org`. The previous organisation is retired and nobody writes to it again.
+- **The name `noema`.** The code repository was first created as `noema-` and has been renamed `noema`. R1 names it correctly. Use `Noemai-org/noema` everywhere.
+- **R8 (`backend` and `intent-engine`).** They are archived in the retired organisation. They are not recreated in `Noemai-org`, and no skeleton of them (or of any other part of the PERD §64.2 layout) is created outside `noema`.
+- **R7 (`brain`).** Confirmed, with the build-record locations, by DEC-2026-10-16 E8.
+
+No SoT change is needed for this amendment.

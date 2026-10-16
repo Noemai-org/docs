@@ -278,7 +278,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 ### OD-P-18: Purpose of the `brain` repository (OQ-05)
 
 - **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-13-code-monorepo](decisions/DEC-2026-10-13-code-monorepo.md) R7 (takes effect when that record is approved and merged)
-- **Answer (DEC-2026-10-13 R7):** `brain` holds founder documentation outside the build. It is not part of the build's chain of authority: nothing in it is a specification, a requirement or a decision for the POC unless first moved into `docs` through a decision record. Coding agents do not read or cite it for build work. Nothing about it is archived or changed.
+- **Answer (DEC-2026-10-13 R7, confirmed by [DEC-2026-10-16](decisions/DEC-2026-10-16-execution-reset.md) E8):** `brain` holds founder documentation outside the build. It is not part of the build's chain of authority: nothing in it is a specification, a requirement or a decision for the POC unless first moved into `docs` through a decision record. Coding agents do not read or cite it for build work. Nothing about it is archived or changed. DEC-2026-10-16 E8 adds where build records live (gates, daily notes and sessions in `docs/poc/execution/`; Tushe observations and correspondence in `docs/poc/tushe/`; incidents and as-built notes in `noema/docs/`) and what `brain` never holds (specifications, build records, technology decisions).
 - **Question:** Purpose of the `brain` repository
 - **Why it matters:** Avoid misplaced code
 - **Minimum safe default (meanwhile):** No POC code there
@@ -551,11 +551,12 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-43"></a>
 ### OD-P-43: Public webhook receiver hosting and security (OQ-15)
 
-- **Status:** [OPEN] · NON-CANONICAL · decide by: Wed 14 Oct 2026
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-10-16-execution-reset](decisions/DEC-2026-10-16-execution-reset.md) E6 (takes effect when that record is approved and merged). Closes plan task GOV-20
+- **Answer (DEC-2026-10-16 E6):** The webhook relay (`synthetic/webhook_relay/` in `noema`, a test-environment component, E5) runs on one small public HTTPS host that runs nothing else. The Engineering lead picks the provider at setup and records it in the `local-setup` runbook. The relay verifies the Standard Webhooks signature and the five-minute tolerance, rejects and counts anything unverified, and stores each verified delivery unchanged, keyed by delivery ID. It holds only the webhook signing secret: no database, Tushe, grant or provider credential. The core pulls verified deliveries over an authenticated outbound connection to an allowlisted host, into its inbox, which deduplicates by delivery ID (REQ-API-008). Nothing on the internet can reach the core. In the benchmark profile the core's pull runs through the hostility proxy; the proxy never runs on the public host.
 - **Question:** Where does the public webhook receiver run, and how is it secured?
 - **Why it matters:** Tushe delivers webhooks only to public HTTPS endpoints; AT-06 needs it on Fri 16 Oct.
-- **Minimum safe default (meanwhile):** One small public HTTPS host that runs only the receiver and the proxy in front of it; no other Noema component is exposed.
+- **Minimum safe default (meanwhile):** One small public HTTPS host that runs only the receiver; no other Noema component is exposed. (The earlier wording, "and the proxy in front of it", is replaced by the E6 design above.)
 - **What would change it:** — (none stated)
 - **Owner:** Engineering lead
-- **Deadline:** Wed 14 Oct 2026 (plan task GOV-20)
-- **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15; [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.
+- **Deadline:** Wed 14 Oct 2026 (plan task GOV-20); decided 16 Oct 2026
+- **Source:** [PERD v1.3](poc/perd/NOEMA_POC_PERD_v1.3.md) §67.2, OQ-15 (answered in [PERD v1.5](poc/perd/NOEMA_POC_PERD_v1.5.md)); [DEC-2026-10-12-tushe-environment-scope](decisions/DEC-2026-10-12-tushe-environment-scope.md), Amendment 1.
