@@ -22,7 +22,7 @@ def run_git(root, *args):
     subprocess.run(["git", *args], cwd=root, check=True, capture_output=True)
 
 
-class SpellingScan(unittest.TestCase):
+class TempRepoCase(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.root = self._tmp.name
@@ -42,6 +42,9 @@ class SpellingScan(unittest.TestCase):
         if track:
             run_git(self.root, "add", rel)
 
+
+
+class SpellingScan(TempRepoCase):
     def failures(self):
         out = []
         cdc.check_spelling(out.append)
@@ -86,6 +89,34 @@ class SpellingScan(unittest.TestCase):
     def test_correct_spelling_passes(self):
         self.put("docs/note.md", "Tushe wrote back.\n")
         self.assertEqual(self.failures(), [])
+
+
+class RetiredOrgLinks(TempRepoCase):
+    URL = "https://github.com/" + "noema" + "-org/docs/pull/1"
+
+    def failures(self):
+        out = []
+        cdc.check_links_to_retired_org(out.append)
+        return out
+
+    def test_url_to_retired_org_fails(self):
+        self.put("docs/note.md", f"See {self.URL}\n")
+        fails = self.failures()
+        self.assertEqual(len(fails), 1, fails)
+        self.assertIn("docs/note.md:1", fails[0])
+
+    def test_url_to_canonical_org_passes(self):
+        self.put("docs/note.md", "See https://github.com/Noemai-org/docs/pull/1\n")
+        self.assertEqual(self.failures(), [])
+
+    def test_frozen_file_may_keep_the_old_url(self):
+        self.put("docs/record.md", f"{self.URL}\n")
+        self.put(cdc.FROZEN_LIST, "0" * 64 + "  docs/record.md\n")
+        self.assertEqual(self.failures(), [])
+
+    def test_untracked_file_is_scanned(self):
+        self.put("docs/new.md", f"{self.URL}\n")
+        self.assertEqual(len(self.failures()), 1)
 
 
 if __name__ == "__main__":

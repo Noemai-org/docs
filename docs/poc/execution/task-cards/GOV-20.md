@@ -7,7 +7,7 @@ TASK-P0-020  GOV-20 · Decide where the public webhook receiver runs and how it 
 Priority: P0
 Requirement IDs: REQ-OPS-001, REQ-SEC-002; SoT IDs: INV-29, INV-22
 Rationale: Tushe delivers webhooks only to public HTTPS endpoints; AT-06 needs the receiver on Fri 16 Oct. DEC-2026-10-12, Amendment 1 (D5).
-Modules touched (allowlist): docs/decisions/ (the decision record); docs/open-decisions.md (closing OD-P-43, regenerated register) (noema-org/docs)   ← nothing else may change
+Modules touched (allowlist): docs/decisions/ (the decision record); docs/open-decisions.md (closing OD-P-43, regenerated register) (Noemai-org/docs)   ← nothing else may change
 Contracts: none; bump required? N
 Inputs/outputs: PERD v1.3 §67.2 OQ-15 and its minimum safe default → a committed decision record; OD-P-43 closed
 Acceptance criteria:
