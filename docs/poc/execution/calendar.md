@@ -25,7 +25,7 @@ Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.6.md), re-baselined by [
 | Fri 23 Oct | all day | **G1** evidence run (BEN-05) | §3, §8 |
 | Sat 24 Oct | — | Reserve only, called by EL | §3 |
 | Mon 26 Oct | before 10:00 | Noema-covered AT exceptions AT-04, AT-05, AT-07 and AT-14 shown internally (internal target) | §3.1 (G0-N) |
-| Mon 26 Oct | 10:00 | **G1** Unknown-outcome slice review (GOV-07). Counts only once G0 passes; cut-line items 4 and 5 reviewed against measured progress (DEC C8) | §3, §9 |
+| Mon 26 Oct | 10:00 | **G1** Unknown-outcome slice review (GOV-07). Counts only once G0 passes; if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 are applied that day (DEC C8) | §3, §9 |
 | Fri 30 Oct | all day | Tushe R9 to R12 due (ambiguous name enquiry, approval states, scenario richness, diagnostics view) | §18 |
 | Fri 30 Oct | before 16:00 | The two external people for the comparison arms, ARM and REV, engaged under NDA (GOV-21; DEC-2026-10-16 contract-and-pack-clarifications C8) | §3, §4 |
 | Fri 30 Oct | 16:00 | **G2** Trust depth; ARM and REV confirmed (GOV-11) | §3 |
@@ -35,7 +35,7 @@ Every fixed event in [the plan](NOEMA_POC_4WEEK_PLAN_v1.6.md), re-baselined by [
 | Wed 11 Nov | 12:00 | Code freeze: release candidate tagged (REL-01) | §11 |
 | Wed 11 Nov | 16:00 | **G4** Comparison and **G5** Voice reviews (GOV-13) | §3, §11 |
 | Thu 12 Nov | 18:00 | **G6** Release run review (GOV-16) | §3, §11 |
-| Fri 13 Nov | 09:00 | **G7** External readiness: dry run (DEM-02), how G7 is met for the demo | §3.1, §11 |
+| Fri 13 Nov | 09:00 | **G7** External readiness: dry run (DEM-02), how G7 is met for the demo (DoD pre-demo items signed at G6) | §3.1, §11 |
 | Fri 13 Nov | 13:00 | Demo pre-flight | §14 |
 | Fri 13 Nov | 14:00 | Demo (DEM-03) | §3, §11, §14 |
 | Fri 13 Nov | 16:00 | POC-done review (GOV-17) | §11 |

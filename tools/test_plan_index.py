@@ -89,6 +89,27 @@ class TbcDate(unittest.TestCase):
         self.assertEqual(tasks["ENV-14"]["gate"], ["G0-N"])
 
 
+class SplitTaskIds(unittest.TestCase):
+    def test_a_lower_case_suffix_is_part_of_the_task_id(self):
+        text = plan(
+            day("Monday 19 October · One",
+                "| BEN-16 | A | B | — | — | x |",
+                "| BEN-17a | Triage | B | — | BEN-16 | x |",
+                "| BEN-17b | Fix | C1, C2 | — | BEN-17a | x |",
+                "| BEN-18 | Replay | B | — | BEN-17b | x |"),
+        )
+        tasks, errors = run(text)
+        self.assertEqual(only(errors, "needs"), [])
+        self.assertEqual(tasks["BEN-17b"]["needs"], ["BEN-17a"])
+        self.assertEqual(tasks["BEN-18"]["needs"], ["BEN-17b"])
+
+    def test_a_need_on_the_old_unsplit_id_is_unknown(self):
+        text = plan(day("Monday 19 October · One",
+                        "| BEN-17a | Triage | B | — | — | x |", "| BEN-18 | Replay | B | — | BEN-17 | x |"))
+        _, errors = run(text)
+        self.assertTrue(only(errors, "unknown task BEN-17"))
+
+
 class Needs(unittest.TestCase):
     def test_forward_need_is_an_error(self):
         text = plan(
