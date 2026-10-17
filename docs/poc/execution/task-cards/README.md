@@ -6,7 +6,7 @@
 - A card is changed only by its owner, in a PR, and says what changed and why.
 - This index is generated from the card files and the plan by `python3 tools/plan_index.py --write`; CI runs `--check`. Never edit it by hand.
 
-| Card | Task | Day (plan v1.7) |
+| Card | Task | Day (plan v1.8) |
 |---|---|---|
 | [GOV-19](GOV-19.md) | Founders approve, amend or reject DEC-2026-10-12 and SoT v1.4 | Mon 12 Oct |
 | [PLT-01](PLT-01.md) | Create the `noema` skeleton per DEC-2026-10-13 R1 and PERD v1.5 §64.2 | Fri 16 Oct |

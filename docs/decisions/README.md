@@ -4,6 +4,8 @@ This directory holds **decision records**: dated, owned records of decisions. It
 
 **A founder decision counts only once it is committed** to the SoT or to this directory, with date, owner, rationale, affected requirement IDs and migration notes. Decisions made in conversation, calls, chat apps or AI sessions are not authoritative until then (SoT §0.4). If an instruction disagrees with the SoT and has not been committed, follow the SoT and raise the conflict (AGENT-27).
 
+**Where the decision log lives (OD-P-02, closed by DEC-2026-10-17).** This directory holds founder decisions and engineering decisions alike. Technology decisions never live in `brain` (DEC-2026-10-16 execution reset E8). A record that changes the SoT lands in the same pull request as the SoT edit and the regenerated register (AGENT-29).
+
 ## Records
 
 | Record | Subject |
@@ -19,6 +21,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-16-execution-reset](DEC-2026-10-16-execution-reset.md) | Execution reset: `Noemai-org` canonical, two-person team, schedule to 13 Nov, G0-T and G0-N, test-environment components, webhook relay, what leaves `docs`, `brain`'s purpose, the Tushe delta v1.2, the port to `noema`, no direct pushes; amends SoT §35.6, §40.3, §51 (SoT v1.6) (Accepted) |
 | [DEC-2026-10-16-contract-and-pack-clarifications](DEC-2026-10-16-contract-and-pack-clarifications.md) | The `evidence_set_hash` construction (C1), the two-node intent model (C2), the status of CON-04, PCK-01 and PCK-02 (C3), noema#1 as a pure port (C4), G7 "External readiness" (C6), the repository mapping closed (C7), team rules, the work-in-progress limit and the cut line (C8); the settlement of the open items (C10); amends DEC-2026-10-16-execution-reset E2 and E12; no SoT change (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
 | [DEC-2026-10-16-money-and-value-lists](DEC-2026-10-16-money-and-value-lists.md) | Money as integer minor units (M1 to M10) and the contract value lists (Intent Object `status`, authority results, two-tier reason codes, the drift guard); closes OD-P-19 and OD-P-26; amends SoT §43.1 (SoT v1.7) (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
+| [DEC-2026-10-17-open-decisions-closure](DEC-2026-10-17-open-decisions-closure.md) | Closure of every open decision: the canonical OD-01, 02, 03, 06, 08, 10, 12, 13, 14, 15, 16 and the provisional items; the PERD defaults adopted; eleven gates converted to plan tasks; amends SoT §46, §19.3, INV-20, §47.1 and Appendix A (SoT v1.8) (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
 
 ## Where decisions already live
 

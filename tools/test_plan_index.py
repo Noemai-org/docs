@@ -110,6 +110,30 @@ class SplitTaskIds(unittest.TestCase):
         self.assertTrue(only(errors, "unknown task BEN-17"))
 
 
+class AfterTheWindow(unittest.TestCase):
+    AFTER_HEAD = "### After the build window · Gates due later\n\n" + HEAD
+
+    def test_rows_under_the_after_heading_have_date_and_week_after(self):
+        text = plan(
+            day("Monday 19 October · One", "| GOV-01 | A | FND | — | — | x |"),
+            self.AFTER_HEAD + "| GOV-24 | Partner | FND | — | GOV-01 | Due before any paid pilot |\n",
+        )
+        tasks, errors = run(text)
+        self.assertEqual([e for e in errors if "has no task" not in e and "Appendix" not in e and "not in the PERD" not in e], [])
+        self.assertEqual((tasks["GOV-24"]["date"], tasks["GOV-24"]["week"]), ("AFTER", "AFTER"))
+
+    def test_a_dated_task_cannot_wait_for_an_after_task(self):
+        text = plan(
+            self.AFTER_HEAD + "| GOV-24 | Partner | FND | — | — | x |\n",
+            day("Monday 19 October · One", "| GOV-01 | A | FND | — | GOV-24 | x |"),
+        )
+        _, errors = run(text)
+        self.assertTrue(only(errors, "which is AFTER") or only(errors, "appears later"))
+
+    def test_day_label(self):
+        self.assertEqual(pi.day_label("AFTER"), "After the build window")
+
+
 class Needs(unittest.TestCase):
     def test_forward_need_is_an_error(self):
         text = plan(
