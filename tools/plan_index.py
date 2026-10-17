@@ -11,6 +11,9 @@ week 0. Other rows take their date from the nearest "### <Weekday> <D> <Month> �
 heading. Work delivered before the re-baseline (dates up to Sun 18 Oct) is week 0.
 A heading "### To be confirmed by Tushe · ..." gives its rows the literal date
 TBC; that is accepted only on rows whose gate is G0-T (DEC-2026-10-16 E3, E4).
+A heading "### After the build window · ..." gives its rows the literal date and week
+AFTER: gates that fall due after Fri 13 Nov (DEC-2026-10-17 section 5). They have an owner
+and a due point in their text, and no day in the four weeks.
 
 CSV columns:
     task_id, week, date, workstream, task, owner, req_ids, needs, done_when, gate
@@ -57,6 +60,8 @@ ROW_RE = re.compile(r"^\| ([A-Z]+-\d\d[a-z]?) \|")
 NOT_TASKS = {"SR", "OQ", "OD"}
 TBC = "TBC"
 TBC_RE = re.compile(r"^### To be confirmed by Tushe · ")
+AFTER = "AFTER"
+AFTER_RE = re.compile(r"^### After the build window · ")
 DAY_RE = re.compile(
     r"^### (?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) (\d{1,2}) "
     r"(January|February|March|April|May|June|July|August|September|October|November|December) · "
@@ -97,7 +102,7 @@ GATE_RE = re.compile(r"\bG(0-T|0-N|[0-7])\b")
 EXTERNAL_RE = re.compile(r"\bR\d{1,2}(?: batch \d)? received\b")
 DELIVERED_RE = re.compile(r"\bdelivered \d{1,2} (?:Oct|Nov)", re.I)
 COLUMNS = ["task_id", "week", "date", "workstream", "task", "owner", "req_ids", "needs", "done_when", "gate"]
-EXPECTED = {"total": 215, "weeks": {0: 10, 1: 75, 2: 48, 3: 48, 4: 32, TBC: 2}, "edge_cases": 105, "stories": 22}
+EXPECTED = {"total": 225, "weeks": {0: 10, 1: 77, 2: 49, 3: 48, 4: 32, TBC: 2, AFTER: 7}, "edge_cases": 105, "stories": 22}
 MONTHS = {m: i for i, m in enumerate(
     ["January", "February", "March", "April", "May", "June", "July", "August",
      "September", "October", "November", "December"], 1)}
@@ -139,8 +144,8 @@ def task_ids(text):
 
 
 def week_of(date):
-    if date == TBC:
-        return TBC
+    if date in (TBC, AFTER):
+        return date
     if PRE_MONDAY_DATE <= date <= WEEK0_LAST_DAY:
         return 0
     for first, last, n in WEEKS:
@@ -177,6 +182,8 @@ def _parse(lines, label):
             date = datetime.date(YEAR, MONTHS[dm.group(2)], int(dm.group(1)))
         if TBC_RE.match(line):
             date = TBC
+        if AFTER_RE.match(line):
+            date = AFTER
         rm = ROW_RE.match(line)
         if not rm or rm.group(1).split("-")[0] in NOT_TASKS:
             continue
@@ -208,7 +215,7 @@ def _parse(lines, label):
             "line": lineno,
             "task_id": tid,
             "week": week_of(date),
-            "date": date if date == TBC else date.isoformat(),
+            "date": date if date in (TBC, AFTER) else date.isoformat(),
             "workstream": ws or "",
             "task": strip_markup(task),
             "owner": strip_markup(owner),
@@ -238,6 +245,8 @@ def _parse(lines, label):
                 errors.append(f"line {t['line']}: {t['task_id']} needs unknown task {need}")
             elif by_id[need]["date"] == TBC and t["date"] != TBC:
                 errors.append(f"line {t['line']}: {t['task_id']} has a date but needs {need}, which is {TBC}")
+            elif by_id[need]["date"] == AFTER and t["date"] != AFTER:
+                errors.append(f"line {t['line']}: {t['task_id']} has a date but needs {need}, which is {AFTER}")
             elif position[need] > i and not DELIVERED_RE.search(t["done_when"]):
                 errors.append(f"line {t['line']}: {t['task_id']} needs {need}, which appears later in the plan")
 
@@ -354,6 +363,8 @@ def render_appendix_b(tasks):
 def day_label(date):
     if date == TBC:
         return "To be confirmed by Tushe (G0-T)"
+    if date == AFTER:
+        return "After the build window"
     d = datetime.date.fromisoformat(date)
     return f"{d:%a} {d.day} {d:%b}"
 
@@ -380,7 +391,7 @@ def render_cards_index(tasks, cards):
 
     cards maps a task ID to the task text on its card (so the title keeps its code formatting)."""
     by_id = {t["task_id"]: t for t in tasks}
-    rows = ["| Card | Task | Day (plan v1.7) |", "|---|---|---|"]
+    rows = ["| Card | Task | Day (plan v1.8) |", "|---|---|---|"]
     for t in tasks:
         tid = t["task_id"]
         if tid not in cards:
@@ -444,8 +455,8 @@ def main():
     weeks = Counter(t["week"] for t in stats["tasks"])
     if len(stats["tasks"]) != EXPECTED["total"] or dict(weeks) != EXPECTED["weeks"]:
         # Reported, never forced: the plan is the source.
-        print("plan_index: note: task counts differ from the v1.7 baseline "
-              "(215: week 0 10, week 1 75, week 2 48, week 3 48, week 4 32, TBC 2)", file=sys.stderr)
+        print("plan_index: note: task counts differ from the v1.8 baseline "
+              "(225: week 0 10, week 1 77, week 2 49, week 3 48, week 4 32, TBC 2, AFTER 7)", file=sys.stderr)
 
     cards_text = None
     if CARDS_DIR.exists():
