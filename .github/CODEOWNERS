@@ -1,9 +1,9 @@
 # Founders' approval is required for the Source of Truth, decision records and the consistency checks (SoT §0.4).
-/docs/NOEMA_SOURCE_OF_TRUTH.md       @OladiranOlatunde
-/docs/decisions/                     @OladiranOlatunde
-/docs/poc/perd/                      @OladiranOlatunde
-/docs/poc/execution/                 @OladiranOlatunde
-/docs/security/                      @OladiranOlatunde
-/tools/check_docs_consistency.py     @OladiranOlatunde
-/tools/frozen-files.sha256           @OladiranOlatunde
-/.github/                            @OladiranOlatunde
+/docs/NOEMA_SOURCE_OF_TRUTH.md       @OladiranOlatunde @noemai-systems
+/docs/decisions/                     @OladiranOlatunde @noemai-systems
+/docs/poc/perd/                      @OladiranOlatunde @noemai-systems
+/docs/poc/execution/                 @OladiranOlatunde @noemai-systems
+/docs/security/                      @OladiranOlatunde @noemai-systems
+/tools/check_docs_consistency.py     @OladiranOlatunde @noemai-systems
+/tools/frozen-files.sha256           @OladiranOlatunde @noemai-systems
+/.github/                            @OladiranOlatunde @noemai-systems
