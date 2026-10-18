@@ -1,10 +1,14 @@
 # POC PERD (Product & Engineering Requirements Document)
 
-> **Status: Proposed.** The PERD becomes the POC's detailed engineering specification (SoT §0.4, item 4) only when [DEC-2026-10-11-poc-perd-v1.1](../../decisions/DEC-2026-10-11-poc-perd-v1.1.md) is accepted. It **ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md)**: where they disagree, the SoT wins (PERD P.1).
+> **Status: Accepted** ([DEC-2026-10-11-poc-perd-v1.1](../../decisions/DEC-2026-10-11-poc-perd-v1.1.md), re-pointed to the current PERD by [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) E11). The PERD is the POC's detailed engineering specification (SoT §0.4, item 4). It **ranks below the [SoT](../../NOEMA_SOURCE_OF_TRUTH.md)**: where they disagree, the SoT wins (PERD P.1).
 
 | File | What it is |
 |---|---|
-| [`NOEMA_POC_PERD_v1.4.md`](NOEMA_POC_PERD_v1.4.md) | **Current.** The PERD, v1.4 (13 October 2026): v1.3 with the changes of [DEC-2026-10-13](../../decisions/DEC-2026-10-13-code-monorepo.md) (one code repository, `noema`), listed in its "Changes in v1.4". Proposed until that record is accepted. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.8.md`](NOEMA_POC_PERD_v1.8.md) | **Current.** The PERD, v1.8 (17 October 2026; 153 requirements): v1.7 with the changes of [DEC-2026-10-17 open-decisions-closure](../../decisions/DEC-2026-10-17-open-decisions-closure.md) (the §67.3 defaults adopted and tagged [ADOPTED DEC-2026-10-17], §67.1 and §67.2 marked, the §37.1 clock note, the reason-code block moved to §23.3), listed in its "Changes in v1.8". Do not edit it. |
+| [`NOEMA_POC_PERD_v1.7.md`](NOEMA_POC_PERD_v1.7.md) | The PERD, v1.7 (16 October 2026; 153 requirements): v1.6 with the changes of [DEC-2026-10-16 money-and-value-lists](../../decisions/DEC-2026-10-16-money-and-value-lists.md) (integer minor units for money, the Intent Object `status` and `REJECTED_AT_GATE`, the authority results, the two-tier reason codes, the case reason), listed in its "Changes in v1.7". Superseded by v1.8; kept unchanged. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.6.md`](NOEMA_POC_PERD_v1.6.md) | The PERD, v1.6 (16 October 2026; 153 requirements): v1.5 with the changes of [DEC-2026-10-16 contract-and-pack-clarifications](../../decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) (the `evidence_set_hash` construction and golden vectors, the two-node intent model), listed in its "Changes in v1.6". Superseded by v1.7; kept unchanged. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.5.md`](NOEMA_POC_PERD_v1.5.md) | The PERD, v1.5 (16 October 2026; 153 requirements): v1.4 with the changes of [DEC-2026-10-16](../../decisions/DEC-2026-10-16-execution-reset.md) (G0 in two halves, per-object time in AT-15 and TEN-05, the test-environment components, the webhook relay), listed in its "Changes in v1.5". Superseded by v1.6; kept unchanged. Do not edit it. |
+| [`NOEMA_POC_PERD_v1.4.md`](NOEMA_POC_PERD_v1.4.md) | The PERD, v1.4 (13 October 2026): v1.3 with the changes of [DEC-2026-10-13](../../decisions/DEC-2026-10-13-code-monorepo.md) (one code repository, `noema`), listed in its "Changes in v1.4". Superseded by v1.5; kept unchanged. Do not edit it. |
 | [`NOEMA_POC_PERD_v1.3.md`](NOEMA_POC_PERD_v1.3.md) | The PERD, v1.3 (13 October 2026): v1.2 with the changes of [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) Amendment 1 (the joint G0 session on Fri 16 Oct, webhooks kept active, OQ-15), listed in its "Changes in v1.3". Superseded by v1.4; kept unchanged. Do not edit it. |
 | [`NOEMA_POC_PERD_v1.2.md`](NOEMA_POC_PERD_v1.2.md) | The PERD, v1.2 (12 October 2026): v1.1 with the changes of [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md) (how the POC uses Tushe), listed in its "Changes in v1.2". Superseded by v1.3; kept unchanged. Do not edit it. |
 | [`NOEMA_POC_PERD_v1.1.md`](NOEMA_POC_PERD_v1.1.md) | The PERD, v1.1, committed byte-for-byte as issued. Superseded by v1.2; kept unchanged. Do not edit it. |
@@ -12,7 +16,7 @@
 | [`conflicts-register.md`](conflicts-register.md) | PERD §72 conflicts (SOT-C-01 to SOT-C-31) with their status. |
 | [`templates/`](templates/) | Task card, conflict block and benchmark-case templates. |
 
-The dated build plan that turns this PERD into tasks is the [POC execution plan](../execution/README.md) (Proposed).
+The dated build plan that turns this PERD into tasks is the [POC execution plan](../execution/README.md) (Accepted).
 
 ## How to read it
 
@@ -41,4 +45,4 @@ One pull request (AGENT-29) that contains:
 
 ## Where open items live
 
-PERD §67 (open questions OQ-01 to OQ-14 and the [REC] defaults awaiting adoption) is mirrored as provisional, NON-CANONICAL entries OD-P-14 to OD-P-41 in [`docs/open-decisions.md`](../../open-decisions.md#od-p-14).
+PERD §67 (open questions OQ-01 to OQ-15 and the [REC] defaults awaiting adoption) is mirrored as provisional, NON-CANONICAL entries OD-P-14 to OD-P-41 in [`docs/open-decisions.md`](../../open-decisions.md#od-p-14).

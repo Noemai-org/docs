@@ -1,6 +1,6 @@
 # Task card: PLT-02
 
-Plan v1.4 task PLT-02. Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-13](../../../decisions/DEC-2026-10-13-code-monorepo.md). Repository: `noema` (the card lives in `docs`).
+Plan v1.5 task PLT-02 (re-baselined by DEC-2026-10-16 E3 to Mon 19 Oct). Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-13](../../../decisions/DEC-2026-10-13-code-monorepo.md). Repository: `noema` (the card lives in `docs`).
 
 ```
 TASK-P0-002  PLT-02 · CI pipeline: build, unit tests, secret scan, dependency pinning check, SBOM, codegen diff, image file-list check (DEC R2), environment-reference check (DEC R3), PR trace-ID check (PERD REQ IDs plus SoT IDs)
@@ -17,7 +17,7 @@ Acceptance criteria:
   - CI SHALL fail on an unpinned dependency, a detected secret, or an unsigned pack.
   REQ-AGT-001:
   - A PR without IDs SHALL fail the `trace-ids` check.
-  Task "Done when" (plan v1.4): a PR without IDs fails; a planted test secret fails; a planted cross-service file in an image fails CI; a workflow referencing another area's environment fails CI
+  Task "Done when" (plan v1.5): a PR without IDs fails; a planted test secret fails; a planted cross-service file in an image fails CI; a workflow referencing another area's environment fails CI. Re-baselined by DEC-2026-10-16 E3
 Tests to write FIRST (AGENT-11), each a planted-violation test (a "canary") that must fail CI before the check exists and pass once it does:
   - a pull request without REQ and SoT IDs (the `trace-ids` check);
   - a planted test secret;

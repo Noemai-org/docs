@@ -8,7 +8,7 @@ This file adds no product rules. It adds the working practice for applying the [
 
 - **Noema:** models understand; Noema makes understanding safe to act on, makes the action happen correctly, and proves the outcome (SoT §0.1, item 4).
 - **What we are building now:** the POC, one narrow, hostile workflow. Noema is not its POC (SoT §0.1, item 1).
-- **Dates:** build from Mon 12 Oct to Fri 6 Nov 2026. If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
+- **Dates:** build from Mon 19 Oct to Fri 13 Nov 2026 (re-baselined by DEC-2026-10-16 E3). If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
 - **The three documents, in order:** the SoT, then the PERD, then the plan. Code comes last.
 - **The one rule:** when in doubt, take the safer reading, write the ambiguity down, and ask (AGENT-20). Never invent.
 
@@ -39,7 +39,7 @@ The hard part is thinking, not typing. Plan before you edit. Prefer the simplest
 4. **Where the PERD and the plan sit.**
    - The current PERD, named in [`docs/poc/perd/README.md`](docs/poc/perd/README.md), is the detailed engineering specification for the POC, beneath the SoT (PERD P.1; [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md)).
    - The current plan, named in [`docs/poc/execution/README.md`](docs/poc/execution/README.md), is the dated execution layer, beneath the PERD ([DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md)).
-   - The [Tushe specification v1.0](docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md) and [`docs/poc/tushe/tushe-spec-delta-v1.1.md`](docs/poc/tushe/tushe-spec-delta-v1.1.md) govern Tushe endpoint semantics. Nobody infers endpoint semantics from memory or from one observed response (plan, "How to use this plan").
+   - Tushe endpoint semantics are governed by (DEC-2026-10-16 E10): the [Tushe specification v1.0](docs/poc/tushe/Noema_Tushe_Synthetic_Enterprise_Environment_Spec_v1.0.md); Tushe's response of 7 Oct 2026 ([`docs/poc/tushe/responses/`](docs/poc/tushe/responses/README.md)); [DEC-2026-10-12](docs/decisions/DEC-2026-10-12-tushe-environment-scope.md); [`docs/poc/tushe/tushe-spec-delta-v1.2.md`](docs/poc/tushe/tushe-spec-delta-v1.2.md); and the signed worksheet in `docs/poc/tushe/acceptance/`. Nobody infers endpoint semantics from memory or from one observed response (plan, "How to use this plan").
 5. **Labels stay until adopted.** A PERD item marked `[REC]`, `[ASM]` or `[OQ]` stays marked until a decision record adopts it (PERD P.2). Task GOV-06 adopts the PERD §67.3 defaults provisionally; until then and after, they are tracked as OD-P entries in [`docs/open-decisions.md`](docs/open-decisions.md).
 6. **Everything else under `docs/` is derived and non-normative**: indexes, registers and checklists that point to SoT sections. If one disagrees with the SoT, the SoT is right. Fix the derived document; do not "fix" the SoT.
 7. **`docs/archive/` is non-authoritative.** Never implement, cite or quote from it. Its vocabulary is superseded. That includes READY / WAITING / BLOCKED trust states, Execution and Action Contracts, a Validation layer, "intent infrastructure" and "Intent OS", card-replacement and account-inquiry wedges, and the archive's Temporal-as-a-requirement framing. The current position is different and is set by the SoT: Temporal is the durable workflow engine (SoT §35.6, PERD §36.1), and it is never authoritative (INV-30).
@@ -67,11 +67,11 @@ Run this at the start of every session.
 3. **Check that the task may start.**
    - Every task in its Needs column is Done.
    - Its gate's conditions hold:
-     - no Phase B result counts before G0 passes (plan §3);
+     - no Phase B result counts before G0 passes, and G0 passes only when both halves, G0-T and G0-N, pass (plan §3, DEC-2026-10-16 E4);
      - if G1 failed, week 2 starts with the slice and ambiguity work waits (plan §3.1);
      - no comparison arm starts before G3 passes (SoT §38.5, plan §3.1);
-     - after the code freeze (Wed 4 Nov 12:00 WAT), only the fixes plan §11 allows merge.
-   - The work-in-progress limit holds: one active P0 task per engineer, at most two active tasks per person (plan §5).
+     - after the code freeze (Wed 11 Nov 12:00 WAT), only the fixes plan §11 allows merge.
+   - The work-in-progress limit holds: at most 4 open PRs per driving founder, at most 2 of them P0; see the current plan §5.
 
    If any check fails, stop and report.
 4. **Read or write the task card** (PERD §61.4; template [`docs/poc/perd/templates/task-card.md`](docs/poc/perd/templates/task-card.md)). Read the PERD REQ blocks it cites ([`requirements-index.csv`](docs/poc/perd/requirements-index.csv) lists them) and the SoT IDs those REQs cite. Use [`docs/requirements-index.md`](docs/requirements-index.md) to find the SoT section each ID points to.

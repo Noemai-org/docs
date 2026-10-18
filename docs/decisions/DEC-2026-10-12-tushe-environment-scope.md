@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| **Status** | Proposed. Founder approval required before merge |
+| **Status** | Accepted. The Founder approved it on 16 Oct 2026 (written instruction); the Technical Co-Founder confirms by approving the pull request that applies DEC-2026-10-16. Amendments 1 and 2 are part of the record |
 | **Date** | 12 October 2026 |
-| **Owner** | Founders (TODO: name). Reviewer: engineering lead (TODO: name) |
+| **Owner** | Founder and Technical Co-Founder |
 | **Prepared by** | Engineering lead, with the integration lead |
 | **Amends** | SoT §36 "The synthetic enterprise environment" [DECISION] and its Phase A exit line; SoT §35.6 rule 4 [DECISION] (the time-source sentence only); SoT §40.1 (Phase A row); SoT §41 (Phase 0 exit gate) |
 | **Closes** | The OD-P entries mirroring PERD OQ-03 (Tushe case API semantics) and OQ-10 (CI access to Tushe): OD-P-16 and OD-P-23. Amendment 1 opens OD-P-43 (PERD OQ-15, webhook receiver hosting), to be closed by plan task GOV-20 |
@@ -13,7 +13,7 @@
 
 **Record fields (decisions README template).** The table above already gives Status, Date, Owner, Closes and Supersedes; the template headings it lacks point to the sections below.
 
-- Status: Proposed (see the table above)
+- Status: Accepted (see the table above)
 - Date: 12 October 2026 (see the table above)
 - Closes: OD-P-16, OD-P-23 (see the table above)
 - Owner: see the table above
@@ -260,10 +260,10 @@ Replace these parts of SoT §36. Everything else in §36 stays as written.
 
 | Role | Name | Decision | Date |
 |---|---|---|---|
-| Founder | TODO | Approve / amend / reject | |
-| Founder | TODO | Approve / amend / reject | |
-| Engineering lead | TODO | Reviewed | |
-| Benchmark owner | TODO | Accepts ownership of fault plans and truth endpoints | |
+| Founder | — | Approved, 16 Oct 2026 (written instruction) | 16 Oct 2026 |
+| Technical Co-Founder | — | Confirms by approving this PR | Date of the approving review |
+
+The engineering-lead and benchmark-owner rows of the original sign-off are not kept: both roles are held by the two founders (DEC-2026-10-16 E2), and the separation-of-duties safeguard (E2, point 4) applies to fault plans and truth endpoints.
 
 ## Amendment 1 · 13 October 2026
 
@@ -278,4 +278,20 @@ Every section above stays as written. This amendment changes the following.
 - **G1** moves to Monday 19 October at 10:00 WAT, because G0 must pass before G1.
 - **Check-ins.** The 30-minute Friday check-ins with Tushe are removed.
 
-No SoT change is needed. The status of this record is unchanged (Proposed).
+No SoT change is needed.
+
+## Amendment 2 · 16 October 2026
+
+Applied by [DEC-2026-10-16](DEC-2026-10-16-execution-reset.md) (E4 to E6, E9 and E10). Every section above and Amendment 1 stay as written, except where this amendment changes them.
+
+- **D7 and Amendment 1 (G0).** G0 did not hold on Thu 15 or Fri 16 October, and Tushe has not confirmed a joint-session date. G0 is now two halves, and both must pass (E4):
+  - **G0-T (Tushe):** AT-01 to AT-20 against the signed worksheet, in the joint session, on the date Tushe confirms (plan tasks ENV-12 and ENV-07).
+  - **G0-N (Noema):** TEN-01 to TEN-08, `/contracts` v1 tagged, at least 50 reproducible fixtures and the isolation tests, on Thu 22 Oct 2026, 17:00. The TEN checks are Noema-side and are not in the worksheet.
+  - G1 may run before G0-T. Its evidence is recorded and counts only once G0 passes.
+  - The dates of Amendment 1 move with the E3 schedule: the G1 review is Mon 26 Oct 2026, 10:00 (not Mon 19 Oct), and the internal targets for AT-04, AT-05, AT-07 and AT-14 are "before the G1 review on Mon 26 Oct, 10:00". Tushe's own dates (R1 to R13) do not move.
+- **D1 and D4 (components).** `mock-case`, the hostility proxy and the webhook relay are test-environment components, not Noema deployables (E5). Their paths in `noema` are `synthetic/mock_case/`, `benchmark/hostility_proxy/` and `synthetic/webhook_relay/`. None holds a decision, grant, Record, provider or core-database credential, and none runs in a production profile.
+- **D5 and Amendment 1, D5 (the receiver).** The sentence "sits behind the hostility proxy" no longer applies. Per E6, a small public relay holds only the webhook signing secret, verifies the Standard Webhooks signature and the five-minute tolerance, and stores each verified delivery unchanged by delivery ID. The core pulls from the relay over an authenticated outbound connection, into its inbox (REQ-API-008). In the benchmark profile the pull runs through the hostility proxy; the proxy never runs on the public host. This decides OD-P-43 (PERD OQ-15) and plan task GOV-20.
+- **Evidence (E9).** The 13 October response is recorded only as the PDF Tushe received (SHA-256 `c1f1e33a…`). The hand-edited Markdown copy was removed.
+- **Governing documents and delta (E10).** `tushe-spec-delta-v1.1.md` was never sent and is superseded by `tushe-spec-delta-v1.2.md`, which records what was agreed on 13 October and what was withdrawn. What governs Tushe semantics: the Tushe specification v1.0, Tushe's response of 7 October, this record (DEC-2026-10-12), delta v1.2 and the signed worksheet.
+
+No SoT change is needed for this amendment. The SoT edits of DEC-2026-10-16 (v1.6) are listed in that record.

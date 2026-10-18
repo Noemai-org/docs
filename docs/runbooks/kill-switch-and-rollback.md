@@ -8,28 +8,28 @@ Disable all writes for a tenant in one step, and roll back to the previous image
 
 ## When to use
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Preconditions
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Steps
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Verification
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Rollback or recovery
 
-TODO(owner): to be written when the backend skeleton exists (PERD §61.2 step P0/P4).
+TODO(EL, PLT-02): to be written when the core service in `Noemai-org/noema` exists (PLT-02; PERD §61.2 step P0/P4).
 
 ## Owner
 
-TODO(owner): name the owner (PERD §61.2, "Who does what first").
+EL (PERD §61.2: the engineering lead owns CI and releases; plan task OPS-03 (EL, SR)). Both roles are held by the Founder and the Technical Co-Founder (DEC-2026-10-16 E2).
 
 ## Source
 
-PERD REQ-EXE-008 (Tenant kill switch; §27); PERD REQ-OPS-002 (Kill switch, rollback and incident playbook; §65). PERD: [`../poc/perd/NOEMA_POC_PERD_v1.1.md`](../poc/perd/NOEMA_POC_PERD_v1.1.md).
+PERD REQ-EXE-008 (Tenant kill switch; §27); PERD REQ-OPS-002 (Kill switch, rollback and incident playbook; §65). PERD: [`../poc/perd/README.md`](../poc/perd/README.md) (the current PERD).

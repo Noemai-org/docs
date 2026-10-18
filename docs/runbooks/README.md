@@ -1,6 +1,6 @@
 # Runbooks
 
-Scaffolds for the POC operational runbooks. Each has the same headings (Purpose, When to use, Preconditions, Steps, Verification, Rollback or recovery, Owner, Source). None has steps yet: they are written when the backend skeleton exists (PERD §61.2, steps P0 and P4) and tested with the real system before any customer-facing action (SoT §39, [OD-P-04](../open-decisions.md#od-p-04)).
+Scaffolds for the POC operational runbooks. Each has the same headings (Purpose, When to use, Preconditions, Steps, Verification, Rollback or recovery, Owner, Source). None has steps yet: they are written when the core service in `Noemai-org/noema` exists (plan task PLT-02; PERD §61.2, steps P0 and P4) and tested with the real system before any customer-facing action (SoT §39, [OD-P-04](../open-decisions.md#od-p-04)).
 
 | Runbook | Purpose |
 |---|---|

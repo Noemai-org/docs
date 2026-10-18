@@ -11,7 +11,47 @@
 >
 > If this page and the SoT disagree, the SoT wins.
 
-**Module paths are planned, not present.** The paths below are the module boundaries named in SoT §51. Noema uses several repositories; which repository hosts each deployable and `/contracts` is still [OPEN] (§51; [OD-P-13](../open-decisions.md#od-p-13)). This repository contains no application code. The paths show where code *will* live and what it may import; they do not mean the code exists.
+**The repository mapping is closed.** [DEC-2026-10-13](../decisions/DEC-2026-10-13-code-monorepo.md) decided it (SoT §51, v1.5; [OD-P-13](../open-decisions.md#od-p-13)): all POC code lives in one repository, [`Noemai-org/noema`](https://github.com/Noemai-org/noema), laid out as in the next section. `benchmark-heldout` is separate and private; `docs` and `brain` hold documentation only. [DEC-2026-10-16](../decisions/DEC-2026-10-16-execution-reset.md) (E1) made `Noemai-org` the canonical organisation.
+
+**Module paths are relative to the root of `noema`.** The paths below are the module boundaries named in SoT §51, written with a leading slash (`/services/core/trust` is `services/core/trust/` in the layout below). They show what each module may import. The code is built during the POC; where a module does not yet exist, the path is where it will live, not proof that it does. This repository (`docs`) contains no application code.
+
+## Repositories (DEC-2026-10-13 R1, R5 to R8)
+
+| Repository | What it holds | Rule |
+|---|---|---|
+| [`Noemai-org/noema`](https://github.com/Noemai-org/noema) | **The only code repository.** Both deployables, `/contracts`, packs, tools, UI, the benchmark harness and the synthetic test-environment components | Layout below (R1). Secrets only in GitHub Environments (R3). Ownership by path (R4) |
+| `benchmark-heldout` (private) | The held-out cases and oracles | The one repository boundary that is a real security boundary (R5). Only the benchmark owner and the founders read it. No coding agent and no builder gets a credential for it (REQ-AGT-004, OD-16) |
+| [`Noemai-org/docs`](https://github.com/Noemai-org/docs) | Governance: the SoT, the PERD, the plan, decisions, registers, Tushe correspondence | Documentation only; no POC code (R6, OD-P-01) |
+| [`Noemai-org/brain`](https://github.com/Noemai-org/brain) | Founder knowledge outside the build: strategy, research, partner context and notes | Not part of the chain of authority; agents do not read or cite it for build work (R7, confirmed by DEC-2026-10-16 E8) |
+
+`backend` and `intent-engine` are archived in the retired organisation and are not recreated; no skeleton of them exists (R8).
+
+### The layout of `noema` (DEC-2026-10-13 R1)
+
+```
+noema/
+  AGENTS.md, CLAUDE.md        copied from docs; each states the docs commit it was copied from
+  .github/CODEOWNERS
+  .github/workflows/          one workflow per area, each filtered by path
+  Makefile                    the only build orchestration (no Bazel, Nx or Pants)
+  contracts/                  JSON Schemas, fixtures, errors.v1.json, codegen config
+  services/core/              Go: go.mod; cmd/core, edge, orchestrator, trust, execution,
+                              outcome, record, evidence, adapters/synthetic_tushe, workflows,
+                              platform, migrations, internal/contracts (generated, committed)
+  services/model/             Python 3.13: pyproject.toml; understanding, explanation, voice,
+                              providers/{llm,speech}, platform, contracts (generated, committed), tests
+  packs/                      fintech; telecom, insurance, healthcare_admin (conformance)
+  tools/lint/, tools/packcheck/, tools/codegen/
+  ui/                         overlay, inspector, bench (package.json)
+  benchmark/                  generator, cases, fixtures, fault_plans, runner, oracle_client,
+                              scoring, arms, evil_provider, hostility_proxy, partner_listener, reports
+                              (never the held-out set)
+  synthetic/mock_case/        the synthetic case service (DEC-2026-10-12, REQ-ENV-008)
+  deploy/compose/             docker-compose.yml, profiles (dev, ci, bench, demo), network policy
+  docs/                       as-built documentation and session files (AGENTS.md section 9)
+```
+
+`/contracts` is the single source. Generated Go and Python types are committed inside each service, and CI fails if regenerating them produces any difference. No package is published between services.
 
 ## Two deployables (SoT §35.6)
 
@@ -21,6 +61,21 @@
 | **Core service** (Go) | Trust, Execution, Outcome, the Record, the Evidence Layer, enterprise adapters, Temporal workers | Postgres, enterprise adapters, Temporal, grant keys | Any model or speech provider (INV-29, AGENT-05) |
 
 The two talk only over mutual TLS using contracts from `/contracts` (§35.6, §47.1). Temporal orchestrates but is never the authoritative record (INV-30).
+
+These are the only two deployables. The three test-environment components below are not deployables (DEC-2026-10-16 E5).
+
+## Test-environment components (DEC-2026-10-16 E5)
+
+| Component | Path in `noema` | What it is |
+|---|---|---|
+| `mock-case` | `synthetic/mock_case/` | Emulates the bank's case system (DEC-2026-10-12 D1, REQ-ENV-008); task ENV-08 |
+| Hostility proxy | `benchmark/hostility_proxy/` | Injects faults; benchmark and test profiles only; task ENV-09 |
+| Webhook relay | `synthetic/webhook_relay/` | Receives Tushe's webhooks from the internet (E6); task ENV-13 |
+
+- They are not Noema deployables. The two deployables stay the Go core and the Python model service (SoT §35.6).
+- None of them holds a decision, grant, Record, provider or core-database credential.
+- None of them runs in a production profile.
+- The relay runs on one small public HTTPS host that runs nothing else and holds only the webhook signing secret. The core pulls verified deliveries from it over an authenticated, outbound connection; nothing on the internet reaches the core. In the benchmark profile that pull runs through the hostility proxy, which never runs on the public host (E6).
 
 ## The rule in one line
 
@@ -45,10 +100,10 @@ Understanding → Trust → Execution → Outcome, with an independent Record th
 |---|---|---|---|
 | Evidence Layer | §14, §43.5 | `/services/core/evidence` (core service; includes the principal-scoped read API used by the model service) | Read-only adapters. Trust and Outcome each read it separately. Data minimisation (PLAT-NFR-10). |
 | Enterprise (write) adapters | §14 | `/services/core/adapters` (POC: `synthetic_tushe`) | One per registered capability. Only Execution may call them. No adapter exists for a `PROHIBITED` capability (§34.2, BD-08). |
-| Vertical Packs | §15 | `/packs` (POC: fintech populated; telecom, insurance and healthcare_admin conformance packs skeletal) | Loaded as **data**, never imported as code. All industry and country terms live here (INV-14, AGENT-04, PLAT-NFR-08). Validated locally by the internal pack checker, `/tools/packcheck` (§15.4). |
+| Vertical Packs | §15 | `/packs` (POC: fintech populated; telecom, insurance and healthcare_admin conformance packs skeletal) | Loaded as **data**, never imported as code. All industry and country terms live here (INV-14, AGENT-04, PLAT-NFR-08). Validated locally by the internal pack checker, `packcheck` (§15.4; ported to `noema` as `tools/packcheck.py`, with the R1 layout's `tools/packcheck/` as its home). |
 | Providers | §17, §35.3 | `/services/model/providers` | Model, speech and TTS behind neutral interfaces. Changing provider is configuration plus a benchmark run (PLAT-NFR-09, BD-16, AGENT-28). |
-| Contracts | §43 | `/contracts` (JSON Schemas; not yet written) | One source of truth for every boundary object. Changes need a version bump (AGENT-15, PLAT-NFR-17). |
-| Benchmark | §20.2, §38 | `/benchmark` | The oracle is never reachable from runtime credentials (INV-22). |
+| Contracts | §43 | `/contracts` (JSON Schemas, written by task CON-01; the golden vectors are already in `noema`) | One source of truth for every boundary object. Changes need a version bump (AGENT-15, PLAT-NFR-17). |
+| Benchmark | §20.2, §38 | `/benchmark` (including `benchmark/hostility_proxy/`, a test-environment component) | The oracle is never reachable from runtime credentials (INV-22). The held-out set lives in `benchmark-heldout`, never in `noema`. |
 
 ## Boundary rules (SoT §51, checked in CI)
 

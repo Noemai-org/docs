@@ -1,6 +1,6 @@
 # PR checklist
 
-<!-- Paste into the PR description and tick each line only on evidence. Source: plan §13.1 (NOEMA_POC_4WEEK_PLAN_v1.1.md lines 794–804), verbatim. -->
+<!-- Paste into the PR description and tick each line only on evidence. Source: plan §13.1 (NOEMA_POC_4WEEK_PLAN_v1.1.md lines 794–804; current: see the execution README), verbatim. -->
 
 **PR checklist (CI enforces what it can; the reviewer checks the rest).**
 

@@ -1,6 +1,6 @@
 # DEC-2026-10-06-architecture-and-contracts
 
-- Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (deployment shape); Temporal confirmed
+- Status: Superseded in part by DEC-2026-10-09-deployment-temporal-providers (deployment shape); Temporal confirmed; superseded in part by DEC-2026-10-13-code-monorepo (item 2, repository layout); superseded in part by DEC-2026-10-16-money-and-value-lists (item 4, contract enums)
 - Date: 6 October 2026
 - Closes: OD-07, OD-11
 - Owner: Founders (Technical Co-founder)

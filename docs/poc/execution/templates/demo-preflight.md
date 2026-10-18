@@ -1,13 +1,13 @@
 # Demo pre-flight: Fri 6 Nov 2026
 
-<!-- Source: plan §14 (NOEMA_POC_4WEEK_PLAN_v1.1.md). Fill on the day; never in advance. -->
+<!-- Source: plan §14 (NOEMA_POC_4WEEK_PLAN_v1.1.md; current: see the execution README). Fill on the day; never in advance. -->
 
 **Rules.** Every scenario runs live from the release build against Tushe, with the evidence panel open. Nothing is scripted, edited or replayed from video. If a scenario fails in the dry run, it is dropped and the drop is said out loud.
 
 ## Pre-flight at 13:00 WAT
 
 - Release run ID: <!-- From the G6 record. -->
-- Person holding the stop decision: <!-- TODO(FND): one named person (plan §14). -->
+- Person holding the stop decision: <!-- TODO(FND, DEM-02): one named person (plan §14). -->
 
 - [ ] `make reset` to the release seed <!-- Tick only once checked on the demo host. -->
 - [ ] Run IDs recorded <!-- Tick only once checked on the demo host. -->
