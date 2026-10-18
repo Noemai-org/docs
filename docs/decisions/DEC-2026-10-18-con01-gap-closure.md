@@ -53,6 +53,8 @@ The instruction listed seven strings as event types missing from §32.2. Reading
 
 Adding the last three to the Record event list would put void reasons and an access-log entry into the hash chain's vocabulary, contradicting the requirement lines that define them. So **only the four Record events are added to §32.2**; the other three keep the role their requirements give them. This keeps the PERD consistent with itself, which is the rule for anything the instruction does not settle.
 
+`GRANT_VOIDED` reasons are `INTENT_SUPERSEDED`, `STATE_CHANGED` and `POLICY_SUPERSEDED` (PERD US-08, step E4). The "/ STALE" in step E4 is read as prose, not a fourth reason, because no other PERD line uses `STALE` as a void reason. If a `STALE` void is ever needed, it is added by a decision record, not by widening the schema.
+
 ## 3. Host-publishing network (PLT-04 follow-up)
 
 PERD §65.1 gains `ui_publish_net`: the network on which the UI's port is published on the host. Only the UI is a member, and no service-to-service traffic is allowed on it. `edge_net` and every other network keep their members and purpose. This is the follow-up that PLT-04 found while building the connection matrix.
