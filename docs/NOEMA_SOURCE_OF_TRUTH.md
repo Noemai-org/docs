@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.8 · 17 October 2026 · Status: canonical
+Version 1.9 · 18 October 2026 · Status: canonical
 
 ---
 
@@ -2145,7 +2145,7 @@ The approver must be shown the exact action, the target (masked), the parameters
   "schema_version": "1.0",
   "receipt_id": "rcp_2M1",
   "grant_id": "grt_3K9",
-  "idempotency_key": "idk_v1_sha256:3e7f...",
+  "idempotency_key": "idk_v1_3df771ed82afada94c2eb1e6a27b98f061f67c67e7440b6b9f8b30892ad85176",
   "logical_action": "fin.cap.create_escalation_case",
   "attempt": 1,
   "dispatched_at": "2026-10-01T09:48:01Z",
@@ -2211,7 +2211,7 @@ Staleness is judged against the effective limit (§15.1): the stricter of `fresh
 
 ```json
 {
-  "event_id": "rec_1001",
+  "event_id": "recev_1001",
   "prev_hash": "sha256:4d2e...",
   "hash": "sha256:7a91...",
   "written_by": "TRUST",
@@ -2926,6 +2926,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.9 | 18 Oct 2026 | **Two examples corrected (DEC-2026-10-18-con01-gap-closure).** Why: building the contract schemas (CON-01) showed that two SoT examples disagreed with the adopted PERD and the committed golden vectors. What changed: §43.3 shows the idempotency key as `idk_v1_` plus the 64 lower-case hex characters of the SHA-256, the form PERD §27.2 defines and `contracts/fixtures/golden_vectors.json` computes (the example read `idk_v1_sha256:…`); §43.6 shows the Record event ID with the `recev` prefix of PERD §32.3 (the example read `rec_1001`, whose prefix `rec` identifies a state-reconciliation result). No requirement, invariant, gate or decision changes. |
 | 1.8 | 17 Oct 2026 | **Closure of every open decision (DEC-2026-10-17-open-decisions-closure).** Why: the founders decided every remaining open decision, so the register can close; evidence that can only come from reality is tracked as gates in the plan, not as open decisions. What changed: §46 (OD-01, OD-02, OD-03, OD-06, OD-08, OD-10, OD-12, OD-13, OD-14, OD-15 and OD-16 are DECIDED, each with the record's decision); §19.3 (the pricing sentence about safe refusals, which contradicted itself, now says a correct refusal or escalation is a paid outcome priced below a verified success and a wrong action earns nothing; the [OPEN] tag became [DECISION]); INV-20 (names the freeze allow-list: escalation case, evidence record and routing, held as pack data); §47.1 (per-power service identity means per-power Postgres roles and adapter credentials, with one core process identity in the POC); Appendix A (WAIT and UNKNOWN for Trust). No other SoT text changed. |
 | 1.7 | 16 Oct 2026 | **Money in minor units (DEC-2026-10-16-money-and-value-lists).** Why: the §43.1 example showed `"value": 20000` for NGN 20,000.00, which read as major units, while the decision record fixes every currency amount as an integer count of the minor unit (OD-P-19). What changed: §43.1 only: the example amount is `"value": 2000000`, and a one-line note under the example says currency amounts are integer minor units. No other SoT text changed; the contract value lists (OD-P-26) are decided in the same record and live in `docs/engineering/state-registry.md`. |
 | 1.6 | 16 Oct 2026 | **Execution reset (DEC-2026-10-16-execution-reset).** Why: the repositories moved to one organisation, the team was confirmed as two people working with coding agents, G0 could not hold on its planned date, and three test-environment components needed a place in the architecture that does not make them Noema services. What changed: §35.6 (a paragraph after the table of the two deployables: `synthetic/mock_case`, `benchmark/hostility_proxy` and `synthetic/webhook_relay` are test-environment components, not deployables, holding no decision, grant, Record, provider or core-database credential, and never running in a production profile); §40.3 (the environment-and-reproducibility line now says Noema's simulated clock is controllable and Tushe time is controlled per object, instead of "the virtual clock is controllable"); §51 (the tree gains `/synthetic` and `/deploy`). Binding decisions: none of BD-01 to BD-16 is affected. The two-deployable split of §35.6 is unchanged. No invariant changes and no requirement changes. |

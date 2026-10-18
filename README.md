@@ -2,7 +2,7 @@
 
 This repository is Noema's documentation and organisational memory.
 
-**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.8, 17 October 2026). It defines:
+**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.9, 18 October 2026). It defines:
 
 - what Noema is and is not;
 - what we are building first, and why;

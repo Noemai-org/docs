@@ -2,7 +2,7 @@
 
 ## The one authority
 
-[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.8, 17 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
+[`NOEMA_SOURCE_OF_TRUTH.md`](NOEMA_SOURCE_OF_TRUTH.md) (the **SoT**, v1.9, 18 October 2026, status: canonical) is the single source of truth for what Noema is, what we are building first, why, and how. When anything disagrees with it, the SoT wins until it is formally revised (SoT, "How to use this document").
 
 **Every other active document here is derived and non-normative.** Each one is an index, register, checklist or map that points back to SoT sections. None of them defines Noema, its architecture, its requirements or its states. If any of them disagrees with the SoT, the derived document is wrong and must be fixed.
 
@@ -62,7 +62,7 @@ docs/
       tushe-spec-delta-v1.2.md changes v1.0 → v1.2: what was agreed and withdrawn on 13 Oct 2026
       acceptance/              Phase A acceptance: the worksheet as sent, verbatim AT-01..20, the signed report (none yet; the joint session date is to be confirmed by Tushe)
       responses/               Tushe correspondence: received and sent records, with checksums
-    perd/                      POC PERD v1.8 (current, Accepted; ranks below the SoT; v1.1 to v1.7 kept unchanged), generated REQ index, conflicts, templates
+    perd/                      POC PERD v1.9 (current, Accepted; ranks below the SoT; v1.1 to v1.8 kept unchanged), generated REQ index, conflicts, templates
     execution/                 four-week plan v1.5 (current, Accepted; v1.1 to v1.4 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
       task-cards/              task cards for the tasks added by plans v1.2 to v1.5 and for PLT-01 to PLT-04 (GOV-19, GOV-20, ENV-08 to ENV-14); the index is generated
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
