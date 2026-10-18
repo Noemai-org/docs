@@ -53,7 +53,11 @@ The instruction listed seven strings as event types missing from §32.2. Reading
 
 Adding the last three to the Record event list would put void reasons and an access-log entry into the hash chain's vocabulary, contradicting the requirement lines that define them. So **only the four Record events are added to §32.2**; the other three keep the role their requirements give them. This keeps the PERD consistent with itself, which is the rule for anything the instruction does not settle.
 
-## 3. What this does not change
+## 3. Host-publishing network (PLT-04 follow-up)
+
+PERD §65.1 gains `ui_publish_net`: the network on which the UI's port is published on the host. Only the UI is a member, and no service-to-service traffic is allowed on it. `edge_net` and every other network keep their members and purpose. This is the follow-up that PLT-04 found while building the connection matrix.
+
+## 4. What this does not change
 
 - Every invariant, every gate and the 153 requirements.
 - The money rules (DEC-2026-10-16 money-and-value-lists) and the two-tier reason codes.

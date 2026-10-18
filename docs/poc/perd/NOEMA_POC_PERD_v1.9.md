@@ -105,6 +105,7 @@ Applied from DEC-2026-10-18-con01-gap-closure (18 October 2026). Version 1.8 sta
 4. §39.1: the rule for retryable errors, and the five retryable codes of the catalogue.
 5. §32.2: four event types that PERD requirements already use are added to the table: `AUDIO_RETAINED` (REQ-VOI-004), `INBOUND_EVENT_RECEIVED` (REQ-API-008), `RESOLUTION_POSTED` (REQ-API-007) and `CONFIG_CHANGED` (REQ-OPS-003). Their [REC event] tags become [ADOPTED DEC-2026-10-18]. `INTENT_SUPERSEDED` (REQ-INT-004) and `STATE_CHANGED` (REQ-RES-004) are grant-void reasons of `GRANT_VOIDED`, and `RECORD_ACCESSED` (REQ-AUD-003) is an access-log entry "not the chain"; none of the three is a Record event type, so none is added.
 6. P.2: the label [ADOPTED DEC-2026-10-18] is defined.
+7. §65.1: `ui_publish_net` is added as a host-publishing network that only the UI is on, with no service-to-service traffic on it (the PLT-04 follow-up). The other networks and their members are unchanged.
 
 No requirement is added or removed; the totals stay 153 (P0 130, P1 20, P2 3).
 
@@ -5870,6 +5871,7 @@ noema/
 | `svc_net` | core, model | mTLS internal APIs |
 | `data_net` | core, postgres, temporal | Authoritative data and workflows |
 | `tushe_net` | core egress to the hosted Tushe API through the hostility proxy (allowlisted host only), plus `mock-case`; and the core's outbound pull from the webhook relay (allowlisted host only; through the hostility proxy in the benchmark profile) | Enterprise access |
+| `ui_publish_net` | ui only | Publishes the UI's port on the host. No service-to-service traffic is allowed on it. Added in v1.9 as the PLT-04 follow-up [ADOPTED DEC-2026-10-18] |
 | `provider_egress` | model only | Egress to model and speech providers |
 | `bench_net` | benchmark-runner, oracle (Tushe), fault-controller, benchmark-db, the `mock-case` truth endpoint, the proxy control API, and the runner holding the administrator and fixture credentials | **Unreachable from core and model** |
 
