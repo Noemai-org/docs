@@ -39,6 +39,9 @@ CODE_EXTENSIONS = {
 OWN_CHECKERS = {
     "tools/check_docs_consistency.py", "tools/perd_index.py", "tools/plan_index.py",
     "tools/test_check_docs_consistency.py", "tools/test_plan_index.py",
+    # The repository's own CI guard and its offline tests (GOV-22): tooling that audits merges to this
+    # repository, not product code. The exemption names exactly these two files.
+    ".github/scripts/main-merge-audit.js", ".github/tests/main-merge-audit.test.js",
 }
 
 # Built from parts so this file does not itself contain the misspelling it looks for.
