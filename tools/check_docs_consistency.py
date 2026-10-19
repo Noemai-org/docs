@@ -39,10 +39,10 @@ CODE_EXTENSIONS = {
 OWN_CHECKERS = {
     "tools/check_docs_consistency.py", "tools/perd_index.py", "tools/plan_index.py",
     "tools/test_check_docs_consistency.py", "tools/test_plan_index.py",
-    # The repository's own CI guard and its offline tests (GOV-22): tooling that audits merges to this
-    # repository, not product code. The exemption names exactly these two files.
-    ".github/scripts/main-merge-audit.js", ".github/tests/main-merge-audit.test.js",
 }
+# Repository-infrastructure code that governs this repository itself is not product code
+# (DEC-2026-10-19, amending DEC-2026-10-16 E7). It is permitted in these two directories only.
+INFRASTRUCTURE_CODE_DIRS = (".github/scripts/", ".github/tests/")
 
 # Built from parts so this file does not itself contain the misspelling it looks for.
 OLD_SPELLING = "tu" + "che"
@@ -219,7 +219,7 @@ def check_spelling(fail):
 def check_no_code(fail):
     """No contracts/, packs/ or source code in this repository, except the archive and the checkers' own files."""
     for path in tracked_files():
-        if path.startswith(ARCHIVE_DIR) or path in OWN_CHECKERS:
+        if path.startswith(ARCHIVE_DIR) or path in OWN_CHECKERS or path.startswith(INFRASTRUCTURE_CODE_DIRS):
             continue
         if path.startswith(NO_CODE_DIRS):
             fail(f"{path}: contracts/ and packs/ belong in the noema repository, not in docs (DEC-2026-10-16 E7)")

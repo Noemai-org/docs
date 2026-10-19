@@ -144,13 +144,19 @@ class NoCodeInDocs(TempRepoCase):
             self.put(name, "x = 1\n")
         self.assertEqual(self.failures(), [])
 
-    def test_only_the_named_ci_guard_files_are_exempt(self):
+    def test_infrastructure_code_is_allowed_in_the_two_directories(self):
         self.put(".github/scripts/main-merge-audit.js", "x = 1\n")
+        self.put(".github/scripts/another_helper.py", "x = 1\n")
         self.put(".github/tests/main-merge-audit.test.js", "x = 1\n")
+        self.put(".github/tests/fixtures/sample.json", "{}\n")
         self.assertEqual(self.failures(), [])
-        self.put(".github/scripts/other.js", "x = 1\n")
-        self.assertEqual(len(self.failures()), 1)
-        self.assertIn(".github/scripts/other.js", self.failures()[0])
+
+    def test_a_code_file_anywhere_else_still_fails(self):
+        for where in (".github/workflows/helper.js", ".github/helper.js", ".githubx/scripts/a.js", "scripts/a.js",
+                      "tools/new_tool.py", "docs/tool.js", "main.go", ".github/scriptsx/a.js"):
+            self.put(where, "x = 1\n")
+        failures = self.failures()
+        self.assertEqual(len(failures), 8, failures)
 
     def test_archive_is_exempt(self):
         self.put("docs/archive/2026-10-pre-poc-drafts/example.py", "x = 1\n")

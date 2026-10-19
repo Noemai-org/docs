@@ -23,6 +23,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-16-money-and-value-lists](DEC-2026-10-16-money-and-value-lists.md) | Money as integer minor units (M1 to M10) and the contract value lists (Intent Object `status`, authority results, two-tier reason codes, the drift guard); closes OD-P-19 and OD-P-26; amends SoT §43.1 (SoT v1.7) (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
 | [DEC-2026-10-17-open-decisions-closure](DEC-2026-10-17-open-decisions-closure.md) | Closure of every open decision: the canonical OD-01, 02, 03, 06, 08, 10, 12, 13, 14, 15, 16 and the provisional items; the PERD defaults adopted; eleven gates converted to plan tasks; amends SoT §46, §19.3, INV-20, §47.1 and Appendix A (SoT v1.8) (Accepted by the Founder; the Technical Co-Founder confirms by approving) |
 | [DEC-2026-10-18-con01-gap-closure](DEC-2026-10-18-con01-gap-closure.md) | Seven decisions found while building the contract schemas: ALLOW needs three PASS layers, the recovery request for a voided grant, the clarification answer, retryable errors, the `recev` and `idk_v1_` forms, and four Record event types added to §32.2 (SoT v1.9, PERD v1.9) (Accepted) |
+| [DEC-2026-10-19-docs-infrastructure-code](DEC-2026-10-19-docs-infrastructure-code.md) | Repository-infrastructure code that governs `docs` itself is permitted in `.github/scripts/` and `.github/tests/` only; amends DEC-2026-10-16 E7 (Accepted) |
 
 ## Where decisions already live
 
