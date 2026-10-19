@@ -1,6 +1,6 @@
 # Task card: PLT-03
 
-Plan v1.4 task PLT-03. Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-13](../../../decisions/DEC-2026-10-13-code-monorepo.md). Repository: `noema` (the card lives in `docs`).
+Plan v1.5 task PLT-03 (re-baselined by DEC-2026-10-16 E3 to Mon 19 Oct). Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Source decision: [DEC-2026-10-13](../../../decisions/DEC-2026-10-13-code-monorepo.md). Repository: `noema` (the card lives in `docs`).
 
 ```
 TASK-P0-003  PLT-03 · `tools/lint`: core forbidden terms; import boundaries (trust, execution and outcome; explanation never imported); no wall-clock outside the clock package; no float money; no mock libraries in integration or benchmark packages; no benchmark branches; no provider SDK in core manifests; no DB driver or Temporal client in the model service; no file in `services/core/` references a path in `services/model/`, or the reverse
@@ -23,7 +23,7 @@ Acceptance criteria:
   REQ-SEC-002:
   - Connection tests run from inside each container SHALL show that every forbidden route fails.
   - Each service's container image SHALL contain only files from that service's folder and its generated contracts; a CI check SHALL list each image's files and fail otherwise.
-  Task "Done when" (plan v1.4): each rule has a canary file that fails CI
+  Task "Done when" (plan v1.5): each rule has a canary file that fails CI. Re-baselined by DEC-2026-10-16 E3
 Tests to write FIRST (AGENT-11), each a planted-violation test (a "canary") that must fail before the rule exists and pass once it does:
   - a provider SDK added to `services/core/go.mod`;
   - a database driver for the core schemas, or a Temporal client, added to `services/model/pyproject.toml`;

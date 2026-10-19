@@ -1,6 +1,6 @@
 # Conflict block template
 
-<!-- Source: PERD REQ-AGT-003 (NOEMA_POC_PERD_v1.1.md lines 5831–5839), copied verbatim. Paste it into the PR description, fill every <…>, and stop work on the conflicting part (AGENT-27). -->
+<!-- Source: PERD REQ-AGT-003 (NOEMA_POC_PERD_v1.1.md lines 5831–5839; current: see the PERD README), copied verbatim. Paste it into the PR description, fill every <…>, and stop work on the conflicting part (AGENT-27). -->
 
 When the specification and the implementation conflict, or the PERD and the SoT conflict, the agent stops and puts this block in the PR (REQ-AGT-003, AGENT-26, AGENT-27). Check [`../conflicts-register.md`](../conflicts-register.md) first and cite the `SOT-C-xx` ID if the conflict is already listed.
 

@@ -2,7 +2,7 @@
 
 This repository is Noema's documentation and organisational memory.
 
-**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.5, 13 October 2026). It defines:
+**The single source of truth is [`docs/NOEMA_SOURCE_OF_TRUTH.md`](docs/NOEMA_SOURCE_OF_TRUTH.md)** (v1.9, 18 October 2026). It defines:
 
 - what Noema is and is not;
 - what we are building first, and why;
@@ -27,8 +27,8 @@ This README intentionally does not restate the definition of Noema. Read SoT §1
 | `docs/NOEMA_SOURCE_OF_TRUTH.md` | **Canonical** |
 | `docs/` (other files) | Derived indexes, registers and checklists. Non-normative. |
 | `docs/poc/tushe/` | Issued Tushe environment specification (v1.0, frozen) and its original export |
-| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.4 (applies [DEC-2026-10-13](docs/decisions/DEC-2026-10-13-code-monorepo.md); earlier versions kept). Status: Proposed, pending founder approval of [DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md). Ranks below the SoT. |
-| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.4 (12 Oct to 6 Nov 2026) and its task index. Status: Proposed, pending [DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md). Ranks below the SoT and the PERD. |
+| `docs/poc/perd/` | **POC build specification**: the [POC PERD](docs/poc/perd/README.md) v1.5 (applies [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md); earlier versions kept). Status: Accepted ([DEC-2026-10-11-poc-perd-v1.1](docs/decisions/DEC-2026-10-11-poc-perd-v1.1.md), re-pointed by [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md)). Ranks below the SoT. |
+| `docs/poc/execution/` | **POC execution plan**: the [four-week implementation plan](docs/poc/execution/README.md) v1.5 (19 Oct to 13 Nov 2026, re-baselined by DEC-2026-10-16) and its task index. Status: Accepted ([DEC-2026-10-11-poc-4week-plan](docs/decisions/DEC-2026-10-11-poc-4week-plan.md), re-pointed by [DEC-2026-10-16](docs/decisions/DEC-2026-10-16-execution-reset.md)). Ranks below the SoT and the PERD. |
 | `docs/security/`, `docs/runbooks/` | Threat model, trust-boundary and threat-to-test maps (from the PERD, Proposed); runbook scaffolds (no steps yet) |
 | `docs/archive/` | **Non-authoritative** historical material |
 | `tools/`, `.github/` | The `docs-consistency` check (`tools/check_docs_consistency.py`), the PERD and plan index checks (`tools/perd_index.py`, `tools/plan_index.py`), frozen-file hashes, CI workflow, PR template and code owners |

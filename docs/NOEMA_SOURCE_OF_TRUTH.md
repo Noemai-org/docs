@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.5 · 13 October 2026 · Status: canonical
+Version 1.9 · 18 October 2026 · Status: canonical
 
 ---
 
@@ -863,7 +863,7 @@ where `N` is eligible cases per month, `B` the baseline fully loaded cost per ca
 
 ### 19.3 How Noema is priced
 
-**[OPEN — OD-01, decide before the first paid pilot]** For the first pilot: a fixed-fee paid pilot with auditable success criteria agreed in writing in advance. Verified outcomes are Noema's internal unit of measurement from day one, counted separately as verified success, verified safe refusal, verified escalation, and unresolved or unknown. Outcome-based pricing is tested only once both sides can agree on what counted. Never per seat. Rationale: per-seat pricing is the model Gartner's agentic-arbitrage analysis says is being eroded [S3]; charging for verified outcomes aligns our revenue with the thing the customer actually values and with the thing our architecture is built to prove. Outcomes that end in a safe refusal or escalation are counted and reported but priced lower, so we are never paid more for acting than for correctly declining to act. As deployments mature, the commercial model is expected to combine a platform commitment, execution volume, a premium for high-assurance capabilities, private or regional deployment, and support tiers; each element is tested with design partners before it is published.
+**[DECISION — OD-01, DEC-2026-10-17-open-decisions-closure]** For the first pilot: a fixed-fee paid pilot with auditable success criteria agreed in writing in advance. Verified outcomes are Noema's internal unit of measurement from day one, counted separately as verified success, verified safe refusal, verified escalation, and unresolved or unknown. Outcome-based pricing is tested only once both sides can agree on what counted. Never per seat. Rationale: per-seat pricing is the model Gartner's agentic-arbitrage analysis says is being eroded [S3]; charging for verified outcomes aligns our revenue with the thing the customer actually values and with the thing our architecture is built to prove. A correct refusal or escalation is a paid outcome, priced below a verified success; a wrong action earns nothing, so Noema is paid for being right, never merely for acting. As deployments mature, the commercial model is expected to combine a platform commitment, execution volume, a premium for high-assurance capabilities, private or regional deployment, and support tiers; each element is tested with design partners before it is published.
 
 ## 20. The engineering problem the full platform solves, and how it is measured
 
@@ -1551,6 +1551,8 @@ The synthetic environment's domain lifecycles keep these distinct (from the Tush
 | **Model service** | Python | Input Gateway, Intent Compiler, Entity Resolution, voice pipeline, explanation renderer, all model and speech provider adapters | Model and speech providers only | The core database, enterprise adapters, Temporal, grant keys |
 | **Core service** | Go | Trust, Execution, Outcome (verifier and outcome watch), the Record, the Evidence Layer, enterprise adapters, Temporal workers | Postgres, enterprise adapters, Temporal, grant keys | Any model or speech provider (no provider SDK, no provider credentials, network egress to providers denied) |
 
+Test-environment components (`synthetic/mock_case`, `benchmark/hostility_proxy`, `synthetic/webhook_relay`) are not Noema deployables. They hold no decision, grant, Record, provider or core-database credential, and never run in a production profile (DEC-2026-10-16 E5).
+
 **How the two talk.**
 
 - The core service calls the model service over an authenticated internal API (mutual TLS) using only contracts from `/contracts`: canonical input → Intent Object, and verified facts → explanation text.
@@ -1905,7 +1907,7 @@ The POC is not done because the UI works or a demo looks good. It is done when a
 - **Voice:** the demo runs live, unscripted, through voice, from the same benchmarked engine; it uses the same core, and low-confidence speech recognition on a key slot always clarifies; the real-conditions gate (§37.5) holds.
 
 - **Mechanics, each checked explicitly:** principal and resource scope enforced on every read and write; unknown, stale, ambiguous and contradictory states explicit; every Decision Grant bound to principal, resource, intent, capability, policy version, evidence set and plan hash; Execution revalidates before every write; logical writes use stable idempotency keys; unknown outcomes verified before any retry; business postconditions independently verified; every governed write has a complete causal record; explanation claims bound to evidence.
-- **Environment and reproducibility:** at least 300 hidden-oracle cases with versioned fixtures; deterministic scenario replay passes; the oracle is unreachable from runtime credentials; the virtual clock is controllable; scenario reset and seed reproducibility work; independent system state can diverge; duplicate, missing and reordered events, stale and contradictory state, idempotency collisions, concurrency conflicts, policy mutation, authorisation failures, composite failures and prompt or tool injection can all be generated; the non-monetary write boundary is enforced; baselines run on the same scenarios; outcome verification is independent of the explanation generator.
+- **Environment and reproducibility:** at least 300 hidden-oracle cases with versioned fixtures; deterministic scenario replay passes; the oracle is unreachable from runtime credentials; Noema's simulated clock is controllable, and Tushe time is controlled per object (§36); scenario reset and seed reproducibility work; independent system state can diverge; duplicate, missing and reordered events, stale and contradictory state, idempotency collisions, concurrency conflicts, policy mutation, authorisation failures, composite failures and prompt or tool injection can all be generated; the non-monetary write boundary is enforced; baselines run on the same scenarios; outcome verification is independent of the explanation generator.
 - **Reporting:** results include safety, correctness, false blocks, intervention, recovery, latency and cost, not just automation; there are no P0 (S0) defects and no unresolved P1 (S1) defects.
 - **Discovery:** baseline economics gathered and a design-partner path agreed.
 
@@ -2043,7 +2045,7 @@ Vertical-agnostic: it refers to pack nodes and abstract slot types, never to ind
   "intent_node": "fin.payments.exception.investigate",
   "slots": {
     "subject_resource": { "type": "Resource", "status": "UNRESOLVED", "candidates_ref": null },
-    "amount": { "type": "Quantity", "value": 20000, "unit": "NGN", "confidence": 0.97 },
+    "amount": { "type": "Quantity", "value": 2000000, "unit": "NGN", "confidence": 0.97 },
     "counterparty": { "type": "Party", "surface_form": "Tunde", "confidence": 0.99 },
     "when": { "type": "TimeRef", "surface_form": "this morning", "window": ["2026-10-01T05:00:00Z", "2026-10-01T09:00:00Z"] }
   },
@@ -2053,6 +2055,8 @@ Vertical-agnostic: it refers to pack nodes and abstract slot types, never to ind
   "sig": { "key_id": "und-2026-10", "value": "..." }
 }
 ```
+
+Currency amounts are integer minor units (DEC-2026-10-16-money-and-value-lists).
 
 Rules: immutable once admitted to Trust (changes create a new `version` with `supersedes`); `principal` is copied from the authenticated session, never extracted from the user's words or a model's output; unknown fields are rejected at the schema gate.
 
@@ -2141,7 +2145,7 @@ The approver must be shown the exact action, the target (masked), the parameters
   "schema_version": "1.0",
   "receipt_id": "rcp_2M1",
   "grant_id": "grt_3K9",
-  "idempotency_key": "idk_v1_sha256:3e7f...",
+  "idempotency_key": "idk_v1_3df771ed82afada94c2eb1e6a27b98f061f67c67e7440b6b9f8b30892ad85176",
   "logical_action": "fin.cap.create_escalation_case",
   "attempt": 1,
   "dispatched_at": "2026-10-01T09:48:01Z",
@@ -2207,7 +2211,7 @@ Staleness is judged against the effective limit (§15.1): the stricter of `fresh
 
 ```json
 {
-  "event_id": "rec_1001",
+  "event_id": "recev_1001",
   "prev_hash": "sha256:4d2e...",
   "hash": "sha256:7a91...",
   "written_by": "TRUST",
@@ -2334,7 +2338,7 @@ Each is enforced in code and asserted as a property test that runs on every merg
 | INV-17 | Execution revalidates, immediately before every write: grant signature, scope, expiry and single use; decision and policy version; plan hash; resource ownership; capability registration and non-prohibition; and the facts named in the capability's revalidation_reads against the evidence set. Any mismatch voids the grant. |
 | INV-18 | The Planner can emit only registered capability IDs; a plan containing an unregistered or prohibited ID cannot be hashed or granted. |
 | INV-19 | Absence of evidence is never recorded as a negative fact; a missing record yields UNAVAILABLE or UNKNOWN. |
-| INV-20 | A CONTRADICTORY_STATE classification freezes all consequential writes on that target until Trust records a resolution or escalation. |
+| INV-20 | A CONTRADICTORY_STATE classification freezes all consequential writes on that target, except the freeze allow-list (escalation case, evidence record and routing, held as pack data), until Trust records a resolution or escalation. |
 | INV-21 | Replay determinism: the same scenario, seed, evidence, policy and pack versions produce the same Trust decisions and verdicts. |
 | INV-22 | No runtime credential can read the benchmark oracle; `/core/explanation` cannot write to any store except its own output, and nothing in Trust, Execution or Outcome consumes its output. |
 | INV-23 | Trust and Execution apply the stricter of the source's freshness limit and the trust profile's limit (including any per-source override). A trust profile can never loosen a source's limit. Age is measured from retrieval time (read_at). |
@@ -2356,22 +2360,22 @@ Each has a recommended default that applies until decided. Changing a [DECISION]
 
 | # | Decision | Recommended default | Decide by |
 |---|---|---|---|
-| OD-01 | Pricing model | First pilot: fixed fee with auditable success criteria agreed in writing in advance; verified outcomes counted internally from day one (verified success, verified safe refusal, verified escalation, unresolved or unknown); outcome-based pricing tested only once both sides can agree on what counted; never per seat | Before the first paid pilot |
-| OD-02 | Policy evaluation | Deterministic, versioned rules evaluated in our code; import/export for Cedar and OPA later | Phase B |
-| OD-03 | Ambiguity thresholds | 0.35 auto-resolve margin; escalate above 4 candidates; tune only with full benchmark runs | Phase C |
+| OD-01 | Pricing model | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Fixed-fee, time-bounded pilot on one exception subtype, with success criteria, eligible-case definition, denominator, exclusions, data source and dispute process agreed in writing before signature; never per seat. Four outcome buckets counted from day one (verified success, verified safe refusal, verified escalation, unresolved or unknown). A correct refusal or escalation is a paid outcome priced below a verified success; a wrong action earns nothing. Outcome-linked pricing is tested only after both sides agree what counted; the Founder sets each pilot price from delivery cost. | Closed |
+| OD-02 | Policy evaluation | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Deterministic, versioned policy-as-data evaluated only in the Go core; no Cedar or OPA in the POC; no policy logic in the model service; missing, malformed or conflicting policy never yields ALLOW. | Closed |
+| OD-03 | Ambiguity thresholds | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** 0.35 auto-resolve margin; escalate above 4 candidates; both are pack data (intent-node `disambiguation`, §15.3), versioned and recorded in the Decision Record, and separate from the PERD resolution values; no score authorises an action. Changes need a full benchmark run and human approval. | Closed |
 | OD-04 | Speech providers | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** Aethex AI, Indigenius and N-ATLAS, all integrated behind the provider-neutral speech interface. Default per locale chosen by benchmark (key-slot accuracy, then latency, then cost); switchable by configuration. Each must pass the voice subset and the real-conditions gate (§37.5) before it serves a demo or pilot, and must clear vendor due diligence (data terms, continuity) before handling partner data. | Closed |
 | OD-05 | Model providers for Understanding | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** GPT, Gemini and Claude, all integrated behind the provider-neutral interface. Default per task chosen by intent accuracy on the code-switched suite; switchable by configuration; automatic failover to another integrated provider. Each provider's enterprise data-retention terms are confirmed, and account data is masked before it is sent, before any partner data flows. | Closed |
-| OD-06 | Record integrity | POC: hash chain only, no anchoring. Before Phase 2 production: periodic anchoring of chain heads. External notarisation deferred. | Before Phase 2 |
+| OD-06 | Record integrity | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** POC: append-only, hash-chained Record in Postgres with canonical serialisation, a chain verifier in CI and the nightly job, and restricted write roles; described as tamper-evident within the POC threat model, never as immutable. Before Phase 2 production: periodic anchoring of chain heads to a separately controlled write-once store. | Closed |
 | OD-07 | Durable execution engine | **DECIDED 9 Oct 2026 (DEC-2026-10-06-architecture-and-contracts, confirmed by DEC-2026-10-09).** Temporal from the POC onward, under the rules in §35.6 and INV-30. Postgres remains the only authoritative store. | Closed |
-| OD-08 | Data retention | Minimal by default; raw audio discarded after transcription unless a dispute needs it and consent is recorded; retention per pack and region | Before the first design-partner data conversation |
+| OD-08 | Data retention | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Minimal by default; raw audio discarded after transcription unless a documented dispute needs it (consent, purpose, expiry, restricted access recorded); identifiers masked before any model-provider call; synthetic data only until a partner-specific schedule exists. No universal retention period is set. | Closed |
 | OD-09 | Policy precedence when policy changes mid-case | **DECIDED in v1.2 (see INV-09, INV-26).** Any policy change voids outstanding grants and Trust re-evaluates under the version in force; a rule marked AT_ADMISSION in policy data keeps the version in force when the intent was admitted. Trust never infers "stricter". | Closed |
-| OD-10 | Public benchmark scope | Publish taxonomy, schemas, fault model and scoring; keep partner data private | End of Phase 1 |
+| OD-10 | Public benchmark scope | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Publish taxonomy, case schema, fault model, scoring method, evaluation protocol and aggregate results including failures and safety-gate results, with counts, versions, confidence bounds and limitations. Never the held-out set, oracle labels, partner data, secrets or abusable exploit detail; a synthetic result is never presented as production performance; REV checks for leakage and reproducibility first. | Closed |
 | OD-11 | Implementation language and deployment shape | **DECIDED 9 Oct 2026 (DEC-2026-10-09).** Two deployables split at the model boundary: Python model service; Go core service (§35.6). | Closed |
-| OD-12 | First design partner and customer channel | A Nigerian bank or large fintech with high "where is my money" volume and an executive owner of the KPI; channel through its own app overlay. Pick one exception subtype during discovery (§38.6). | Before the end of Phase 1 |
-| OD-13 | First production deployment model | Single-tenant SaaS in-region for the first partner; multi-tenant with strong isolation once tenant-isolation tests pass; customer VPC only where a buyer requires it | Before shadow mode |
-| OD-14 | Certifications the first buyers require, and when | SOC 2 Type I in Phase 2, Type II in Phase 3; confirm with the first US/EU prospects before committing spend | Before Phase 3 planning |
-| OD-15 | The exact Mode 2 contract | Request → decision → (grant) → execution → verdict, versioned, with delegation chain; defined only after Mode 1 has run in production | Phase 4 planning |
-| OD-16 | Custody of the held-out benchmark set | Held by the benchmark owner in a separate private repository with access restricted from the build team and its coding agents; release runs executed by the benchmark owner | Before Phase C |
+| OD-12 | First design partner and customer channel | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** One Nigerian bank or large fintech via an overlay in its own app or support channel, with a named executive KPI owner, measurable exception volume, authoritative evidence, a technical integration owner, agreement to baseline, shadow mode and stop conditions, and willingness to review failures. Exactly one exception subtype from discovery evidence; if none qualifies, discovery continues. | Closed |
+| OD-13 | First production deployment model | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Single-tenant SaaS in a partner-approved region with separate credentials, database, keys, network boundary and operator access; no multi-tenant production until isolation, cross-tenant negative tests, backup/restore and independent review pass; customer VPC only when a qualified buyer requires and sponsors it. Two deployables, unchanged. | Closed |
+| OD-14 | Certifications the first buyers require, and when | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Keep the §50.3 roadmap: SOC 2 Type I in Phase 2, Type II in Phase 3, ISO/IEC 27001 and 42001 in Phase 4; build the controls now; never claim a certification before the report exists. | Closed |
+| OD-15 | The exact Mode 2 contract | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Not defined or implemented in the POC; only the concept is frozen (request → decision → optional grant → execution → verdict, with the delegation chain); Noema re-evaluates at its own boundary and never trusts an upstream ALLOW; the exact contract is derived from Mode 1 production evidence. | Closed |
+| OD-16 | Custody of the held-out benchmark set | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** The held-out set lives in `Noemai-org/benchmark-heldout`; the Founder is custodian and runs release evaluations; the Technical Co-Founder and every coding agent have no access; release runs use a frozen commit and pinned configuration and produce a signed bundle; every published benchmark report states the custody arrangement, and REV reviews leakage controls before any public claim. | Closed |
 
 Questions to be answered with evidence and **never silently resolved**: actual baseline case volume, cost, repeat contacts and resolution time at the first partner; whether the chosen speech providers meet latency and language-quality targets in real conditions; and the commercial unit that best matches value (OD-01). Every decision is recorded with date, owner, rationale and evidence.
 
@@ -2391,7 +2395,7 @@ Noema sits next to consequence, so security is part of the product's design, not
 - Capabilities are allowlisted and typed.
 - Execution revalidates immediately before acting.
 - High-impact actions can require deterministic human approval. **An approval binds to one specific action, resource, policy version and evidence set**, never to "the agent" in general, and cannot be reused for anything else (contract and flow: §43.2a; INV-25).
-- Credentials are short-lived and least-privilege; each power and each adapter runs under its own service identity.
+- Credentials are short-lived and least-privilege; each power and each adapter has its own identity: per-power Postgres roles and adapter credentials, with one core process identity in the POC.
 - The control plane (configuration, policy, packs, keys) and the data plane (requests, evidence, execution) use separate credentials and permissions.
 - Every production action is attributable to an authenticated principal or a delegated service identity.
 - The model can never mutate policy, identity, allowlists, audit records or credentials, and cannot elevate its own privileges.
@@ -2565,6 +2569,8 @@ Noema uses four repositories: `docs` (governing documents), `noema` (all POC cod
 /packs                  fintech (populated); telecom, insurance, healthcare_admin (conformance)
 /ui                     overlay and evidence panel
 /benchmark              cases, fixtures, fault configs, oracle client, runner, comparison arms, reports
+/synthetic              test-environment components: mock_case, webhook_relay (not deployables, §35.6)
+/deploy                 Docker Compose and profiles
 /tools/lint             core forbidden-terms lint, boundary and dependency checks
 /tools/packcheck        internal pack-validation CLI (wraps CI checks)
 /docs (in `noema`): as-built documentation and session files. Governing documents live in the `docs` repository.
@@ -2758,6 +2764,8 @@ We are not betting on today's interface or today's model. We are betting that tr
 | **Verified outcome** | An outcome that was allowed for recorded reasons, executed without duplication against the right target, independently confirmed against reality, and recorded. Noema's unit of value. |
 | **Understanding** | The power that interprets intent into an Intent Object. May use models. Cannot act. |
 | **Trust** | The power that decides whether a specific action on a specific target should become real now. Deterministic. Cannot execute. |
+| **WAIT** (Trust) | Nothing may be done yet because a bounded, known condition must first change (for example, a source asked us to retry after N seconds within budget, or an AT_ADMISSION rule defers action until a clock threshold); re-evaluated by a durable timer. |
+| **UNKNOWN** (Trust) | Trust cannot safely produce any of the other six outcomes, because the inputs needed to decide (including whether escalation is possible) are unavailable. Nothing executes, an ops alert is raised, and re-evaluation is scheduled within budget, after which the result is ESCALATE (handoff). |
 | **Execution** | The power that carries out exactly what a Decision Grant allows, without ever duplicating it. Has no discretion. Cannot judge success. |
 | **Outcome** | The power that independently verifies whether the intended outcome happened. Cannot execute. |
 | **Record** | The append-only, hash-chained witness of everything the four powers do. Cannot act. |
@@ -2918,6 +2926,10 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.9 | 18 Oct 2026 | **Two examples corrected (DEC-2026-10-18-con01-gap-closure).** Why: building the contract schemas (CON-01) showed that two SoT examples disagreed with the adopted PERD and the committed golden vectors. What changed: §43.3 shows the idempotency key as `idk_v1_` plus the 64 lower-case hex characters of the SHA-256, the form PERD §27.2 defines and `contracts/fixtures/golden_vectors.json` computes (the example read `idk_v1_sha256:…`); §43.6 shows the Record event ID with the `recev` prefix of PERD §32.3 (the example read `rec_1001`, whose prefix `rec` identifies a state-reconciliation result). No requirement, invariant, gate or decision changes. |
+| 1.8 | 17 Oct 2026 | **Closure of every open decision (DEC-2026-10-17-open-decisions-closure).** Why: the founders decided every remaining open decision, so the register can close; evidence that can only come from reality is tracked as gates in the plan, not as open decisions. What changed: §46 (OD-01, OD-02, OD-03, OD-06, OD-08, OD-10, OD-12, OD-13, OD-14, OD-15 and OD-16 are DECIDED, each with the record's decision); §19.3 (the pricing sentence about safe refusals, which contradicted itself, now says a correct refusal or escalation is a paid outcome priced below a verified success and a wrong action earns nothing; the [OPEN] tag became [DECISION]); INV-20 (names the freeze allow-list: escalation case, evidence record and routing, held as pack data); §47.1 (per-power service identity means per-power Postgres roles and adapter credentials, with one core process identity in the POC); Appendix A (WAIT and UNKNOWN for Trust). No other SoT text changed. |
+| 1.7 | 16 Oct 2026 | **Money in minor units (DEC-2026-10-16-money-and-value-lists).** Why: the §43.1 example showed `"value": 20000` for NGN 20,000.00, which read as major units, while the decision record fixes every currency amount as an integer count of the minor unit (OD-P-19). What changed: §43.1 only: the example amount is `"value": 2000000`, and a one-line note under the example says currency amounts are integer minor units. No other SoT text changed; the contract value lists (OD-P-26) are decided in the same record and live in `docs/engineering/state-registry.md`. |
+| 1.6 | 16 Oct 2026 | **Execution reset (DEC-2026-10-16-execution-reset).** Why: the repositories moved to one organisation, the team was confirmed as two people working with coding agents, G0 could not hold on its planned date, and three test-environment components needed a place in the architecture that does not make them Noema services. What changed: §35.6 (a paragraph after the table of the two deployables: `synthetic/mock_case`, `benchmark/hostility_proxy` and `synthetic/webhook_relay` are test-environment components, not deployables, holding no decision, grant, Record, provider or core-database credential, and never running in a production profile); §40.3 (the environment-and-reproducibility line now says Noema's simulated clock is controllable and Tushe time is controlled per object, instead of "the virtual clock is controllable"); §51 (the tree gains `/synthetic` and `/deploy`). Binding decisions: none of BD-01 to BD-16 is affected. The two-deployable split of §35.6 is unchanged. No invariant changes and no requirement changes. |
 | 1.5 | 13 Oct 2026 | **One code repository for the POC (DEC-2026-10-13-code-monorepo).** Why: with one small team, coding agents and a Go-Python contract that changes often in weeks 1 and 2, two code repositories would make every contract change a package release and two ordered pull requests, and would protect nothing that CI boundary checks, separate credentials and separate networks do not already protect. What changed: §51 only: the opening paragraph (four repositories, `docs`, `noema`, `benchmark-heldout` and `brain`; `backend` and `intent-engine` archived; the [OPEN] mapping note removed), the `/docs` line of the tree, and two added boundary rules (each service's image is built from that service's folder only; CI secrets are scoped to GitHub Environments per service). Binding decisions: none of BD-01 to BD-16 is affected. The repository list in DEC-2026-10-06-architecture-and-contracts is superseded; every other decision in that record stands. The two-deployable split of §35.6 is unchanged. No invariant changes. |
 | 1.4 | 12 Oct 2026 | **How the POC uses Tushe (DEC-2026-10-12-tushe-environment-scope).** Why: Tushe's response of 7 October 2026 (received 8 October) showed that Tushe provides no case or dispute domain, will not host a privileged oracle endpoint, and will not run an environment-wide clock; DEC-2026-10-12 decides how the POC works with that. What changed: §36 domains bullet (Tushe provides every domain except case/dispute; Noema provides `mock-case`; disputes not modelled), ground-truth bullet (Tushe's read-only partner-administrator surface, held by the benchmark owner), time bullet (per-object time in Tushe; Noema's simulated clock elsewhere; no snapshot and restore), the acceptance-test bullet and the Exit of Phase A line (pass, pass under an amended condition, or agreed exception); the case and dispute lifecycles in §36 and §35.5; §34.2 (who can cause modelled monetary changes in the simulation); §34.3 footnote 1 (case capabilities keep `QUERYABLE_BY_KEY` and `CONDITIONAL_WRITE`); §35.6 rule 4 (wall clock against live Tushe, simulated clock in tests and replays); the §40.1 Phase A exit condition and the §41 Phase 0 exit gate; the glossary entry for the synthetic enterprise environment. Binding decisions: the §36 [DECISION] is amended. §35.6 [DECISION] rule 4 changes only its time-source sentence to follow D3; nothing else in §35.6 changes. No other binding decision (BD-01 to BD-16) is affected; BD-07 is unchanged. No invariant changes. |
 | 1.3 | 9 Oct 2026 | **Final architecture and provider decisions; SoT, register and decision records brought into agreement and kept so mechanically.** Two deployables split at the model boundary: a Python model service and a Go core service (§35.6, INV-29, AGENT-05). Temporal adopted as the durable workflow engine, with Postgres as the only authoritative store (§35.3, §35.6, INV-30). No single provider dependence: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech (BD-16, §17, AGENT-28), all benchmarked on every release run (§38.5). OD-04, OD-05, OD-07 and OD-11 closed (DEC-2026-10-09; the two 6 October records amended with migration notes and status). Leftovers fixed: remaining old spelling of Tushe; the Tushe delta moved to `docs/poc/tushe/tushe-spec-delta-v1.1.md` and extended with simulated-time reporting (proposed AT-25); value lists no longer described as examples. Mechanical sync: AGENT-29; the register generated from §46; `tools/check_docs_consistency.py` with the `docs-consistency` CI check; a PR template; code owners and branch-protection settings. |
