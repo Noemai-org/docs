@@ -40,7 +40,7 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 
 | Vendor | What we need | Status | Owner |
 |---|---|---|---|
-| **GitHub** | Team plan (branch protection and required reviews on private repositories); Environments `core-ci`, `model-ci`, `bench` | Environments created; Team plan pending | Founder |
+| **GitHub** | Team plan (branch protection and required reviews on private repositories); Environments `core-ci`, `model-ci`, `bench` | Environments `core-ci` and `model-ci` exist; **`bench` does not exist yet** (checked in Settings > Environments on 20 Oct 2026) and must be created before any benchmark workflow or any `TUSHE_ORACLE_*` / `TUSHE_FIXTURE_*` secret is added; Team plan pending | Founder |
 | **Hosting for the public webhook relay** (E6) | A provider and an account; the relay holds only the signing secret | not started; provider to be chosen | Founder |
 
 ## 5. People and partners

@@ -785,3 +785,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder and Technical Co-Founder
 - **Deadline:** before the explanation task (EXP-xx)
 - **Source:** [noema#30](https://github.com/Noemai-org/noema/pull/30); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §28.2, REQ-STM-001, REQ-EXP-002.
+<a id="od-p-61"></a>
+### OD-P-61: PyYAML as a pinned CI dependency (AGENT-14)
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** approval to add PyYAML 6.0.2, pinned and hashed in `tools/ci/requirements.lock`, to the CI safeguards job. It lets `check_secret_refs.py` parse workflow files and tell jobs apart, so the bench-only rule for `TUSHE_ORACLE_*` and `TUSHE_FIXTURE_*` can be enforced per job.
+- **Why it matters:** `tools/ci` is standard-library only. A line scanner cannot know which job a secret reference sits in, and a hand-written YAML reader would be a security control that nobody has reviewed. The pinned parser runs on the CI runner only; it is in no service image.
+- **Minimum safe default (meanwhile):** the dependency is added in noema#29 on the founders' written instruction to parse the YAML, and stays provisional until approved here. Rejecting it means replacing the parser with a strict, fail-closed reader of the workflow subset the repository uses.
+- **What would change it:** the founders preferring a hand-written parser, or PyYAML failing the dependency review.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before noema#29 merges
+- **Source:** [noema#29](https://github.com/Noemai-org/noema/pull/29); AGENT-14, REQ-SEC-007.
