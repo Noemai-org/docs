@@ -138,7 +138,7 @@ Raised by the retrospective review on Noemai-org/docs#36. The §3 row for **OD-P
 
 So neither side was right alone. The §3 row's citation of §38.3 points at a real retention table, and A2's statement that §38.3 holds only the data requirements, and that the defaults are "not" there, was wrong. **What this record now says:** OD-P-41's retention defaults are in two places, the §38.2 retention column (the text that carries the adoption tag, and the one A2 names as adopted) and the §38.3 retention and data-handling table. The §3 citation is therefore correct as one of the two, and A2's "not §38.3" is withdrawn. The original wording above is left as it was.
 
-**Open point, not decided here.** The §38.3 table still carries `[REC]` in PERD v1.9, although OD-P-41 is shown as adopted. This correction does not adopt it. Whether the §38.3 table is adopted, and a PERD edit to its tag, is a founder decision (a new PERD version and a decision record).
+**Resolved the same day.** The §38.3 table still carried `[REC]` in PERD v1.9, although OD-P-41 is shown as adopted. The Founders confirmed that this tag was a leftover of this closure, which retags adopted defaults `[ADOPTED DEC-2026-10-17]`. PERD v1.10 retags the §38.3 table that way, with its values unchanged. This is a tag correction under this record, not a new decision, so no new decision record is added.
 
 ## Sign-off
 
