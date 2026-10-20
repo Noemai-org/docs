@@ -129,6 +129,17 @@ Where this record was silent, the pull request that adds it chose the following.
 - **A7. Plan tasks.** Of the eleven rows of §5, GOV-21 (ARM and REV), GOV-08 (native reviewers) and VOI-08 to VOI-14 (the field protocol and its evidence) already exist. The others become tasks. Gates that fall due after Fri 13 Nov are listed under a new plan heading, "After the build window", with the date and week `AFTER`, so that none is shown as due inside the four weeks; `tools/plan_index.py` accepts that heading.
 - **A8. Conflicts.** SOT-C-03, 04, 05, 12, 13, 14, 16 and 18 are resolved. The ten that remain open are listed in the pull request; none is decided here.
 
+## Correction note (20 October 2026): the OD-P-41 source reference
+
+Raised by the retrospective review on Noemai-org/docs#36. The §3 row for **OD-P-41 Retention (synthetic)** cites "PERD §38.3 defaults for synthetic data", while A2 above says the retention defaults are in the retention column of PERD §38.2 "not §38.3 (§38.3 holds the data requirements)". Reading both sections of PERD v1.9 (the text is unchanged since v1.8):
+
+- **§38.2 (Entities)** has a "Retention (POC)" column on the entity table, tagged `[ADOPTED DEC-2026-10-17]`.
+- **§38.3 (Data requirements)** also holds a table headed "Retention and data-handling defaults for the POC `[REC]`" (benchmark fixtures, utterances, recordings, raw audio, prompts and responses, logs, Record objects, secrets), followed by REQ-DATA-003, which says to apply "the retention column above".
+
+So neither side was right alone. The §3 row's citation of §38.3 points at a real retention table, and A2's statement that §38.3 holds only the data requirements, and that the defaults are "not" there, was wrong. **What this record now says:** OD-P-41's retention defaults are in two places, the §38.2 retention column (the text that carries the adoption tag, and the one A2 names as adopted) and the §38.3 retention and data-handling table. The §3 citation is therefore correct as one of the two, and A2's "not §38.3" is withdrawn. The original wording above is left as it was.
+
+**Open point, not decided here.** The §38.3 table still carries `[REC]` in PERD v1.9, although OD-P-41 is shown as adopted. This correction does not adopt it. Whether the §38.3 table is adopted, and a PERD edit to its tag, is a founder decision (a new PERD version and a decision record).
+
 ## Sign-off
 
 | Role | Decision | Date | How recorded |
