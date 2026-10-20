@@ -41,6 +41,7 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 | Vendor | What we need | Status | Owner |
 |---|---|---|---|
 | **GitHub** | Team plan (branch protection and required reviews on private repositories); Environments `core-ci`, `model-ci`, `bench` | Environments created; Team plan pending | Founder |
+| **Read-only access to `Noemai-org/docs`** (the vendored-docs drift guard) | A fine-grained token or deploy key, `contents: read` on `docs` only, with an expiry; stored as `DOCS_READ_TOKEN` in the `noema` repository secrets | not started | Founder |
 | **Hosting for the public webhook relay** (E6) | A provider and an account; the relay holds only the signing secret | not started; provider to be chosen | Founder |
 
 ## 5. People and partners
