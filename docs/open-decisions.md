@@ -619,3 +619,169 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder and Technical Co-Founder
 - **Deadline:** before PCK-01 and UND-05 start the rewrite; decided 16 Oct 2026
 - **Source:** [PERD v1.6](poc/perd/NOEMA_POC_PERD_v1.6.md) §20.4, REQ-INT-005; [DEC-2026-10-16-contract-and-pack-clarifications](decisions/DEC-2026-10-16-contract-and-pack-clarifications.md) C2, C3.
+
+<a id="od-p-46"></a>
+### OD-P-46: Value types in the Action Graph node
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** the types of `on_unknown`, `on_failure`, `recovery_ref` and `escalation_ref` (PERD §24 lists the fields with no value)
+- **Why it matters:** the Planner and packcheck cannot check a graph without them
+- **Minimum safe default (meanwhile):** `on_*` are the PERD §30.1 recovery types (RETRY_READ, VERIFY_BY_IDEMPOTENCY_KEY, RETRY_UNDER_NEW_GRANT, ESCALATE); `recovery_ref` is one of the capability's own `recovery[]`; `escalation_ref` is CASE or HANDOFF (PERD §30.2)
+- **What would change it:** the PERD or SoT giving the types
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the Planner task (PLN-01)
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §24, REQ-AG-001
+<a id="od-p-47"></a>
+### OD-P-47: Evidence-descriptor vocabulary for predicate type-checking
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** the typed fields of each evidence entity and the typed predicate variables a pack declares (SoT §43.7 requires the type-check, and names no vocabulary)
+- **Why it matters:** pack load cannot reject an unknown field without it
+- **Minimum safe default (meanwhile):** `evidence_descriptors` and `predicate_variables` in the pack, with the grammar and shared corpus in `contracts/predicates/`
+- **What would change it:** a vocabulary in the SoT or the Tushe worksheet
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before PCK-02 is accepted
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26), [noema#27](https://github.com/Noemai-org/noema/pull/27); SoT §43.7, REQ-VER-002
+<a id="od-p-48"></a>
+### OD-P-48: Per-kind fields of memory observations
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** the fields of each of the six `memory_observation` kinds (PERD §33 gives the envelope and says each kind has its own schema)
+- **Why it matters:** free text is forbidden, so each kind needs typed fields before anything is written
+- **Minimum safe default (meanwhile):** `observation` holds typed scalars only (codes, IDs, integers, booleans)
+- **What would change it:** each kind's owner supplying its field list
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the first observation is written (REC-xx)
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26); PERD §33, REQ-MEM-001
+<a id="od-p-49"></a>
+### OD-P-49: Missing SoT §15.1 minimum properties
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** five minimum properties have no schema field: urgency; compiler model and prompt version on the Intent Object; fraud and risk signals; consent; acceptable uncertainty
+- **Why it matters:** SoT §15.1 says a vertical may add fields but never remove these, so the abstract schemas must carry them
+- **Minimum safe default (meanwhile):** none is carried; the POC pack needs none of them, and the table in `contracts/schemas/README.md` lists each as a gap
+- **What would change it:** a decision on each, then a contract change (AGENT-15)
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the second vertical
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26); SoT §15.1
+<a id="od-p-50"></a>
+### OD-P-50: Payload schemas of the outbound events `case.created` and `confirmation.recorded`
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** the payloads of two of the three signed events (only `outcome.updated` has a schema)
+- **Why it matters:** REQ-API-001 says every object in §39.2 to §39.7 is a schema
+- **Minimum safe default (meanwhile):** the integration contract names the events only
+- **What would change it:** the field lists in PERD §39.7 turned into schemas
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the partner listener task (API-xx)
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26); PERD §39.7, REQ-API-006
+<a id="od-p-51"></a>
+### OD-P-51: Benchmark cases per capability, and template coverage
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** packcheck cannot check that every capability has benchmark cases (AGENT-06) or that every template ID resolves, because there is no benchmark case set and no template container in the pack schema
+- **Why it matters:** two PCK-02 checks cannot run
+- **Minimum safe default (meanwhile):** both checks are listed as not run
+- **What would change it:** the case set (T4) and a template container in the pack schema
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before PCK-02 is accepted
+- **Source:** [noema#26](https://github.com/Noemai-org/noema/pull/26); AGENT-06, REQ-CAP-001
+<a id="od-p-52"></a>
+### OD-P-52: Reconciliation rule for REJECTED_CONFIRMED
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** a rule in rule set v1 that produces REJECTED_CONFIRMED. Not debited, and the authoritative source confirms rejection. Needs the ledger and switch values that mean "not debited" and "rejected", from the Tushe worksheet (INV-19: absence is never negative).
+- **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
+- **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
+- **What would change it:** the founders adding the rule and the Tushe field semantics
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T is signed
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-53"></a>
+### OD-P-53: Reconciliation rule for DEBIT_POSTED_CREDIT_UNCONFIRMED
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** a rule in rule set v1 that produces DEBIT_POSTED_CREDIT_UNCONFIRMED. Debit KNOWN, credit UNKNOWN or UNAVAILABLE, switch non-terminal. Needs the switch value that means non-terminal.
+- **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
+- **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
+- **What would change it:** the founders adding the rule and the Tushe field semantics
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T is signed
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-54"></a>
+### OD-P-54: Reconciliation rule for REVERSAL_PENDING
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** a rule in rule set v1 that produces REVERSAL_PENDING. Reversal initiated, not yet posted. Needs the rule and the reversal values that mean initiated.
+- **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
+- **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
+- **What would change it:** the founders adding the rule and the Tushe field semantics
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T is signed
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-55"></a>
+### OD-P-55: Reconciliation rule for PARTIAL
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** a rule in rule set v1 that produces PARTIAL. A multi-leg transaction with a missing leg. Needs the multi-leg facts, which no pack entity models yet.
+- **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
+- **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
+- **What would change it:** the founders adding the rule and the Tushe field semantics
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T is signed
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-56"></a>
+### OD-P-56: Reconciliation rule for EVENT_ORDER_UNCERTAIN
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** a rule in rule set v1 that produces EVENT_ORDER_UNCERTAIN. Ordering cannot be established. Needs the ordering facts and the rule that detects them.
+- **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
+- **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
+- **What would change it:** the founders adding the rule and the Tushe field semantics
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T is signed
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-57"></a>
+### OD-P-57: `allowed_under_freeze` on the capability descriptor
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** the descriptor field REQ-RES-002 says declares which capabilities are allowed under a contradiction freeze (CREATE_ESCALATION_CASE, RECORD_INVESTIGATION_EVIDENCE, ROUTE_TO_INTERNAL_OWNER)
+- **Why it matters:** the freeze gate in `trust/reconcile` needs the list from pack data, and the schema has no such field
+- **Minimum safe default (meanwhile):** the gate takes the list as an argument
+- **What would change it:** a contract change adding the field (AGENT-15) once noema#26 has merged
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the grant constructor (TRU-08)
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); PERD REQ-RES-002
+<a id="od-p-58"></a>
+### OD-P-58: Reconciliation rule set v1 differs from the PERD text in three places
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** whether rule set v1 may differ from PERD §22.3 where the PERD's own properties need it: R1 also requires no pending settlement, no pending reversal and no unavailable required source; R3 does not fire when the reversal conflicts with another fact; two KNOWN rows of a single-valued fact with different states are a contradiction. The certainty tiers are also set (definitive 2, indefinite 1)
+- **Why it matters:** without these, a pending settlement past its window or a lost required source gave SUCCESS_CONFIRMED, which breaks "no pending state is collapsed into a terminal one" and "losing a source never raises certainty" (REQ-RES-001)
+- **Minimum safe default (meanwhile):** the safer reading as built in noema#27, proposed for adoption in [DEC-2026-10-20-reconciliation-ruleset-v1](decisions/DEC-2026-10-20-reconciliation-ruleset-v1.md) (Proposed)
+- **What would change it:** the founders amending PERD §22.3 or choosing the literal R1
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before G0-T
+- **Source:** [noema#27](https://github.com/Noemai-org/noema/pull/27); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §22.3, REQ-RES-001
+<a id="od-p-59"></a>
+### OD-P-59: Free-text and speech answer binding
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** how REQ-AMB-005's deterministic label matching and model-assisted mapping to an option ID are split between the model service and Trust (noema#28 binds only clicks and negations)
+- **Why it matters:** the answer path for voice and free text is not built
+- **Minimum safe default (meanwhile):** only option IDs and negations are bound
+- **What would change it:** a decision on the split, then T6.3 and T5
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the voice track
+- **Source:** [noema#28](https://github.com/Noemai-org/noema/pull/28); PERD REQ-AMB-005
+<a id="od-p-60"></a>
+### OD-P-60: The state EXPLAINING_BLOCKED has no definition and no exit
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** what EXPLAINING_BLOCKED is and where it goes. PERD §28.2 lists "→ EXPLAINING_BLOCKED → fallback" as an exit of EXPLAINING, but gives the state no entry, no exit, no customer text and no audit trail, and "fallback" names no state.
+- **Why it matters:** a blocked explanation (REQ-EXP-002: a claim not bound to a fact) must end in a safe, defined state, and the transition table (REQ-STM-001) cannot be complete without one.
+- **Minimum safe default (meanwhile):** `transitions.yaml` has the row EXPLAINING → EXPLAINING_BLOCKED and no row leaving it, so an investigation that reaches it stays there and the safe fallback text is shown (REQ-EXP-002 failure behaviour).
+- **What would change it:** a definition in the PERD of the state and its exit.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the explanation task (EXP-xx)
+- **Source:** [noema#30](https://github.com/Noemai-org/noema/pull/30); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §28.2, REQ-STM-001, REQ-EXP-002.
