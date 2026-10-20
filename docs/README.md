@@ -67,6 +67,7 @@ docs/
       task-cards/              task cards for the tasks added by plans v1.2 to v1.5 and for PLT-01 to PLT-04 (GOV-19, GOV-20, ENV-08 to ENV-14); the index is generated
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
   runbooks/                    runbook scaffolds (headings and TODOs only)
+  vendors/                     vendor and partner register: what we need from each, where it goes, who chases it
   decisions/
     README.md                  decision-record process and template
     DEC-2026-10-02-sot-v1.2.md the v1.2 amendment record
