@@ -774,3 +774,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder and Technical Co-Founder
 - **Deadline:** before the voice track
 - **Source:** [noema#28](https://github.com/Noemai-org/noema/pull/28); PERD REQ-AMB-005
+<a id="od-p-60"></a>
+### OD-P-60: The state EXPLAINING_BLOCKED has no definition and no exit
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** what EXPLAINING_BLOCKED is and where it goes. PERD §28.2 lists "→ EXPLAINING_BLOCKED → fallback" as an exit of EXPLAINING, but gives the state no entry, no exit, no customer text and no audit trail, and "fallback" names no state.
+- **Why it matters:** a blocked explanation (REQ-EXP-002: a claim not bound to a fact) must end in a safe, defined state, and the transition table (REQ-STM-001) cannot be complete without one.
+- **Minimum safe default (meanwhile):** `transitions.yaml` has the row EXPLAINING → EXPLAINING_BLOCKED and no row leaving it, so an investigation that reaches it stays there and the safe fallback text is shown (REQ-EXP-002 failure behaviour).
+- **What would change it:** a definition in the PERD of the state and its exit.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the explanation task (EXP-xx)
+- **Source:** [noema#30](https://github.com/Noemai-org/noema/pull/30); [PERD v1.10](poc/perd/NOEMA_POC_PERD_v1.10.md) §28.2, REQ-STM-001, REQ-EXP-002.
