@@ -796,3 +796,36 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder and Technical Co-Founder
 - **Deadline:** before noema#29 merges
 - **Source:** [noema#29](https://github.com/Noemai-org/noema/pull/29); AGENT-14, REQ-SEC-007.
+<a id="od-p-62"></a>
+### OD-P-62: The network `tushe_egress` is for the hostility proxy and the webhook relay
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** `tushe_egress` is a Docker network for the hostility proxy and the webhook relay, to be added to PERD §65.1 (the Founder's instruction of 21 October 2026).
+- **Why it matters:** Today only the webhook relay is a member of `tushe_egress` in the Compose files and the connection matrix on noema `main`, and the PERD v1.12 text in [docs#54](https://github.com/Noemai-org/docs/pull/54) (DEC-2026-10-21-compose-topology) names the relay alone. The proxy's Compose service (noema `sB/t4-hostility-proxy`) is not on it. The §65.1 `tushe_net` row already says the core reaches the hosted Tushe API only through the proxy, so the proxy needs its own route out.
+- **Minimum safe default (meanwhile):** the PERD text as written in docs#54 (relay only). If the proxy joins, that row of §65.1 and the matrix change together: the proxy becomes the second member and the allowlisted host is named.
+- **What would change it:** the Founders confirming the proxy's membership, with the allowlisted host.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the hostility proxy enters the `bench` profile
+- **Source:** the Founder's instruction of 21 October 2026; PERD §65.1, REQ-ENV-005.
+<a id="od-p-63"></a>
+### OD-P-63: REQ-ENV-004 needs a worked example
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** REQ-ENV-004 (deterministic fault plans) gets a worked example of a FaultPlan with its scenario ID, seed and fault trace (the Founder's instruction of 21 October 2026). The content of the example was not given.
+- **Why it matters:** REQ-ENV-004 has no example today, and the three plan sources (`TUSHE`, `PROXY`, `MOCK_CASE`) are applied differently.
+- **Minimum safe default (meanwhile):** none is written; the example is not invented. The fault-plan schema (noema#44) and its fixtures are the only worked plans.
+- **What would change it:** the Founders giving the example or approving one drawn from the noema#44 fixtures.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the benchmark owner freezes the fault plans
+- **Source:** the Founder's instruction of 21 October 2026; PERD REQ-ENV-004, §37.1.
+<a id="od-p-64"></a>
+### OD-P-64: IMPOSSIBLE_STATE is owned by the proxy
+
+- **Status:** [OPEN] · NON-CANONICAL
+- **Missing decision:** IMPOSSIBLE_STATE is owned by the hostility proxy (the Founder's instruction of 21 October 2026).
+- **Why it matters:** PERD v1.11 §37.2 lists IMPOSSIBLE_STATE under "State changes (fault controller only)" and as an impossible-state fixture (EC-S20), not as a proxy fault. The proxy changes what travels on the wire; a state in an enterprise system is set by the fault controller (Tushe's control plane or `mock-case`). A committed document and an instruction in a session disagree (AGENTS.md §2, item 3).
+- **Minimum safe default (meanwhile):** the committed PERD text: the fault controller owns IMPOSSIBLE_STATE.
+- **What would change it:** the Founders amending §37.2 in a new PERD version with a decision record.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the benchmark owner freezes the fault plans
+- **Source:** the Founder's instruction of 21 October 2026; PERD §37.2, EC-S20, REQ-ENV-005.
