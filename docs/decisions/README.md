@@ -25,7 +25,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-18-con01-gap-closure](DEC-2026-10-18-con01-gap-closure.md) | Seven decisions found while building the contract schemas: ALLOW needs three PASS layers, the recovery request for a voided grant, the clarification answer, retryable errors, the `recev` and `idk_v1_` forms, and four Record event types added to §32.2 (SoT v1.9, PERD v1.9) (Accepted) |
 | [DEC-2026-10-19-docs-infrastructure-code](DEC-2026-10-19-docs-infrastructure-code.md) | Repository-infrastructure code that governs `docs` itself is permitted in `.github/scripts/` and `.github/tests/` only; amends DEC-2026-10-16 E7 (Accepted) |
 | [DEC-2026-10-20-architecture-depth](DEC-2026-10-20-architecture-depth.md) | Nine decisions from the architecture review: the §64.2 skeleton depth, the model harness and pipeline, the clarification question by attribute, the composed recipient matcher, signed Record checkpoints and replay, the spend-and-dispatch acceptance, Temporal write activities at most once, decision models as a provider class (PERD v1.11) (Accepted) |
-| [DEC-2026-10-20-reconciliation-ruleset-v1](DEC-2026-10-20-reconciliation-ruleset-v1.md) | Where reconciliation rule set v1 differs from PERD §22.3 (R1, R3, single-valued conflicts, certainty tiers) (Proposed) |
+| [DEC-2026-10-20-reconciliation-ruleset-v1](DEC-2026-10-20-reconciliation-ruleset-v1.md) | Where reconciliation rule set v1 differs from PERD §22.3 (R1, R3, single-valued conflicts, certainty tiers) (Accepted) |
 
 ## Where decisions already live
 

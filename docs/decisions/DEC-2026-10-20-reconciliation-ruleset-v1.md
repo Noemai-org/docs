@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Accepted — 21 October 2026 — normai-systems (recorded at the user's direction) |
+| **Status** | Accepted — 21 October 2026 — noemai-systems (recorded at the user's direction) |
 | **Date** | 20 October 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | Whether the three differences in section 2 enter rule set v1 and PERD §22.3 |
