@@ -41,6 +41,7 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 | Vendor | What we need | Status | Owner |
 |---|---|---|---|
 | **GitHub** | Team plan (branch protection and required reviews on private repositories); Environments `core-ci`, `model-ci`, `bench` | Environments `core-ci`, `model-ci` and `bench` exist (checked in Settings > Environments, 20 Oct 2026); Team plan pending | Founder |
+| **Read-only access to `Noemai-org/docs`** (the vendored-docs drift guard) | `DOCS_READ_TOKEN`: a repository secret in `noema`, read-only, scoped to `Noemai-org/docs` only (contents: read), with an expiry. Without it the drift guard fails with "DOCS_READ_TOKEN is not set. See docs/vendors/README.md." | not started | Founder |
 | **Hosting for the public webhook relay** (E6) | A provider and an account; the relay holds only the signing secret | not started; provider to be chosen | Founder |
 
 ## 5. People and partners
