@@ -788,7 +788,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-61"></a>
 ### OD-P-61: PyYAML as a pinned CI dependency (AGENT-14)
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [CLOSED] · NON-CANONICAL · withdrawn 20 Oct 2026: noema#29 went back to the standard-library secret-name check, so no dependency is added. The parser version stays in the history of noema#29 (commit `803e027`) for when an oracle credential is issued, and the request is raised again then.
 - **Missing decision:** approval to add PyYAML 6.0.2, pinned and hashed in `tools/ci/requirements.lock`, to the CI safeguards job. It lets `check_secret_refs.py` parse workflow files and tell jobs apart, so the bench-only rule for `TUSHE_ORACLE_*` and `TUSHE_FIXTURE_*` can be enforced per job.
 - **Why it matters:** `tools/ci` is standard-library only. A line scanner cannot know which job a secret reference sits in, and a hand-written YAML reader would be a security control that nobody has reviewed. The pinned parser runs on the CI runner only; it is in no service image.
 - **Minimum safe default (meanwhile):** the dependency is added in noema#29 on the founders' written instruction to parse the YAML, and stays provisional until approved here. Rejecting it means replacing the parser with a strict, fail-closed reader of the workflow subset the repository uses.
