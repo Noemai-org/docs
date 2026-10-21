@@ -26,6 +26,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-19-docs-infrastructure-code](DEC-2026-10-19-docs-infrastructure-code.md) | Repository-infrastructure code that governs `docs` itself is permitted in `.github/scripts/` and `.github/tests/` only; amends DEC-2026-10-16 E7 (Accepted) |
 | [DEC-2026-10-20-architecture-depth](DEC-2026-10-20-architecture-depth.md) | Nine decisions from the architecture review: the §64.2 skeleton depth, the model harness and pipeline, the clarification question by attribute, the composed recipient matcher, signed Record checkpoints and replay, the spend-and-dispatch acceptance, Temporal write activities at most once, decision models as a provider class (PERD v1.11) (Accepted) |
 | [DEC-2026-10-20-reconciliation-ruleset-v1](DEC-2026-10-20-reconciliation-ruleset-v1.md) | Where reconciliation rule set v1 differs from PERD §22.3 (R1, R3, single-valued conflicts, certainty tiers) (Accepted) |
+| [DEC-2026-10-21-int-002-refusal-failover](DEC-2026-10-21-int-002-refusal-failover.md) | REQ-INT-002: a refused reply triggers failover to the next provider; the output still passes the schema gate and is never repaired (Accepted) |
 
 ## Where decisions already live
 
