@@ -51,5 +51,5 @@ Five classifications have no rule in v1 (REJECTED_CONFIRMED, DEBIT_POSTED_CREDIT
 
 | Role | Decision | Date | How recorded |
 |---|---|---|---|
-| Founders | Pending | | |
-| Technical Co-Founder | Pending | | |
+| Founders | Accepted | 20 October 2026 | Prior agreement, confirmed by the Founder on 21 October 2026; formalized in this decision record through PR #53. |
+| Technical Co-Founder | Accepted | 20 October 2026 | Prior agreement, as confirmed by the Founder on 21 October 2026; formalized in this decision record through PR #53. |
