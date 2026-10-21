@@ -51,5 +51,5 @@ Five classifications have no rule in v1 (REJECTED_CONFIRMED, DEBIT_POSTED_CREDIT
 
 | Role | Decision | Date | How recorded |
 |---|---|---|---|
-| Founders | Pending | | |
+| Founders | Accepted by `noemai-systems` (one founder; the second sign-off is not recorded) | 21 October 2026 | Stated by `noemai-systems` to the requesting founder; written to `main` by direct push 46694e4 and 4159736; reviewed after the fact in docs#52 |
 | Technical Co-Founder | Pending | | |
