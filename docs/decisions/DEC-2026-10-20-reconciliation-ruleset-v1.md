@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Accepted — 21 October 2026 — normai-systems (recorded at the user's direction) |
+| **Status** | Accepted — 21 October 2026 — noemai-systems (recorded at the user's direction) |
 | **Date** | 20 October 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | Whether the three differences in section 2 enter rule set v1 and PERD §22.3 |
@@ -51,5 +51,5 @@ Five classifications have no rule in v1 (REJECTED_CONFIRMED, DEBIT_POSTED_CREDIT
 
 | Role | Decision | Date | How recorded |
 |---|---|---|---|
-| Founders | Pending | | |
+| Founders | Accepted by `noemai-systems` (one founder; the second sign-off is not recorded) | 21 October 2026 | Stated by `noemai-systems` to the requesting founder; written to `main` by direct push 46694e4 and 4159736; reviewed after the fact in docs#52 |
 | Technical Co-Founder | Pending | | |
