@@ -4,7 +4,7 @@
 
 **The implementation contract for the Noema Proof of Concept: "Where is my money?"**
 
-Version 1.12 · 21 October 2026 · Status: accepted with DEC-2026-10-21-int-002-refusal-failover (the Technical Co-Founder confirms by approving the pull request that adds it) · Governing source: Noema Single Source of Truth v1.9
+Version 1.12 · 21 October 2026 · Status: accepted with DEC-2026-10-21-int-002-refusal-failover and DEC-2026-10-21-compose-topology (the Technical Co-Founder confirms by approving the pull request that adds it) · Governing source: Noema Single Source of Truth v1.9
 
 ---
 
@@ -22,7 +22,7 @@ This PERD turns the Noema Single Source of Truth (SoT) v1.8 into something engin
 
 **Version 1.6** applies DEC-2026-10-16-contract-and-pack-clarifications (the `evidence_set_hash` construction and the intent model of the fintech pack). No SoT change is needed. The changes are listed under "Changes in v1.6".
 
-**Version 1.12** applies DEC-2026-10-21-int-002-refusal-failover: one amendment to REQ-INT-002 (a refused reply triggers failover; the output still passes the schema gate and is never repaired). No SoT change is needed. The change is listed under "Changes in v1.12".
+**Version 1.12** applies DEC-2026-10-21-int-002-refusal-failover: an amendment to REQ-INT-002 (a refused reply, meaning a reply in the wrong format that fails the schema check, triggers failover and `PROVIDER_FAILOVER` carries the reason; the output still passes the schema gate and is never repaired) and DEC-2026-10-21-compose-topology (the `tushe_egress` network and the benchmark runner's route to the core API in §65.1). No SoT change is needed. The changes are listed under "Changes in v1.12".
 
 **Version 1.11** applies DEC-2026-10-20-architecture-depth (D1 to D9: the §64.2 skeleton depth, the model harness and pipeline, the clarification question by attribute, the composed recipient matcher, signed Record checkpoints and replay, the spend-and-dispatch acceptance, Temporal write activities at most once, and decision models as a provider class). No SoT change is needed. The changes are listed under "Changes in v1.11".
 
@@ -52,7 +52,7 @@ The SoT (§0.4) sets the order of authority, and this PERD does not change it.
 | **[REC]** | Recommendation. A default this PERD proposes, filling a gap. Not binding until adopted (§67). It never loosens a SoT rule. |
 | **[ADOPTED DEC-2026-10-17]** | A former [REC] default that DEC-2026-10-17 adopts (the fourteen groups of §67.3). Binding; the value is unchanged. |
 | **[ADOPTED DEC-2026-10-18]** | A former [REC] item that DEC-2026-10-18-con01-gap-closure adopts (the Record event types of §32.2). Binding. |
-| **[ADOPTED DEC-2026-10-21]** | An amendment that DEC-2026-10-21-int-002-refusal-failover makes (REQ-INT-002). Binding. It adds a failover trigger and restates that output is never repaired; no invariant is loosened. |
+| **[ADOPTED DEC-2026-10-21]** | An amendment that DEC-2026-10-21-int-002-refusal-failover (REQ-INT-002) or DEC-2026-10-21-compose-topology (§65.1) makes. Binding. It adds a failover trigger, a failover reason, a network and a network membership, and restates that output is never repaired; no invariant is loosened. |
 | **[ADOPTED DEC-2026-10-20]** | An amendment that DEC-2026-10-20-architecture-depth makes (D1 to D9). Binding. It tightens or adds; no invariant is loosened. |
 | **[ASM]** | Assumption. Something we are taking as true without having verified it. Each has an owner and a check in §67. |
 | **[OQ]** | Open question. Needs a decision or a fact we do not have. Listed in §67 with the minimum default to use meanwhile. |
@@ -105,10 +105,12 @@ A complete index of every REQ, with its priority and the SoT IDs it serves, is i
 
 ### Changes in v1.12
 
-Applied from DEC-2026-10-21-int-002-refusal-failover (21 October 2026). Version 1.11 stays unchanged in `docs/poc/perd/NOEMA_POC_PERD_v1.11.md`.
+Applied from DEC-2026-10-21-int-002-refusal-failover and DEC-2026-10-21-compose-topology (21 October 2026). Version 1.11 stays unchanged in `docs/poc/perd/NOEMA_POC_PERD_v1.11.md`.
 
-1. REQ-INT-002: a refused reply (the provider declines to answer instead of returning output) triggers failover to the next configured provider, as a provider error or timeout already does. The output of any provider, including after failover, still passes the schema gate of REQ-INT-001 and is never repaired. When every provider errors, times out or refuses, the result is REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`). The acceptance criteria and tests gain the matching cases.
-2. P.2: the label [ADOPTED DEC-2026-10-21] is defined.
+1. REQ-INT-002: a refused reply, meaning a reply in the wrong format that fails the schema check of REQ-INT-001 (not a provider declining to answer), triggers failover to the next configured provider, as a provider error or timeout already does. `PROVIDER_FAILOVER` carries the reason (`PROVIDER_ERROR`, `TIMEOUT` or `REFUSED_REPLY`). The output of any provider, including after failover, still passes the schema gate and is never repaired. When every provider errors, times out or returns a refused reply, the result is REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`). The acceptance criteria and tests gain the matching cases.
+2. §65.1: the network `tushe_egress` is added (webhook relay only; not internal, so Docker can publish the relay's port), and the relay's row in the test-environment table says it also runs in the Compose profiles `relay`, `ci` and `netcheck`.
+3. §65.1: the benchmark runner is also a member of `edge_net` in the `bench` profile, which is its route to the core's public API. `bench_net` stays unreachable from core and model.
+4. P.2: the label [ADOPTED DEC-2026-10-21] is defined.
 
 No requirement is added or removed; the totals stay 153 (P0 130, P1 20, P2 3).
 
@@ -1218,19 +1220,19 @@ These five examples are written as fixtures before any compiler code exists, and
 
 #### REQ-INT-002 · Provider-neutral compilation with failover · P0
 
-- **Requirement:** The Intent Compiler calls GPT, Gemini or Claude only through `providers/`. The default per task and locale comes from configuration set by benchmark results. On provider error, timeout or a refused reply, it fails over automatically to the next configured provider. A refused reply is one in which the provider declines to answer instead of returning output [ADOPTED DEC-2026-10-21]. The output of whichever provider answers, including after failover, is untrusted data: it passes the schema gate of REQ-INT-001 and is never repaired, which means no Noema code edits, completes, re-types or infers a field of it [ADOPTED DEC-2026-10-21]. If every provider fails or refuses, the result is REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`), never a heuristic guess.
+- **Requirement:** The Intent Compiler calls GPT, Gemini or Claude only through `providers/`. The default per task and locale comes from configuration set by benchmark results. On provider error, timeout or a refused reply, it fails over automatically to the next configured provider. A refused reply is a reply in the wrong format: it fails the schema check of REQ-INT-001 (the JSON Schema validation of the Intent Object). It is not a provider declining to answer [ADOPTED DEC-2026-10-21]. The output of whichever provider answers, including after failover, is untrusted data: it passes the schema gate of REQ-INT-001 and is never repaired, which means no Noema code edits, completes, re-types or infers a field of it [ADOPTED DEC-2026-10-21]. If every provider errors, times out or returns a refused reply, the result is REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`), never a heuristic guess.
 - **Rationale:** BD-16; OD-05; AGENT-28; SoT §38.5 provider runs.
 - **Inputs:** Canonical input; the prompt template (versioned); the pack's node catalogue (IDs, slot schemas and examples only; no policy).
 - **Expected behaviour:** Structured output mode is requested where the provider supports it; the output is validated by REQ-INT-001. The provider ID, model version and template version are recorded.
 - **Failure behaviour:** A per-provider timeout of 1,200 ms [REC] triggers failover, and so does a refused reply [ADOPTED DEC-2026-10-21]. Total compile budget: P95 ≤ 700 ms on the primary [SoT §48]; failover may exceed it and is reported on its own latency path.
   If failover produces a reading that differs materially from the one already admitted (another intent node, another amount or counterparty), the result is a new Intent Object version. Resolution and Trust run again, and any decision, confirmation or grant tied to the earlier version is void. Nothing continues on a stale grant.
 - **Security:** Prompts contain masked data only. Provider credentials live in the model service only (INV-29). Each provider's enterprise data-retention terms are confirmed before partner data flows (OD-05).
-- **Audit:** `INTENT_PROPOSED` with `{provider_id, model_version, template_version}`; `PROVIDER_FAILOVER`.
+- **Audit:** `INTENT_PROPOSED` with `{provider_id, model_version, template_version}`; `PROVIDER_FAILOVER{reason}`, where the reason is `PROVIDER_ERROR`, `TIMEOUT` or `REFUSED_REPLY` [ADOPTED DEC-2026-10-21].
 - **Acceptance criteria:**
   - Switching the default provider SHALL require only a configuration change.
   - All safety gates SHALL remain zero under each provider's release run (SoT §38.2).
-  - A refused reply SHALL cause failover to the next configured provider, and no field of any provider's output SHALL be changed between receipt and the schema gate (property test over generated outputs) [ADOPTED DEC-2026-10-21].
-- **Tests:** Provider contract tests (recorded fixtures plus a live smoke test); failover chaos test, including a refusal case; per-provider B1 run.
+  - A refused reply SHALL cause failover to the next configured provider, `PROVIDER_FAILOVER` SHALL carry its reason, and no field of any provider's output SHALL be changed between receipt and the schema gate (property test over generated outputs) [ADOPTED DEC-2026-10-21].
+- **Tests:** Provider contract tests (recorded fixtures plus a live smoke test); failover chaos test, including a case where a provider returns a reply that fails the schema check; per-provider B1 run.
 - **Dependencies:** REQ-OBS-001 (provider metrics).
 
 #### REQ-INT-003 · Deterministic lexicon normalisation · P0
@@ -5939,7 +5941,8 @@ noema/
 | `tushe_net` | core egress to the hosted Tushe API through the hostility proxy (allowlisted host only), plus `mock-case`; and the core's outbound pull from the webhook relay (allowlisted host only; through the hostility proxy in the benchmark profile) | Enterprise access |
 | `ui_publish_net` | ui only | Publishes the UI's port on the host. No service-to-service traffic is allowed on it. Added in v1.9 as the PLT-04 follow-up [ADOPTED DEC-2026-10-18] |
 | `provider_egress` | model only | Egress to model and speech providers |
-| `bench_net` | benchmark-runner, oracle (Tushe), fault-controller, benchmark-db, the `mock-case` truth endpoint, the proxy control API, and the runner holding the administrator and fixture credentials | **Unreachable from core and model** |
+| `tushe_egress` [ADOPTED DEC-2026-10-21] | webhook-relay only (Compose profiles `relay`, `ci`, `netcheck`) | Not Docker-internal, solely so Docker can publish the relay's receiving port to the host (`127.0.0.1` by default; reachable by Tushe only if published deliberately behind the deployment's TLS terminator). The relay dials nothing. No core, model or `mock-case` member: the core still has no non-internal network |
+| `bench_net` | benchmark-runner, oracle (Tushe), fault-controller, benchmark-db, the `mock-case` truth endpoint, the proxy control API, and the runner holding the administrator and fixture credentials. In the `bench` profile the runner is **also on `edge_net`**, which is its route to the core's public API as a partner app [ADOPTED DEC-2026-10-21]; it listens on no port, so this gives core and model no path into `bench_net` | **Unreachable from core and model** |
 
 Profiles: `dev`, `ci`, `bench` (adds the hostility proxy and runner), `demo` (adds the reference partner listener).
 
@@ -5951,7 +5954,7 @@ Each service's image is built from that service's folder only (DEC-2026-10-13 R2
 |---|---|---|---|
 | `mock-case` (task ENV-08) | `synthetic/mock_case/` | Emulates the bank's case system (REQ-ENV-008) | `tushe_net` for writes; its truth endpoint on `bench_net` |
 | Hostility proxy (task ENV-09) | `benchmark/hostility_proxy/` | Injects faults (REQ-ENV-005) | Benchmark and test profiles only; never on the public host |
-| Webhook relay (task ENV-13) | `synthetic/webhook_relay/` | Receives Tushe's webhooks from the internet and stores verified deliveries (REQ-API-008) | One small public HTTPS host that runs nothing else; outside the Compose networks |
+| Webhook relay (task ENV-13) | `synthetic/webhook_relay/` | Receives Tushe's webhooks from the internet and stores verified deliveries (REQ-API-008) | One small public HTTPS host that runs nothing else; outside the Compose networks. In the Compose profiles `relay`, `ci` and `netcheck` it also runs as a container on `tushe_net` and `tushe_egress` [ADOPTED DEC-2026-10-21] |
 
 None of them holds a decision, grant, Record, provider or core-database credential, and none runs in a production profile. The relay holds only the webhook signing secret. The founder who drives `mock-case` or the hostility proxy does not approve its fault plans (DEC-2026-10-16 E2, point 4).
 

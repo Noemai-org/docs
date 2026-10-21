@@ -15,8 +15,8 @@
 - Date: 21 October 2026
 - Closes: none
 - Owner: Founder and Technical Co-Founder
-- Decision: the table in §1
-- Rationale and evidence: the Founder's instruction of 21 October 2026, in the words quoted in §1. No other evidence is cited
+- Decision: the table in §1 (D1 to D4)
+- Rationale and evidence: the Founder's instructions of 21 October 2026 (the amendment, then the correction and the two answers), in the words quoted in §1. No other evidence is cited
 - Affected requirement IDs / SoT sections: REQ-INT-002. It cites REQ-INT-001 and INV-02 and changes neither. No SoT change. The requirement count stays 153
 - Migration notes: PERD v1.12 is a new file; v1.11 stays unchanged. The `noema` model service (`providers/`, `harness/`) follows under the understanding tasks
 - Supersedes: None. It adds a failover trigger and restates a rule; it loosens no invariant
@@ -28,13 +28,17 @@
 | | Decision |
 |---|---|
 | D1 | The failover amendment to REQ-INT-002: a refused reply triggers failover to the next provider; the output still passes the schema gate and is never repaired. (The Founder's words: "a refused reply triggers failover to the next provider; the output still passes the schema gate and is never repaired".) |
+| D2 | **A refused reply is a reply in the wrong format that fails the schema check. It is not a provider declining to answer.** (Correction by the Founder, 21 October 2026, before this record merged.) |
+| D3 | A schema-failing reply triggers failover (the Founder's answer to the first open question of the first draft). |
+| D4 | `PROVIDER_FAILOVER` carries the reason (the Founder's answer to the second open question). |
 
 ## 2. Agent decisions
 
-1. **Wording in PERD v1.12.** A refused reply is defined as one in which the provider declines to answer instead of returning output. "Never repaired" is written as: no Noema code edits, completes, re-types or infers a field of a provider's output. Both are readings of the instruction, not new rules; the Founders may correct them.
-2. **Every provider refuses.** The existing sentence for "every provider fails" now reads "fails or refuses", so the result is REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`), never a heuristic guess. This follows from the instruction and is the safer reading (AGENT-20).
-3. **Not decided here.** (a) Whether a reply that is returned but fails the schema gate also triggers failover. REQ-INT-001 says rejected objects are never admitted; this record does not change that and does not add a trigger. (b) Whether `PROVIDER_FAILOVER` carries the reason (error, timeout, refusal): the Record event list is closed and no field is added. Both are raised as open decisions.
-4. **Tests added to REQ-INT-002.** A refusal case in the failover chaos test, and a property test that no field of a provider's output changes between receipt and the schema gate.
+1. **"The schema check"** is read as the JSON Schema validation step of REQ-INT-001 (the Intent Object against the generated schema). The pack checks that follow it in REQ-INT-001 (the node exists, the slots match) are not part of "refused reply". The Founders may widen it.
+2. **Reason values.** No value set was given. I wrote `PROVIDER_ERROR`, `TIMEOUT` and `REFUSED_REPLY`, one per failover trigger. This is a default for the Founders to confirm; the Record event type list is unchanged (`PROVIDER_FAILOVER` already exists), only the carried reason is added, as `GRANT_VOIDED{reason}` already does.
+3. **Every provider fails.** The sentence for "every provider fails" now lists the three triggers, and the result stays REJECTED_AT_GATE (`PROVIDER_UNAVAILABLE`), never a heuristic guess. When every provider returned a wrong-format reply, `PROVIDER_UNAVAILABLE` reads oddly; the code was not changed because no other was given.
+4. **Never repaired** is written as: no Noema code edits, completes, re-types or infers a field of a provider's output.
+5. **Tests.** The failover chaos test gains a case where a provider returns a reply that fails the schema check; a property test shows that no field of any provider's output changes between receipt and the schema gate.
 
 ## 3. Sign-off
 
