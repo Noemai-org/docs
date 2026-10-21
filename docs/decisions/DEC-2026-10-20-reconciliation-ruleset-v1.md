@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed. Not authoritative until the Founders approve it and it is merged (AGENTS.md section 2, item 3) |
+| **Status** | Accepted — 21 October 2026 — ChatGPT (recorded at the user's direction) |
 | **Date** | 20 October 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | Whether the three differences in section 2 enter rule set v1 and PERD §22.3 |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed (see the table above)
+- Status: Accepted (see the table above)
 - Date: 20 October 2026
 - Owner: Founder and Technical Co-Founder
 - Decision: section 4 (requested)
