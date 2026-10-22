@@ -799,33 +799,51 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-62"></a>
 ### OD-P-62: The network `tushe_egress` is for the hostility proxy and the webhook relay
 
-- **Status:** [OPEN] · NON-CANONICAL
-- **Missing decision:** `tushe_egress` is a Docker network for the hostility proxy and the webhook relay, to be added to PERD §65.1 (the Founder's instruction of 21 October 2026).
-- **Why it matters:** Today only the webhook relay is a member of `tushe_egress` in the Compose files and the connection matrix on noema `main`, and the PERD v1.12 text in [docs#54](https://github.com/Noemai-org/docs/pull/54) (DEC-2026-10-21-compose-topology) names the relay alone. The proxy's Compose service (noema `sB/t4-hostility-proxy`) is not on it. The §65.1 `tushe_net` row already says the core reaches the hosted Tushe API only through the proxy, so the proxy needs its own route out.
-- **Minimum safe default (meanwhile):** the PERD text as written in docs#54 (relay only). If the proxy joins, that row of §65.1 and the matrix change together: the proxy becomes the second member and the allowlisted host is named.
-- **What would change it:** the Founders confirming the proxy's membership, with the allowlisted host.
-- **Owner:** Founder and Technical Co-Founder
-- **Deadline:** before the hostility proxy enters the `bench` profile
-- **Source:** the Founder's instruction of 21 October 2026; PERD §65.1, REQ-ENV-005.
+- **Status:** [CLOSED] · NON-CANONICAL · decided 21 October 2026 by [DEC-2026-10-21-egress-layout-fault-reading](decisions/DEC-2026-10-21-egress-layout-fault-reading.md) D1: `tushe_egress` carries both the hostility proxy and the webhook relay; PERD §65.1 says so from v1.13 ("relay only" is removed).
+- **Missing decision:** which services are members of `tushe_egress`.
+- **Source:** the Founder's instructions of 21 October 2026; noema#48, noema#51; PERD §65.1, REQ-ENV-005.
 <a id="od-p-63"></a>
-### OD-P-63: REQ-ENV-004 needs a worked example
+### OD-P-63: IMPOSSIBLE_STATE is produced by the hostility proxy
 
-- **Status:** [OPEN] · NON-CANONICAL
-- **Missing decision:** REQ-ENV-004 (deterministic fault plans) gets a worked example of a FaultPlan with its scenario ID, seed and fault trace (the Founder's instruction of 21 October 2026). The content of the example was not given.
-- **Why it matters:** REQ-ENV-004 has no example today, and the three plan sources (`TUSHE`, `PROXY`, `MOCK_CASE`) are applied differently.
-- **Minimum safe default (meanwhile):** none is written; the example is not invented. The fault-plan schema (noema#44) and its fixtures are the only worked plans.
-- **What would change it:** the Founders giving the example or approving one drawn from the noema#44 fixtures.
-- **Owner:** Founder and Technical Co-Founder
-- **Deadline:** before the benchmark owner freezes the fault plans
-- **Source:** the Founder's instruction of 21 October 2026; PERD REQ-ENV-004, §37.1.
+- **Status:** [CLOSED] · NON-CANONICAL · decided 21 October 2026 by [DEC-2026-10-21-egress-layout-fault-reading](decisions/DEC-2026-10-21-egress-layout-fault-reading.md) D3: the proxy produces IMPOSSIBLE_STATE. The Founder asked to keep the committed text unless REQ-ENV-005 said otherwise; REQ-ENV-005 and DEC-2026-10-12 D4 say the proxy, and PERD §37.1's "fault controller only" line contradicted them, so v1.13 corrects the table.
+- **Missing decision:** who owns IMPOSSIBLE_STATE.
+- **Source:** the Founder's instructions of 21 October 2026; PERD REQ-ENV-005, §37.1, §37.2 (EC-S20); DEC-2026-10-12 D4.
 <a id="od-p-64"></a>
-### OD-P-64: IMPOSSIBLE_STATE is owned by the proxy
+### OD-P-64: REQ-ENV-004 needs a worked example
 
-- **Status:** [OPEN] · NON-CANONICAL
-- **Missing decision:** IMPOSSIBLE_STATE is owned by the hostility proxy (the Founder's instruction of 21 October 2026).
-- **Why it matters:** PERD v1.11 §37.2 lists IMPOSSIBLE_STATE under "State changes (fault controller only)" and as an impossible-state fixture (EC-S20), not as a proxy fault. The proxy changes what travels on the wire; a state in an enterprise system is set by the fault controller (Tushe's control plane or `mock-case`). A committed document and an instruction in a session disagree (AGENTS.md §2, item 3).
-- **Minimum safe default (meanwhile):** the committed PERD text: the fault controller owns IMPOSSIBLE_STATE.
-- **What would change it:** the Founders amending §37.2 in a new PERD version with a decision record.
+- **Status:** [CLOSED] · NON-CANONICAL · decided 21 October 2026 by [DEC-2026-10-21-egress-layout-fault-reading](decisions/DEC-2026-10-21-egress-layout-fault-reading.md) D4: the example is the §37.1 plan, a `mock-case` fault inside a `TUSHE` plan, which is the reading the fault-plan schema took. It is written into REQ-ENV-004 in PERD v1.13.
+- **Missing decision:** the content of the REQ-ENV-004 example.
+- **Source:** the Founder's instructions of 21 October 2026; Session B's description in noema#44; PERD REQ-ENV-004, §37.1.
+<a id="od-p-65"></a>
+### OD-P-65: The core's pull client for the webhook relay does not exist
+
+- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Missing decision:** which task builds the core's outbound pull from the webhook relay (REQ-API-008) and with what credential handling. The relay (noema#48) and the matrix row exist; no core client does, and the proxy forwards relay pulls in the benchmark profile.
+- **Why it matters:** until it exists, deliveries stored by the relay are never read.
+- **Minimum safe default (meanwhile):** none; nothing pulls.
+- **What would change it:** a task card for the pull client.
 - **Owner:** Founder and Technical Co-Founder
-- **Deadline:** before the benchmark owner freezes the fault plans
-- **Source:** the Founder's instruction of 21 October 2026; PERD §37.2, EC-S20, REQ-ENV-005.
+- **Deadline:** before the event-delivery cases run
+- **Source:** noema#48; PERD REQ-API-008, REQ-ENV-005.
+<a id="od-p-66"></a>
+### OD-P-66: `.env.example` has no entries for the relay and the proxy
+
+- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Missing decision:** the secret and configuration names the relay (noema#48) and the hostility proxy (noema#51) need in `.env.example`, including the pull token the relay derives and the proxy's bench credential and number-map key. Both read their secrets from mounted files today, so the CI check that every workflow secret is listed has nothing to catch yet.
+- **Why it matters:** a name that is not listed will not be found by the secret-name check when a workflow starts to use it.
+- **Minimum safe default (meanwhile):** file-mounted secrets only; no names invented here.
+- **What would change it:** the two services naming their variables in a pull request that adds them to `.env.example`.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before either service gets a workflow secret
+- **Source:** noema#48, noema#51; AGENT-14, REQ-SEC-007.
+<a id="od-p-67"></a>
+### OD-P-67: Whether Tushe supplies the webhook signing secret
+
+- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Missing decision:** whether Tushe gives Noema the signing secret for its webhooks, or Noema generates it and gives it to Tushe. The relay generates one into a named volume and says the secret Tushe was given can be written there instead (noema#48).
+- **Why it matters:** the secret decides who can forge a delivery, and the vendor register (docs/vendors/README.md) has to name its owner.
+- **Minimum safe default (meanwhile):** the relay-generated secret, synthetic, local only.
+- **What would change it:** Tushe's written answer in `docs/poc/tushe/responses/`.
+- **Owner:** Founder
+- **Deadline:** before the first Tushe webhook is received
+- **Source:** noema#48; DEC-2026-10-16 E6; PERD REQ-API-008.
