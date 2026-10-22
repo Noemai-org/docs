@@ -28,6 +28,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-20-reconciliation-ruleset-v1](DEC-2026-10-20-reconciliation-ruleset-v1.md) | Where reconciliation rule set v1 differs from PERD §22.3 (R1, R3, single-valued conflicts, certainty tiers) (Accepted) |
 | [DEC-2026-10-21-int-002-refusal-failover](DEC-2026-10-21-int-002-refusal-failover.md) | REQ-INT-002: a refused reply (a reply in the wrong format that fails the schema check) triggers failover to the next provider; `PROVIDER_FAILOVER` carries the reason; the output still passes the schema gate and is never repaired (Accepted) |
 | [DEC-2026-10-21-compose-topology](DEC-2026-10-21-compose-topology.md) | PERD §65.1: the `tushe_egress` network is confirmed and written in; the benchmark runner reaches the core API over `edge_net` (Accepted) |
+| [DEC-2026-10-21-egress-layout-fault-reading](DEC-2026-10-21-egress-layout-fault-reading.md) | `tushe_egress` carries the hostility proxy and the webhook relay; the candidate client lives in `noema_model/evidence/`; IMPOSSIBLE_STATE is produced by the proxy; the REQ-ENV-004 example (Accepted) |
 
 ## Where decisions already live
 
