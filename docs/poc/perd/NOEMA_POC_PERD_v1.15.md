@@ -22,7 +22,7 @@ This PERD turns the Noema Single Source of Truth (SoT) v1.8 into something engin
 
 **Version 1.6** applies DEC-2026-10-16-contract-and-pack-clarifications (the `evidence_set_hash` construction and the intent model of the fintech pack). No SoT change is needed. The changes are listed under "Changes in v1.6".
 
-**Version 1.15** applies DEC-2026-10-23-vendored-copies-and-scope-code: a new requirement, REQ-OPS-005, that a docs change touching vendored text needs a matching re-point in the same change set and that the drift check fails when copies differ; and §39.3 names `TENANT_SCOPE_MISMATCH`, the code in `errors.v1.json`, in place of `SCOPE_VIOLATION`. No SoT change is needed. The changes are listed under "Changes in v1.15".
+**Version 1.15** applies DEC-2026-10-23-vendored-copies-and-scope-code: a new requirement, REQ-OPS-005, that a docs change touching vendored text needs a matching re-point in the same change set and that the drift check fails when copies differ; and §39.3 names `TENANT_SCOPE_MISMATCH`, the code in `errors.v1.json`, in place of `SCOPE_VIOLATION`; and REQ-AMB-002 gives a candidate request with no time window `INPUT_INVALID`, not `NO_TRANSACTION_MATCH`. No SoT change is needed. The changes are listed under "Changes in v1.15".
 
 **Version 1.14** applies DEC-2026-10-22-impossible-state-and-no-window: §37.2 names the hostility proxy as the producer of impossible-state fixtures (the §37.1 table was corrected in v1.13), and REQ-AMB-002 records the result for a candidate request that has no time window. No SoT change is needed. The changes are listed under "Changes in v1.14".
 
@@ -117,7 +117,8 @@ Applied from DEC-2026-10-23-vendored-copies-and-scope-code (23 October 2026). Ve
 
 1. §65.2: new requirement **REQ-OPS-005** (P1): a docs change that touches vendored text requires a matching re-point of the vendored copies in the same change set, and the drift check fails when a copy differs from the docs original.
 2. §39.3: the error of `POST /internal/v1/evidence/candidates` is `TENANT_SCOPE_MISMATCH` (a security event), not `SCOPE_VIOLATION`, which is not in `errors.v1.json`.
-3. P.2: the label [ADOPTED DEC-2026-10-23] is defined.
+3. REQ-AMB-002: a candidate request with no time window returns `INPUT_INVALID` (`REJECTED_AT_GATE`; nothing is read), not `NO_TRANSACTION_MATCH`, which is only for a search that ran and came back empty. This replaces the v1.14 wording.
+4. P.2: the label [ADOPTED DEC-2026-10-23] is defined.
 
 One requirement is added: the totals become 154 (P0 130, P1 21, P2 3).
 
@@ -1605,7 +1606,7 @@ Resolution answers **"which transaction?"** (Understanding: Entity Resolution). 
 - **Rationale:** POC-FR-04; POC-FR-07; US-07.
 - **Inputs:** Slots; the principal.
 - **Expected behaviour:** At most 20 raw candidates, then scoring.
-- **Failure behaviour:** An empty set raises `NO_TRANSACTION_MATCH`, never "no such transfer happened". A candidate request needs a time window (REQ-CTX-006): when the slots give none, no request is sent, nothing is read, and the result is `NO_TRANSACTION_MATCH` too, the ambiguity flag of §20.3 [ADOPTED DEC-2026-10-22].
+- **Failure behaviour:** An empty set raises `NO_TRANSACTION_MATCH`, never "no such transfer happened". A candidate request needs a time window (REQ-CTX-006): when the slots give none, no request is sent, nothing is read, and the result is `INPUT_INVALID` (`REJECTED_AT_GATE`) [ADOPTED DEC-2026-10-23]. `NO_TRANSACTION_MATCH`, the ambiguity flag of §20.3, is only for a search that ran and came back empty.
 - **Security:** REQ-CTX-006.
 - **Audit:** `CANDIDATES_RESOLVED` (IDs and scores, masked).
 - **Acceptance criteria:** Out-of-scope leakage SHALL be 0 (US-07).
