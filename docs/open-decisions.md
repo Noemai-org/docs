@@ -847,3 +847,32 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder
 - **Deadline:** before the first Tushe webhook is received
 - **Source:** noema#48; DEC-2026-10-16 E6; PERD REQ-API-008.
+<a id="od-p-68"></a>
+### OD-P-68: Automating vendored-copy drift (proposal, not built)
+
+- **Status:** [OPEN] · NON-CANONICAL · proposal, not built, not blocking
+- **Missing decision:** how a docs change that touches vendored text becomes a matching `noema` re-point pull request without a person having to notice. Today `noema` keeps five copies (`AGENTS.md`, `CLAUDE.md`, `contracts/state-registry.md`, the PERD §32.2 and §28.2 extracts) and a daily workflow (`docs-drift`) turns red when they differ from docs `main`. Each time, a person runs `tools/vendor/repoint_docs.py` and opens a pull request (noema#39, noema#55, noema#56). No PERD requirement governs this drift (PERD §64.2 says only that `AGENTS.md` and `CLAUDE.md` are copied from docs and state the commit; §64.1 covers `/contracts` only).
+- **Why it matters:** the guard goes red after almost every docs merge, a red check that is expected stops being noticed, and the copies are read by CI (the state-machine test and the event-type drift check).
+- **Proposal (smallest, no new access):** extend the existing `docs-drift` workflow in `noema`. It already has read access to docs through `DOCS_READ_TOKEN`. When `repoint_docs.py --check --ignore-commit` finds drift, the same job runs `repoint_docs.py` on a fresh branch `chore/repoint-docs-<docs sha7>` off `main`, commits only the files the script owns, and opens one pull request titled "GOV-22: re-point vendored docs copies to docs <sha7>", using `noema`'s own `GITHUB_TOKEN` (`contents: write`, `pull-requests: write`). It never pushes to `main`, never merges, and never edits a branch it did not create; if docs moves again it opens a new branch and closes the superseded pull request with a comment. Its pull request needs the same review as any other (one approval from the founder who did not open it; the bot is not a founder). The text of the docs files is data: the job runs only `noema`'s own script. The schedule is the cron it has today; a docs-side trigger would need write access from docs to `noema`, which is a new credential and is not proposed.
+- **What the Founders must decide:** (1) turn on "Allow GitHub Actions to create and approve pull requests" for `noema` (a repository setting; approval stays off); (2) accept that a pull request opened with `GITHUB_TOKEN` does not start the other workflows, so its checks have to be started by a person pushing a commit or closing and reopening it (the alternative is a token or GitHub App, which is credential issuance and is not proposed); (3) whether a PERD requirement should say that vendored copies are checked against docs `main` daily and re-pointed by pull request (none exists today, and none is invented here).
+- **Tests it would need before it is built:** the existing `tools/vendor` tests; a workflow test that drift opens exactly one branch and one pull request and that no drift opens none; a canary that the job refuses to run on a fork or with a write token on any path other than the PR step; `check_pins` for any new action.
+- **Minimum safe default (meanwhile):** the manual procedure of noema#56 (re-point, run `repoint_docs.py --check --ignore-commit`, require exit 0 immediately before merge).
+- **What would change it:** the Founders preferring a docs-side trigger (and issuing the credential for it), or preferring to keep drift manual.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** none; before the next PERD version that adds a vendored section
+- **Source:** noema#39, noema#55, noema#56; `.github/workflows/docs-drift.yml`; PERD §64.1, §64.2.
+<a id="od-p-69"></a>
+### OD-P-69: The format of `counterparty_display` in the candidate response (PROPOSAL)
+
+- **Status:** [OPEN] · NON-CANONICAL · **proposal, not a decision**; not blocking
+- **Missing decision:** what `counterparty_display` carries. PERD REQ-CTX-006 says "counterparty_display (masked)" and "No unmasked names". The recipient matcher (REQ-AMB-003, D5) is deterministic code in the model service that matches name tokens, aliases, transliterations, phonetic keys and initials. Session D reports that if core masks with asterisks, matching has nothing to work on (noema#43, `docs/sessions/2026-10-21-1211-T5-T6.3.md`). The contract (`candidates-response.v1.json`, noema#42) today only forbids a run of five or more digits.
+- **Why it matters:** the Recipient feature carries a weight of 0.25 in the ranking; with no readable token it scores 0 for every candidate, so identification depends on amount and time alone and more cases clarify or escalate.
+- **Options:**
+  - **A (proposed).** Core returns the principal's own beneficiary name, readable, in this principal-scoped internal response only. These are names the principal already knows (their own beneficiaries), and the response never leaves core and the model service. Conditions that make this safe: (1) the model service never puts `counterparty_display` in a prompt, a log or a trace (the harness masks before any provider call, and the redactor covers it); (2) every customer-facing string built from it (clarification options, explanations) is masked by the D4 label rules; (3) the shape lint and the contract keep every other field masked (account numbers to the last four). This amends the PERD's "no unmasked names" for this one internal API, so it needs a new PERD version.
+  - **B.** Core returns precomputed match keys beside a masked display name (for example case-folded and transliteration-folded tokens, and initials). The matcher then matches keys only. It cannot use the nickname and variant lexicons or phonetic keys unless core carries the same lexicons, which duplicates the matcher data in core and breaks "never hard-coded".
+  - **C.** Keep asterisk masking and accept that the Recipient feature scores 0.
+- **Minimum safe default (meanwhile):** the contract as merged (masked display, no run of five digits); the matcher scores the Recipient feature 0 on a masked token.
+- **What would change it:** the Founders choosing A or B, with a PERD amendment for A.
+- **Owner:** Founder and Technical Co-Founder
+- **Deadline:** before the first resolution benchmark run
+- **Source:** noema#42, noema#43; PERD REQ-CTX-006, REQ-AMB-003, REQ-CTX-007; SoT §43 masking rules.
