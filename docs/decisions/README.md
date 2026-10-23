@@ -30,6 +30,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-21-compose-topology](DEC-2026-10-21-compose-topology.md) | PERD §65.1: the `tushe_egress` network is confirmed and written in; the benchmark runner reaches the core API over `edge_net` (Accepted) |
 | [DEC-2026-10-21-egress-layout-fault-reading](DEC-2026-10-21-egress-layout-fault-reading.md) | `tushe_egress` carries the hostility proxy and the webhook relay; the candidate client lives in `noema_model/evidence/`; IMPOSSIBLE_STATE is produced by the proxy; the REQ-ENV-004 example (Accepted) |
 | [DEC-2026-10-22-impossible-state-and-no-window](DEC-2026-10-22-impossible-state-and-no-window.md) | §37.2 names the hostility proxy as the producer of impossible-state fixtures; a candidate request with no time window gives `NO_TRANSACTION_MATCH` (Accepted) |
+| [DEC-2026-10-23-vendored-copies-and-scope-code](DEC-2026-10-23-vendored-copies-and-scope-code.md) | REQ-OPS-005: vendored copies are re-pointed in the same change set and the drift check fails when a copy differs; §39.3 names `TENANT_SCOPE_MISMATCH`; a candidate request with no time window is `INPUT_INVALID` (Accepted) |
 
 ## Where decisions already live
 

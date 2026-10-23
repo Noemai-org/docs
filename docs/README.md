@@ -62,7 +62,7 @@ docs/
       tushe-spec-delta-v1.2.md changes v1.0 → v1.2: what was agreed and withdrawn on 13 Oct 2026
       acceptance/              Phase A acceptance: the worksheet as sent, verbatim AT-01..20, the signed report (none yet; the joint session date is to be confirmed by Tushe)
       responses/               Tushe correspondence: received and sent records, with checksums
-    perd/                      POC PERD v1.14 (current, Accepted; ranks below the SoT; v1.1 to v1.13 kept unchanged), generated REQ index, conflicts, templates
+    perd/                      POC PERD v1.15 (current, Accepted; ranks below the SoT; v1.1 to v1.14 kept unchanged), generated REQ index, conflicts, templates
     execution/                 four-week plan v1.5 (current, Accepted; v1.1 to v1.4 kept unchanged), generated tasks.csv, calendar, templates, daily/gate/release records
       task-cards/              task cards for the tasks added by plans v1.2 to v1.5 and for PLT-01 to PLT-04 (GOV-19, GOV-20, ENV-08 to ENV-14); the index is generated
   security/                    threat model, trust-boundary and threat-to-test maps (from the PERD; Proposed)
