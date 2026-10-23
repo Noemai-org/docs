@@ -147,6 +147,7 @@ REQ-OPS-001,Network policy enforces the boundaries,P0,OPS,65. Deployment,INV-29;
 REQ-OPS-002,"Kill switch, rollback and incident playbook",P0,OPS,65. Deployment,,
 REQ-OPS-003,Configuration as versioned data,P1,OPS,65. Deployment,AGENT-16;AGENT-28,
 REQ-OPS-004,"Debt is registered, never hidden",P1,OPS,65. Deployment,,REQ-BEN-008
+REQ-OPS-005,Vendored copies are re-pointed in the same change set,P1,OPS,65. Deployment,,
 REQ-AGT-001,Every change traces to IDs,P0,AGT,71. Engineering philosophy and standards,AGENT-01,
 REQ-AGT-002,Module allowlist per task,P0,AGT,71. Engineering philosophy and standards,AGENT-03;AGENT-19,
 REQ-AGT-003,Stop on conflict,P0,AGT,71. Engineering philosophy and standards,AGENT-27;AGENT-20;AGENT-26,
