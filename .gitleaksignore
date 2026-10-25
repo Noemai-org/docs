@@ -1,0 +1,10 @@
+# gitleaks fingerprint allowlist for this repository. One entry per line: <commit>:<file>:<rule>:<line>.
+# Scope: a single finding, pinned to the commit that added the line. No path, file or rule is allowed as a whole.
+#
+# Approved by the Founder on 24 October 2026 (working session; recorded in the pull request that adds this file).
+# Finding 1 of the full-history scan of 24 October 2026: docs/NOEMA_SOURCE_OF_TRUTH.md line 2148 is an
+# example receipt field, "idempotency_key": "idk_v1_<64 hex>". The value is the public SHA-256 output of the
+# idempotency-key construction defined in the SoT (line 1521 of this file at 67a60ec) applied to the example's public inputs; it is
+# character-for-character one of the expected_idempotency_key values in the golden vectors, which
+# tools/check_vectors.py in the noema repository recomputes from their inputs. It is not a credential.
+a8e22b3a1c3ca9a3bca6c1527e8b1b51c9bafc87:docs/NOEMA_SOURCE_OF_TRUTH.md:generic-api-key:2148
