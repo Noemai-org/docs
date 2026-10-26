@@ -273,12 +273,12 @@ All of this section is **working practice**.
 
 **The session file.**
 
-- Write one file per session, in the repository where the work happened:
-  - in the `docs` repository: `docs/poc/execution/sessions/YYYY-MM-DD-HHMM-<task-id>.md`;
-  - in the `noema` repository: `docs/sessions/YYYY-MM-DD-HHMM-<task-id>.md`.
-- Neither folder exists yet. The first session that writes a file creates the folder.
-- Never overwrite another session's file. Parallel agents each write their own.
-- Use this template:
+- Write session notes in the repository where the work happened:
+  - in the `docs` repository: one file per session, `docs/poc/execution/sessions/YYYY-MM-DD-HHMM-<task-id>.md`;
+  - in the `noema` repository: one file per task, `status/<task-id>.md` ([DEC-2026-10-26-session-notes-in-status](docs/decisions/DEC-2026-10-26-session-notes-in-status.md)). Each session adds its own dated section to its task's file, using the template below. The same file carries the task's state and its message log (`status/README.md` in `noema` gives the format).
+- The first session that needs a folder creates it.
+- Never overwrite another session's file or section. Parallel agents each write their own.
+- Use this template (for `status/<task-id>.md`, the heading's date and time make the section; keep the rest):
 
 ```markdown
 # Session <YYYY-MM-DD HH:MM WAT> · <task ID>
