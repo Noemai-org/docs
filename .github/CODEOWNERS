@@ -12,3 +12,4 @@
 /tools/check_docs_consistency.py     @OladiranOlatunde @noemai-systems
 /tools/frozen-files.sha256           @OladiranOlatunde @noemai-systems
 /.github/                            @OladiranOlatunde @noemai-systems
+/.gitleaksignore                     @OladiranOlatunde @noemai-systems
