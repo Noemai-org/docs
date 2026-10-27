@@ -67,6 +67,8 @@ The sets in PERD v1.17 are read from these PERD lines:
 7. **An event that refers to no object has the payload `{}`.** That is the earlier default (D4 (b)), now a consequence of the definition: the hash of the two bytes `{}` is `sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a`. No earlier hash changes.
 8. **Integers are from −(2^53−1) to 2^53−1,** the range the Go canonicaliser (`platform/crypto`) already accepts for grants and signatures. Zero is written `0`.
 
+9. **Conflict with the architecture lint, resolved the safer way.** The set includes `benchmark-runner` (PERD §41.1). The architecture lint (`tools/lint`, rule `benchmark-branch`, SoT §51) forbids benchmark-aware terms in core code, and the core never appends to the Record as the benchmark runner (it holds the oracle credential and no runtime Record access). The contract (`record-event.v3.json`) keeps all 17 values, as decided; the core's writer and verifier accept 16 and refuse `benchmark-runner`, and a test requires exactly that one difference. If the Founders want the core to accept it, the lint needs a reviewed exception first; that is a change under `tools/lint`, which needs both Founders.
+
 ## 4. Migration notes (AGENT-15)
 
 - **Route.** `actor` changes meaning and form (D3), so the change is not additive: existing v2 events would stop validating. By the Founder's rule that is a new major (v3) and v2 stays as it is. No v2 event exists outside tests and fixtures (checked 27 October 2026: the writer is not wired into `cmd/core`, the `record_event` table holds rows only in throwaway test databases, and `chain.Verify` has no caller outside tests). Nothing is migrated.
