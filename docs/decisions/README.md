@@ -34,7 +34,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-26-session-notes-in-status](DEC-2026-10-26-session-notes-in-status.md) | AGENTS §9: in `noema`, session notes are kept in `status/<task-id>.md` (one file per task) instead of `docs/sessions/` (Accepted) |
 | [DEC-2026-10-25-engine-dependencies-and-case-secrets](DEC-2026-10-25-engine-dependencies-and-case-secrets.md) | ENV-03 starts (mock-case slice); the Go Postgres driver and Temporal SDK are approved (AGENT-14); the two `mock-case` secret names; CODEOWNERS for `/.gitleaksignore`; Tushe-dependent work paused (Accepted) |
 | [DEC-2026-10-26-control-plane-services](DEC-2026-10-26-control-plane-services.md) | PERD §34.1: `fault-controller` and `fixture-loader` are benchmark-only and never reachable from the core or the model service; their clients live under `benchmark/runner/` and `benchmark/fixtures/`; a read-only `mock-clock` client in core adapters only when a slice needs it (Accepted) |
-| [DEC-2026-10-27-record-event-v2](DEC-2026-10-27-record-event-v2.md) | Record event v2 (`record-event.v2.json`, `reconstruction.v2.json`): the PERD §32.1 event with `seq`, `payload_hash`, `actor` and the tenant-scoped genesis hash; nine grant-void reasons; v1 unchanged; no migration tooling (Accepted) |
+| [DEC-2026-10-27-record-event-v2](DEC-2026-10-27-record-event-v2.md) | Record event v2 (`record-event.v2.json`, `reconstruction.v2.json`): the PERD §32.1 event with `seq`, `payload_hash`, `actor` and the tenant-scoped genesis hash; nine grant-void reasons; `errors.v2` with the `DUPLICATE_CREATE` code; v1 unchanged; no migration tooling (Accepted) |
 
 ## Where decisions already live
 
