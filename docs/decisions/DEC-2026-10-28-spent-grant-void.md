@@ -19,6 +19,7 @@
 - Rationale and evidence: §2
 - Affected requirement IDs / SoT sections: REQ-EXE-001, REQ-EXE-004, REQ-AUD-001; INV-03, INV-17, INV-27; US-19; EC-E11; SoT §43.3; PERD §27.1, §28.1, §38.2. No SoT change; the requirement count stays 154
 - Migration notes: §4
+- Amended: §6 (28 October 2026), after the merge
 - Supersedes: none
 
 ---
@@ -72,6 +73,23 @@ The other two PERD lines changed are REQ-EXE-001's Audit line and REQ-EXE-004's 
 - **Vendored copies.** The two PERD extracts in `noema` (`contracts/perd-32-2-event-types.md`, `services/core/orchestrator/perd-28-2-state-machine.md`) name the PERD file, and the other vendored copies name the docs commit, so they are re-pointed in the same session after this record merges (REQ-OPS-005). Their text does not change.
 - **Code.** In `noema`: one forward-only migration (`decision_grant_guard` replaced); `ledger.Complete` makes the void in the receipt's transaction; the ledger tests assert `VOID` and every refused transition. No contract file changes. No existing row changes.
 - **Nothing is migrated.** No grant exists outside tests and throwaway databases (checked 28 October 2026: the writer is not wired into `cmd/core`).
+
+## 6. Amendment of 28 October 2026, after the merge of the pull request that added this record
+
+PERD v1.18 is not edited in place. This amendment records three findings the Founders asked for; a PERD v1.19 is needed only if they want the text of REQ-EXE-004 to carry them.
+
+**6.1 The "nothing applied" guarantee comes from `mock-case`'s OpenAPI document, not from a real target's contract.** §3 item 1 and PERD v1.18 REQ-EXE-004 take a confirmed refusal as the evidence that no write was applied, because "a refused conditional write applies nothing (INV-27)". For the POC that guarantee is `mock-case`'s: the route response `409` in `synthetic/mock_case/internal/api/openapi.json` ("VERSION_MISMATCH: a distinct error; nothing applied"), PERD §34.4 ("Route with expected version: version mismatch returns a distinct error and applies nothing") and `mock-case`'s own contract test. Tushe defines no case API for the POC (`tushe-spec-delta-v1.2.md`: CON-01 and IDP-07 "Not needed: Noema writes to its own case system"; the G0 worksheet, AT-14: "Noema covers"). **The guarantee must be re-verified against any real target before production use.** Nothing in the check can establish it for another target: the class `VERSION_CONFLICT_409_412` is whatever that target's adapter maps to it.
+
+**6.2 What verifies the receipt's signature before the receipt is written: nothing.** Checked on 28 October 2026 in `noema`:
+- `KeyRing.VerifyWith` is called in one place, `services/core/execution/controller/controller.go` (E1), and verifies the grant's signature.
+- The receipt is signed by `Controller.sign` and written by `ledger.Complete`, which stores the signature as it is. The recovery sweeper's receipts take the same path. No code verifies a receipt's signature before or after the write.
+- The SoT puts that check in Outcome (SoT §13.1, the "Checks" row of the constitution table: "Signature of the receipt"). Outcome is not built (plan task OUT-01). The PERD has no requirement that names it, and REQ-SEC-005 describes one HMAC key "for grants and confirmation requests".
+- The database holds no key (PERD §41.1). The trigger of migration 0002 compares the signature member of the signed document with the row's signature columns: a consistency check, not a verification, and not even a check that the value is non-empty (an empty key and an empty value on both sides pass).
+- So the origin of a receipt rests on one fact: only `execution_rw` can insert one, and only the Controller does.
+
+*Decision for the Founders* (none applied): (1) leave as is and record it as debt until Outcome exists; (2) tighten the trigger to a non-empty key and a hex value of the expected shape (still not a verification); (3) verify in the core, in the Controller before `Ledger.Complete`, refusing on failure (catches a bug between signing and writing; stops nothing that writes as `execution_rw` without the Controller); (4) verify in the database, which needs the key there and PERD §41.1 does not allow it. The agent recommends 2 and 3 together.
+
+**6.3 Reconciling "the row's signature" with "the database does not verify the HMAC".** The first is condition (g) of the trigger: the signed document's signature member equals the row's signature columns. The second is the limit in §3 item 1. They do not conflict: (g) compares two copies of one string; it does not check that the string is a valid HMAC. Wording that read like a verification ("the document's signature is the row's signature") is reworded in the `noema` migration comment and README, and PERD v1.18's wording, which says only that the document is "checked against the spend" and that "the database does not verify the receipt's HMAC", stands.
 
 ## 5. Sign-off
 
