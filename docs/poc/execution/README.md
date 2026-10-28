@@ -6,7 +6,7 @@
 
 | File | What it is |
 |---|---|
-| [`tasks.csv`](tasks.csv) | All 226 tasks, generated from the plan for the board (rows dated `TBC` are the G0-T rows; rows dated `AFTER` fall due after the build window). Run `python3 tools/plan_index.py --write`; CI runs `--check`. Never edit by hand. |
+| [`tasks.csv`](tasks.csv) | All 226 tasks, generated from the plan for the board (rows dated `TBC` are the G0-T rows; rows dated `AFTER` fall due after the build window). Task metadata is regenerated; `current_status` and `blocked` are operational fields preserved by task ID. Run `python3 tools/plan_index.py --write`; CI runs `--check`. |
 | [`calendar.md`](calendar.md) | Fixed meetings, gates and deadlines (WAT). |
 | [`daily/`](daily/README.md) · [`gates/`](gates/README.md) · [`release/`](release/README.md) | Daily notes, gate records and the release evidence bundle, written when they happen. |
 | [`sessions/`](sessions/g0-t-joint-session.md) · [`todo-triage.md`](todo-triage.md) | The G0-T joint session plan (date to be confirmed by Tushe) and the triage of every TODO (16 Oct 2026). |
@@ -22,7 +22,7 @@
 4. Open a PR that cites the task ID, the REQ IDs and the SoT IDs.
 5. Close the task only against the task definition of done (plan §13.1; [`templates/pr-checklist.md`](templates/pr-checklist.md)).
 
-**Status values:** `Backlog → Ready → In progress → In review → Verified → Done`, plus the `Blocked` flag, which always names its blocker, its owner and the date it must clear (plan, "How to use this plan").
+**Status values:** `Backlog → Ready → In progress → In review → Verified → Done`, plus the `Blocked` flag, which always names its blocker, its owner and the date it must clear (plan, "How to use this plan"). In `tasks.csv`, `current_status=Unassessed` means no current status has yet been verified; it must not be counted as `Backlog` or `Not started`. The `blocked` field is blank until assessed, then `true` or `false`. Update these operational fields only from current board/evidence; the generator preserves them by task ID.
 
 ## Daily rhythm, gates and notes
 
