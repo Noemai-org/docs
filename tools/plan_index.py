@@ -16,7 +16,14 @@ AFTER: gates that fall due after Fri 13 Nov (DEC-2026-10-17 section 5). They hav
 and a due point in their text, and no day in the four weeks.
 
 CSV columns:
-    task_id, week, date, workstream, task, owner, req_ids, needs, done_when, gate
+    task_id, week, date, workstream, task, owner, req_ids, needs, done_when, gate,
+    current_status, blocked
+
+The task metadata is generated from the plan. The operational fields current_status
+and blocked are preserved by task_id across regeneration. New tasks start as
+current_status=Unassessed and blocked blank; blank means not assessed, not "not blocked".
+Allowed current_status values are Unassessed, Backlog, Ready, In progress, In review,
+Verified and Done. The blocked flag is blank until assessed, then true or false.
 
 The needs column holds task IDs and, after them, external inputs written in
 the Needs cell as "R<n> received" or "R<n> batch <m> received" (Tushe deliveries).
@@ -101,7 +108,8 @@ BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
 GATE_RE = re.compile(r"\bG(0-T|0-N|[0-7])\b")
 EXTERNAL_RE = re.compile(r"\bR\d{1,2}(?: batch \d)? received\b")
 DELIVERED_RE = re.compile(r"\bdelivered \d{1,2} (?:Oct|Nov)", re.I)
-COLUMNS = ["task_id", "week", "date", "workstream", "task", "owner", "req_ids", "needs", "done_when", "gate"]
+STATUS_VALUES = {"Unassessed", "Backlog", "Ready", "In progress", "In review", "Verified", "Done"}
+COLUMNS = ["task_id", "week", "date", "workstream", "task", "owner", "req_ids", "needs", "done_when", "gate", "current_status", "blocked"]
 EXPECTED = {"total": 225, "weeks": {0: 10, 1: 77, 2: 49, 3: 48, 4: 32, TBC: 2, AFTER: 7}, "edge_cases": 105, "stories": 22}
 MONTHS = {m: i for i, m in enumerate(
     ["January", "February", "March", "April", "May", "June", "July", "August",
@@ -414,14 +422,40 @@ def cards_on_disk():
     return out
 
 
-def render(tasks):
+def load_current_statuses():
+    """Preserve operational status fields by task ID across plan regeneration."""
+    statuses = {}
+    if not CSV_PATH.exists():
+        return statuses, []
+    with CSV_PATH.open(encoding="utf-8", newline="") as fh:
+        reader = csv.DictReader(fh)
+        if not reader.fieldnames or "task_id" not in reader.fieldnames:
+            return statuses, []
+        errors = []
+        for row in reader:
+            tid = (row.get("task_id") or "").strip()
+            if not tid:
+                continue
+            status = (row.get("current_status") or "Unassessed").strip() or "Unassessed"
+            blocked = (row.get("blocked") or "").strip().lower()
+            if status not in STATUS_VALUES:
+                errors.append(f"{CSV_PATH.relative_to(ROOT)}: {tid} has invalid current_status {status!r}; expected one of {', '.join(sorted(STATUS_VALUES))}")
+            if blocked not in ("", "true", "false"):
+                errors.append(f"{CSV_PATH.relative_to(ROOT)}: {tid} has invalid blocked value {blocked!r}; expected blank, true or false")
+            statuses[tid] = {"current_status": status, "blocked": blocked}
+    return statuses, errors
+
+
+def render(tasks, statuses=None):
+    statuses = statuses or {}
     buf = io.StringIO()
     w = csv.DictWriter(buf, fieldnames=COLUMNS, lineterminator="\n")
     w.writeheader()
     for t in tasks:
-        row = {k: t[k] for k in COLUMNS}
+        row = {k: t[k] for k in COLUMNS if k in t}
         for k in ("req_ids", "needs", "gate"):
             row[k] = ";".join(t[k])
+        row.update(statuses.get(t["task_id"], {"current_status": "Unassessed", "blocked": ""}))
         w.writerow(row)
     return buf.getvalue()
 
@@ -451,7 +485,9 @@ def main():
 
     path = newest_plan()
     stats, errors = parse(path)
-    expected_csv = render(stats["tasks"])
+    statuses, status_errors = load_current_statuses()
+    errors.extend(status_errors)
+    expected_csv = render(stats["tasks"], statuses)
     weeks = Counter(t["week"] for t in stats["tasks"])
     if len(stats["tasks"]) != EXPECTED["total"] or dict(weeks) != EXPECTED["weeks"]:
         # Reported, never forced: the plan is the source.
