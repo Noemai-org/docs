@@ -37,6 +37,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-27-record-event-v2](DEC-2026-10-27-record-event-v2.md) | Record event v2 (`record-event.v2.json`, `reconstruction.v2.json`): the PERD §32.1 event with `seq`, `payload_hash`, `actor` and the tenant-scoped genesis hash; nine grant-void reasons; `errors.v2` with the `DUPLICATE_CREATE` code; v1 unchanged; no migration tooling (Accepted) |
 | [DEC-2026-10-27-actor-and-payload-hash](DEC-2026-10-27-actor-and-payload-hash.md) | The Record event's emitter (`written_by`, closed set of service identities of PERD §41.1 and §34.1), principal (`actor`, required, six principal kinds) and `payload_hash` (SHA-256 of the RFC 8785 form, integers only); `record-event.v3` and `reconstruction.v3`, v2 unchanged; PERD v1.17; replaces D4 of DEC-2026-10-27-record-event-v2 (Accepted) |
 | [DEC-2026-10-28-spent-grant-void](DEC-2026-10-28-spent-grant-void.md) | PERD §38.2: a SPENT `decision_grant` becomes VOID only for a confirmed `REJECTED_STALE_VERSION` refusal; receipt, invalidation, RecoveryRequest and outbox in one transaction; the Record keeps `GRANT_SPENT`; PERD v1.18 (Accepted in principle) |
+| [DEC-2026-10-29-receipt-signature-alert](DEC-2026-10-29-receipt-signature-alert.md) | A failed receipt signature alerts a human: the five rules and the exact PERD sections the next PERD version changes; recipient and channel are placeholders (Proposed; keeps DEBT-02 open) |
 
 ## Where decisions already live
 

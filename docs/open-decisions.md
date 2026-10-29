@@ -888,3 +888,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder
 - **Deadline:** before the first Compose profile that starts both services with mTLS
 - **Source:** PERD §36.1, §65.1; INV-29; SoT §51; DEC-2026-10-21 compose-topology.
+
+<a id="od-p-71"></a>
+### OD-P-71: Who is alerted, and how, when a receipt signature fails (PLACEHOLDERS; DEFERRED to pre-production)
+
+- **Status:** [OPEN] · **DEFERRED to pre-production** (Founders' decision, 29 Oct 2026) · NON-CANONICAL · no default is proposed for the recipient or the channel; nothing is built from this entry. **Development phase: no alert email and no recipient; a failed receipt signature is logged and flagged (the `SECURITY_EVENT` is recorded and DEBT-02 stays open).** The requirement for a human alert stays in place and is not met
+- **Missing decision:** (a) the designated recipient (a role title) and the delivery channel of the operational alert; (b) the separate operator channel that does not depend on the database, used when the `SECURITY_EVENT` cannot be written or an alert cannot be delivered; (c) what happens if the operator channel itself fails; (d) how often a repeating fault may alert; (e) whether the alert reuses `ops_alert` and `OPS_ALERT_RAISED` (PERD §38.2, §32.2) or is a separate path; (f) how the core reaches an outbound operator channel (INV-29, PERD §65.1).
+- **Why it matters:** the Founders require that a human is alerted when a receipt signature fails (29 Oct 2026). Without a recipient and a channel the requirement cannot be met, and a `SECURITY_EVENT` record or a log line is not an alert.
+- **Default (smallest safe):** none proposed. Session A does not invent a recipient or a channel (AGENT-02). Until it is decided, the failure is fail-closed and recorded, and DEBT-02 stays open.
+- **What would change it:** a Founder decision; a channel that needs a new dependency or egress (AGENT-14).
+- **Not covered:** implementing the alert path.
+- **Owner:** Founder (the choice); EL (Engineering Leader: the PERD text); SR (Security Reviewer: the rule and its fixture)
+- **Deadline:** before production (deferred to pre-production; no development-phase date)
+- **Source:** [DEC-2026-10-29-receipt-signature-alert](decisions/DEC-2026-10-29-receipt-signature-alert.md); PERD REQ-SEC-005, §44.1; DEBT-02.
