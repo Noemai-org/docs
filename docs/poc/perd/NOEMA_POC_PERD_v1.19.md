@@ -4,7 +4,7 @@
 
 **The implementation contract for the Noema Proof of Concept: "Where is my money?"**
 
-Version 1.19 · 29 October 2026 · Status: accepted with DEC-2026-10-28-spent-grant-void (the Technical Co-Founder confirms by approving the pull request that adds it) · Governing source: Noema Single Source of Truth v1.9
+Version 1.19 · 29 October 2026 · Status: proposed; receipt-verification implementation and independent security validation pending · Governing source: Noema Single Source of Truth v1.9
 
 ---
 
