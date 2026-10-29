@@ -8,6 +8,8 @@ This directory holds **decision records**: dated, owned records of decisions. It
 
 ## Records
 
+| [DEC-2026-10-29-receipt-ed25519-db-verification](DEC-2026-10-29-receipt-ed25519-db-verification.md) | Founder-selected direction: PostgreSQL-side Ed25519 receipt verification; implementation, extension pin and security evidence pending |
+
 | Record | Subject |
 |---|---|
 | [DEC-2026-10-02-sot-v1.2](DEC-2026-10-02-sot-v1.2.md) | SoT v1.2: pre-development fixes |
