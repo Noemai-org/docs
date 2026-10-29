@@ -93,6 +93,42 @@ PERD v1.18 is not edited in place. This amendment records three findings the Fou
 
 **6.3 Reconciling "the row's signature" with "the database does not verify the HMAC".** The first is condition (g) of the trigger: the signed document's signature member equals the row's signature columns and, after the decision in 6.2, has the shape of an HMAC-SHA-256. The second is the limit in §3 item 1. They do not conflict: (g) compares two copies of one string and checks its shape; the verification of the HMAC is the Controller's. Wording that read like a verification ("the document's signature is the row's signature") is reworded in the `noema` migration comment and README, and PERD v1.18's wording, which says only that the document is "checked against the spend" and that "the database does not verify the receipt's HMAC", stands.
 
+## 7. Amendment of 29 October 2026: a failed receipt verification appends one SECURITY_EVENT SIGNATURE_INVALID
+
+**Status of this section: proposed by the Technical Co-Founder's agent, in the direction the Founders approved on 29 October 2026 (given in a working session; it counts once this amendment is merged).** The pull request that adds it is for the Founders to merge.
+
+**7.1 The conflict, named.** §6.2 records the Founders' decision of 28 October that a failed receipt verification "writes nothing: no receipt, no Record event, no RecoveryRequest, no outbox event", and says an alert on this path "is a follow-up the Founders may ask for". The clauses that call for an alert are:
+
+| Source | Clause |
+|---|---|
+| PERD v1.18 REQ-SEC-005, Requirement | "Verification failures fail closed and raise an alert." |
+| PERD v1.18 §32.2, Security row | `SECURITY_EVENT{kind: … SIGNATURE_INVALID …}` is an adopted event type and kind (DEC-2026-10-17) |
+| PERD v1.18 §12.5, EC-X09 | "Forged Intent Object (bad or missing HMAC on the internal hop) or forged confirmation: Reject; security alert" |
+| PERD v1.18 §42, TM-17 | "Forged internal object": detection "Signature failures"; record `SECURITY_EVENT`; test EC-X09. [`threat-to-test-map.md`](../security/threat-to-test-map.md) lists TM-17 as "Not started", with no REQ named |
+| PERD v1.18 REQ-AUD-001 | Every power appends events about its own objects "in the same transaction as the object write wherever possible"; if an append fails, the enclosing transaction fails and the action does not happen |
+| SoT §13.1 ("Checks" row), §47.4 | Names the receipt's signature as a check and sets the key policy. The SoT has no clause that requires an alert for a failed receipt signature (INV-11's alert is for a chain break) |
+
+Authority order applied: SoT, then decision records, then the PERD. §6.2 is a decision record and outranks the PERD's REQ-SEC-005 wording, so the PERD cannot override it; the two cannot both hold as written, and this amendment is the smallest change that lets both stand. It changes one word of §6.2 ("no Record event" becomes "no Record event except the one below") and nothing else.
+
+**7.2 The amendment.** §6.2's "writes nothing" is read as: a failed verification writes no receipt, no `RECEIPT` or `GRANT_VOIDED` event, no RecoveryRequest, no outbox event, and changes neither the grant nor the attempt. **It appends exactly one Record event, `SECURITY_EVENT` of kind `SIGNATURE_INVALID`, and nothing else.** The no-business-side-effects rule stands: the event is the only write.
+
+**7.3 The rules, each with its test in `noema#90`:**
+
+| | Rule | Test |
+|---|---|---|
+| Failure behaviour | The receipt is refused with `ErrReceiptSignature`; fail closed. The attempt stays `DISPATCHING`; the sweeper takes it over as `OUTCOME_UNKNOWN` with the honest key ring. The same holds for the sweeper's own receipt | `TestAFailedReceiptVerificationAppendsExactlyOneSecurityEventAndNothingElse` (controller, simulated; ledger, real PostgreSQL) |
+| Write permission | No new privilege, role, table, column, contract field or metric. The event goes through `Ledger.Append`, which calls `record_lock_head` and `record_insert`, the two functions `execution_rw` already may execute (migration 0001). `execution_rw` gains no write on any table. There is no `ops_alert` row and no `OPS_ALERT_RAISED` (both stay unbuilt, PERD §32.2 and §38.2) | the existing role tests; the real-PostgreSQL test reads `written_by` and the event's object |
+| Event contents | `event_type` `SECURITY_EVENT`, `kind` `SIGNATURE_INVALID`, `written_by` `core-execution`, `object_ref` the grant ID, the tenant and correlation of the grant. Payload: `cause` (`RECEIPT_SIGNATURE_NOT_VERIFIED`, or `RECEIPT_DOCUMENT_NOT_CANONICAL` if the document cannot be canonicalised), `receipt_id`, `attempt`. **Never** the signature, the key ID the receipt claims, the document or any text from the target (all untrusted) | the real-PostgreSQL test reads the payload and shows the forged value is nowhere in the Record |
+| Transaction boundary | A transaction of its own, after the verification fails and with no other write open. There is no object write for it to share (REQ-AUD-001), and the receipt is never written | the Record holds `REVALIDATION_PASSED`, `GRANT_SPENT`, `DISPATCH_ATTEMPTED`, `SECURITY_EVENT`, in that order and no `RECEIPT` |
+| Count | One event per failed verification. The dispatch path and the sweeper each verify once per receipt, and the sweeper stops at its first failure, so one sweep adds at most one event. A repeating key fault therefore adds one event per sweep until it is fixed | the sweeper case in the same tests (two events after one dispatch failure and one sweeper failure; none after an honest recovery) |
+| If the event write fails | Nothing is written either. `Execute` and `Recover` return an error that is `ErrReceiptSignature` **and** carries the append failure (`errors.Is` holds for both); the grant stays `SPENT`, the attempt `DISPATCHING`, no receipt, no event, no RecoveryRequest, no outbox event; the Record chain still verifies. The event that failed is not invented later by the sweeper. The failure is surfaced to the caller; this is the same fail-closed rule as EC-E16 (nothing is done that the Record cannot hold) | `TestIfTheSecurityEventCannotBeAppendedNothingIsWrittenAndBothFailuresAreReturned` (controller, with a refusing ledger; ledger, with a real fault: a trigger planted with the admin role refuses a `SECURITY_EVENT` inside `record_insert`) |
+| Honest receipts | A receipt that verifies appends no event | `TestAnHonestReceiptAppendsNoSecurityEvent` |
+
+**7.4 What this does not do, stated plainly.**
+- It is a Record entry, not a notification. Nothing reads `SECURITY_EVENT` and tells anyone; there is no `ops_alert` row, no `OPS_ALERT_RAISED` and no metric (none is built, and the Founders asked for none). REQ-SEC-005's "raise an alert" is met as far as TM-17 names it (`SECURITY_EVENT`) and no further. Operator notification stays open until the alert path (`ops_alert`, REQ-OPS) is built; it is registered as DEBT-02 (open, owners EL and SR, proposed date OBS-01, Wed 4 Nov 2026) in [`debt.md`](../poc/execution/debt.md).
+- On the dispatch path the Controller signs the receipt itself just before it verifies it, so a failure there means the key ring cannot verify what it signed (a key-ring or configuration fault, or a canonicalisation fault), not a forgery by an outsider. The event is the right record of it. It does not detect a forged receipt written by a caller with `execution_rw` that bypasses the Controller (registered as DEBT-01 in [`debt.md`](../poc/execution/debt.md)).
+- The SoT is unchanged. PERD v1.18 is not edited in place; a PERD v1.19 is needed only if the Founders want REQ-SEC-005 or EC-X09 to carry this reading.
+
 ## 5. Sign-off
 
 | Role | Decision | Date | How recorded |
