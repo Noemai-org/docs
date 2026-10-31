@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.9 · 18 October 2026 · Status: canonical
+Version 1.10 · 31 October 2026 · Status: canonical
 
 ---
 
@@ -718,6 +718,8 @@ Mode 2 is not a claim that a complete interoperable product exists today. It is 
 
 **[DECISION]** The POC builds Mode 1 only. It keeps a clean Trust interface so Mode 2 can be added without re-architecture (POC-FR-16). Mode 2 is built in Phase 4 (§41).
 
+**[DECISION — DEC-2026-10-31-proof-depth-and-completeness D29]** In Mode 2, every proposal from an external agent is signed with that agent's key and carries the principal and the full delegation chain. Noema verifies the signature and every link of the chain before Trust evaluates the proposal; an unsigned proposal, or one whose chain does not verify, is refused before any evidence is read. Each consequential action still needs its own ALLOW and its own single-use grant, so an agent acting under a delegated session never inherits standing permission.
+
 ## 17. Interface-agnostic and model-agnostic, by design
 
 **Interface-agnostic.** Interfaces change constantly; anything tied to one dies when it does. Noema treats every interface as replaceable. Voice is where the POC starts, because it needs no literacy and works on any phone (§32). But the Input Gateway turns a spoken sentence, a typed message, a WhatsApp note, an API call, a form, a wearable command or another agent's proposal into the same canonical input contract, and nothing downstream knows or cares which one it was. Specific rules: no modality-specific business logic below the Input Gateway (PLAT-NFR-07); modality metadata (for example speech-recognition confidence) may inform ambiguity flags but never authority.
@@ -1181,6 +1183,13 @@ Incumbents can copy a feature. They can also decide to attack the category. Our 
 - We do not compete on agent feature count. We do not build a workflow recorder, browser agent, connector catalogue or marketplace. We integrate where existing tools are good enough.
 - We benchmark real alternatives, assume any visible feature can be copied, and never claim a large edge before the evidence exists.
 
+### 25.5 Positioning statements [DECISION — DEC-2026-10-31-proof-depth-and-completeness D27]
+
+1. **Noema consumes enterprise identity and access management and never replaces it.** The IdP, directory, cloud IAM and secrets stores stay the enterprise's; Noema reads their decisions as evidence (§14 Authority Engine).
+2. **Noema's own policy is typed, versioned data evaluated in Noema's deterministic code.** OPA, Cedar and Zanzibar-style systems are consumed as evidence at decision time, captured with source and freshness, so every decision replays exactly.
+3. **Where permission-based safety stops, Noema starts.** The leading agent platforms treat action safety as an API-permission problem: if the API allows it, it is safe. That holds for one call. It breaks on stale and contradictory state, duplicate effects under timeouts, delegated sessions acting at machine speed, writes that report success and did not happen, and the need to prove all of it afterwards. That is Noema's ground.
+4. **Task benchmarks measure whether an agent can complete the task; Noema's benchmark measures whether it is safe to let it.**
+
 ## 26. Why enterprises should not build this themselves
 
 A large enterprise *can* assemble a model, an agent framework, a policy engine, a workflow engine and some reconciliation jobs, and get a working demo of the easy 80%. The hard 20% is where it breaks: disambiguation against real data, contradictory state, confused-deputy protection, no duplicate effects under timeouts, honest "unknown" handling, independent verification and regulator-grade evidence. The question is not whether they can, but whether they should, and whether they will keep owning it forever.
@@ -1454,11 +1463,11 @@ The POC implements all four powers and the Record, narrowly. Nothing is faked to
 
 | Power | Built in the POC | Deferred |
 |---|---|---|
-| Understanding | Input Gateway (voice + text → canonical input); Intent Compiler on the fintech pack; deterministic local-language lexicon; Entity Resolution with ranked candidates | Other channels; fine-tuned intent models; other packs populated |
+| Understanding | Input Gateway (voice + text → canonical input); Intent Compiler on the fintech pack; deterministic local-language lexicon; Entity Resolution with ranked candidates; **Context Fabric: session, conversation history, the requester's prior cases (read fresh, principal-scoped) and prior journeys** [DECISION — DEC-2026-10-31-proof-depth-and-completeness D4] | Other channels; fine-tuned intent models; other packs populated |
 | Trust | Decision-time State Reconciliation; three-layer authorisation; versioned, effective-dated policy as data; SLA and regulatory clocks; seven-outcome Decision Maker; Decision Grants | Approval workflows beyond a single confirmation; Studio |
-| Execution | Deterministic Planner over the POC Action Graph; Capability Registry with prohibited entries; Execution Controller with idempotency and revalidation; recovery playbook; Temporal workflows for outcome watches, confirmation expiry, recovery and callback delivery | Monetary capabilities; compensation for monetary actions |
-| Outcome | Outcome Verifier using fintech outcome definitions; Explanation Engine bound to verified facts | Multi-step compensations |
-| Record | Hash-chained, append-only causal record; reconstruction endpoint; minimal operational memory: append-only structured observations and regression knowledge only; no learning, no automated change to policy or behaviour | External notarisation; learning from memory |
+| Execution | Deterministic Planner over the POC Action Graph; Capability Registry with prohibited entries; Execution Controller with idempotency and revalidation; recovery playbook; **compensation declared per capability and executed through Trust for non-monetary capabilities** [D11]; Temporal workflows for outcome watches, confirmation expiry, recovery and callback delivery | Monetary capabilities; compensation for monetary actions |
+| Outcome | Outcome Verifier using fintech outcome definitions; verification of multi-step non-monetary compensations [D11]; Explanation Engine bound to verified facts | Monetary compensations |
+| Record | Hash-chained, append-only causal record; **writers authenticated per event and chain heads anchored to a separately controlled write-once store** [D18, D19]; reconstruction endpoint; minimal operational memory: append-only structured observations, regression knowledge and escalation resolutions; no learning, no automated change to policy or behaviour | Public notarisation; learning from memory |
 | Utilities | Evidence adapters and write adapters to the synthetic environment; fintech pack; three conformance packs | Real enterprise adapters (Phase 2) |
 
 ### 35.2 The POC loop
@@ -1849,6 +1858,8 @@ The security benchmark explicitly includes: prompt injection in user text, docum
 
 Zero failures in n independent cases bounds the true failure rate only below about 3/n at 95% confidence (the "rule of three"). Zero unsafe actions in 300 cases therefore supports "below about 1% on this tested population", not "zero". The 300-case suite is an engineering gate. Any external safety claim states the number of cases, how they were generated, the conditions exercised and the bound. A claim of "below 0.1%" needs about 3,000 independent generated cases with zero failures; the benchmark runner must support generated runs of at least that size with fixed seeds. Real failures are often correlated, so generated cases must vary across families and fault combinations, not repeat one shape.
 
+**Publication rules [DECISION — DEC-2026-10-31-proof-depth-and-completeness D28].** Published numbers are never cherry-picked: the full distribution is shown, and every number carries n, method, bound and confidence interval. Every demo runs from the benchmarked engine and is never scripted; voice is shown live on a real phone only if the voice gate passes (§37.5), otherwise in text. The public benchmark evaluates outcomes against the final state of the systems, reports consistency over repeated runs (pass^k) and ships an open harness and public cases; the held-out set stays private.
+
 ## 39. How the POC is deployed
 
 **Integration surface.** Noema runs as a sandboxed overlay inside the partner's app, in its own isolated context. The partner's app implements exactly one thing: a listener that receives typed, signed payloads when a customer confirms an action, when a case is created, and when a pending outcome changes (`outcome.updated`, §43.4a). That is the whole integration a partner's engineers must build for the POC.
@@ -1960,6 +1971,8 @@ The POC moves no money. Phase 2 adds nothing that moves money. When we introduce
 8. Produce security and compliance evidence as we go, not at the end.
 9. Convert every production incident into a regression scenario in the benchmark.
 10. Expand only after the substrate stays stable.
+
+**Product roadmap after the POC [DECISION — DEC-2026-10-31-proof-depth-and-completeness D30]:** shadow mode with an autonomy setting per capability, segment and time window, and replay of a prospect's historical cases through Noema; proposals for pack changes mined from recorded escalation resolutions, approved by a person and benchmarked before release; a case-quality report over the Record; pricing per verified outcome with every billable event linked to its Record entry (§19.3); a standing model-qualification pipeline; a pack development lifecycle with Studio over the same pack data. Mode 2 with signed agent proposals and delegation chains follows in Phase 4 (§16).
 
 ## 42. Industry, region and modality sequence
 
@@ -2365,7 +2378,7 @@ Each has a recommended default that applies until decided. Changing a [DECISION]
 | OD-03 | Ambiguity thresholds | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** 0.35 auto-resolve margin; escalate above 4 candidates; both are pack data (intent-node `disambiguation`, §15.3), versioned and recorded in the Decision Record, and separate from the PERD resolution values; no score authorises an action. Changes need a full benchmark run and human approval. | Closed |
 | OD-04 | Speech providers | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** Aethex AI, Indigenius and N-ATLAS, all integrated behind the provider-neutral speech interface. Default per locale chosen by benchmark (key-slot accuracy, then latency, then cost); switchable by configuration. Each must pass the voice subset and the real-conditions gate (§37.5) before it serves a demo or pilot, and must clear vendor due diligence (data terms, continuity) before handling partner data. | Closed |
 | OD-05 | Model providers for Understanding | **DECIDED 9 Oct 2026 (DEC-2026-10-09; BD-16).** GPT, Gemini and Claude, all integrated behind the provider-neutral interface. Default per task chosen by intent accuracy on the code-switched suite; switchable by configuration; automatic failover to another integrated provider. Each provider's enterprise data-retention terms are confirmed, and account data is masked before it is sent, before any partner data flows. | Closed |
-| OD-06 | Record integrity | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** POC: append-only, hash-chained Record in Postgres with canonical serialisation, a chain verifier in CI and the nightly job, and restricted write roles; described as tamper-evident within the POC threat model, never as immutable. Before Phase 2 production: periodic anchoring of chain heads to a separately controlled write-once store. | Closed |
+| OD-06 | Record integrity | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** POC: append-only, hash-chained Record in Postgres with canonical serialisation, a chain verifier in CI and the nightly job, and restricted write roles; described as tamper-evident within the POC threat model, never as immutable. **Amended 31 Oct 2026 (DEC-2026-10-31-proof-depth-and-completeness D18–D20):** in the POC, every event is signed by its writing power's key and verified on append, and chain heads are anchored on a schedule and at every run boundary to a separately controlled write-once store; the wording stays tamper-evident (never tamper-proof or immutable). | Closed |
 | OD-07 | Durable execution engine | **DECIDED 9 Oct 2026 (DEC-2026-10-06-architecture-and-contracts, confirmed by DEC-2026-10-09).** Temporal from the POC onward, under the rules in §35.6 and INV-30. Postgres remains the only authoritative store. | Closed |
 | OD-08 | Data retention | **DECIDED 17 Oct 2026 (DEC-2026-10-17-open-decisions-closure).** Minimal by default; raw audio discarded after transcription unless a documented dispute needs it (consent, purpose, expiry, restricted access recorded); identifiers masked before any model-provider call; synthetic data only until a partner-specific schedule exists. No universal retention period is set. | Closed |
 | OD-09 | Policy precedence when policy changes mid-case | **DECIDED in v1.2 (see INV-09, INV-26).** Any policy change voids outstanding grants and Trust re-evaluates under the version in force; a rule marked AT_ADMISSION in policy data keeps the version in force when the intent was admitted. Trust never infers "stricter". | Closed |
@@ -2926,6 +2939,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.10 | 31 Oct 2026 | **Proof depth and completeness (DEC-2026-10-31-proof-depth-and-completeness).** Why: the founders' review of the architecture, tests and strategy pulled core capabilities into the POC and wrote down positions that were only implicit. What changed: §16 (signed Mode 2 proposals with delegation chains); §25.5 new (positioning statements); §35.1 (Context Fabric in the POC; compensation for non-monetary capabilities; authenticated Record writers and external anchoring); §38.8 (publication rules); §41.2 (post-POC product roadmap); §46 OD-06 (amended). No ID is added, renamed or removed. |
 | 1.9 | 18 Oct 2026 | **Two examples corrected (DEC-2026-10-18-con01-gap-closure).** Why: building the contract schemas (CON-01) showed that two SoT examples disagreed with the adopted PERD and the committed golden vectors. What changed: §43.3 shows the idempotency key as `idk_v1_` plus the 64 lower-case hex characters of the SHA-256, the form PERD §27.2 defines and `contracts/fixtures/golden_vectors.json` computes (the example read `idk_v1_sha256:…`); §43.6 shows the Record event ID with the `recev` prefix of PERD §32.3 (the example read `rec_1001`, whose prefix `rec` identifies a state-reconciliation result). No requirement, invariant, gate or decision changes. |
 | 1.8 | 17 Oct 2026 | **Closure of every open decision (DEC-2026-10-17-open-decisions-closure).** Why: the founders decided every remaining open decision, so the register can close; evidence that can only come from reality is tracked as gates in the plan, not as open decisions. What changed: §46 (OD-01, OD-02, OD-03, OD-06, OD-08, OD-10, OD-12, OD-13, OD-14, OD-15 and OD-16 are DECIDED, each with the record's decision); §19.3 (the pricing sentence about safe refusals, which contradicted itself, now says a correct refusal or escalation is a paid outcome priced below a verified success and a wrong action earns nothing; the [OPEN] tag became [DECISION]); INV-20 (names the freeze allow-list: escalation case, evidence record and routing, held as pack data); §47.1 (per-power service identity means per-power Postgres roles and adapter credentials, with one core process identity in the POC); Appendix A (WAIT and UNKNOWN for Trust). No other SoT text changed. |
 | 1.7 | 16 Oct 2026 | **Money in minor units (DEC-2026-10-16-money-and-value-lists).** Why: the §43.1 example showed `"value": 20000` for NGN 20,000.00, which read as major units, while the decision record fixes every currency amount as an integer count of the minor unit (OD-P-19). What changed: §43.1 only: the example amount is `"value": 2000000`, and a one-line note under the example says currency amounts are integer minor units. No other SoT text changed; the contract value lists (OD-P-26) are decided in the same record and live in `docs/engineering/state-registry.md`. |

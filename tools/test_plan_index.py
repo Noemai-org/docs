@@ -89,6 +89,54 @@ class TbcDate(unittest.TestCase):
         self.assertEqual(tasks["ENV-14"]["gate"], ["G0-N"])
 
 
+class RebaselineTbc(unittest.TestCase):
+    """DEC-2026-10-31-proof-depth-and-completeness D32: rows under "To be dated at the re-baseline" are TBC without a gate."""
+    HEADING = "### To be dated at the re-baseline · DEC-2026-10-31 additions\n\n"
+
+    def test_tbc_is_accepted_without_a_gate_under_the_rebaseline_heading(self):
+        text = plan(self.HEADING + HEAD + "| REC-08 | Authenticated writers | C1+AG | — | — | Done |\n")
+        tasks, errors = run(text)
+        self.assertEqual(tasks["REC-08"]["date"], "TBC")
+        self.assertEqual(tasks["REC-08"]["week"], "TBC")
+        self.assertEqual(tasks["REC-08"]["gate"], [])
+        self.assertEqual(tasks["REC-08"]["tbc_kind"], "rebaseline")
+        self.assertFalse(only(errors, "accepted only on rows whose gate is G0-T"))
+
+    def test_the_tushe_heading_still_needs_g0t(self):
+        text = plan("### To be confirmed by Tushe · G0-T\n\n" + HEAD + "| ENV-12 | Sign | IL | — | — | Signed |\n")
+        _, errors = run(text)
+        self.assertTrue(only(errors, "accepted only on rows whose gate is G0-T"))
+
+    def test_a_dated_task_cannot_wait_for_a_rebaseline_task(self):
+        text = plan(
+            self.HEADING + HEAD + "| REC-08 | Authenticated writers | C1+AG | — | — | Done |\n",
+            day("Monday 26 October · Review", "| GOV-07 | G1 review | EL | — | REC-08 | Gate record |"),
+        )
+        _, errors = run(text)
+        self.assertTrue(only(errors, "has a date but needs REC-08"))
+
+    def test_a_forward_need_inside_the_section_is_still_an_error(self):
+        text = plan(self.HEADING + HEAD
+                    + "| GOV-28 | Signing design | FND | — | SEC-12 | Done |\n"
+                    + "| SEC-12 | Extension evaluation | SR | — | — | Done |\n")
+        _, errors = run(text)
+        self.assertTrue(only(errors, "GOV-28 needs SEC-12, which appears later in the plan"))
+        self.assertFalse(only(errors, "has a date but needs"))
+
+    def test_a_day_heading_after_the_section_ends_tbc(self):
+        text = plan(
+            self.HEADING + HEAD + "| REC-08 | Authenticated writers | C1+AG | — | — | Done |\n",
+            day("Monday 26 October · Review", "| GOV-07 | G1 review | EL | — | — | Gate record |"),
+        )
+        tasks, _ = run(text)
+        self.assertEqual(tasks["GOV-07"]["date"], "2026-10-26")
+        self.assertIsNone(tasks["GOV-07"]["tbc_kind"])
+
+    def test_day_label_names_the_rebaseline(self):
+        self.assertEqual(pi.day_label("TBC", "rebaseline"), "To be dated at the re-baseline")
+        self.assertEqual(pi.day_label("TBC"), "To be confirmed by Tushe (G0-T)")
+
+
 class SplitTaskIds(unittest.TestCase):
     def test_a_lower_case_suffix_is_part_of_the_task_id(self):
         text = plan(
