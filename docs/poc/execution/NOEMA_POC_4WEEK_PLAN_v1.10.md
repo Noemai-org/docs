@@ -47,7 +47,7 @@ Version 1.8 applies DEC-2026-10-17-open-decisions-closure (every open decision c
 
 ## How to use this plan
 
-This plan turns the PERD into dated, owned and checkable work. It does not add scope, and it does not remove any. Every task points to the PERD requirements (`REQ-…`) it delivers, and the coverage appendix proves that every one of the PERD's 153 requirements has at least one task.
+This plan turns the PERD into dated, owned and checkable work. It does not add scope, and it does not remove any. Every task points to the PERD requirements (`REQ-…`) it delivers, and the coverage appendix proves that every one of the PERD's 173 requirements has at least one task.
 
 **Order of authority.** A committed founder decision (in the SoT or `docs/decisions/`) and the SoT win over the PERD, and the PERD wins over this plan. For Tushe endpoint behaviour, the Tushe specification v1.0, Tushe's response of 7 October 2026, DEC-2026-10-12, `docs/poc/tushe/tushe-spec-delta-v1.2.md` and the signed worksheet govern (DEC-2026-10-16 E10); nobody infers endpoint semantics from memory or from a response they happened to see. If this plan disagrees with any of them, stop the affected task, keep the safe behaviour, follow the governing document, and fix the plan at that day's 17:00 review.
 
@@ -1039,7 +1039,7 @@ The bundle hash is recorded in the docs repository.
 |---|---|---|---|
 | Board | Project board with the status flow in "How to use this plan" | EL | Live |
 | Daily note | `docs/poc/execution/daily/<date>.md`: Done by REQ; benchmark delta; new failures; regression cases added; decisions needed; debt changes | EL | Daily 17:30 |
-| REQ burn-up | Generated from PR trace IDs: P0 REQs Done ÷ 130, all REQs Done ÷ 153 | EL | Daily |
+| REQ burn-up | Generated from PR trace IDs: P0 REQs Done ÷ 142, all REQs Done ÷ 173 | EL | Daily |
 | Nightly report | Full suite, fault suite, deep properties, chain verification, performance | B | Daily 07:00 |
 | Gate record | `docs/poc/execution/gates/G<n>.md`: evidence links, decision, owner, date | Gate deciders | At each gate |
 | Decision records | `docs/decisions/` | Decider | Same day as the decision |
@@ -1160,7 +1160,7 @@ Any change to scope, a contract or a gate is a written change request before it 
 
 ## Appendix A — Requirement coverage
 
-Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by at least one task. This table is generated from the task rows above, so it cannot drift from them. A requirement is Done only when every task listed against it is Done and its PERD acceptance criteria pass.
+Every one of the PERD's 173 requirements (P0 142, P1 28, P2 3) is delivered by at least one task. This table is generated from the task rows above, so it cannot drift from them. A requirement is Done only when every task listed against it is Done and its PERD acceptance criteria pass.
 
 | REQ | Title | Priority | Delivered by |
 |---|---|---|---|
