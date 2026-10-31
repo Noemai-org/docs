@@ -11,6 +11,10 @@ week 0. Other rows take their date from the nearest "### <Weekday> <D> <Month> �
 heading. Work delivered before the re-baseline (dates up to Sun 18 Oct) is week 0.
 A heading "### To be confirmed by Tushe · ..." gives its rows the literal date
 TBC; that is accepted only on rows whose gate is G0-T (DEC-2026-10-16 E3, E4).
+A heading "### To be dated at the re-baseline · ..." also gives its rows the literal date
+TBC; there the rows need no gate, because their week and date are set by task GOV-30 after the
+status assessment (DEC-2026-10-31-proof-depth-and-completeness D32). The rule that a dated
+task cannot need a TBC task applies to both kinds.
 A heading "### After the build window · ..." gives its rows the literal date and week
 AFTER: gates that fall due after Fri 13 Nov (DEC-2026-10-17 section 5). They have an owner
 and a due point in their text, and no day in the four weeks.
@@ -37,7 +41,7 @@ Usage:
 duplicated; a Needs entry names an unknown task or a task that appears later
 in the plan (allowed only for a row whose Done when says "delivered <date>",
 which was done out of order); a dated task needs a TBC task; the TBC date is on
-a row that is not gate G0-T; Appendix A or B differs from the task rows; the
+a row that is neither gate G0-T nor under the re-baseline heading; Appendix A or B differs from the task rows; the
 task-cards index is stale; a task names a REQ ID that is not in the PERD index; a PERD REQ
 has no task; Appendix C does not list exactly 105 edge cases or names an
 unknown task; or Appendix D does not list exactly 22 stories or names an
@@ -67,6 +71,9 @@ ROW_RE = re.compile(r"^\| ([A-Z]+-\d\d[a-z]?) \|")
 NOT_TASKS = {"SR", "OQ", "OD"}
 TBC = "TBC"
 TBC_RE = re.compile(r"^### To be confirmed by Tushe · ")
+REBASELINE_RE = re.compile(r"^### To be dated at the re-baseline · ")
+TBC_TUSHE = "tushe"
+TBC_REBASELINE = "rebaseline"
 AFTER = "AFTER"
 AFTER_RE = re.compile(r"^### After the build window · ")
 DAY_RE = re.compile(
@@ -179,6 +186,7 @@ def _parse(lines, label):
 
     tasks = []
     date = None
+    tbc_kind = None
     section = None
     for lineno, line in enumerate(lines[:cut], 1):
         sm = SECTION_RE.match(line)
@@ -188,8 +196,13 @@ def _parse(lines, label):
         dm = DAY_RE.match(line)
         if dm:
             date = datetime.date(YEAR, MONTHS[dm.group(2)], int(dm.group(1)))
+            tbc_kind = None
         if TBC_RE.match(line):
             date = TBC
+            tbc_kind = TBC_TUSHE
+        if REBASELINE_RE.match(line):
+            date = TBC
+            tbc_kind = TBC_REBASELINE
         if AFTER_RE.match(line):
             date = AFTER
         rm = ROW_RE.match(line)
@@ -231,10 +244,11 @@ def _parse(lines, label):
             "needs": task_ids(needs) + EXTERNAL_RE.findall(strip_markup(needs)),
             "done_when": strip_markup(done),
             "gate": gates,
+            "tbc_kind": tbc_kind if date == TBC else None,
         })
         if tasks[-1]["week"] is None:
             errors.append(f"line {lineno}: {tid} date {date} is outside the four weeks")
-        if date == TBC and "G0-T" not in gates:
+        if date == TBC and tbc_kind == TBC_TUSHE and "G0-T" not in gates:
             errors.append(f"line {lineno}: {tid} has the date {TBC}, which is accepted only on rows whose gate is G0-T")
 
     # Duplicates and dependencies
@@ -368,8 +382,10 @@ def render_appendix_b(tasks):
     return out
 
 
-def day_label(date):
+def day_label(date, tbc_kind=None):
     if date == TBC:
+        if tbc_kind == TBC_REBASELINE:
+            return "To be dated at the re-baseline"
         return "To be confirmed by Tushe (G0-T)"
     if date == AFTER:
         return "After the build window"
@@ -404,7 +420,7 @@ def render_cards_index(tasks, cards):
         tid = t["task_id"]
         if tid not in cards:
             continue
-        rows.append(f"| [{tid}]({tid}.md) | {short_title(cards[tid] or t['task'])} | {day_label(t['date'])} |")
+        rows.append(f"| [{tid}]({tid}.md) | {short_title(cards[tid] or t['task'])} | {day_label(t['date'], t.get('tbc_kind'))} |")
     missing = sorted(set(cards) - set(by_id))
     return CARDS_HEADER + "\n".join(rows) + "\n", missing
 
