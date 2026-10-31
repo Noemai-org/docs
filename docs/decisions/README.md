@@ -38,6 +38,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-27-actor-and-payload-hash](DEC-2026-10-27-actor-and-payload-hash.md) | The Record event's emitter (`written_by`, closed set of service identities of PERD §41.1 and §34.1), principal (`actor`, required, six principal kinds) and `payload_hash` (SHA-256 of the RFC 8785 form, integers only); `record-event.v3` and `reconstruction.v3`, v2 unchanged; PERD v1.17; replaces D4 of DEC-2026-10-27-record-event-v2 (Accepted) |
 | [DEC-2026-10-28-spent-grant-void](DEC-2026-10-28-spent-grant-void.md) | PERD §38.2: a SPENT `decision_grant` becomes VOID only for a confirmed `REJECTED_STALE_VERSION` refusal; receipt, invalidation, RecoveryRequest and outbox in one transaction; the Record keeps `GRANT_SPENT`; PERD v1.18 (Accepted in principle) |
 | [DEC-2026-10-29-receipt-signature-alert](DEC-2026-10-29-receipt-signature-alert.md) | A failed receipt signature alerts a human: the five rules and the exact PERD sections the next PERD version changes; recipient and channel are placeholders (Proposed; keeps DEBT-02 open) |
+| [DEC-2026-10-31-proof-depth-and-completeness](DEC-2026-10-31-proof-depth-and-completeness.md) | Context Fabric, compensation, authenticated Record writers, external anchoring, crash-point and corrupted-payload testing, per-merge chaos subset and pass^k pulled into the POC; practices not adopted; SoT v1.10, PERD v1.19, plan v1.10 |
 
 ## Where decisions already live
 
