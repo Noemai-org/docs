@@ -6,7 +6,7 @@
 
 | File | What it is |
 |---|---|
-| [`tasks.csv`](tasks.csv) | All 261 tasks, generated from the plan for the board (rows dated `TBC` are the G0-T rows; rows dated `AFTER` fall due after the build window). Task metadata is regenerated; `current_status` and `blocked` are operational fields preserved by task ID. Run `python3 tools/plan_index.py --write`; CI runs `--check`. |
+| [`tasks.csv`](tasks.csv) | All 261 tasks, generated from the plan for the board (rows dated `TBC` are the G0-T rows and the tasks in the plan section "To be dated at the re-baseline"; rows dated `AFTER` fall due after the build window). Task metadata is regenerated; `current_status` and `blocked` are operational fields preserved by task ID. Run `python3 tools/plan_index.py --write`; CI runs `--check`. |
 | [`calendar.md`](calendar.md) | Fixed meetings, gates and deadlines (WAT). |
 | [`daily/`](daily/README.md) · [`gates/`](gates/README.md) · [`release/`](release/README.md) | Daily notes, gate records and the release evidence bundle, written when they happen. |
 | [`sessions/`](sessions/g0-t-joint-session.md) · [`todo-triage.md`](todo-triage.md) | The G0-T joint session plan (date to be confirmed by Tushe) and the triage of every TODO (16 Oct 2026). |
