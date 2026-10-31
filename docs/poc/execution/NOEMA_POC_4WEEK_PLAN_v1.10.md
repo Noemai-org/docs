@@ -745,7 +745,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | UI-05 | Benchmark inspector: runs, Tier 0 first, per-family results, failure drill-down into the panel | FE+AG | REQ-UI-004 | BEN-16 | Renders the latest run. Scope: PERD §40 minimum only (DEC C8) |
 | OBS-03 | Thin engineering and benchmark dashboard | EL+AG | REQ-OBS-003 | OBS-01 | Dashboard shows last nightly run |
 | OPS-04 | Demo and benchmark environment availability: `demo` profile on a dedicated host, reset to a known seed in under 10 min | EL | REQ-NFR-008 | PLT-04 | Reset timed and recorded |
-| GOV-12 | **G3 review** at 16:00; week retro; freeze the week 4 plan; any G3 miss takes Monday | EL, B, SR, FND | — | BEN-18, SEC-10, SEC-06, TST-05, TST-06, REC-08, REC-07, SEC-13 | Gate record committed |
+| GOV-12 | **G3 review** at 16:00; week retro; freeze the week 4 plan; any G3 miss takes Monday | EL, B, SR, FND | — | BEN-18, SEC-10, SEC-06 | Gate record committed |
 
 **Week 3 definition of done.**
 
@@ -845,20 +845,21 @@ These tasks are part of the POC. Their week and date are set by GOV-30 once the 
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
+| SEC-14 | Evaluation of the write-once anchor store (leading candidate: S3-compatible object lock in compliance mode, for example MinIO in Compose): write-only credential, retention that no account can shorten, operations in Compose | SR | REQ-AUD-007 | — | Recommendation presented for founder approval under AGENT-14 |
 | REC-07 | Record-head anchoring implemented in the POC (OD-06 as amended by DEC-2026-10-31-proof-depth-and-completeness D19): chain heads anchored on a schedule and at every run boundary to the approved write-once store; the verifier proves the chain matches every anchor | C1+AG | REQ-AUD-007 | REC-05, SEC-14 | An offline chain rewrite in a test database is detected against the anchors; the word used is tamper-evident |
 | OPS-08 | Architecture map (derived, non-normative): founders' terms, canonical names, governing sections, code paths, tasks, owning roles and live build status; agent: Repo Steward | EL+AG | — | — | `docs/architecture-map.md` merged; every row's status links to evidence or says Unassessed |
 | OPS-09 | Evidence-based status assessment of every task in `tasks.csv`; agent: Repo Steward | EL+AG | — | — | Every task has a `current_status` backed by a merged PR, test or CI run, or the lower status with what is missing |
-| GOV-28 | W1: one Ed25519 signing design for receipts (DEBT-01, Option B) and Record events: canonical bytes, binding to tenant, grant, attempt, key and state, key IDs, rotation and revocation, trusted-key table, privilege model, failure modes, migration of `noema#94` and `noema#90`, Option C fallback | EL, FND | REQ-AUD-006, REQ-EXE-004 | SEC-12 | Decision record and PERD amendment text approved by the founders by Wed 4 Nov |
 | SEC-12 | W2: evaluation of PostgreSQL Ed25519 verification extensions from primary sources: pinned version, licence, maintenance, supply chain, constant-time and canonical-signature checks, PostgreSQL 16 support, behaviour when unavailable, compatibility with a migration-owned trusted-key table | SR | REQ-AUD-006 | — | Recommendation, or "none viable", presented for founder approval under AGENT-14 by Mon 2 Nov |
+| GOV-28 | W1: one Ed25519 signing design for receipts (DEBT-01, Option B) and Record events: canonical bytes, binding to tenant, grant, attempt, key and state, key IDs, rotation and revocation, trusted-key table, privilege model, failure modes, migration of `noema#94` and `noema#90`, Option C fallback | EL, FND | REQ-AUD-006, REQ-EXE-004 | SEC-12 | Decision record and PERD amendment text approved by the founders by Wed 4 Nov |
 | EXE-07 | W3: Ed25519 receipt signing in `core-execution`: private key outside PostgreSQL from the secret store; key ID and version on every receipt; two active keys during rotation | C1+AG | REQ-AUD-006, REQ-SEC-005 | GOV-28 | Signing and rotation tests pass; no key material in the database, logs or traces |
 | EXE-08 | W4: database-side verification of receipts with the approved extension; trusted-key table, function and trigger owned by the migration role; `execution_rw` cannot alter them or bypass verification; then release `noema#94` and `noema#90` | C1 | REQ-AUD-006, REQ-EXE-004 | EXE-07, SEC-12 | Failing-first forgery, replay, rotation, revoked-key and verification-unavailable tests pass; DEBT-01 criteria (1)–(6) evidenced |
-| SEC-13 | DEBT-01 closure evidence: failing-first bypass test on the held code; independent validation of every closure criterion after EXE-08 | SR | REQ-AUD-006 | EXE-08 | DEBT-01 closed by EL with the evidence, or kept open with the gap named |
-| REC-08 | Authenticated Record writers: each power signs each event (Ed25519, JCS, including the previous hash); the database refuses an event that does not verify; the chain verifier checks every signature | C1+AG | REQ-AUD-006 | GOV-28, SEC-12, REC-05 | Forgery by any database credential without a key fails; rotation with two active keys passes |
-| SEC-14 | Evaluation of the write-once anchor store (leading candidate: S3-compatible object lock in compliance mode, for example MinIO in Compose): write-only credential, retention that no account can shorten, operations in Compose | SR | REQ-AUD-007 | — | Recommendation presented for founder approval under AGENT-14 |
+| SEC-13 | DEBT-01 closure evidence: failing-first bypass test on the held code; independent validation of every closure criterion after EXE-08 | SR | REQ-AUD-006 | EXE-08 | DEBT-01 closed by EL with the evidence, or kept open with the gap named → **G3** |
+| REC-08 | Authenticated Record writers: each power signs each event (Ed25519, JCS, including the previous hash); the database refuses an event that does not verify; the chain verifier checks every signature | C1+AG | REQ-AUD-006 | GOV-28, SEC-12, REC-05 | Forgery by any database credential without a key fails; rotation with two active keys passes → **G3** |
 | UND-09 | Context Fabric, part 1: session context (principal, tenant, channel, locale) and the open journey's turns and Intent Object versions as a typed, bounded, versioned context view | C2+AG | REQ-CTX-009 | UND-04, INP-01 | Context never authorises (property test); replay gives the same context view |
 | UND-10 | Context Fabric, part 2: the requester's prior cases read fresh through the Evidence Layer, principal-scoped, and prior journeys from the Record; no standing replica | C2+AG | REQ-CTX-010 | UND-09, ENV-05, REC-03 | No other principal's case in any view, prompt, log or trace; an unreachable case system gives UNAVAILABLE |
 | UND-11 | Scoped speculative prefetch of candidate evidence while the Intent Compiler runs; unused results discarded, never cached across journeys, never recorded as facts | C2+AG | REQ-CTX-006 | UND-05 | Latency measured before and after; the prefetch leak test passes |
 | UND-12 | Async-safety check of the provider transport: `_post_blocking` never runs on the event loop; fix if it does | C2 | REQ-TST-010 | — | A test proves the event loop is never blocked by a provider call |
+| BEN-30 | Scoring reports pass^k (k = 5) for Understanding-dependent cases, turns to resolution, unnecessary-clarification rate and auto-resolve precision | B | REQ-BEN-009 | BEN-01 | Every run report contains the four diagnostics with n |
 | UND-13 | Model-drift canary: pinned model and speech versions; the qualification subset including pass^k runs on every version or provider change; unqualified IDs refused | C2, B | REQ-INT-006 | TST-02, BEN-30 | The harness refuses a model ID with no qualification record |
 | PCK-04 | Action Graph verification: confirm the fintech graph has real nodes and edges with preconditions, postconditions, `on_unknown`, `on_failure`, recovery and escalation references; extend `packcheck` so a flat list fails; if the graph is a flat list today, rebuild it first | EL+AG | REQ-AG-001 | PCK-02 | A flat-list negative fixture fails `packcheck`; the fintech graph passes; findings recorded |
 | PLN-03 | The planner selects a path through the graph: every plan step is a node reached through a declared edge with satisfied preconditions | C1+AG | REQ-AG-003 | PCK-04, PLN-01 | Property test: every emitted plan is a valid path in the graph |
@@ -867,11 +868,10 @@ These tasks are part of the POC. Their week and date are set by GOV-30 once the 
 | CAP-02 | Compensation declared per capability (`NONE_REQUIRED`, `INVERSE_CAPABILITY`, `ESCALATE_ONLY`) for all four POC capabilities, with the `packcheck` rules | C1+AG | REQ-CAP-004 | PCK-02 | All four declare compensation; negative fixtures fail `packcheck` |
 | RCV-04 | Compensation executed through Trust as recovery, under a new ALLOW and grant, verified by Outcome | C1 | REQ-RCV-005 | CAP-02, RCV-01 | A G2 partial-failure fixture yields the declared compensation or an escalation, never a silent partial state |
 | CAP-03 | Legacy-API protection: honour `Retry-After`, jittered exponential backoff on reads, per-target concurrency caps | C1+AG | REQ-CAP-005 | CAP-01, ENV-09 | Proven against the proxy's 429 and near-timeout faults with the observed request rate recorded |
-| TST-05 | Crash-point matrix: kill the core before the spend commits, after it and before dispatch, after dispatch and before the response, and after the target commits with the response lost; assert exactly one effect and the correct final state | IL, SR | REQ-TST-008 | EXE-02, OUT-01, RCV-01 | All four points pass, repeated with seeds; run ID recorded |
+| TST-05 | Crash-point matrix: kill the core before the spend commits, after it and before dispatch, after dispatch and before the response, and after the target commits with the response lost; assert exactly one effect and the correct final state | IL, SR | REQ-TST-008 | EXE-02, OUT-01, RCV-01 | All four points pass, repeated with seeds; run ID recorded → **G3** |
 | ENV-15 | Corrupted-payload fault families in the hostility proxy: truncated body, invalid JSON, wrong `Content-Type`, empty body with success status, extra or missing required field | IL+AG | REQ-ENV-005 | ENV-09 | Each is observed by the adapter as UNAVAILABLE or a schema rejection, never a fact or a success |
-| TST-06 | Chaos subset (four crash points plus one fault per proxy family) as a required check on merges touching Trust, Execution, Outcome, the Evidence Layer or adapters; full chaos matrix nightly | B, IL | REQ-TST-009 | TST-02, TST-05, ENV-15, SEC-10 | Required check active under 15 minutes; nightly run IDs recorded |
-| BEN-29 | Integration suite as one command: US-01 to US-22, the chaos matrix, the evil provider and the full suite (≥ 320 cases, ≥ 300 hidden-oracle), runnable from a clean environment | B | REQ-BEN-004, REQ-TST-005 | BEN-12, BEN-16, SEC-06, SEC-10 | One command runs each suite from `make reset`; run IDs recorded |
-| BEN-30 | Scoring reports pass^k (k = 5) for Understanding-dependent cases, turns to resolution, unnecessary-clarification rate and auto-resolve precision | B | REQ-BEN-009 | BEN-01 | Every run report contains the four diagnostics with n |
+| TST-06 | Chaos subset (four crash points plus one fault per proxy family) as a required check on merges touching Trust, Execution, Outcome, the Evidence Layer or adapters; full chaos matrix nightly | B, IL | REQ-TST-009 | TST-02, TST-05, ENV-15, SEC-10 | Required check active under 15 minutes; nightly run IDs recorded → **G3** |
+| BEN-29 | Integration suite as one command: US-01 to US-22, the chaos matrix, the evil provider and the full suite (≥ 320 cases, ≥ 300 hidden-oracle), runnable from a clean environment | B | REQ-BEN-004, REQ-TST-005 | BEN-12, BEN-16, SEC-06, SEC-10 | One command runs each suite from `make reset`; run IDs recorded → **G3** |
 | BEN-31 | Public benchmark format and publication rules: state-based outcomes, pass^k, open harness and public cases, held-out private; full distribution, n, method, bound and CI on every number | B, FND | REQ-BEN-010 | BEN-16 | Format and rules committed; G7 checklist references them |
 | MEM-03 | Labelled pairs by design: extraction of (request, resolved target, verified outcome) with tenant scope and provenance from the Record and memory | C1, C2 | REQ-MEM-003 | REC-03 | Extraction test on a benchmark run passes; no extraction for training before GOV-25 |
 | MEM-04 | Escalation resolutions recorded as structured operational-memory observations linked to the case | C1 | REQ-MEM-004 | MEM-01, RCV-03 | Every escalated benchmark case resolved in `mock-case` has one linked observation |
@@ -1173,14 +1173,17 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-INT-003 | Deterministic lexicon normalisation | P0 | UND-06, GOV-08, GOV-10, VOI-07 |
 | REQ-INT-004 | Versioning and supersession | P0 | AMB-03, INP-01 |
 | REQ-INT-005 | Out-of-scope and prohibited-intent recognition | P0 | UND-05, UND-07 |
+| REQ-INT-006 | Model-drift canary | P1 | UND-13 |
 | REQ-CTX-001 | Evidence items carry full provenance | P0 | EVD-01 |
 | REQ-CTX-002 | FactStatus assignment rules | P0 | EVD-01 |
 | REQ-CTX-003 | Effective freshness enforced at decision and at revalidation | P0 | EVD-02 |
 | REQ-CTX-004 | Sealed context snapshots | P0 | EVD-03 |
 | REQ-CTX-005 | Event time and ingestion time both kept | P0 | EVD-06 |
-| REQ-CTX-006 | Principal-scoped candidate read API for the model service | P0 | EVD-04 |
+| REQ-CTX-006 | Principal-scoped candidate read API for the model service | P0 | EVD-04, UND-11 |
 | REQ-CTX-007 | Enterprise strings are data, never instructions | P0 | EVD-06 |
 | REQ-CTX-008 | Integration hostility handling in reads | P0 | EVD-05 |
+| REQ-CTX-009 | Context Fabric: session and conversation context | P0 | UND-09 |
+| REQ-CTX-010 | Context Fabric: prior cases and prior journeys | P0 | UND-10 |
 | REQ-AMB-001 | Material ambiguity is unrepresentable as action | P0 | TRU-01 |
 | REQ-AMB-002 | Candidate generation is principal-scoped and bounded | P0 | EVD-04, AMB-01 |
 | REQ-AMB-003 | Deterministic ranking and the auto-resolve rule | P0 | AMB-01 |
@@ -1192,6 +1195,7 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-RES-002 | Contradiction freeze | P0 | RES-02 |
 | REQ-RES-003 | Resend advice | P0 | RES-03 |
 | REQ-RES-004 | Reversal precedence | P0 | RES-04 |
+| REQ-RES-005 | Convergence windows: expected lag versus real contradiction | P0 | PCK-05, RES-05 |
 | REQ-TRU-001 | Exactly one outcome, fully attributed | P0 | TRU-01, TRU-05 |
 | REQ-TRU-002 | Fail-closed gate order | P0 | TRU-02 |
 | REQ-TRU-003 | Target-bound three-layer authority | P0 | TRU-04 |
@@ -1204,18 +1208,21 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-TRU-010 | Escalation disposition linkage | P0 | TRU-10 |
 | REQ-TRU-011 | Mode 2-compatible Trust interface | P1 | TRU-12 |
 | REQ-TRU-012 | Tenant rate limits and per-principal limits | P1 | TRU-11 |
-| REQ-AG-001 | Graph as validated data | P0 | PCK-01, PCK-02 |
+| REQ-AG-001 | Graph as validated data | P0 | PCK-01, PCK-02, PCK-04 |
 | REQ-AG-002 | Routing targets are allowlisted | P0 | PCK-01 |
+| REQ-AG-003 | The planner selects a path through the graph | P0 | PLN-03 |
 | REQ-CAP-001 | Complete descriptors only | P0 | ENV-11, PCK-01, PCK-02, PCK-03 |
 | REQ-CAP-002 | Prohibited: registered, rejecting, unreachable | P0 | EXE-01, UND-07, SEC-06 |
 | REQ-CAP-003 | Limits, timeouts and circuit breakers per capability | P1 | CAP-01 |
+| REQ-CAP-004 | Compensation declared per capability | P0 | CAP-02 |
+| REQ-CAP-005 | Legacy-API protection | P0 | CAP-03 |
 | REQ-PLN-001 | Deterministic plans from registered nodes only | P0 | PLN-01 |
 | REQ-PLN-002 | Canonical plan hash | P0 | PLN-01 |
 | REQ-PLN-003 | Compound requests are planned, not executed beyond scope | P2 | PLN-02 |
 | REQ-EXE-001 | Grant verification and single use | P0 | EXE-02 |
 | REQ-EXE-002 | Idempotency key derived and persisted before dispatch | P0 | CON-04, EXE-03 |
 | REQ-EXE-003 | Revalidation immediately before every write | P0 | EXE-02, EXE-05 |
-| REQ-EXE-004 | Conditional writes | P0 | EXE-04 |
+| REQ-EXE-004 | Conditional writes | P0 | EXE-04, GOV-28, EXE-08 |
 | REQ-EXE-005 | Silence is OUTCOME_UNKNOWN | P0 | EXE-02 |
 | REQ-EXE-006 | No retry without a new grant | P0 | EXE-02 |
 | REQ-EXE-007 | Adapter response normalisation | P0 | ENV-04, ENV-11, EXE-05 |
@@ -1231,22 +1238,27 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-RCV-002 | Verify-by-key before any retry | P0 | OUT-01, RCV-02 |
 | REQ-RCV-003 | Recovery budget and escalation | P0 | RCV-02 |
 | REQ-RCV-004 | Late evidence after escalation | P1 | RCV-03 |
+| REQ-RCV-005 | Compensation executed through Trust | P0 | RCV-04 |
 | REQ-EXP-001 | Facts-in, text-out renderer in the model service | P0 | EXP-03 |
 | REQ-EXP-002 | Claim validator and fallback | P0 | EXP-01, EXP-02, BEN-14 |
 | REQ-EXP-003 | Register and language | P1 | GOV-10, EXP-04 |
-| REQ-EXP-004 | Operator evidence packet | P0 | EXP-05 |
+| REQ-EXP-004 | Operator evidence packet | P0 | EXP-05, EXP-06 |
 | REQ-AUD-001 | Append-only hash-chained Record | P0 | REC-01, REC-06 |
 | REQ-AUD-002 | Completeness per consequential decision | P0 | REC-04 |
 | REQ-AUD-003 | Reconstruction endpoint | P0 | REC-03 |
 | REQ-AUD-004 | Correlation chain everywhere | P0 | REC-02 |
 | REQ-AUD-005 | Nightly and on-demand chain verification | P0 | REC-05 |
+| REQ-AUD-006 | Authenticated Record writers | P0 | SEC-12, GOV-28, EXE-07, EXE-08, SEC-13, REC-08 |
+| REQ-AUD-007 | External anchoring of chain heads | P0 | SEC-14, REC-07 |
 | REQ-MEM-001 | Memory is data, never authority | P0 | MEM-01 |
 | REQ-MEM-002 | Every failure becomes a regression case | P0 | MEM-02 |
+| REQ-MEM-003 | Labelled pairs by design | P1 | MEM-03 |
+| REQ-MEM-004 | Escalation resolutions are recorded | P1 | MEM-04 |
 | REQ-ENV-001 | Adapters per logical service, behind interfaces | P0 | ENV-03, ENV-11, ENV-10, ENV-05, ENV-08 |
 | REQ-ENV-002 | Oracle isolation | P0 | BEN-03, SEC-02, ENV-14, ENV-07, SEC-11 |
 | REQ-ENV-003 | One clock | P0 | PLT-07 |
 | REQ-ENV-004 | Deterministic fault plans | P0 | ENV-01, ENV-09, ENV-06, ENV-08 |
-| REQ-ENV-005 | Hostility proxy contingency | P0 | ENV-09, ENV-06, ENV-13 |
+| REQ-ENV-005 | Hostility proxy contingency | P0 | ENV-09, ENV-06, ENV-13, ENV-15 |
 | REQ-ENV-006 | Synthetic labelling | P0 | ENV-04, ENV-09 |
 | REQ-ENV-007 | Phase A acceptance before integration | P0 | PRE-03, GOV-19, GOV-04, ENV-01, ENV-02, ENV-14, ENV-12, ENV-07 |
 | REQ-ENV-008 | Synthetic case service (mock-case) | P0 | ENV-08 |
@@ -1255,6 +1267,8 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-VOI-003 | Confidence propagation | P0 | VOI-03, AMB-04 |
 | REQ-VOI-004 | Raw audio handling | P0 | VOI-05, DATA-01 |
 | REQ-VOI-005 | Real-conditions gate | P0 | PRE-05, VOI-08, VOI-11, VOI-12, VOI-13, VOI-14 |
+| REQ-VOI-006 | Modular voice pipeline in production | P0 | VOI-18 |
+| REQ-VOI-007 | Voice simulation and native-speaker testing before field sessions | P1 | VOI-17 |
 | REQ-DATA-001 | Schema ownership and migrations | P0 | PLT-06 |
 | REQ-DATA-002 | Money and time representation | P0 | PLT-03, CON-05, DATA-02 |
 | REQ-DATA-003 | Retention and minimisation | P1 | DATA-01 |
@@ -1274,7 +1288,7 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-SEC-002 | mTLS and network isolation between deployables | P0 | PLT-01, GOV-20, PLT-03, UND-01, SEC-02, ENV-13 |
 | REQ-SEC-003 | Masking and PII redaction on every surface | P0 | REC-02, SEC-03, SEC-07 |
 | REQ-SEC-004 | Tenant isolation | P0 | PLT-06, SEC-08 |
-| REQ-SEC-005 | Key management | P0 | PLT-01, PLT-05, TRU-05, SEC-09 |
+| REQ-SEC-005 | Key management | P0 | PLT-01, PLT-05, TRU-05, SEC-09, EXE-07 |
 | REQ-SEC-006 | Control plane separated from data plane | P0 | SEC-04 |
 | REQ-SEC-007 | Supply chain and secure development lifecycle | P1 | PLT-02, SEC-01, SEC-06, SEC-07, REL-01 |
 | REQ-SEC-008 | Abuse limits at the edge | P1 | EDG-01 |
@@ -1294,16 +1308,21 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 | REQ-TST-002 | Property tests for every invariant | P0 | TST-01, TST-03 |
 | REQ-TST-003 | Contract tests at every boundary | P0 | CON-03, ENV-05, ENV-08 |
 | REQ-TST-004 | No mocked failure modes | P0 | PLT-03, TST-04 |
-| REQ-TST-005 | CI gates and rhythm | P0 | PLT-02, TST-02, REL-01 |
+| REQ-TST-005 | CI gates and rhythm | P0 | PLT-02, TST-02, REL-01, BEN-29 |
 | REQ-TST-006 | No benchmark-only branches | P0 | PLT-03, TST-04 |
 | REQ-TST-007 | Operational and load tests | P1 | OPS-03 |
+| REQ-TST-008 | Crash-point matrix for Execution | P0 | TST-05 |
+| REQ-TST-009 | Chaos on every relevant merge | P0 | TST-06 |
+| REQ-TST-010 | Static-analysis gates | P1 | UND-12, PLT-09 |
 | REQ-BEN-001 | Fully specified, versioned cases | P0 | BEN-01, BEN-02, BEN-04, BEN-06, BEN-07, BEN-08, BEN-09, BEN-10, BEN-13, BEN-15, BEN-16 |
 | REQ-BEN-002 | Runner and oracle client | P0 | BEN-03, BEN-05 |
 | REQ-BEN-003 | Held-out custody | P0 | GOV-03, BEN-28, BEN-11, BEN-19, BEN-26 |
-| REQ-BEN-004 | Tiered scorecard and reports | P0 | BEN-12, BEN-16, BEN-22, BEN-24, BEN-25, BEN-26 |
+| REQ-BEN-004 | Tiered scorecard and reports | P0 | BEN-12, BEN-16, BEN-22, BEN-24, BEN-25, BEN-26, BEN-29 |
 | REQ-BEN-005 | Provider runs | P0 | BEN-21, BEN-23 |
 | REQ-BEN-006 | Every failure becomes a regression case | P0 | MEM-02, BEN-17a, BEN-17b |
 | REQ-BEN-008 | Release evidence bundle | P0 | BEN-27, GOV-14, REL-02, GOV-16 |
+| REQ-BEN-009 | Consistency and disambiguation diagnostics | P1 | BEN-30 |
+| REQ-BEN-010 | Publication rules and a legible benchmark | P1 | BEN-31 |
 | REQ-BEN-007 | Competent, fair arms built after the core passes | P1 | GOV-21, GOV-11, BEN-20, ARM-01, ARM-02, ARM-03, ARM-04, ARM-05, BEN-24 |
 | REQ-BIZ-003 | Implementation economics measured | P1 | BIZ-02 |
 | REQ-BIZ-001 | Business metrics from runs only | P0 | BIZ-01, BIZ-03 |
@@ -1321,25 +1340,25 @@ Every one of the PERD's 153 requirements (P0 130, P1 20, P2 3) is delivered by a
 
 ## Appendix B — Task count by workstream
 
-The plan holds **226 tasks**, including the five tasks before Monday.
+The plan holds **261 tasks**, including the five tasks before Monday.
 
 | Workstream | Tasks |
 |---|---|
-| GOV | 37 |
-| PLT | 14 |
-| CON | 9 |
-| ENV | 14 |
-| UND | 14 |
-| EVD | 10 |
+| GOV | 40 |
+| PLT | 17 |
+| CON | 11 |
+| ENV | 15 |
+| UND | 19 |
+| EVD | 11 |
 | TRU | 12 |
-| EXE | 9 |
-| OUT | 8 |
-| REC | 11 |
-| EXP | 12 |
-| VOI | 16 |
-| BEN | 37 |
-| SEC | 23 |
-| **Total** | **226** |
+| EXE | 14 |
+| OUT | 9 |
+| REC | 14 |
+| EXP | 13 |
+| VOI | 18 |
+| BEN | 40 |
+| SEC | 28 |
+| **Total** | **261** |
 
 ## Appendix C — Edge cases to tasks
 
