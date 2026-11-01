@@ -23,4 +23,5 @@
 | [ENV-08](ENV-08.md) | Build `mock-case` per REQ-ENV-008, with its fault hooks and truth endpoint, plus the core's case... | Thu 22 Oct |
 | [ENV-13](ENV-13.md) | Webhook relay | Thu 22 Oct |
 | [ENV-14](ENV-14.md) | G0-N, the Noema half of G0, Thu 22 Oct 17:00 | Thu 22 Oct |
+| [OUT-01](OUT-01.md) | Outcome Verifier, verify-by-key scope | Fri 23 Oct |
 | [ENV-12](ENV-12.md) | Walk through, agree and sign the acceptance worksheet with Tushe at the joint session | To be confirmed by Tushe (G0-T) |
