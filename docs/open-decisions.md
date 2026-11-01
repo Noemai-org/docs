@@ -907,12 +907,12 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1); nothing is built from this entry until the Founders approve it.
 - **Missing decision:** whether pgsodium v3.1.11 (commit `a8b8a2739bab1f7a07445b1c911e2bd1abf67784`), built from source into Noema's own PostgreSQL 17.11 image with a checksum-verified libsodium, may be added as a dependency, using only `crypto_sign_verify_detached` behind a migration-owned wrapper.
 - **Why it matters:** DEBT-01 (Tier 0) and REQ-AUD-006 need the database to refuse a receipt or Record event whose Ed25519 signature does not verify; PostgreSQL has no Ed25519 verifier of its own.
-- **Default (smallest safe):** do not adopt until the W2 spike checks T1 to T6 pass. If any of T1, T2, T3, T4 or T6 fails, or the Founders refuse, Option C applies (DEC-2026-11-01-receipt-and-record-signing §11).
-- **What would change it:** a failed spike check; a security issue in pgsodium or libsodium; an upstream deprecation; a PostgreSQL major that pgsodium does not support.
+- **Default (smallest safe):** do not adopt until the Founders approve. The W2 spike passed T1 to T6 in CI on `postgres:17.11-alpine` (58 of 58, 1 Nov 2026), with one bootstrap step: pgsodium's event trigger is disabled and guarded against re-enabling (DEC-2026-11-01-receipt-and-record-signing D10a). If the Founders refuse, Option C applies (§11 of that record).
+- **What would change it:** a failed check on a later run; a security issue in pgsodium or libsodium; an upstream deprecation; an extension upgrade that re-enables its event trigger; a PostgreSQL major that pgsodium does not support.
 - **Not covered:** key custody (DEC-2026-11-01 §3); the write-once anchor store (SEC-14).
 - **Owner:** Founders (the approval); SR (the evaluation and the spike's validation); C1 (the spike and the image, EXE-08); EL (the design).
 - **Deadline:** with GOV-28, Wed 4 Nov 2026.
-- **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §5; the W2 evaluation (SEC-12, `docs/security/w2-ed25519-extension-evaluation.md`, branch `claude/zealous-bohr-twqkij`, not yet merged); DEBT-01; PERD REQ-AUD-006.
+- **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §5; the W2 evaluation (SEC-12, docs#78, not yet merged) and its spike (run 41314576829, noema#106); DEBT-01; PERD REQ-AUD-006.
 
 ### OD-P-73: Record keys for `model-service` and the adapter emitters (PROPOSAL)
 
