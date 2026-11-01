@@ -901,3 +901,27 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder (the choice); EL (Engineering Leader: the PERD text); SR (Security Reviewer: the rule and its fixture)
 - **Deadline:** before production (deferred to pre-production; no development-phase date)
 - **Source:** [DEC-2026-10-29-receipt-signature-alert](decisions/DEC-2026-10-29-receipt-signature-alert.md); PERD REQ-SEC-005, §44.1; DEBT-02.
+
+### OD-P-72: Adopt pgsodium for in-database Ed25519 verification (AGENT-14; PROPOSED, conditional on the W2 spike)
+
+- **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1); nothing is built from this entry until the Founders approve it.
+- **Missing decision:** whether pgsodium v3.1.11 (commit `a8b8a2739bab1f7a07445b1c911e2bd1abf67784`), built from source into Noema's own PostgreSQL 17.11 image with a checksum-verified libsodium, may be added as a dependency, using only `crypto_sign_verify_detached` behind a migration-owned wrapper.
+- **Why it matters:** DEBT-01 (Tier 0) and REQ-AUD-006 need the database to refuse a receipt or Record event whose Ed25519 signature does not verify; PostgreSQL has no Ed25519 verifier of its own.
+- **Default (smallest safe):** do not adopt until the W2 spike checks T1 to T6 pass. If any of T1, T2, T3, T4 or T6 fails, or the Founders refuse, Option C applies (DEC-2026-11-01-receipt-and-record-signing §11).
+- **What would change it:** a failed spike check; a security issue in pgsodium or libsodium; an upstream deprecation; a PostgreSQL major that pgsodium does not support.
+- **Not covered:** key custody (DEC-2026-11-01 §3); the write-once anchor store (SEC-14).
+- **Owner:** Founders (the approval); SR (the evaluation and the spike's validation); C1 (the spike and the image, EXE-08); EL (the design).
+- **Deadline:** with GOV-28, Wed 4 Nov 2026.
+- **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §5; the W2 evaluation (SEC-12, `docs/security/w2-ed25519-extension-evaluation.md`, branch `claude/zealous-bohr-twqkij`, not yet merged); DEBT-01; PERD REQ-AUD-006.
+
+### OD-P-73: Record keys for `model-service` and the adapter emitters (PROPOSAL)
+
+- **Status:** [OPEN] · NON-CANONICAL · default proposed; nothing is built from this entry.
+- **Missing decision:** record-event v3 lists `model-service` and seven adapter identities (`mock-ledger`, `mock-switch`, `mock-destination`, `mock-customer`, `mock-policy`, `mock-case`, `mock-clock`) as `RUNTIME` emitters (`services/core/record/chain/actors.json`). REQ-AUD-006 makes each emitter sign with its own key. The model service cannot hold a core credential (INV-29) and does not append to the Record itself, and the adapters run inside the core, so for each of them it is undecided who holds the key, or whether the core appends such events under its own identity instead.
+- **Why it matters:** a key held by the core for another identity would let the core sign as that identity, which defeats the point of per-emitter keys.
+- **Default (smallest safe):** register no key for these eight identities in the POC. The database then refuses any event that claims them (fail closed). No code appends as them today (checked 1 Nov 2026: only `core-execution` appends).
+- **What would change it:** a slice that needs an event attributed to the model service or an adapter; a decision on the Mode 2 signed-proposal design (DEC-2026-10-31 D29).
+- **Not covered:** the model service's own outputs, which cross the schema gate as untrusted data (INV-02).
+- **Owner:** EL (the proposal); Founders (the decision).
+- **Deadline:** before the first event attributed to one of these identities.
+- **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §3 D2; PERD §32.1, REQ-AUD-006; INV-29.
