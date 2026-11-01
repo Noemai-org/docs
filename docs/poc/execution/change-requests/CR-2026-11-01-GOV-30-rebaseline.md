@@ -1,7 +1,7 @@
 # Change request: CR-2026-11-01-GOV-30 · Re-baselined gate dates (proposal)
 
 - **Change ID:** CR-2026-11-01-GOV-30
-- **Requester:** Engineering Lead (role agent, for the EL role of plan §4), under DEC-2026-10-31-proof-depth-and-completeness D32 and plan task GOV-30. **This is a proposal.** It sets no date: the Founders record dates in the gate records (D32; plan §3.1 gate rules). Started on the Architect's instruction of 1 Nov 2026, from docs#77's counts, before docs#77 merges.
+- **Requester:** Engineering Lead (role agent, for the EL role of plan §4), under DEC-2026-10-31-proof-depth-and-completeness D32 and plan task GOV-30. **This is a proposal.** It sets no date: the Founders record dates in the gate records (D32; plan §3.1 gate rules). Started on the Architect's instruction of 1 Nov 2026, from docs#77's counts, before docs#77 merged. **docs#77 merged on 1 Nov 2026 (`90bba64`); the counts on `main` are unchanged** (25 Done, 3 In review, 48 In progress, 18 Ready, 152 Backlog, 15 Unassessed), so nothing below changes. D32's two working days from OPS-09 end on Tue 3 Nov 2026.
 - **Date:** Sunday 1 November 2026 (WAT).
 - **REQ IDs affected:** none changed. Plan v1.10 §3 (calendar), §3.1 (gate dates), §11 (code freeze), §14 (demo), §16 (SR-03, SR-24, SR-25); tasks GOV-07, GOV-12, GOV-13, GOV-16, ENV-14, REL-01, DEM-02 and every dated row; gate records G0-N to G7.
 - **SoT IDs:** SoT §40.2 (gates never move, dates do), §38.5 (no comparison arm before G3); DEC-2026-10-16 E3, E4.
