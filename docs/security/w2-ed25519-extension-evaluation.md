@@ -115,7 +115,7 @@ It is a weak recommendation: the surface is large, the maintenance history has a
 | T3 | Malleability vectors: signature with `S + L`; non-canonical public key; small-order key; small-order `R`; all-zero signature | Each returns false (or raises), through the wrapper |
 | T4 | Wrapper: signature of 63, 65 and 0 bytes; NULL signature, message and key; unknown, revoked, not-yet-valid and expired `key_id`; replay of a valid receipt for another grant, tenant, attempt or state | Every case is refused, with no exception block that converts an error into acceptance |
 | T5 | Privilege: as `execution_rw`, try to `INSERT`/`UPDATE`/`DELETE`/`TRUNCATE` the key table, `ALTER` or `DROP` the trigger or function, `DISABLE TRIGGER`, `SET ROLE` to the migration role, `CREATE FUNCTION` that shadows the verifier through `search_path` | All refused. The forged receipt of DEBT-01 is refused, by `INSERT` and by any function |
-| T6 | Extension unavailable: start the database with the extension absent, and with the library file missing | Inserts fail closed; nothing is accepted unverified; the failure is a `SECURITY_EVENT` rather than silence (links to DEBT-02) |
+| T6 | Verification unavailable: the extension dropped, or its library file missing, or the verification function raising | **Pass condition, agreed with the Engineering Lead on 2 Nov 2026 (GOV-28 D13, `DEC-2026-11-01-receipt-and-record-signing`):** a correctly signed receipt or event is refused, no row is added, and no other write of that transaction is kept; the core returns the error and logs it (structured, redacted). No `SECURITY_EVENT` is expected, because no Record append can succeed while verification is unavailable; alerting a human is DEBT-02 (OD-P-71). *Amended from the original wording "the failure is a `SECURITY_EVENT` rather than silence", which cannot hold.* |
 
 T1 to T6 are inputs to SEC-13. I will write them as failing-first tests when C1's EXE-07/EXE-08 branch exists, and keep the W2 spike separate from `noema#94` and `noema#90`.
 
@@ -148,3 +148,16 @@ Architect decisions of 1 Nov 2026: pgsodium is approved on condition that checks
 **Result.** 58 of 58 checks pass at head `4206c77`: [run 41314576829](https://github.com/Noemai-org/noema/actions/runs/41314576829), carried by [noema#106](https://github.com/Noemai-org/noema/pull/106). T1 (loads on 17.11 Alpine with no preload, DDL works), T2 (RFC 8032 vectors and altered inputs), T3 (`S + L`, small-order and non-canonical keys, small-order `R`, all-zero signature: all refused, called directly and through the wrapper), T4 (wrapper and trigger: lengths, NULLs, replay across grant, tenant, attempt and state, revoked, not-yet-valid, expired and unknown keys, signed by another key, forged well-formed), T5 (authentication and restriction tested separately, including `pg_temp` shadowing and a superuser in `session_replication_role = replica`) and T6 (library missing, extension dropped: a valid receipt is refused and no row is added) all pass. By the Architect's condition the answer is therefore **pgsodium, not Option C**, subject to W4 and to founder approval under AGENT-14.
 
 **What this does not show.** It is a spike on synthetic data in a throwaway container: nothing here is in `main`, and nothing is adopted. T6 shows the insert fails closed, not that anyone is alerted (DEBT-02, W4). Performance, extension upgrades, and the real canonical bytes (GOV-28) are untested. The spike is test infrastructure and must not be read as DEBT-01 evidence; the closure evidence is SEC-13's, after W4. `pg_ed25519` was rejected on reading its code; I did not run it.
+
+## 11. Addendum, 2026-11-02: T6 pass condition aligned with GOV-28
+
+The T6 row of section 7 originally said the failure is "a `SECURITY_EVENT` rather than silence". The Engineering Lead showed (GOV-28 D13, `DEC-2026-11-01-receipt-and-record-signing`, docs#80) that this cannot hold: while verification is unavailable no Record append can succeed, including the `SECURITY_EVENT` itself. I agree. The T6 row now carries the wording agreed with the Engineering Lead, and the spike (noema#106) was extended to test every part of it that the database can show:
+
+- a correctly signed receipt is refused, with the extension dropped, with its library file missing, and with the verification function raising (its `EXECUTE` revoked from the verifier's owner);
+- no row is added in any of the three cases;
+- no other write of the same transaction is kept (a marker row inserted just before the refused receipt is absent);
+- as in the GOV-28 design (D10), no pgsodium function is executable by `PUBLIC`, and a runtime role cannot call the verifier directly (a new T5 check).
+
+Result: **66 of 66 checks pass** at head `5904374` of noema#106: [run 41427207979](https://github.com/Noemai-org/noema/actions/runs/41427207979).
+
+Not shown by the spike, and so still W4's: that the core returns the error and logs it (structured, redacted), and the human alert (DEBT-02, OD-P-71). The spike's workflow now runs only on a pull request that changes `deploy/spike/pgsodium/**` or the workflow file, or by hand.
