@@ -50,6 +50,11 @@ Each core power that writes signs what it writes with its own Ed25519 private ke
 
 **D4. Key ID and version.** `sig.key_id` is `<identity>.ed25519.<version>`, for example `core-execution.ed25519.3`, matching `^[a-z][a-z-]*\.ed25519\.[1-9][0-9]*$`. `sig.value` is the 64-byte signature as 128 lower-case hex characters. The key ID carries both the identity and the version, so a verifier never infers either. Sorting by key ID is not ordering: the database compares versions as integers.
 
+  **Invariant K1 (key ID binding).** For every row of `signing_key`, `key_id = identity || '.ed25519.' || version` exactly, with `algorithm = 'ED25519'`. The three parts are never stored independently of the ID:
+  - **At registration,** `key_register` takes `identity` and `version` and builds `key_id` itself. A caller cannot supply a `key_id`. A table constraint (`CHECK (key_id = identity || '.' || lower(algorithm) || '.' || version::text)`) and a `UNIQUE (identity, version)` back this up, so a mismatched row cannot exist even if the function were bypassed.
+  - **At verification,** `noema_sig.verify` selects the row by `key_id`, parses the identity and version out of the presented `key_id`, and returns false unless they equal the selected row's `identity` and `version` and the row's `algorithm` is `ED25519`. It never selects by any other column.
+  - **In the audit trail,** `KEY_ROTATED`, `SECURITY_EVENT` and the chain verifier's reports name keys by `key_id` only. Because of K1, that ID names exactly one identity and version, so a rotation or revocation record can never refer to a different key than the one the verifier used.
+
 **D5. Rotation and revocation.**
 - A key is in one of three states: `ACTIVE`, `RETIRED` or `REVOKED`.
   - At most **two** keys per identity are `ACTIVE` (the rotation overlap of REQ-SEC-005). The signer always uses the newest active version.
@@ -111,7 +116,7 @@ The Go writers and verifiers (Controller, Outcome, chain verifier) also require 
 - **It returns false** unless all of the following hold:
   - `sig_hex` matches `^[0-9a-f]{128}$`, so it decodes to exactly 64 bytes;
   - the key ID matches D4;
-  - the key exists, is `ACTIVE`, and its identity equals `claimed_identity`;
+  - the key exists, is `ACTIVE`, its identity equals `claimed_identity`, and the identity and version parsed from the presented `key_id` equal the row's `identity` and `version` (invariant K1, D4);
   - the purpose (`receipt`, `record-event` or `outcome-verdict`) is one that identity may sign (D2);
   - the public key is exactly 32 bytes;
   - `pgsodium.crypto_sign_verify_detached(decode(sig_hex, 'hex'), msg, public_key)` is true.
@@ -216,6 +221,7 @@ Neither pull request is touched by this record; C1 executes W3 and W4 under thei
 | 14 | Mutation check: remove each condition of `noema_sig.verify` and of the trigger in turn; each removal is caught by a test | All | SR |
 | 15 | PERD §47 budget: the verification cost per insert, measured, not assumed | §47 | C1 |
 | 16 | **Event trigger stays disabled.** After bootstrap, every event trigger owned by pgsodium has `evtenabled = 'D'`, and DDL by `noema_migrator` succeeds. Re-enable `pgsodium_trg_mask_update` (as a superuser, simulating an upgrade): `db.Migrate` refuses to run and the core refuses to start, each with a distinct error. Also run after `ALTER EXTENSION pgsodium UPDATE` whenever the pinned version changes | D10a, T1 | C1, SR |
+| 17 | **Key ID binding (K1).** Registration: `key_register` cannot be given a `key_id`; a direct row whose `key_id` differs from `identity.ed25519.version` (wrong identity, wrong version, wrong algorithm text) is refused by the constraint; a second row with the same identity and version is refused. Verification: a row forced in by the migration role with a mismatched `key_id` (to simulate corruption) makes `noema_sig.verify` return false. Rotation: after rotating `core-execution` from version 1 to 2, a signature made by version 1 but presented with a `key_id` naming version 2 (and the reverse) is refused; a revoked version's `key_id` is refused; `KEY_ROTATED` and the chain verifier's report name the same `key_id` that `verify` used | D4, D5, D11 | C1, SR |
 
 ## 11. Fallback: Option C (if W2's spike fails or the Founders refuse pgsodium)
 
