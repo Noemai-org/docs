@@ -88,3 +88,12 @@ If neither self-hosted candidate passes A1 to A7, the fallback is the external-a
 - <https://github.com/seaweedfs/seaweedfs> at `a7a6482`: `README.md`, `LICENSE`, `weed/s3api/s3api_object_retention.go`.
 - <https://github.com/rustfs/rustfs> at `e494dc2`: `README.md`, `Cargo.toml`, `crates/e2e_test/src/object_lock/`.
 - Requirement text: PERD v1.19 REQ-AUD-007; D19 of DEC-2026-10-31-proof-depth-and-completeness; SoT §46 OD-06.
+
+## 9. Addendum, 2026-11-02: Architect's decisions, and the spike
+
+Relayed by the Architect on 2 Nov 2026. They count as decisions once a founder commits them (AGENTS.md section 2); until then they scope the work only.
+
+1. **Spike approved:** run A1 to A7 on SeaweedFS first, then pgsty/silo, as test infrastructure only (the spike is [noema#110](https://github.com/Noemai-org/noema/pull/110)).
+2. **Principle:** the production anchor store must sit in an account whose credentials the runtime operator does not hold. This answers question (2) of section 6 in direction and resolves the separation limit of section 2.2 for production: a store in Compose is the test double for the same S3 interface and is never described as "separately controlled". **The vendor is decided later, after the cloud documentation is verified** (I could not read any cloud vendor's documentation from my session, section 7). Until then no cloud vendor is named in a requirement or a plan.
+3. The spike's design notes: the harness is a standard-library SigV4 client (no new client dependency), with a self-check against the signature in AWS's published example; the SeaweedFS image is pinned by the digest of the index Docker Hub served on 2 Nov 2026 (trust-on-first-use: no image signature was verified); three synthetic identities (administrator with every Object Lock action, a write-only core writer, a read-only verifier); only the S3 port is published. Retention set by the writer (A7) is tested in both directions: a past date, and a date shorter than the bucket default.
+4. **Results** are in the pull request that carries the spike, with a check-run link at its final head. Nothing in this document is changed by results until they exist.
