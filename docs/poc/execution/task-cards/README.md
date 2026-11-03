@@ -25,3 +25,4 @@
 | [ENV-14](ENV-14.md) | G0-N, the Noema half of G0, Thu 22 Oct 17:00 | Thu 22 Oct |
 | [OUT-01](OUT-01.md) | Outcome Verifier, verify-by-key scope | Fri 23 Oct |
 | [ENV-12](ENV-12.md) | Walk through, agree and sign the acceptance worksheet with Tushe at the joint session | To be confirmed by Tushe (G0-T) |
+| [UND-12](UND-12.md) | Async safety of the model service's blocking HTTP transports | To be dated at the re-baseline |
