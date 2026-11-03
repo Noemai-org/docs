@@ -39,6 +39,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-28-spent-grant-void](DEC-2026-10-28-spent-grant-void.md) | PERD §38.2: a SPENT `decision_grant` becomes VOID only for a confirmed `REJECTED_STALE_VERSION` refusal; receipt, invalidation, RecoveryRequest and outbox in one transaction; the Record keeps `GRANT_SPENT`; PERD v1.18 (Accepted in principle) |
 | [DEC-2026-10-29-receipt-signature-alert](DEC-2026-10-29-receipt-signature-alert.md) | A failed receipt signature alerts a human: the five rules and the exact PERD sections the next PERD version changes; recipient and channel are placeholders (Proposed; keeps DEBT-02 open) |
 | [DEC-2026-10-31-proof-depth-and-completeness](DEC-2026-10-31-proof-depth-and-completeness.md) | Context Fabric, compensation, authenticated Record writers, external anchoring, crash-point and corrupted-payload testing, per-merge chaos subset and pass^k pulled into the POC; practices not adopted; SoT v1.10, PERD v1.19, plan v1.10 |
+| [DEC-2026-11-03-demo-date-and-no-scope-cut](DEC-2026-11-03-demo-date-and-no-scope-cut.md) | The Founder's orders of 3 Nov: demo Sat 12 Dec 2026 14:00 WAT, fixed; Monday to Saturday are work days; no scope is cut (plan §2's cut line and C8's cut-now rows are not applied); the gate-failure protocol; the gate calendar (targets and latest dates); supersedes the dates of plan v1.10 and the gate records (Proposed until merged) |
 
 ## Where decisions already live
 
