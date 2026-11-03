@@ -1,6 +1,6 @@
 # Change request: CR-2026-11-01-GOV-30 · Re-baselined gate dates (proposal)
 
-> **Update, 3 Nov 2026: the proposed dates in §3 are superseded by the Founder's standing orders, recorded in [DEC-2026-11-03](../../decisions/DEC-2026-11-03-demo-date-scope-and-working-rules.md) (demo Sat 12 Dec 2026).** This request stays as the feasibility evidence; DEC-2026-11-03 §4 restates it against the Founder's dates. Its §4 questions are answered by that record, except the Tushe pause (still **CONFIRM**).
+> **Update, 3 Nov 2026: the proposed dates in §3 are superseded by the Founder's standing orders, recorded in [DEC-2026-11-03](../../../decisions/DEC-2026-11-03-demo-date-scope-and-working-rules.md) (demo Sat 12 Dec 2026).** This request stays as the feasibility evidence; DEC-2026-11-03 §4 restates it against the Founder's dates. Its §4 questions are answered by that record, except the Tushe pause (still **CONFIRM**).
 
 - **Change ID:** CR-2026-11-01-GOV-30
 - **Requester:** Engineering Lead (role agent, for the EL role of plan §4), under DEC-2026-10-31-proof-depth-and-completeness D32 and plan task GOV-30. **This is a proposal.** It sets no date: the Founders record dates in the gate records (D32; plan §3.1 gate rules). Started on the Architect's instruction of 1 Nov 2026, from docs#77's counts, before docs#77 merged. **docs#77 merged on 1 Nov 2026 (`90bba64`); the counts on `main` are unchanged** (25 Done, 3 In review, 48 In progress, 18 Ready, 152 Backlog, 15 Unassessed), so nothing below changes. D32's two working days from OPS-09 end on Tue 3 Nov 2026.
