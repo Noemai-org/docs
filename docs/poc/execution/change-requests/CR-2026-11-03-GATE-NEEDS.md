@@ -30,7 +30,7 @@ The 20 provisional rows of plan v1.11 (UND-09 to UND-13, BEN-30, BEN-31, PCK-04,
 1. **Longer Needs cells.** GOV-12 would list about 55 more tasks; ENV-14 about 47. The tool accepts it (Needs may name any earlier-positioned task, and plan v1.11 orders every group topologically).
 2. **A review row that needs a task does not wait for it to be dated earlier.** Under the standing orders a task starts when its own prerequisites are on `main`; the review row's new Needs only say the gate cannot pass before they are Done.
 3. **Gate-order dependencies stay as they are.** For example no comparison arm starts before G3 passes (SoT §38.5): BEN-21 to BEN-25 and ARM-04 are added to GOV-13 (G4 and G5), and the existing arm rows already need G3 through GOV-12.
-4. **Done rows.** Tasks that are already Done (for example PLT-02, REC-01's neighbours) are listed too; they cost nothing and make the closure complete.
+4. **Done rows.** Tasks that are already Done (for example PLT-02 and PLT-03) are listed too; they cost nothing and make the closure complete.
 
 ## Options
 
