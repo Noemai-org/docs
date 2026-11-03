@@ -7,6 +7,13 @@
 - **Owner:** Founder and Technical Co-Founder.
 - **Authority order applied:** SoT v1.10 → decision records (DEC-2026-10-28-spent-grant-void, DEC-2026-10-29-receipt-signature-alert, DEC-2026-10-31-proof-depth-and-completeness D18 to D20) → PERD v1.19 → plan v1.10.
 
+## Recommendation to the Founders (2 Nov 2026)
+
+1. **Approve OD-P-72: pgsodium v3.1.11** (commit `a8b8a27`) built into the digest-pinned `postgres:17.11-alpine` image, using only `crypto_sign_verify_detached` behind the migration-owned wrapper. The spike passed 66 of 66 checks, T1 to T6 ([run 41427207979](https://github.com/Noemai-org/noema/actions/runs/41427207979), noema#106, test infrastructure only). Alpine builds it; one bootstrap step (D10a) and its guard (test 16) are the price.
+2. **Approve OD-P-73's safe default:** no Record keys for `model-service` and the seven adapter identities. The database then refuses any event that claims them; nothing appends as them today.
+3. **Order after approval:** this record → docs#84 (W2 T6 wording) → the Repo Steward's PERD v1.20 PR (§9 step 1) → EXE-07 (W3) → EXE-08 (W4) → SEC-13 → noema#94, then noema#90.
+4. **Stated limits you accept by approving:** a compromised core process holds every power's key, the `admin` key included (D2a, §7.1); the migration role and the superuser stay trusted (§7.2); DEBT-02 (the human alert) stays open.
+
 ## 1. Inputs, and what each one fixes
 
 | Input | What it fixes for this design |
@@ -38,15 +45,29 @@ Each core power that writes signs what it writes with its own Ed25519 private ke
 | `core-outcome` | Outcome verdicts; its Record events | **Separate from `core-execution`**, so Outcome's verification of a receipt stays independent (SoT §13.1; §8) |
 | `core-trust` | Its Record events | Grants stay HMAC (D1) |
 | `core-evidence`, `core-workflows`, `core-edge`, `core-record` | Their Record events | Each gets a key when it first writes an event; until then it has no key and cannot append |
-| `admin` (control plane) | `KEY_ROTATED`, `POLICY_PUBLISHED`, `PACK_LOADED`, `KILL_SWITCH_CHANGED`, `CONFIG_CHANGED` | The admin key is held by the operator tooling, not by the core's runtime |
+| `admin` (control plane) | `KEY_ROTATED`, `POLICY_PUBLISHED`, `PACK_LOADED`, `KILL_SWITCH_CHANGED`, `CONFIG_CHANGED` | **Held by the core** for its admin-API handler (D2a). A stated limit, not an oversight |
 | `model-service`, and the adapter emitters `mock-ledger`, `mock-switch`, `mock-destination`, `mock-customer`, `mock-policy`, `mock-case`, `mock-clock` | **Nothing in the POC** | **Open: [OD-P-73](../open-decisions.md#od-p-73).** No code appends as these today. Safe default: no key is registered, so the database refuses any event that claims them. The model service never holds a Record key or any core credential (INV-29) |
 | `benchmark-runner` | Nothing | Already refused by the core (`BENCHMARK_ONLY` in `actors.json`) |
+
+**D2a. How admin events are signed and reach the Record (Founders' order, 2 Nov 2026).**
+- **Who appends.** In the POC the control-plane operations (policy publish, pack load, kill switch, key rotation, configuration) are served by the core process's admin API (PERD §41.1; DEC-2026-10-17: the core is one deployable). A publish changes the policy, voids the unspent grants and appends `POLICY_PUBLISHED` and `GRANT_VOIDED` in **one Postgres transaction** (PERD §23.4, INV-26). So the process that runs that transaction must append the admin event in it.
+- **How it is written.** `written_by = admin`; `actor = admin:<id>` of the authenticated administrator, taken only from the IdP session (INV-12); signed with the `admin` private key (D6, over the event including `prev_hash`); appended through `record_insert` like every other event, in the same transaction as the change it records.
+- **The limit, stated plainly: the core must hold the `admin` key.** The key is its own mounted secret, read only by the admin-API package (an architecture-lint rule), and distinct from every other power's. But a compromised core process can sign admin events, for example a false `KILL_SWITCH_CHANGED`. What the database check proves is that the event was signed by the `admin` key, not that an administrator asked for it. What bounds it: the admin API needs a valid administrator session (REQ-SEC-006); every admin event names that administrator in `actor`; and external anchoring (REQ-AUD-007) makes a later rewrite detectable. It is the same limit as §7.1, here for the `admin` identity.
+- **Not done in the POC.** A separate operator tool holding the `admin` key would need its own Record credential and a way to take part in the publish transaction: a new role and a new deployable (AGENT-14, PERD §36.1). That is the Phase 2 step, with the managed key service (D3).
+- **Key registration is announced.** The deploy step registers public keys without a Record event (it holds no signing key, D3a). At start-up the core appends `KEY_ROTATED` (signed by `admin`) for every `signing_key` version that has none yet, so every registration reaches the Record. Test 20 covers it.
 
 **D3. Custody.**
 - Each private key is a separate file-mounted secret (PLT-05; OQ-09 decides the shared-environment secrets manager). It is read at start-up only by the package of the power that owns it, and never by another. An architecture-lint rule enforces this: `execution` cannot import Outcome's signer, and `outcome` cannot import Execution's.
 - No private key enters PostgreSQL, a log, a trace, a fixture, a PR or the model service. The SEC-07 scanner covers logs.
 - Signing uses Go's standard library `crypto/ed25519`. That is not a new dependency.
 - Before Phase 2, keys move to a regional managed key service (REQ-SEC-005, SoT §47.4). This record does not move them.
+
+**D3a. Key lifecycle at deploy (Founders' order, 2 Nov 2026).**
+- **Generated outside the database and outside the core.** Private keys are generated at deploy by an operator step (standard library `crypto/ed25519`; no new dependency), written as `0400` files in the secrets directory of the owning service, and mounted as secrets into that service's process only. The core never generates a key at run time. A migration never generates one.
+- **Public keys are registered by the migrator at deploy.** The operator step also writes each public key and its metadata (`identity`, `version`) to a public deploy artifact. The one-shot migrate step (D14a) reads that artifact and calls `key_register`, the only way a key becomes `ACTIVE` (D5).
+- **No key material in migrations.** The SQL migrations create `signing_key` empty and contain no key bytes, private or public. A key reaches the database only through `key_register` at deploy.
+- **Fixtures hold only synthetic test keys, each labelled.** A test key is generated for the test, carries the explicit label `SYNTHETIC` (a `"synthetic": true` member or a `.synthetic.` file name), is never mounted in a deployment and is never passed to `key_register` by the deploy step (AGENT-25). The golden vectors' existing test-only key is one of these.
+- **Test 19** pins all of it.
 
 **D4. Key ID and version.** `sig.key_id` is `<identity>.ed25519.<version>`, for example `core-execution.ed25519.3`, matching `^[a-z][a-z-]*\.ed25519\.[1-9][0-9]*$`. `sig.value` is the 64-byte signature as 128 lower-case hex characters. The key ID carries both the identity and the version, so a verifier never infers either. Sorting by key ID is not ordering: the database compares versions as integers.
 
@@ -62,7 +83,7 @@ Each core power that writes signs what it writes with its own Ed25519 private ke
 - **Retirement** is routine. Objects signed while the key was active still verify for the chain verifier (REQ-AUD-005), because the key table keeps retired keys and the time they were retired.
 - **Revocation** is for a key believed compromised. It records `compromised_since`. The chain verifier reports every object signed under a revoked key at or after `compromised_since` as untrusted for human review; it never silently accepts them.
 - Only the migration role changes the key table, through three functions it owns: `key_register`, `key_retire` and `key_revoke`. No runtime role can execute them.
-- Each change appends `KEY_ROTATED`, written by `admin`. The first keys are registered by the migration that creates the table, which writes no event; the first `KEY_ROTATED` follows the first rotation.
+- Every registration is announced by a `KEY_ROTATED` event written by `admin` (D2a). Keys are registered by the deploy step (D3a), never by a migration.
 
 ## 4. Canonical bytes: exactly what is signed
 
@@ -140,6 +161,11 @@ The Go writers and verifiers (Controller, Outcome, chain verifier) also require 
 - **Design requirement (Architect, 1 Nov 2026):** `execution_rw`, and every other runtime role (`trust_rw`, `outcome_rw`, `evidence_rw`, `orchestrator_rw`, `record_append`), is **never** a member of `noema_migrator`, directly or through another role. A test pins this from `pg_auth_members`, recursively.
 - **No privileged attributes.** No runtime role is `SUPERUSER`, `CREATEROLE`, `CREATEDB`, `REPLICATION` or `BYPASSRLS` (pinned).
 
+**D14a. Migrations are a separate one-shot step; its credential is never in the core's runtime (Founders' order, 2 Nov 2026).**
+- **Where `db.Migrate` runs today (checked 2 Nov 2026 on `noema` `main`).** Only in Go tests (`platform/db/migrate_test.go`, `schema_test.go`, `record/chain/chain_test.go`), with an admin connection to a throwaway database. `cmd/core` is the health-only skeleton and never calls it; no Compose service or deploy script runs it. The superuser secret is mounted into the `postgres` container only, and `core` receives only `noema_core_password`. So the migrator credential is not in the core's runtime today, **by absence of a migration step, not by design.**
+- **Design.** A separate binary `cmd/migrate` (not imported by `cmd/core`, so the core image's entrypoint cannot migrate) and a one-shot Compose service `migrate`. Its secret, the migrator login's password, is mounted into `migrate` and into the one-time Postgres bootstrap (D10a) and nowhere else. `core` has `depends_on: migrate: condition: service_completed_successfully`, no migrator secret and no migrator DSN in its environment. The migrator login is a member of `noema_migrator`; W4 decides between that login and the superuser after checking what migration `0001` needs (`GRANT record_append TO CURRENT_USER` and ownership hand-overs), and either way the credential is never available to the core.
+- **Test 18** pins it.
+
 **D15. What `noema_migrator` owns**, after W4 and REC-08:
 - the tables `execution_receipt`, `record_event`, `record_chain_head`, `signing_key` (and `outcome_verdict` when it is created);
 - the functions `noema_sig.verify`, the trigger functions, `receipt_insert`, `key_register`, `key_retire`, `key_revoke`;
@@ -161,11 +187,14 @@ Today `record_event` and `record_chain_head` are owned by **`record_append`**, n
 - But **the owner of the Record table is the same role whose definer functions append to it.** A verification trigger on that table would be removable by any session that can act as `record_append`.
 - No named migration role exists, so the requirement "owned by the migration role" cannot be checked.
 
+**A second deviation (found 2 Nov 2026).** `deploy/compose/postgres/init.sh` creates the database `noema` with `OWNER noema_core`, and `noema_core` is the core's runtime login. So **the core's login owns the database** and can create schemas and objects in it, which D16 forbids for every runtime role. W4 makes the migrator the database owner, grants `noema_core` only membership of the six power roles (`NOINHERIT`, used through `SET ROLE`) and never of `noema_migrator`, and removes its `CREATE` on the database and every schema (test 7 pins it).
+
+
 W4 transfers both tables to `noema_migrator` (D15), grants `record_append` what D16 says, and adds the pins. It is a forward-only migration; `0001` is not edited.
 
 ## 7. What this design does not fix (stated plainly)
 
-1. **Compromise of a private key, or of the core process.** The core is one deployable (PERD §41.1, DEC-2026-10-17: one service identity at the network level). Every power's private key is in one process's memory. An attacker inside that process can sign as any power. This design defeats a **stolen database credential**, not a compromised core process. Separating keys by process needs per-power deployables or a managed key service with per-power credentials (before Phase 2).
+1. **Compromise of a private key, or of the core process.** The core is one deployable (PERD §41.1, DEC-2026-10-17: one service identity at the network level). Every power's private key, the `admin` key included (D2a), is in one process's memory. An attacker inside that process can sign as any power. This design defeats a **stolen database credential**, not a compromised core process. Separating keys by process needs per-power deployables or a managed key service with per-power credentials (before Phase 2).
 2. **The migration role and the superuser.** Anyone who can act as `noema_migrator` or as a superuser can change the key table, the function or the trigger, or write rows directly. External anchoring (REQ-AUD-007, REC-07) makes a rewrite of history detectable afterwards; nothing makes it impossible. The word stays **tamper-evident** (D20).
 3. **Outcome still verifies independently.** A receipt the database accepted was signed by `core-execution`'s key. That proves who signed it, not that the write happened as the receipt says. Outcome reads the target by key and checks the receipt's signature with `core-execution`'s public key (SoT §13.1 "Checks" row; INV-04; OUT-01). The database check does not replace it.
 4. **The alert.** A refused signature is recorded where it can be, but no human is told. DEBT-02 stays open.
@@ -191,7 +220,7 @@ Neither pull request is touched by this record; C1 executes W3 and W4 under thei
 | Step | Task, owner | What lands | Gate to the next step |
 |---|---|---|---|
 | 0 | SEC-12, SR | W2 merged (docs#78). Spike T1 to T6 already passed in CI (run 41314576829, noema#106, outside `main`) | W2 merged with the agreed T6 wording |
-| 1 | GOV-28, Founders | This record approved, with the PERD v1.20 text of §12 in the same docs PR (AGENT-29), OD-P-72 decided | — |
+| 1 | GOV-28, Founders; then the Repo Steward | This record approved, OD-P-72 and OD-P-73 decided. **The Repo Steward applies the PERD v1.20 text of §12 in a PR opened the day this record merges** (Founders' order, 2 Nov 2026), with the regenerated indexes. The decision record and the register are in this PR (AGENT-29); until v1.20 merges, §12 and this record win over PERD v1.19 | PERD v1.20 merged |
 | 2 | EXE-07 (W3), C1 | Go signer and verify-only interfaces in `platform/crypto`; key registry; key loading from file; the Controller signs receipts with Ed25519 (no database change yet); golden vectors | Signing and rotation tests green; no key material in logs or traces |
 | 3 | EXE-08 (W4), C1 | Custom `postgres:17.11-alpine` image (D10); the bootstrap step of D10a (`CREATE EXTENSION`, event trigger disabled, setting off) and its migration and start-up guards; the next free migration number: `noema_migrator`, `noema_sig` schema, `signing_key`, `noema_sig.verify`, the receipt trigger, `signed_jcs` on `execution_receipt`, ownership transfer of §6.1, `receipt_insert`, the revocations of D16; `schema_test.go` pins; `docs/db_schema.md` regenerated | The §10 tests that W4 owns, green in CI at its final head |
 | 4 | EXE-04, C1 | `noema#94`: merge `main` in (no rebase). Its migration is renumbered to the next free number, which is allowed only because it has never merged. Its guard keeps the confirmed-refusal conditions of REQ-EXE-004. Condition (g) changes from "64 lower-case hex (HMAC shape)" to "the receipt row exists": the receipt can only exist if the trigger verified it. Its shape tests become verification tests with fixtures signed by a synthetic test key | DEBT-01 criteria (1) to (6) evidenced by SR (SEC-13); EL closes DEBT-01 |
@@ -222,6 +251,9 @@ Neither pull request is touched by this record; C1 executes W3 and W4 under thei
 | 15 | PERD §47 budget: the verification cost per insert, measured, not assumed | §47 | C1 |
 | 16 | **Event trigger stays disabled.** After bootstrap, every event trigger owned by pgsodium has `evtenabled = 'D'`, and DDL by `noema_migrator` succeeds. Re-enable `pgsodium_trg_mask_update` (as a superuser, simulating an upgrade): `db.Migrate` refuses to run and the core refuses to start, each with a distinct error. Also run after `ALTER EXTENSION pgsodium UPDATE` whenever the pinned version changes | D10a, T1 | C1, SR |
 | 17 | **Key ID binding (K1).** Registration: `key_register` cannot be given a `key_id`; a direct row whose `key_id` differs from `identity.ed25519.version` (wrong identity, wrong version, wrong algorithm text) is refused by the constraint; a second row with the same identity and version is refused. Verification: a row forced in by the migration role with a mismatched `key_id` (to simulate corruption) makes `noema_sig.verify` return false. Rotation: after rotating `core-execution` from version 1 to 2, a signature made by version 1 but presented with a `key_id` naming version 2 (and the reverse) is refused; a revoked version's `key_id` is refused; `KEY_ROTATED` and the chain verifier's report name the same `key_id` that `verify` used | D4, D5, D11 | C1, SR |
+| 18 | **Migrator credential never in the core's runtime (D14a).** (i) A Compose test: the migrator secret is mounted only into `postgres` (bootstrap) and `migrate`; `core`'s `secrets`, `environment` and `env_file` hold no migrator credential or DSN; `core` depends on `migrate` with `service_completed_successfully`; `migrate` has no published port and runs once. (ii) An architecture-lint rule with a canary tree: `cmd/core` and everything it imports must not import `services/core/migrations` or call `db.Migrate`. (iii) With only the core's runtime login: `CREATE TABLE`, `CREATE SCHEMA` and `CREATE EXTENSION` fail; the login does not own the database; it is not a member of `noema_migrator` (item 7). Written failing first against `main`, where (iii) fails because `noema_core` owns the database | D14, D14a, §6.1 | C1, SR |
+| 19 | **Key lifecycle (D3a).** (i) A scan test over `services/core/migrations/*.sql` finds no key material: no 32-byte or 64-byte hex or base64 string, no PEM block, no `ed25519` literal other than the algorithm name. (ii) A test over the repository's test and fixture trees: every Ed25519 key or seed carries the `SYNTHETIC` label, and none is referenced by `deploy/`. (iii) The deploy step registers only keys from the public deploy artifact; given a synthetic key it refuses. (iv) A private key file is mounted only into its owning service's container (Compose test), has mode `0400`, and the core refuses to start if a key file is group- or world-readable. (v) The gitleaks canary set gains an Ed25519 private-key case that must fail CI | D3, D3a, PLT-02 | C1, SR |
+| 20 | **Admin events (D2a).** A policy publish appends `POLICY_PUBLISHED` and the `GRANT_VOIDED` events in one transaction; the admin event has `written_by = admin`, `actor = admin:<id>` from the session, and verifies under the `admin` key. An event claiming `written_by = admin` but signed by `core-execution`'s key is refused. A request with no administrator session appends nothing. At start-up `KEY_ROTATED` is appended for every `signing_key` version with none, and not twice on a second start. The `admin` key file is read only by the admin-API package (architecture-lint rule with a canary) | D2a | C1, SR |
 
 ## 11. Fallback: Option C (if W2's spike fails or the Founders refuse pgsodium)
 
@@ -321,7 +353,7 @@ And its acceptance criterion, appended:
 >
 > `admin`, before: Policy publish; pack load; kill switch; key rotation
 >
-> after: Policy publish; pack load; kill switch; key rotation; Ed25519 event signing key (`admin`), held by the operator tooling
+> after: Policy publish; pack load; kill switch; key rotation; Ed25519 event signing key (`admin`), mounted in the core for the admin-API handler (a stated limit: a compromised core can sign admin events)
 
 **12.8 §36.1, a row added after "HMAC-SHA-256 grants and confirmations".**
 
