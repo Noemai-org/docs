@@ -2,7 +2,7 @@
 
 Date: <YYYY-MM-DD> · Protocol: [`../protocols/EXP-06-operator-test.md`](../protocols/EXP-06-operator-test.md) · Packet version: <commit of `noema` that produced the packets> · Observer: <role or code>
 
-SYNTHETIC cases only. No real customer data, no held-out case, no operator name.
+SYNTHETIC cases only. No real customer data, no held-out case, no operator name. The reference answers are not copied here: the observer marks each answer right or wrong, and no agent has seen them.
 
 ## Case runs
 

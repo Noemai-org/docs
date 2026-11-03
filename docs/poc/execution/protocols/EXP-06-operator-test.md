@@ -13,9 +13,11 @@ That a person who works escalations can understand an escalated case, and decide
 | The packet exists on every escalation | EXP-05 Done (`RECORD_INVESTIGATION_EVIDENCE` attaches it; US-14 packet contains every listed element) | C2 |
 | At least three operators who work escalations, from the Founders' network until a design partner exists | the Founders | Founders |
 | Each operator's confidentiality terms confirmed | the Founders (outside the repositories) | Founders |
-| At least five escalated cases per operator, synthetic, never from the held-out set (OD-16, REQ-AGT-004) | the benchmark generator's non-held-out cases, chosen by the Benchmark Owner agent | Benchmark Owner agent |
-| The oracle answer for each case: what happened, and the next action | the case's oracle, read by the Benchmark Owner agent only | Benchmark Owner agent |
+| At least five escalated cases per operator, synthetic, never from the held-out set (OD-16, REQ-AGT-004), chosen by the human Benchmark Owner (B) | the benchmark's non-held-out cases | B (a person) |
+| A reference answer for each case: what happened, and the next action | written by B through the oracle process, on paper or in a file no agent opens; kept by the observer, a person | B (a person) |
 | A rendering of the packet that shows exactly the packet fields, masked (no other screen) | C2 | C2 |
+
+No agent requests, reads or infers an oracle or a reference answer (INV-22, REQ-AGT-004, AGENTS.md section 5). An agent produces only the packets, from the runs of the chosen cases, and the blank record template. The record keeps only "right" or "wrong" against the reference answers, never the answers themselves.
 
 The cases together cover, at least: an unknown outcome after a timeout (US-06), contradictory state (US-14), stale evidence, a pending settlement (US-17), and an ambiguous recipient. A case an operator has seen is not reused for them.
 
@@ -26,12 +28,12 @@ The cases together cover, at least: an unknown outcome after a timeout (US-06), 
    - **Lookups:** each fact the operator asks for or says they would look up, in their words, and why. A lookup is a gap even when the operator guesses right.
    - **Their answer:** what happened to the money or the case, and what they would do next.
    - **Confidence:** 1 (a guess) to 5 (certain).
-3. The timer stops when the operator has stated both answers. The observer then compares them with the oracle: right or wrong on "what happened" and on "next action".
+3. The timer stops when the operator has stated both answers. The observer, a person, then compares them with the reference answer: right or wrong on "what happened" and on "next action".
 4. No hints. If the operator is stuck, they say so; that is recorded as a lookup of "unknown".
 
 ## The record
 
-One file per session cycle in `docs/poc/execution/operator-tests/YYYY-MM-DD-EXP-06.md`, from [`../templates/operator-test-record.md`](../templates/operator-test-record.md): a row per case run (operator code, case ID, seconds to understand, lookups, both answers against the oracle, confidence) and a list of gaps. Operators are named O1, O2, O3; their names stay outside the repositories. No real customer data and no held-out material appears in the record.
+One file per session cycle in `docs/poc/execution/operator-tests/YYYY-MM-DD-EXP-06.md`, from [`../templates/operator-test-record.md`](../templates/operator-test-record.md): a row per case run (operator code, case ID, seconds to understand, lookups, both answers marked right or wrong against the reference answer, confidence) and a list of gaps. Operators are named O1, O2, O3; their names stay outside the repositories. No real customer data and no held-out material appears in the record.
 
 ## Turning gaps into changes
 
