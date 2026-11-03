@@ -7,7 +7,7 @@ The release evidence bundle for the G6 release run (plan §13.4, REQ-BEN-008).
 - **The oracle and held-out cases are referenced by hash, never included.**
 - **The bundle hash is recorded in this folder** once the bundle exists.
 
-Nothing else goes in this folder until the release run happens.
+Nothing else goes in this folder until the release run happens, except [`claims.md`](claims.md), which holds the claim rules and an empty register from 3 Nov 2026 (task GOV-29) and is filled only from the bundle.
 
 **Contents (plan §13.4, verbatim):**
 
