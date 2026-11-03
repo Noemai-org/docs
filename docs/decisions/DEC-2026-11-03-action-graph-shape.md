@@ -3,7 +3,7 @@
 - **Status:** Decided by the Founder on 3 November 2026 in a work order given in a working session. **It counts only once this record is merged** (AGENTS.md §2.3, SoT §0.4); the Technical Co-Founder confirms by approving the pull request that adds it.
 - **Date:** 3 November 2026
 - **Task:** PCK-04 (Action Graph verification). Prepared by the Engineering Lead role agent.
-- **Closes:** none. Settles two points a review of noema#104 found were not committed: the connectedness rule and the `roots` field. It also settles the question PCK-04 left open: whether a root may have an incoming edge.
+- **Closes:** none. Settles the graph shape only: the `roots` field, the connectedness rule and whether a root may have an incoming edge, which a review of noema#104 found were not committed. **It settles nothing about PCK-02**: PCK-04's `Needs: PCK-02` is unchanged by this record.
 - **Owner:** Founder and Technical Co-Founder.
 - **Authority order applied:** SoT v1.10 → decision records (DEC-2026-10-31 D9) → PERD v1.19 REQ-AG-001 → plan v1.10.
 
@@ -15,7 +15,6 @@
 | D2 | **Every non-root node needs at least one incoming edge** (an edge whose `node_id` is that node, with its `depends_on`) |
 | D3 | **A root has no incoming edge.** (The text of D9 and REQ-AG-001 does not say; this settles it.) |
 | D4 | **A graph with more than one node must be weakly connected:** every node is reachable from every other when the direction of the edges is ignored. A list of nodes without edges, or with edges that leave it in separate pieces, fails. A graph of one node is connected |
-| D5 | **PCK-04's dependency on PCK-02 is narrowed, by this record, to PCK-02's graph-shape part.** PCK-04 (`Needs: PCK-02`) builds on one thing PCK-02 was still missing: rejection of a flat-list graph (DEC-2026-10-31 D9, plan v1.10 PCK-02 row), which noema#104 delivers. **PCK-02 as a whole is not satisfied and stays In progress.** Its other open item, **template coverage** (REQ-EXP-002: fallback explanation templates for every outcome × classification in all five locales, 100%, checked by `packcheck`), is a separate acceptance criterion that PCK-04 does not deliver and cannot: `packs/fintech/templates/` is empty and the templates are EXP-04's (Core Engineer 2, with native-speaker review). The Founders' work order of 3 Nov said PCK-02 is "satisfied by this same change"; the facts in §3 show it is satisfied only in the graph-shape part, so this record states the narrowing and not a completion. Everything else in PCK-02's done-when is unchanged and still gates PCK-02. `noema#104` proceeds once this record merges |
 
 The other graph rules of DEC-2026-10-31 D9 and REQ-AG-001 stand unchanged: every node has a postcondition; every write node has a precondition; `on_unknown` and `on_failure` are set; a plan is a path in the graph (REQ-AG-003).
 
@@ -33,7 +32,7 @@ PERD v1.19 is not edited in place. REQ-AG-001 becomes, in PERD v1.20 (the same P
 
 ## 3. Evidence and effect
 
-- **What was checked on 3 Nov 2026 (for D5).** `tools/packcheck/checks.py` already checks that every policy template a capability names is a rule of the policy (lines 106 and 123). It has no check of explanation-template coverage, and none can pass today: `packs/fintech/templates/` holds only a README. The review of this record by Codex found the same gap and was right that it cannot be called satisfied.
+- **What was checked on 3 Nov 2026 (PCK-02 is not changed by this record).** `tools/packcheck/checks.py` already checks that every policy template a capability names is a rule of the policy (lines 106 and 123). It has no check of explanation-template coverage, and none can pass today: `packs/fintech/templates/` holds only a README. The review of this record by Codex found the same gap and was right: this record does not satisfy PCK-02. The Founders' earlier statement that PCK-02 is "satisfied by this same change" was wrong and is withdrawn. PCK-02's open acceptance is handled in its own task.
 - **Why connectedness is needed.** With a free `roots` list, a flat list of endpoints passes by declaring every node a root, and D2 alone would never reject it. D3 and D4 close that: every root has no incoming edge, and the pieces must join.
 - **What noema#104 changes after this merges:** it adds the rule of D3 (a failing test first: a root with an incoming edge), keeps the rest, and merges `main` in. It is also waiting on Core Engineer 2's `beneficiary` and `account` evidence descriptors, so that the two read nodes with no postcondition can get one; the pack is not exempted.
 - **Unsafe autonomy surface:** decreases. A pack whose graph is a list of endpoints can no longer load.
