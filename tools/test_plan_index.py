@@ -49,9 +49,32 @@ class Dates(unittest.TestCase):
         self.assertEqual(tasks["GOV-01"]["week"], 1)
         self.assertEqual(tasks["DEM-03"]["week"], 4)
 
+    def test_weeks_five_to_eight_carry_the_schedule_to_the_demo(self):
+        # Founder's standing orders, 3 Nov 2026: work days are Monday to Saturday and the demo is Sat 12 Dec.
+        text = plan(
+            day("Wednesday 4 November · G0-N", "| GOV-01 | A | FND | — | — | x |"),
+            day("Wednesday 18 November · G2", "| GOV-02 | B | FND | — | — | x |"),
+            day("Sunday 29 November · End of week 6", "| GOV-03 | C | FND | — | — | x |"),
+            day("Tuesday 1 December · G3", "| GOV-04 | D | FND | — | — | x |"),
+            day("Saturday 12 December · Demo", "| DEM-03 | E | FND | — | — | x |"),
+        )
+        tasks, errors = run(text)
+        self.assertEqual([tasks[i]["week"] for i in ("GOV-01", "GOV-02", "GOV-03", "GOV-04", "DEM-03")], [3, 5, 6, 7, 8])
+        self.assertEqual(tasks["DEM-03"]["date"], "2026-12-12")
+        self.assertFalse(only(errors, "outside the schedule"))
+
+    def test_a_saturday_is_inside_its_week(self):
+        tasks, _ = run(plan(day("Saturday 7 November · Work day", "| GOV-01 | A | FND | — | — | x |")))
+        self.assertEqual(tasks["GOV-01"]["week"], 3)
+
     def test_date_outside_the_window_is_an_error(self):
-        _, errors = run(plan(day("Monday 16 November · Late", "| GOV-01 | B | FND | — | — | x |")))
-        self.assertTrue(only(errors, "outside the four weeks"))
+        for heading in ("Monday 14 December · Late", "Sunday 18 October · Early"):
+            with self.subTest(heading):
+                tasks, errors = run(plan(day(heading, "| GOV-01 | B | FND | — | — | x |")))
+                if heading.startswith("Sunday 18 October"):
+                    self.assertEqual(tasks["GOV-01"]["week"], 0)  # week 0 is the work delivered before the re-baseline
+                else:
+                    self.assertTrue(only(errors, "outside the schedule"))
 
 
 class TbcDate(unittest.TestCase):
