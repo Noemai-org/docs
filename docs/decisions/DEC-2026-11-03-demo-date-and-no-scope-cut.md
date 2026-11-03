@@ -44,13 +44,22 @@
 | Plan §11 code freeze "Wed 11 Nov 12:00 WAT" and §14 demo date | §2 |
 | Plan §2 cut line, and DEC-2026-10-16-contract-and-pack-clarifications C8 items 1 to 3 ("cut now") | D3. The rows C8 changed return to their earlier scope: **VOI-04** (TTS for all five locales, not English and Pidgin only), **UI-01 to UI-06** (beyond the PERD §40 minimum) and **ARM-04** (arms E and F built and run, not written up as "not tested") |
 
+**Supersession clause.** On the day this record merges, and from then on, this record overrides exactly the following, and nothing else:
+
+1. **Plan v1.10 §2 (the cut line)** and DEC-2026-10-16-contract-and-pack-clarifications C8 items 1 to 3 (VOI-04, UI-01 to UI-06, ARM-04), by D3.
+2. **Plan v1.10 §3 (the calendar, including "Saturdays are not planned work") and §3.1 (the gate dates)**, plus the plan §11 code-freeze date and the plan §14 demo date, by D1, D2 and §2.
+3. **DEC-2026-10-16-execution-reset E3, which fixed the demo on 13 November 2026**, by D1 (the demo is Saturday 12 December 2026, 14:00 WAT). E3's other content, including the G0 halves of E4, is unchanged.
+4. **The dates in the gate records `docs/poc/execution/gates/G0-N.md` to `G7.md`**, which this pull request updates to §2. Their conditions are unchanged.
+
+Under the authority order (SoT §0.4: the latest recorded founder decision, then decision records, then the PERD, then the plan), a merged decision record outranks plan v1.10, so these changes apply the moment the record merges and do not wait for the plan. **Plan v1.11, which carries them into the plan text and the regenerated `tasks.csv` rows, follows from the Repo Steward within 24 hours of the merge.** Until it merges, every difference between plan v1.10 and this record is settled in favour of this record. Nothing in this record changes the PERD or the SoT.
+
 **Not changed:** every invariant, Tier 0 gate and binding decision; the "never cut" list; the AGENTS.md rules (agents never approve or merge; a Needs task must be Done before its dependant starts; the allowlist; the stop conditions). D4's "start the moment prerequisites are on `main`" is the same Needs rule without waiting for a date.
 
 **Not recorded here:** the Founder's working rules of the same orders (decide inside your task, APPROVE NOW on a ready PR, the report format, no idling) are working practice, not scheduling; they are not part of this record.
 
 ## 4. Handover and open items
 
-- **Plan v1.11** (a new version file, never an edit in place) carries §2 and D2 to D3 into the plan text, with the `tasks.csv` rows named in §3 regenerated. **Handed to the Repo Steward.** Until it merges, this record wins on every difference.
+- **Plan v1.11** (a new version file, never an edit in place) carries §2 and D2 to D3 into the plan text, with the `tasks.csv` rows named in §3 regenerated. **Handed to the Repo Steward, due within 24 hours of this record's merge** (the supersession clause in §3). Until it merges, this record wins on every difference.
 - **Required pace (evidence for the Founders, not a change to the orders).** From `tasks.csv` on `main` (261 tasks, 25 Done), counting 1 for each task not Done and ½ for In progress or In review, along each gate's prerequisites: G1 needs 17, G2 43 and G3 115.5 cumulative, and everything 210.5, against **work days from Tue 3 Nov to the latest dates of 8, 16, 28 and 32.** That is about 2.1, 2.7, 4.1 and 6.6 units a day at the latest dates, against a measured **about 2 build tasks a working day** (19 to 30 Oct). G1's latest date is at today's pace; G2 needs about 1.4 times it, G3 about 2 times, the whole scope about 3 times. The seven role agents started on 31 Oct may raise the pace; that is not yet measured. The method treats all tasks as the same size and ignores critical paths. The Engineering Lead reports the measured pace at every gate.
 - **Open: the Tushe pause of 25 Oct (DEC-2026-10-25).** G0-N's latest date needs ENV-14, which needs ENV-05, which that pause blocks. D3 implies lifting it, but it is a recorded founder decision, so lifting it needs an explicit founder word.
 - **Open: G4 has three work days** between G3's latest (Fri 4 Dec) and G4's latest (Wed 9 Dec) for arms A, B and D to be built, reviewed, run and reported; the arm *builds* and the voice field sessions start before G3 where they do not depend on it.
