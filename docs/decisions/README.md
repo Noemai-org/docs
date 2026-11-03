@@ -39,6 +39,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-28-spent-grant-void](DEC-2026-10-28-spent-grant-void.md) | PERD §38.2: a SPENT `decision_grant` becomes VOID only for a confirmed `REJECTED_STALE_VERSION` refusal; receipt, invalidation, RecoveryRequest and outbox in one transaction; the Record keeps `GRANT_SPENT`; PERD v1.18 (Accepted in principle) |
 | [DEC-2026-10-29-receipt-signature-alert](DEC-2026-10-29-receipt-signature-alert.md) | A failed receipt signature alerts a human: the five rules and the exact PERD sections the next PERD version changes; recipient and channel are placeholders (Proposed; keeps DEBT-02 open) |
 | [DEC-2026-10-31-proof-depth-and-completeness](DEC-2026-10-31-proof-depth-and-completeness.md) | Context Fabric, compensation, authenticated Record writers, external anchoring, crash-point and corrupted-payload testing, per-merge chaos subset and pass^k pulled into the POC; practices not adopted; SoT v1.10, PERD v1.19, plan v1.10 |
+| [DEC-2026-11-03-rapid-test-dependency](DEC-2026-11-03-rapid-test-dependency.md) | `pgregory.net/rapid` v1.3.0 is approved as a test-only dependency of the core (MPL-2.0, no dependencies); first used for REC-01 and TST-01 |
 
 ## Where decisions already live
 
