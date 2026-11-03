@@ -46,3 +46,13 @@ PERD §34.1 lists nine logical services that "Noema's adapters address", includi
 |---|---|---|---|
 | Founders | Accepted | 26 October 2026 | Working session, summarised here |
 | Technical Co-Founder | Pending | | Approval of the pull request that adds this record |
+
+## Amendment 1 · 1 November 2026 · a test-only control client for core tests (OUT-01)
+
+**Status:** Proposed by the Principal System Architect on 1 November 2026, in answer to question Q3 of the [OUT-01 task card](../poc/execution/task-cards/OUT-01.md). It counts once the Founder approves and merges the pull request that adds it (docs#74). Every section above stays as written, except where this amendment changes it.
+
+- **What it allows.** A Go test in the core tree may call `mock-case`'s control listener (`/control/v1/...`) and truth listener (`/truth/v1/...`) with the bench credential, **only** in `_test.go` files, against a `mock-case` that the test itself starts on a throwaway database. The first use is OUT-01's US-06 test, which applies `contracts/fixtures/valid/fault-plan/mock_case_commit_then_drop.json` and counts the cases and create commands for the key from the truth endpoint.
+- **What stays as D1 and D2 say.** No non-test file in `services/` holds a control or truth client, the bench credential or a path to either listener; nothing in `services/` imports a package under `benchmark/` or the hostility proxy; `fault-controller` and `fixture-loader` remain benchmark-only, and their clients remain in `benchmark/runner/` and `benchmark/fixtures/`. The runtime is never given the bench credential or network.
+- **How it is enforced.** A static test fails if any non-test file under `services/` references a control or truth path, the bench credential or a benchmark or proxy package; the architecture lint passes. Both run in CI on every pull request that touches `services/core/`.
+- **Why.** Criterion 7 of OUT-01 requires the real fault fixture, never a mock (AGENT-12), and the case it covers (the target commits, the response is lost) cannot be produced any other way until the public API and the benchmark runner can drive the core end to end. A replay of a recorded exchange does not show one logical case from the truth endpoint.
+- **Affected IDs:** REQ-ENV-002, REQ-ENV-008, REQ-VER-001, REQ-RCV-002, AGENT-12, US-06. No SoT or PERD change.
