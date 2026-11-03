@@ -5,3 +5,4 @@
 - [`threat-to-test-map.md`](threat-to-test-map.md): each threat's control, test and status (all "Not started").
 - [`sec-14-anchor-store-evaluation.md`](sec-14-anchor-store-evaluation.md): SEC-14, evaluation of the write-once store for chain-head anchors (REQ-AUD-007; 2026-11-01; recommendation for founder approval, nothing adopted).
 - [`w2-ed25519-extension-evaluation.md`](w2-ed25519-extension-evaluation.md): SEC-12 (W2), evaluation of PostgreSQL Ed25519 verification extensions for DEBT-01 Option B and REQ-AUD-006 (2026-10-31; recommendation for founder approval, nothing adopted).
+- [`debt-02-alert-design.md`](debt-02-alert-design.md): DEBT-02, how a human is alerted when a signature fails (2026-11-03; Proposed, for founder decision).
