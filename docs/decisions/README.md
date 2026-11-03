@@ -40,6 +40,8 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-29-receipt-signature-alert](DEC-2026-10-29-receipt-signature-alert.md) | A failed receipt signature alerts a human: the five rules and the exact PERD sections the next PERD version changes; recipient and channel are placeholders (Proposed; keeps DEBT-02 open) |
 | [DEC-2026-10-31-proof-depth-and-completeness](DEC-2026-10-31-proof-depth-and-completeness.md) | Context Fabric, compensation, authenticated Record writers, external anchoring, crash-point and corrupted-payload testing, per-merge chaos subset and pass^k pulled into the POC; practices not adopted; SoT v1.10, PERD v1.19, plan v1.10 |
 | [DEC-2026-11-03-action-graph-shape](DEC-2026-11-03-action-graph-shape.md) | Action Graph shape (REQ-AG-001): roots are required; every non-root node needs an incoming edge; a root has none; a graph of more than one node must be weakly connected (a flat list fails); the exact PERD v1.20 text (settles the graph shape only, nothing about PCK-02; Proposed until merged) |
+| [DEC-2026-11-01-receipt-and-record-signing](DEC-2026-11-01-receipt-and-record-signing.md) | W1 (GOV-28): one Ed25519 signing design for execution receipts, Record events and Outcome verdicts; one key per writing identity; database verification by pgsodium behind a migration-owned trigger; the `noema_migrator` role; Option C as the fallback; the exact PERD v1.20 text (Proposed; opens OD-P-72 and OD-P-73) |
+| [DEC-2026-11-03-rapid-test-dependency](DEC-2026-11-03-rapid-test-dependency.md) | `pgregory.net/rapid` v1.3.0 is approved as a test-only dependency of the core (MPL-2.0, no dependencies); first used for REC-01 and TST-01 |
 
 ## Where decisions already live
 
