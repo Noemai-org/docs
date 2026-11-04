@@ -5,7 +5,7 @@
 | **Status** | Proposed for the Founders. The Architect gave these rulings in a work order of 4 November 2026 and asked for them to be committed as one record. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). They count once both Founders approve and merge this pull request. |
 | **Date** | 4 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
-| **Closes** | None. Opens DEBT-06 (Tier 1) in the debt register, in this pull request. |
+| **Closes** | None. Opens DEBT-06 (Tier 1) and DEBT-07 (Tier 0 until closed with EDG-01) in the debt register, in this pull request. |
 | **Amends** | None. No SoT text changes. PERD and plan wording that these rulings touch changes only in a new PERD or plan version, by its own pull request. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -51,3 +51,12 @@
 - **R12.** Environment protection settings are changed by the Founder in GitHub; no agent changes them (AGENTS §11).
 - **R13.** The date is "no later than". No Phase B result counts before G0 passes (plan §3).
 - **Sequence.** Any PERD text these rulings need goes in the next PERD version (docs#96 is v1.20); any plan row change goes in plan v1.11 or its successor. Neither is done here.
+
+## 3. Addendum of 4 November 2026 (same day, Architect's order)
+
+| ID | Ruling | Tasks and sources it touches |
+|---|---|---|
+| R15 | **DEBT-04's "related" paragraph points at DEBT-06.** The other tenant tables are not folded into DEBT-04. | DEBT-04, DEBT-06 |
+| R16 | **The non-power-emitter residual is DEBT-07, Tier 0 until closed with EDG-01.** It covers events attributed to `model-service` and the seven adapter identities (OD-P-73). | DEBT-07, EDG-01, REC-08, OD-P-73 |
+| R17 | **The fixture-loader workflow is approved, and so is the `tushe-fixture` GitHub Environment it uses.** The workflow is a new file under `.github/workflows` (a CI path; AGENTS §11 needs a founder approval for it, and this is that approval for this one workflow only). It loads synthetic fixtures into Tushe for the benchmark and the acceptance runs, uses no secret outside the `tushe-fixture` Environment, runs on `main` only (R12), and has the Founder as required reviewer. The task that builds it is **ENV-16** (added by plan v1.11). | ENV-16, R12, ENV-05, ENV-07 |
+| R18 | **Tushe's R9 to R12 are recorded as delivered, per the Founder** (deck v4 and the call). Acceptance is Tushe's final written response by Wed 11 Nov 2026 (R13). ENV-07 and ENV-12 are Ready, dated Wed 11 Nov 2026. | ENV-07, ENV-12, G0-T; the Tushe correspondence record is a separate pull request under `docs/poc/tushe/responses/` |
