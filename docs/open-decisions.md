@@ -925,3 +925,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the proposal); Founders (the decision).
 - **Deadline:** before the first event attributed to one of these identities.
 - **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §3 D2; PERD §32.1, REQ-AUD-006; INV-29.
+
+### OD-P-74: Claim names and roles of the synthetic IdP's session token (DEFAULT, built in noema#156)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use; the Architect or the Founders decide.
+- **Missing decision:** which claims a session token carries and what they are called, and which roles exist. PERD REQ-SEC-001 says the synthetic IdP issues ES256 JWTs "for synthetic customers, operators and approvers, with roles" and that the core validates "signature, expiry, audience and tenant", and that `sub` is the only principal source. No document names the tenant claim, the roles claim, their values, or the issuer and key identification.
+- **Why it matters:** the claim mapping decides which signed data becomes the principal, the tenant and the authority (INV-12). The synthetic IdP, the core's verifier and the benchmark's session provider must agree on it.
+- **Default (smallest safe):** the claims `sub` (the principal), `aud` (one string, the core's audience), `exp` and `iat` (required, integer seconds; the token's lifetime, `exp - iat`, may not exceed a configured maximum, PERD REQ-API-004 [REC] 15 minutes), `tenant_id` (must be one of the tenants the deployment serves) and `roles` (a non-empty list of `customer`, `operator` or `approver`; any other value rejects the token); a JWT header `alg` of `ES256` only and a `kid` that names a configured P-256 public key. Every failure is one rejection. Built in `services/core/edge/session` (noema#156).
+- **What would change it:** the enterprise IdP contract or the benchmark's IdP naming them differently; a need for more roles (for example audit or ops, REQ-API-004 route roles); a second tenant claim for operators who span tenants.
+- **Not covered:** per-session rate limits, `request_id` deduplication, the 5-minute freshness for sensitive operations, route-level role checks (EDG-01's later slices); key rotation of the IdP.
+- **Owner:** EL (the default and the verifier); IL (the synthetic IdP); Architect (the decision).
+- **Deadline:** before the synthetic IdP issuer (EDG-01 slice 2) is merged.
+- **Source:** PERD REQ-SEC-001, REQ-API-004, REQ-API-002; INV-12; `services/core/edge/session` and `status/EDG-01.md` in `noema`.
