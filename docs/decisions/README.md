@@ -41,6 +41,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-10-31-proof-depth-and-completeness](DEC-2026-10-31-proof-depth-and-completeness.md) | Context Fabric, compensation, authenticated Record writers, external anchoring, crash-point and corrupted-payload testing, per-merge chaos subset and pass^k pulled into the POC; practices not adopted; SoT v1.10, PERD v1.19, plan v1.10 |
 | [DEC-2026-11-01-receipt-and-record-signing](DEC-2026-11-01-receipt-and-record-signing.md) | W1 (GOV-28): one Ed25519 signing design for execution receipts, Record events and Outcome verdicts; one key per writing identity; database verification by pgsodium behind a migration-owned trigger; the `noema_migrator` role; Option C as the fallback; the exact PERD v1.20 text (Proposed; opens OD-P-72 and OD-P-73) |
 | [DEC-2026-11-03-rapid-test-dependency](DEC-2026-11-03-rapid-test-dependency.md) | `pgregory.net/rapid` v1.3.0 is approved as a test-only dependency of the core (MPL-2.0, no dependencies); first used for REC-01 and TST-01 |
+| [DEC-2026-11-04-g1-named-open-exclusion](DEC-2026-11-04-g1-named-open-exclusion.md) | BEN-05: G1's text needs one US-01 and one US-06 case; a case no producer can yet drive may be a named open exclusion, reported as non-full coverage and never as a pass; every other errored or missing case is NOT_COMPARABLE (Proposed) |
 
 ## Where decisions already live
 
