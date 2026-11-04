@@ -18,7 +18,7 @@ Inputs/outputs (slice 1): `AssignStatus(read Read, source Source, now time.Time)
 Acceptance criteria:
   REQ-CTX-002:
   - FactStatus SHALL be assigned deterministically by the rules of PERD §21.1 (the table). No rule may turn absence into a negative fact.
-  - For generated reads with missing records, the status SHALL be UNAVAILABLE or UNKNOWN (the `AUTHORITATIVE_NEGATIVE` exception is not built; see Out of scope).
+  - For generated reads with missing records, the status SHALL be UNAVAILABLE or UNKNOWN unless the descriptor declares `AUTHORITATIVE_NEGATIVE` (PERD v1.20 §21.1, REQ-CTX-002). The exception is a gated requirement of this task, not a cut: slice 1 builds the safe default only, and the exception is built in slice 1b (see Slices) once its contract change request is approved.
   - The function SHALL be total (no panics) over fuzzed inputs, and any unhandled branch SHALL default to UNKNOWN.
   REQ-CTX-001 (slice 2):
   - 100% of Decision Records reference evidence IDs that exist and have `read_at` ≤ `evaluated_at`.
@@ -35,7 +35,7 @@ Record events asserted: none in slice 1 (`EVIDENCE_READ` arrives with slice 2).
 Dependencies: PLT-06 (migrations; slice 2), ENV-03 (adapter interfaces; slice 2). Slice 1 needs neither.
 Out of scope:
   - INFERRED, AMBIGUOUS and CONTRADICTORY: they need more than one item and a reconciliation rule (RES tasks); `AssignStatus` never returns them
-  - the pack field `absence_semantics` and PERD §21.1's AUTHORITATIVE_NEGATIVE exception: `evidence-item.v1` requires a missing record to be UNAVAILABLE or UNKNOWN, `evidence-source.v1` has no field to declare the exception and the POC fixtures declare none, so slice 1 never returns KNOWN for a not-found whatever a source says (Codex finding on noema#160, the safer reading). The exception needs a contract change first (AGENT-15)
+  - (not out of scope, only gated) the pack field `absence_semantics` and PERD §21.1's AUTHORITATIVE_NEGATIVE exception: `evidence-item.v1` requires a missing record to be UNAVAILABLE or UNKNOWN and `evidence-source.v1` has no field to declare the exception, so until the contract change lands (AGENT-15; change request, plan §19) the function never returns KNOWN for a not-found, whatever a source says (the safer reading, AGENT-20). The POC fixtures declare none (PERD v1.20 §21.1). Slice 1b below carries the requirement, with its tests
   - context snapshots (REQ-CTX-004), refresh (REQ-CTX-003), the candidates API, scope enforcement (UNAUTHORIZED is decided from the scope check's result, which arrives as an input)
 Definition of done: tests green; boundary/lint green; docs updated; PR answers the SoT §52 questions
 If blocked or conflicting: STOP and emit the CONFLICT block (§71.3)
@@ -47,14 +47,19 @@ Owner: C2 (a founder) with the Core Engineer 2 role agent. Needs: PLT-06, ENV-03
 
 | # | Question | Agent's default |
 |---|---|---|
-| D1 | A well-formed value from a CORROBORATING-only source within its limit: KNOWN or something else? PERD §21.1 says KNOWN needs an authoritative source and is silent on a corroborating one | **UNKNOWN** (the safer reading: corroboration never confers KNOWN on its own; a reconciliation rule can raise it to INFERRED). **[OPEN]** for the Architect |
+| D1 | A well-formed value from a CORROBORATING-only source within its limit: KNOWN or something else? PERD §21.1 says KNOWN needs an authoritative source and is silent on a corroborating one | **UNKNOWN** (the safer reading: corroboration never confers KNOWN on its own; a reconciliation rule can raise it to INFERRED). **[OPEN]** for the Architect, register entry [OD-P-75](../../../open-decisions.md#od-p-75) |
 | D2 | A well-formed value from a source with authority NONE (a customer's own claim) | **UNKNOWN** (SoT §43.5: authority NONE is never authoritative) |
 | D3 | `read_at` later than `now` (clock skew) | **UNKNOWN** (never KNOWN on a read from the future) |
 | D4 | The order of the rules, most restrictive first | out of scope, then source unreadable (UNAVAILABLE), then malformed (UNKNOWN), then absence, then not authoritative, then stale, then KNOWN |
 | D5 | Where the function lives | `evidence/layer` (its package doc already names FactStatus and provenance) |
 
+## Question for the Architect
+
+- **Q-EVD01-1:** open the change request for `absence_semantics` (AUTHORITATIVE_NEGATIVE) in `evidence-source` and the matching `evidence-item` rule. Recommendation: open it before G2, so slice 1b lands with slice 2. Until then the safer default stands (a not-found is never KNOWN), which cannot make an unsafe fact KNOWN.
+
 ## Slices
 
 1. **Slice 1 (this card, first PR):** the pure `AssignStatus`, its types and tests.
-2. **Slice 2:** `evidence_item` and `evidence_payload` tables (a later migration number than the Outcome migration `0007`), the DB immutability trigger, and the item builder that assigns the status before persisting, with real adapter faults and `EVIDENCE_READ` events.
-3. **Slice 3:** the story tests for G1, in `execution/e2e` (the Founder's order of 4 Nov 2026; docs#106 R10).
+2. **Slice 1b (gated):** the `AUTHORITATIVE_NEGATIVE` exception of PERD v1.20 §21.1: a terminal not-found from a source whose descriptor declares it is KNOWN (absent); every other not-found stays UNAVAILABLE or UNKNOWN. **Blocked on** a change request that adds `absence_semantics` to `evidence-source` and relaxes the `evidence-item` missing-record rule, with a version bump, migration note and regenerated models (AGENT-15). Tests first: declared and terminal gives KNOWN; declared without the terminal flag, undeclared, and non-authoritative source each stay UNAVAILABLE or UNKNOWN. The change request is the Architect's to open (Q-EVD01-1, below); the agent does not change the contract.
+3. **Slice 2:** `evidence_item` and `evidence_payload` tables (a later migration number than the Outcome migration `0007`), the DB immutability trigger, and the item builder that assigns the status before persisting, with real adapter faults and `EVIDENCE_READ` events.
+4. **Slice 3:** the story tests for G1, in `execution/e2e` (the Founder's order of 4 Nov 2026; docs#106 R10).

@@ -937,3 +937,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the default and the verifier); IL (the synthetic IdP); Architect (the decision).
 - **Deadline:** before the synthetic IdP issuer (EDG-01 slice 2) is merged.
 - **Source:** PERD REQ-SEC-001, REQ-API-004, REQ-API-002; INV-12; `services/core/edge/session` and `status/EDG-01.md` in `noema`.
+
+### OD-P-75: Status of a well-formed value from a corroborating-only source (DEFAULT, EVD-01)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use; the Architect decides.
+- **Missing decision:** the FactStatus of a well-formed value, within its freshness limit, read from a source whose authority for the fact is CORROBORATING (not AUTHORITATIVE). PERD v1.20 §21.1 says KNOWN needs an authoritative source and does not say what a corroborating one gives.
+- **Why it matters:** KNOWN is the status Trust and Outcome act on (INV-10, INV-19); giving it to a corroborating source would let a weaker source authorise an action.
+- **Default (smallest safe):** UNKNOWN. Corroboration never confers KNOWN on its own; a later reconciliation rule (RES tasks) may raise it to INFERRED. Built in `AssignStatus` (noema#160).
+- **What would change it:** a fixture or a design-partner source whose only available source is corroborating; a reconciliation rule that defines INFERRED from corroborating items.
+- **Not covered:** the `AUTHORITATIVE_NEGATIVE` exception (task EVD-01 slice 1b, gated on a contract change request); INFERRED, AMBIGUOUS and CONTRADICTORY.
+- **Owner:** EL (the default); Architect (the decision).
+- **Deadline:** before EVD-01 slice 2 is merged.
+- **Source:** PERD v1.20 §21.1, REQ-CTX-002; INV-10, INV-19; [`task-cards/EVD-01.md`](poc/execution/task-cards/EVD-01.md) D1.
