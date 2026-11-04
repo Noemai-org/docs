@@ -28,7 +28,7 @@ Tests to write FIRST (AGENT-11), slice 1:
   - a table, one case per row of the §21.1 table that `assign_status` can decide on its own (KNOWN, STALE, UNAVAILABLE, UNKNOWN, UNAUTHORIZED) and per failure class of REQ-CTX-001 (a malformed response is UNKNOWN; an adapter exception is UNAVAILABLE)
   - absence: for every read class that means "no record" (NOT_FOUND, with and without the terminal flag), the result is UNAVAILABLE or UNKNOWN and never KNOWN, for every source authority, unless the descriptor declares AUTHORITATIVE_NEGATIVE and the read carries the terminal flag (EC-S11, EC-S19)
   - totality: a Go fuzz target and a seeded generator drive arbitrary reads, sources and times (negative and zero limits, a `read_at` in the future, the zero time); the function never panics and always returns one of the eight values
-  - staleness uses the effective limit, the stricter of the source limit and the profile limit, measured from `read_at` on the injected `now` (INV-23); a limit that is zero or negative is UNKNOWN, never KNOWN
+  - staleness uses the effective limit, the stricter of the source limit and the profile limit, measured from `read_at` on the injected `now` (INV-23); a source limit that is zero or negative, or a negative profile limit, is UNKNOWN, never KNOWN; a profile limit of zero means the profile sets none
   - determinism: the same inputs give the same status, with no clock read inside the function
 Faults to exercise (AGENT-12): none in slice 1 (a pure function). Slice 2 exercises real adapter faults (TIMEOUT, 5xx, malformed, 429) from the Tushe FaultPlans.
 Record events asserted: none in slice 1 (`EVIDENCE_READ` arrives with slice 2).
