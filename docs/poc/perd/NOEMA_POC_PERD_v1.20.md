@@ -4,13 +4,13 @@
 
 **The implementation contract for the Noema Proof of Concept: "Where is my money?"**
 
-Version 1.20 · 3 November 2026 · Status: accepted with DEC-2026-11-01-receipt-and-record-signing (the Technical Co-Founder confirms by approving the pull request that adds it) · Governing source: Noema Single Source of Truth v1.9
+Version 1.20 · 3 November 2026 · Status: accepted with DEC-2026-11-01-receipt-and-record-signing and DEC-2026-11-03-action-graph-shape (the Technical Co-Founder confirms by approving the pull request that adds it) · Governing source: Noema Single Source of Truth v1.10
 
 ---
 
 ## How to use this document
 
-This PERD turns the Noema Single Source of Truth (SoT) v1.8 into something engineers and AI coding agents can build from without guessing. It specifies every component, contract, state, failure path, test, benchmark and gate the POC needs. It adds nothing to the product's ambition and takes nothing away from it.
+This PERD turns the Noema Single Source of Truth (SoT) v1.10 into something engineers and AI coding agents can build from without guessing. It specifies every component, contract, state, failure path, test, benchmark and gate the POC needs. It adds nothing to the product's ambition and takes nothing away from it.
 
 **Version 1.2** applies DEC-2026-10-12-tushe-environment-scope (how the POC uses Tushe), which amends SoT §36 in SoT v1.4. The changes are listed under "Changes in v1.2" at the end of this front matter.
 
@@ -28,7 +28,7 @@ This PERD turns the Noema Single Source of Truth (SoT) v1.8 into something engin
 
 **Version 1.17** applies DEC-2026-10-27-actor-and-payload-hash: §32.1 defines the Record event's emitter (`written_by`, a closed set of service identities), its principal (`actor`, required on every event, a closed list of principal kinds) and `payload_hash` (SHA-256 of the RFC 8785 form of the payload, integers only); the §38.2 `record_event` row lists `actor`. No requirement is added or removed. No SoT change is needed. The changes are listed under "Changes in v1.17".
 
-**Version 1.20** applies DEC-2026-11-01-receipt-and-record-signing (Option B): one Ed25519 signing design for execution receipts, Record events and Outcome verdicts, verified in PostgreSQL; REQ-AUD-006, REQ-SEC-005, REQ-EXE-004, REQ-DATA-001, §32.1, §36.1, §38.2 and §41.1 change. No requirement is added or removed (173 requirements: P0 142, P1 28, P2 3). No SoT change is needed. The changes are listed under "Changes in v1.20".
+**Version 1.20** applies DEC-2026-11-01-receipt-and-record-signing (Option B): one Ed25519 signing design for execution receipts, Record events and Outcome verdicts, verified in PostgreSQL, and DEC-2026-11-03-action-graph-shape (the Action Graph shape, REQ-AG-001); REQ-AUD-006, REQ-SEC-005, REQ-EXE-004, REQ-DATA-001, §32.1, §36.1, §38.2 and §41.1 change. No requirement is added or removed (173 requirements: P0 142, P1 28, P2 3). No SoT change is needed. The changes are listed under "Changes in v1.20".
 
 **Version 1.19** applies DEC-2026-10-31-proof-depth-and-completeness: the Context Fabric is built in the POC; the Action Graph must be a validated graph; convergence windows in reconciliation; compensation declared and executed per capability; legacy-API protection; crash-point and corrupted-payload testing and a chaos subset on every relevant merge; authenticated Record writers and external anchoring; labelled pairs and escalation-resolution memory; pass^k and disambiguation diagnostics; publication rules; a model-drift canary; the modular voice pipeline and voice simulation; static-analysis gates. It amends SoT §16, §25, §35.1, §38.8, §41.2 and §46 (OD-06) in SoT v1.10. The changes are listed under "Changes in v1.19".
 
@@ -54,7 +54,7 @@ This PERD turns the Noema Single Source of Truth (SoT) v1.8 into something engin
 
 The SoT (§0.4) sets the order of authority, and this PERD does not change it.
 
-1. **The SoT v1.9 wins every conflict with this PERD.** Wherever this PERD restates the SoT, the SoT text governs. Wherever the two seem to disagree, follow the SoT and raise the conflict (AGENT-26, AGENT-27). Every disagreement found while writing this PERD is listed in §72, never resolved silently.
+1. **The SoT v1.10 wins every conflict with this PERD.** Wherever this PERD restates the SoT, the SoT text governs. Wherever the two seem to disagree, follow the SoT and raise the conflict (AGENT-26, AGENT-27). Every disagreement found while writing this PERD is listed in §72, never resolved silently.
 2. **This PERD is the detailed engineering specification for the POC** (SoT §0.4, item 4) once it is committed to the docs repository with a decision record. Until then it is a proposal.
 3. **Items tagged [REC] are proposed defaults.** They fill gaps the SoT leaves open, using AGENT-02: the missing decision is named, the smallest safe default proposed, and the evidence that would overturn it stated. Each [REC] becomes binding only when adopted through the open-decisions process. §67 lists them, and §72 gives the adoption record to write.
 4. Nothing here authorises scope beyond SoT Part VII. If a requirement here seems to ask for full-platform work, it is a drafting error. Implement the narrower reading and raise it (AGENT-03, AGENT-20).
@@ -134,8 +134,9 @@ Applied from DEC-2026-11-01-receipt-and-record-signing §12 (Option B). Version 
 6. REQ-DATA-001: the `noema_migrator` role (§12.6).
 7. §41.1: the "Holds" column for `core-execution`, `core-outcome`, `core-trust` and `admin` (§12.7).
 8. §36.1: a stack row for Ed25519 verified by pgsodium v3.1.11 [OD-P-72] (§12.8).
+9. REQ-AG-001: roots are required, a root has no incoming edge, and a graph of more than one node is weakly connected (DEC-2026-11-03-action-graph-shape §2, D1 to D4).
 
-Item 9 of the record (Option C) is not applied.
+Item 9 of DEC-2026-11-01 §12 (Option C) is not applied.
 
 ### Changes in v1.19
 
@@ -2356,14 +2357,14 @@ Every node carries:
   - every pre- and postcondition type-checks against the evidence descriptors;
   - the graph is acyclic;
   - every write node has a recovery and an escalation reference;
-  - it is a graph, never a list of endpoints [ADOPTED DEC-2026-10-31-proof-depth-and-completeness D9]: every node other than a declared root has at least one incoming edge with `depends_on`; every node has at least one postcondition; every write node has at least one precondition; and every node's `on_unknown` and `on_failure` are set.
+  - it is a graph, never a list of endpoints [ADOPTED DEC-2026-10-31-proof-depth-and-completeness D9, DEC-2026-11-03-action-graph-shape]: the graph declares its roots (`roots`: at least one, each a node of the graph); every node other than a root has at least one incoming edge with `depends_on`, and a root has none; a graph with more than one node is weakly connected (every node is reachable from every other when the direction of the edges is ignored), so a list of nodes without edges fails; every node has at least one postcondition; every write node has at least one precondition; and every node's `on_unknown` and `on_failure` are set.
 - **Rationale:** SoT §14 ("It is not an API catalogue"), §43.9; INV-18.
 - **Inputs:** —
 - **Expected behaviour:** —
 - **Failure behaviour:** Pack load fails, so the service refuses to start (fail closed).
 - **Security:** Packs are signed and pinned [SoT §47.2 ASI04]; the loader verifies the checksum.
 - **Audit:** `PACK_LOADED` (version, checksum).
-- **Acceptance criteria:** A pack containing a node with a PROHIBITED capability SHALL fail `packcheck` and CI. A pack whose graph is a flat list (nodes without edges, postconditions or preconditions as above) SHALL fail `packcheck` and CI.
+- **Acceptance criteria:** A pack containing a node with a PROHIBITED capability SHALL fail `packcheck` and CI. A pack whose graph is a flat list (nodes without edges, postconditions or preconditions as above), is not connected, or has a root with an incoming edge SHALL fail `packcheck` and CI.
 - **Tests:** `packcheck` tests, including a flat-list negative fixture; the conformance packs load.
 - **Dependencies:** REQ-CAP-001.
 

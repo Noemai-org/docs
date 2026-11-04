@@ -3,7 +3,7 @@
 <!-- Template: ../templates/gate-record.md. Fill only at the gate meeting, from evidence on the screen (plan §3.1). Never pre-fill. This record was created empty on 16 Oct 2026 (DEC-2026-10-16 E3). -->
 
 - Gate: G0-T, Phase A exit, Tushe half (plan §3.1; PERD §69)
-- Date and time (WAT): scheduled to be confirmed by Tushe (DEC-2026-10-16 E3, E4). Our request for the date goes to Tushe by Thu 22 Oct (DEC-2026-10-16 E3). Held on: _not yet held_
+- Date and time (WAT): to be confirmed by Tushe (DEC-2026-10-16 E3, E4; unchanged by DEC-2026-11-03, which fixes the demo on Sat 12 Dec 2026). The request for the date went to Tushe by Thu 22 Oct. Held on: _not yet held_
 - Deciders: Engineering lead, integration lead, benchmark owner, Tushe lead (the roles are held by the Founder and the Technical Co-Founder, DEC-2026-10-16 E2)
 - Must be true (checklist): see below
 - Evidence links: _none yet_
