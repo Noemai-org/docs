@@ -66,6 +66,50 @@ VERSION_PATTERNS = [
 ]
 
 
+# The plan and PERD versions the READMEs name (OPS-09). A README that names any plan or PERD other than the highest
+# version on disk is stale: the file name carries the version, so the check needs no list to maintain.
+PLAN_FILE_RE = re.compile(r"^NOEMA_POC_4WEEK_PLAN_v(\d+(?:\.\d+)*)\.md$")
+PERD_FILE_RE = re.compile(r"^NOEMA_POC_PERD_v(\d+(?:\.\d+)*)\.md$")
+NAMED_VERSION_FILES = ["README.md", "docs/README.md", "docs/poc/README.md"]
+PLAN_NAMES = [r"four-week plan v(\d+(?:\.\d+)*)", r"four-week implementation plan\]\([^)]*\)\s*v(\d+(?:\.\d+)*)"]
+PERD_NAMES = [r"POC PERD v(\d+(?:\.\d+)*)", r"POC PERD\]\([^)]*\)\s*v(\d+(?:\.\d+)*)"]
+
+
+def version_key(v):
+    return tuple(int(x) for x in v.split("."))
+
+
+def highest_on_disk(folder, file_re):
+    path = os.path.join(ROOT, folder)
+    found = []
+    if os.path.isdir(path):
+        for name in os.listdir(path):
+            m = file_re.match(name)
+            if m:
+                found.append(m.group(1))
+    return max(found, key=version_key) if found else None
+
+
+def check_named_versions(fail):
+    """Every plan or PERD version a README names is the highest on disk (compared as numbers, so v1.10 beats v1.9)."""
+    kinds = (
+        ("plan", PLAN_NAMES, highest_on_disk("docs/poc/execution", PLAN_FILE_RE)),
+        ("PERD", PERD_NAMES, highest_on_disk("docs/poc/perd", PERD_FILE_RE)),
+    )
+    for label, patterns, top in kinds:
+        if top is None:
+            continue
+        for path in NAMED_VERSION_FILES:
+            if not os.path.exists(os.path.join(ROOT, path)):
+                continue
+            named = [v for pat in patterns for v in re.findall(pat, read(path))]
+            for v in named:
+                if v != top:
+                    fail(f"{path}: names {label} v{v}, but the highest {label} on disk is v{top}")
+            if not named and path in ("README.md", "docs/README.md"):
+                fail(f"{path}: does not name the {label} version (expected v{top})")
+
+
 def read(path):
     with open(os.path.join(ROOT, path), encoding="utf-8") as fh:
         return fh.read()
@@ -324,6 +368,9 @@ def check(fail):
             for v in re.findall(pat, text):
                 if v != sot_version:
                     fail(f"{path}: states SoT v{v}, but the SoT is v{sot_version}")
+
+    # 5b. Plan and PERD versions named by the READMEs
+    check_named_versions(fail)
 
     # 6. Spelling
     check_spelling(fail)
