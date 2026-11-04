@@ -6,7 +6,7 @@
 
 Version 1.11 · 3 November 2026 · Governing documents: Noema Single Source of Truth v1.10 (SoT) and Noema POC Product & Engineering Requirements Document v1.20 (PERD, 3 November 2026)
 
-Version 1.11 applies DEC-2026-11-03-demo-date-and-no-scope-cut (the founders' standing orders of 3 November 2026): the demo is Saturday 12 December 2026 at 14:00 and does not move; Monday to Saturday are work days; no scope is cut and the §2 cut line is not applied; the gate dates are "no later than" dates. §3 carries the new calendar. Every task is dated by the gate that needs it: its old date is mapped to its old gate window and then to that gate's target date, the Needs rule overrides it when it gives an earlier gate, and a prerequisite takes the date of its earliest dependent. The rows of §8 to §11 are regrouped under those dates; no row's text, owner, requirement, Needs or done-when is changed, and the 35 rows that were to be dated at the re-baseline now carry dates (rows with no gate path carry a provisional date, listed in the pull request that adds this version). The prose that still names the old dates (§1, §2, §3.1, §8 to §11 introductions, §13, §14, §16 to §18) is not edited here; it is listed in that pull request for the Architect. Version 1.10 stays unchanged.
+Version 1.11 applies DEC-2026-11-03-demo-date-and-no-scope-cut (the founders' standing orders of 3 November 2026) and DEC-2026-11-04-architect-rulings: the demo is Saturday 12 December 2026 at 14:00 and does not move; Monday to Saturday are work days; no scope is cut and the §2 cut line is not applied; the gate dates are "no later than" dates. §3 carries the new calendar and is the one source of dates: the prose that named the old dates now points to it. Every task is dated by the gate that needs it: its old date is mapped to its old gate window and then to that gate's target date, and the Needs rule overrides it when it gives an earlier gate. A prerequisite takes the date of its earliest dependent. A task with no old date takes the gate of its earliest dependent task; if it has none, the gate of the PERD or plan section it implements; if still none, G3 (CR-2026-11-03-GATE-NEEDS, Option A, and the Architect's order of 4 November). **Option A is applied:** the 158 tasks that were on no gate's Needs path are added to the Needs of their gate's review row (ENV-14, GOV-07, GOV-11, GOV-12, GOV-13, GOV-16, DEM-02), so a gate cannot pass while a task dated to it is open. **Two rows are added:** TRU-13 (basis binding; Architect-directed, gate G2, Needs TRU-02 and TRU-03) and ENV-16 (the fixture-loader workflow, gate G2). **G0-T** is dated Wed 11 Nov 2026, the day of Tushe's final written response (DEC-2026-11-04-architect-rulings R13); ENV-12 and ENV-07 are Ready. The rows of §8 to §11 are regrouped under those dates; apart from these changes no row's text, owner, requirement or done-when is changed. The sources of the provisional dates are listed in the pull request that adds this version. Version 1.10 stays unchanged.
 
 Version 1.10 applies DEC-2026-10-31-proof-depth-and-completeness: thirty-five tasks are added in a new section to be dated at the re-baseline; REC-07 moves into the POC; PCK-02, TST-02 and GOV-12 change; the G3 definition gains the crash-point matrix, the chaos subset, authenticated Record writers and anchoring; §14 gains the publication rules; SR-25 records the schedule risk. The gate dates stay as they are until GOV-30 records new ones.
 
@@ -90,9 +90,9 @@ Lines of code, commits, agent runs, meetings, tickets moved to "in progress", an
 
 # PART 1 — THE PLAN
 
-## 1. What Friday 13 November must show
+## 1. What the demo on Saturday 12 December must show
 
-On Friday 13 November we demonstrate, live and unscripted, that Noema takes a messy "Where is my money?" request and does the following:
+At the demo (Saturday 12 December 2026, 14:00 WAT; §3) we demonstrate, live and unscripted, that Noema takes a messy "Where is my money?" request and does the following:
 
 1. finds the exact transaction, or asks one precise question;
 2. reconstructs what Tushe's ledger, switch, settlement, beneficiary and case systems actually say;
@@ -108,14 +108,14 @@ All of it runs against Tushe's hostile synthetic enterprise, with the safety gat
 
 | Milestone | Meaning | Date |
 |---|---|---|
-| **External readiness (Gate G7, met for the demo by the dry run)** | D1 to D10 run live from the benchmarked engine; Tier 0 gates are zero on the release run; the evidence bundle exists | Fri 13 Nov |
-| **POC done (SoT §40.3)** | Every item in the SoT definition of done, including the real-conditions voice gate, the comparison report and business discovery | Fri 13 Nov if every gate passes. Otherwise on the date the last gate passes, and **we say so** |
+| **External readiness (Gate G7, met for the demo by the dry run)** | D1 to D10 run live from the benchmarked engine; Tier 0 gates are zero on the release run; the evidence bundle exists | G7 (§3) |
+| **POC done (SoT §40.3)** | Every item in the SoT definition of done, including the real-conditions voice gate, the comparison report and business discovery | At the demo (§3) if every gate has passed. Otherwise on the date the last gate passes, and **we say so** |
 
-If a gate fails, the demo still happens on 13 November with whatever has truly passed, and the gaps are shown openly. We never fake a pass to protect a date [SoT §40.2: "If the time box and the safety gates conflict, the gates win and the date moves"].
+If a gate fails, the demo still happens on its fixed date (§3) with whatever has truly passed, and the gaps are shown openly. We never fake a pass to protect a date [SoT §40.2: "If the time box and the safety gates conflict, the gates win and the date moves"].
 
 **Success, in one line.** N cases processed, N resolved autonomously, N clarified, N escalated, N refused, N blocked, zero unsafe actions, and every number from the run [PERD Appendix B].
 
-**The calendar.** Twenty working days, Monday to Friday. The four-week window closes on Sunday 15 November. Weekends are not engineering capacity and are not where unfinished P0 work goes.
+**The calendar.** The gate table in §3 is the one source of dates. Monday to Saturday are work days.
 
 **Prerequisites.** Twenty days is achievable only with: repository access on Monday; Tushe's specification and a reachable Tushe endpoint from Tuesday; founders available for same-day decisions; at least two strong core engineers, a voice engineer and an independent benchmark owner (§4). Without them, the honest outcome is a narrower internal engineering demonstration, not a claim that the POC is done.
 
@@ -166,7 +166,7 @@ Every target below is reported with its numerator, denominator, confidence inter
 
 **What a clean result lets us say.** Zero failures in n cases bounds the true rate only below about 3/n at 95% confidence (the rule of three). Zero unsafe actions in 320 cases supports "below about 1% on this tested population", not "zero". "Below 0.1%" needs about 3,000 independent generated cases with zero failures [SoT §38.8, PERD §48.6].
 
-### 1.3 The two questions we answer on 13 November
+### 1.3 The two questions we answer at the demo
 
 1. Given a messy request about a transfer, can Noema find the right transaction or ask one useful question; reconstruct the best-supported state from Tushe's fragmented records; decide under deterministic authority and versioned policy; refuse what is unsafe or prohibited; perform only an allowed non-monetary action under a fresh single-use grant; avoid duplicates under retries and restarts; verify the outcome independently; keep UNKNOWN when the truth is not established; explain only what the evidence supports; and reconstruct the whole chain from its Record alone?
 2. Does the reproducible benchmark show that Noema handles cases correctly and safely against competent alternatives, at a measured operating point, with honest uncertainty and known limitations?
@@ -191,7 +191,7 @@ These hold on every day of the four weeks. Breaking one stops the line.
 
 **Out of scope for the whole build** [SoT §34, PERD §16]: monetary writes, refunds, reversals, payment instructions and beneficiary changes, or any callable path to them; `CLOSE_OR_RESOLVE_CASE`, clock changes, evidence edits or deletes, priority downgrades; Mode 2 as a product; a generic agent builder, an MCP gateway or product, a policy studio or DSL; extra deployables, Kafka, Kubernetes, vector or graph databases, Redis as authoritative state; WhatsApp or SMS channels; a broad analytics dashboard; populated non-fintech packs; real bank integration. Any request to add one needs a SoT ID and an approved decision record.
 
-**The cut line.** If we fall behind, things are cut in this order, and **only** in this order. With two people the team is below the §4 staffing table, so SR-03 applies: items 1 to 3 are cut now (DEC-2026-10-16 contract-and-pack-clarifications C8, item 4); items 4 and 5 are applied at the G1 review on Mon 26 Oct (GOV-07) if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged (§5).
+**The cut line.** If we fall behind, things are cut in this order, and **only** in this order. With two people the team is below the §4 staffing table, so SR-03 applies: items 1 to 3 are cut now (DEC-2026-10-16 contract-and-pack-clarifications C8, item 4); items 4 and 5 are applied at the G1 review (GOV-07; date in §3) if G1 has not passed or fewer than 80% of the week-1 P0 tasks have merged (§5).
 
 1. Voice breadth beyond English and Pidgin for the demo (the other three locales are still measured). **Cut now (DEC C8):** VOI-04 is cut to TTS for English and Pidgin only; the other three locales are still recorded and measured (VOI-06, VOI-09, G5 unchanged).
 2. UI polish beyond the PERD §40 minimum. **Cut now (DEC C8):** UI-01 to UI-06 carry "Scope: PERD §40 minimum only (DEC C8)". WCAG 2.2 AA stays, because it is in the requirement.
@@ -229,7 +229,7 @@ Dates are WAT. **Target** is the aim and the team beats it; **latest** is the co
 | Recovery day | | | Fri 11 Dec |
 | **G7** External readiness: dry run and demo | F: the demo | | Dry run Sat 12 Dec 09:00; demo Sat 12 Dec 14:00 |
 
-Every task row is dated by the gate that needs it (plan v1.11): the old date is mapped to its old gate window and then to that gate's target date, and the Needs rule overrides it when it gives an earlier gate. A task that is a prerequisite of an earlier-dated task takes that earlier date. The rows of §8 to §11 are grouped by those dates.
+Every task row is dated by the gate that needs it (plan v1.11): the old date is mapped to its old gate window and then to that gate's target date, and the Needs rule overrides it when it gives an earlier gate. A task that is a prerequisite of an earlier-dated task takes that earlier date. A task with no old date takes the gate of its earliest dependent task, else the gate of the PERD or plan section it implements, else G3. Each gate's review row needs every task dated to the gate. The rows of §8 to §11 are grouped by those dates; this table is the only place dates are stated.
 
 **Monday to Saturday are work days** (DEC-2026-11-03-demo-date-and-no-scope-cut D2). The earlier rule that Saturdays are reserved for recovering a failed gate no longer applies.
 
@@ -248,8 +248,8 @@ Each gate is a meeting with evidence on the screen. It is not a status update.
 
 | Gate | Must be true (all of it) | Evidence shown | Decides | If it fails |
 |---|---|---|---|---|
-| **G0-T Phase A exit, Tushe half** | Each of AT-01 to AT-20 passes, passes under the amended conditions in the signed worksheet, or is covered by an agreed exception with owner and date (REQ-ENV-007), in the joint session on the date Tushe confirms | Signed AT report; the signed worksheet | Engineering lead, integration lead, benchmark owner, Tushe lead | Hostility proxy covers missing faults (REQ-ENV-005). No Phase B result counts until G0 passes. Our request for the date goes to Tushe by Thu 22 Oct (DEC-2026-10-16 E3) |
-| **G0-N Phase A exit, Noema half** | TEN-01 to TEN-08 pass (Noema-side checks against Tushe; internal, not in the worksheet and not sent to Tushe). `/contracts` v1 tagged. ≥ 50 fixtures reproducible. Isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and the `mock-case` truth endpoint | Noema-side TEN report; contracts tag; fixture run log twice with identical output; isolation test log | Engineering lead, integration lead, benchmark owner | Phase B work continues on adapters and core logic. Noema-covered exceptions AT-04, AT-05, AT-07 and AT-14 not shown internally before the G1 review (Mon 26 Oct, 10:00) block G1 |
+| **G0-T Phase A exit, Tushe half** | Each of AT-01 to AT-20 passes, passes under the amended conditions in the signed worksheet, or is covered by an agreed exception with owner and date (REQ-ENV-007), in the joint session on the date Tushe confirms | Signed AT report; the signed worksheet | Engineering lead, integration lead, benchmark owner, Tushe lead | Hostility proxy covers missing faults (REQ-ENV-005). No Phase B result counts until G0 passes. Our request for the date went to Tushe (DEC-2026-10-16 E3); Tushe's final written response is due by Wed 11 Nov (DEC-2026-11-04-architect-rulings R13) |
+| **G0-N Phase A exit, Noema half** | TEN-01 to TEN-08 pass (Noema-side checks against Tushe; internal, not in the worksheet and not sent to Tushe). `/contracts` v1 tagged. ≥ 50 fixtures reproducible. Isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and the `mock-case` truth endpoint | Noema-side TEN report; contracts tag; fixture run log twice with identical output; isolation test log | Engineering lead, integration lead, benchmark owner | Phase B work continues on adapters and core logic. Noema-covered exceptions AT-04, AT-05, AT-07 and AT-14 not shown internally before the G1 review (§3) block G1 |
 
 **G0 passes when both halves pass (DEC-2026-10-16 E4).** G1 may run before G0-T. Its evidence is recorded, but it counts only once G0 passes.
 | **G1 Unknown-outcome slice** | One clean case (US-01) and one timeout-after-write case (US-06) run end to end on text through the public API. The unknown outcome is verified by key, never retried. The Record reconstructs both. Property tests for INV-03, INV-07, INV-08 and the prohibited registry are green | Live run plus Record reconstruction plus CI | Engineering lead | Week 2 starts with the slice. Ambiguity work waits |
@@ -258,7 +258,7 @@ Each gate is a meeting with evidence on the screen. It is not a status update.
 | **G4 Comparison** | Arms A, B and D built, reviewed as competent by the independent reviewer, run on the frozen pack, and the report drafted. Curve and operating point reviewed. S2 budget agreed (PERD §69) | Arm manifests; reviewer sign-off; comparison tables | Benchmark owner and arm reviewer | The release run proceeds; the comparison is reported as incomplete; "POC done" waits |
 | **G5 Voice** | Voice subset meets SoT §38.2: key-slot accuracy ≥ 95%, intent accuracy within 3 percentage points of text, every low-confidence key slot clarifies. The real-conditions gate passes: Intent Object P95 ≤ 2.5 s on a Tecno Spark on Airtel 3G in Lagos noise, ≥ 100 sessions, ≥ 50% Pidgin, consent and retention rules met (PERD §45.4) | Field-session report | Voice engineer and engineering lead | The demo runs in text; voice is shown only as a recorded measurement; **no design-partner demo** until it passes [SoT §37.5] |
 | **G6 Release run** | Held-out plus full suite run by the benchmark owner on one release commit; results from different commits are never combined. All PERD §60 acceptance criteria met, or each miss written down. Clean-room reproduction passes. Evidence bundle complete and signed | Signed evidence bundle | Founders | The demo shows the real result; external claims are limited to what the bundle permits |
-| **G7 External readiness** | DoD signed at G6 (GOV-16, Thu 12 Nov 18:00) for every PERD §68 item that does not depend on the demo itself. Every external number has n, method, bound and CI. Clocks labelled SYNTHETIC. No ROI claim. D1 to D10 run from the engine. Kill switch, rollback and incident playbook drilled. The Fri 13 Nov 09:00 dry run (DEM-02) is how G7 is met for the demo | Dry run at 09:00 Fri 13 Nov; the signed DoD | Founders (any external demo or publication) | Drop any demo scenario that is not real. Never script one |
+| **G7 External readiness** | DoD signed at G6 (GOV-16; date in §3) for every PERD §68 item that does not depend on the demo itself. Every external number has n, method, bound and CI. Clocks labelled SYNTHETIC. No ROI claim. D1 to D10 run from the engine. Kill switch, rollback and incident playbook drilled. The dry run (DEM-02; §3) is how G7 is met for the demo | Dry run at 09:00 on the G7 date (§3); the signed DoD | Founders (any external demo or publication) | Drop any demo scenario that is not real. Never script one |
 
 **Gate rules.**
 
@@ -290,7 +290,7 @@ Each gate is a meeting with evidence on the screen. It is not a status update.
 
 1. **Held-out custody.** Only the Founder holds `benchmark-heldout`, the Tushe administrator credential and the Tushe fixture credential. The Technical Co-Founder and every coding agent never read them, and no held-out case is pasted into an agent session (OD-16, REQ-AGT-004). This is what keeps B independent of C1 and C2.
 2. **Review.** Every change reaches `main` through a pull request approved by the founder who did not drive it (E13). P0 paths need that approval through CODEOWNERS. An agent's report is never the approval.
-3. **Comparison arms (week 4).** The arm builder (ARM, for arms A, B and D) and the independent arm reviewer (REV, a few hours, OQ-02) must be two people outside the build (SoT §38.5). Both are engaged under NDA and confirmed at the G2 review on Fri 30 Oct (GOV-21, GOV-11). E2's "one external engineer" is corrected.
+3. **Comparison arms (week 4).** The arm builder (ARM, for arms A, B and D) and the independent arm reviewer (REV, a few hours, OQ-02) must be two people outside the build (SoT §38.5). Both are engaged under NDA and confirmed at the G2 review (GOV-21, GOV-11; date in §3). E2's "one external engineer" is corrected.
 4. **Separation of duties for test-environment components.** The founder who drives `mock-case` or the hostility proxy does not approve its fault plans (DEC-2026-10-12, SR-19). The same applies to the webhook relay.
 5. **Benchmark independence.** The Founder holds B and does not drive a C1 or C2 build area (the B row above). The Founder may review those pull requests.
 
@@ -343,11 +343,11 @@ Agents must never:
 | Friday 16:00, 60 min | Gate review | Gate deciders | Gate decision record in `docs/poc/execution/gates/` |
 | Friday 17:00, 30 min | Week retrospective and next-week plan confirmation | All | Plan adjustments (this document is updated, never silently) |
 
-**Week 1.** The Friday gate slot is used for the G1 evidence run (BEN-05); G0-N is held on Thu 22 Oct at 17:00 and G0-T on the date Tushe confirms (DEC-2026-10-16 E4). G1 is reviewed on Mon 26 Oct at 10:00.
+**Gates.** Gate dates are in §3 and nowhere else. The G1 evidence run is BEN-05; G0-T is accepted on Tushe's final written response, due by Wed 11 Nov (DEC-2026-10-16 E4; DEC-2026-11-04-architect-rulings R13). G1 is reviewed at 10:00 on its gate date.
 
 **Working rules.**
 
-- **Work in progress.** A flow limit on open pull requests (DEC-2026-10-16 contract-and-pack-clarifications C8, point 3): each founder may have at most 4 open PRs they drive, of which at most 2 are P0, and the agent starts no new task for that founder until one of them merges. The other founder reviews each PR within the same working day, and by 09:00 the next day at the latest. Slippage is handled by gates, not daily dates: at the G1 review (GOV-07, Mon 26 Oct 10:00), if G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (§2) are applied that day.
+- **Work in progress.** A flow limit on open pull requests (DEC-2026-10-16 contract-and-pack-clarifications C8, point 3): each founder may have at most 4 open PRs they drive, of which at most 2 are P0, and the agent starts no new task for that founder until one of them merges. The other founder reviews each PR within the same working day, and by 09:00 the next day at the latest. Slippage is handled by gates, not daily dates: at the G1 review (GOV-07; date in §3), if G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (§2) are applied that day.
 - **Schedule.** Any critical-path task more than one working day late triggers a same-day scope or dependency decision at 17:00. The answer is never less testing or an unverified safety path.
 - **Contracts.** After `/contracts` v1.0.0 is tagged (a G0-N condition), a change needs a version bump, regenerated types, contract tests in both languages and EL's approval.
 - **Pull requests.** One logical change per PR; small, vertical and reviewable. Main is always green.
@@ -412,7 +412,7 @@ These tasks keep their actual dates (DEC-2026-10-16 E3, exception 1). Some were 
 
 # PART 2 — WEEK BY WEEK
 
-## 8. Gates G0-N and G1 · targets Wed 4 Nov and Mon 9 Nov · Foundations and the unknown-outcome slice
+## 8. Gates G0-N, G1 and G0-T · targets Wed 4 Nov, Mon 9 Nov and Wed 11 Nov · Foundations and the unknown-outcome slice
 
 **Objective.** By Friday 16:00 the hardest path in the product works end to end on text against Tushe: a case write whose response is lost is verified by idempotency key, not retried, not duplicated, and the Record proves it. A clean case works beside it [SoT §35.4, §40.2 week 1; PERD §61.2 P0 to P7].
 
@@ -510,12 +510,12 @@ These tasks keep their actual dates (DEC-2026-10-16 E3, exception 1). Some were 
 | PLN-01 | Deterministic Planner and canonical plan hash; a plan with an unregistered or prohibited ID cannot be hashed | C1+AG | REQ-PLN-001, REQ-PLN-002 | EXE-01 | Property tests pass |
 | RES-01 | Reconciliation engine (pure function) with rules R1 and R2 from pack data | C2+AG | REQ-RES-001 | EVD-03 | Rule tests and permutation property pass |
 | ENV-13 | Webhook relay (`synthetic/webhook_relay/`; DEC-2026-10-16 E5, E6): a public HTTPS relay on one small host that runs nothing else and holds only the webhook signing secret. It verifies the Standard Webhooks signature and the five-minute tolerance, rejects and counts anything unverified, and stores each verified delivery unchanged, keyed by delivery ID. The core pulls verified deliveries over an authenticated outbound connection to an allowlisted host into its inbox, which deduplicates by delivery ID; in the benchmark profile the hostility proxy sits on the pull. Endpoint registered with Tushe | EL+AG | REQ-API-008, REQ-ENV-005, REQ-SEC-002 | GOV-20, ENV-09 | A replayed delivery arrives twice with the same delivery ID and the inbox records it once; a forged or stale-signature delivery is rejected and counted and never reaches the inbox; the relay's environment holds only the signing secret; the core's connection to the relay is outbound only; the endpoint is reachable from Tushe before the G0-T session. The founder who drives this does not approve its fault plans (DEC-2026-10-16 E2, point 4). |
-| ENV-14 | **G0-N**, the Noema half of G0 (DEC-2026-10-16 E4), Thu 22 Oct 17:00: TEN-01 to TEN-08 pass; `/contracts` v1 tagged; ≥ 50 fixtures reproducible; the isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and on the `mock-case` truth endpoint. Internal: not in the worksheet and not sent to Tushe | IL, EL, B | REQ-ENV-007, REQ-ENV-002 | CON-03, ENV-05, ENV-06, BEN-04, ENV-08, ENV-09, ENV-13, SEC-02 | The G0-N gate record in `docs/poc/execution/gates/` lists the TEN results with the run seed; contracts tag and fixture run log linked → **G0-N**. TEN details stay out of the Tushe folder |
 | REC-06 | Chain verifier run in CI on every merge, against the CI database, and in the nightly job: the same verifier code, canonical serialisation, restricted write roles (OD-06, DEC-2026-10-17). The Record is described as tamper-evident within the POC threat model, never as immutable | C1+AG | REQ-AUD-001 | REC-01, PLT-02 | A tampered row and a broken prior hash each fail the CI job; the nightly job runs the same verifier and alerts on a mismatch |
 | OPS-08 | Architecture map (derived, non-normative): founders' terms, canonical names, governing sections, code paths, tasks, owning roles and live build status; agent: Repo Steward | EL+AG | — | — | `docs/architecture-map.md` merged; every row's status links to evidence or says Unassessed |
 | OPS-09 | Evidence-based status assessment of every task in `tasks.csv`; agent: Repo Steward | EL+AG | — | — | Every task has a `current_status` backed by a merged PR, test or CI run, or the lower status with what is missing |
 | GOV-29 | Positioning statements (SoT §25.5) and publication rules (SoT §38.8, plan §14) carried into the discovery and publication documents | FND | — | — | Documents updated and linked from the G7 checklist |
 | GOV-30 | Re-baseline: within two working days of OPS-09, EL proposes gate dates; the founders record them in the gate records | FND, EL | — | OPS-09 | New dates recorded in every gate record; demo date confirmed or moved |
+| ENV-14 | **G0-N**, the Noema half of G0 (DEC-2026-10-16 E4), Thu 22 Oct 17:00: TEN-01 to TEN-08 pass; `/contracts` v1 tagged; ≥ 50 fixtures reproducible; the isolation tests pass, including runtime refusal on Tushe `/partner/...` routes and on the `mock-case` truth endpoint. Internal: not in the worksheet and not sent to Tushe | IL, EL, B | REQ-ENV-007, REQ-ENV-002 | CON-03, ENV-05, ENV-06, BEN-04, ENV-08, ENV-09, ENV-13, SEC-02, GOV-01, GOV-04, GOV-05, GOV-06, GOV-22, GOV-23, PLT-02, PLT-03, PLT-05, AGT-01, ENV-02, VOI-01, GOV-09, SEC-01, PLT-07, REC-02, STM-01, PLT-08, UND-02, EDG-01, ENV-04, BEN-03, VOI-02, ENV-11, CON-05, EVD-01, EVD-02, EVD-03, EVD-04, EVD-05, EVD-06, UND-04, UND-05, UND-06, ENV-10, VOI-03, CON-06, TRU-01, TRU-02, TRU-03, TRU-04, RES-01, REC-06, OPS-08, OPS-09, GOV-29, GOV-30 | The G0-N gate record in `docs/poc/execution/gates/` lists the TEN results with the run seed; contracts tag and fixture run log linked → **G0-N**. TEN details stay out of the Tushe folder |
 
 ### Monday 9 November · G1, the unknown-outcome slice (latest: evidence Wed 11 Nov, review Thu 12 Nov 10:00)
 
@@ -530,20 +530,20 @@ These tasks keep their actual dates (DEC-2026-10-16 E3, exception 1). Some were 
 | TST-01 | Property tests INV-03, INV-07, INV-08, INV-05, INV-18 wired into CI | C1+AG | REQ-TST-002 | EXE-02 | All green on every merge |
 | BEN-05 | Run US-01 and US-06 twice through the public API; diff the Trust decisions and verdicts | B | REQ-NFR-001, REQ-BEN-002 | OUT-01, REC-03 | Identical → **G1 evidence** |
 | OPS-07 | Vendored-copy drift (REQ-OPS-005): every docs pull request that touches vendored text names a matching `noema` re-point pull request, merged with it; the drift check fails when a copy differs and passes when only the commit in a header differs. The check and its tests exist (noema#56); this task adds the working rule | EL | REQ-OPS-005 | — | `docs-drift` is green on `main` after the last docs merge of the week; each docs pull request that touches vendored text names its re-point pull request |
-| GOV-07 | **G1 review** at 10:00; Noema-covered exceptions AT-04, 05, 07, 14 shown internally before it | EL, FND | — | BEN-05, ENV-14 | Gate record committed. G1 may run before G0-T; its evidence counts only once G0 passes (DEC-2026-10-16 E4). If G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (arm D, then the A0 diagnostic; the P2 requirements) are applied that day (DEC-2026-10-16 contract-and-pack-clarifications C8) |
+| GOV-07 | **G1 review** at 10:00; Noema-covered exceptions AT-04, 05, 07, 14 shown internally before it | EL, FND | — | BEN-05, ENV-14, EXE-03, EXP-01, TST-01, OPS-07 | Gate record committed. G1 may run before G0-T; its evidence counts only once G0 passes (DEC-2026-10-16 E4). If G1 has not passed, or fewer than 80% of the week-1 P0 tasks have merged, cut-line items 4 and 5 (arm D, then the A0 diagnostic; the P2 requirements) are applied that day (DEC-2026-10-16 contract-and-pack-clarifications C8) |
 
-### To be confirmed by Tushe · G0-T, the joint session
+### Wednesday 11 November · G0-T, Tushe's final written response (latest: the same day)
 
-The date is set by Tushe, who has not confirmed one. These two rows carry the date TBC until it is confirmed (DEC-2026-10-16 E3, E4). No dated task waits for them: G1 waits for G0-N (ENV-14), and its evidence counts only once G0 passes.
+Acceptance is Tushe's final written response, due no later than this date (DEC-2026-11-04-architect-rulings R13). Until it is committed under `docs/poc/tushe/responses/`, G0-T has not passed. Tushe's R9 to R12 are reported delivered by the Founder and are not observed by Noema (`docs/poc/tushe/2026-11-04-r9-r12-delivery-note.md`). No dated task waits for these rows: G1 waits for G0-N (ENV-14), and its evidence counts only once G0 passes.
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
-| ENV-12 | Walk through, agree and sign the acceptance worksheet with Tushe at the joint session (worksheet section 7); the date is set by Tushe | IL, EL | REQ-ENV-007 | ENV-01, GOV-19 | Signed worksheet committed in `docs/poc/tushe/acceptance/` → **G0-T** |
-| ENV-07 | **G0-T**, the Tushe half of G0 (DEC-2026-10-16 E4): joint session, second half: run AT-01 to AT-20 against the signed worksheet; record the outcomes; both sides sign the record. Our request for the date goes to Tushe by Thu 22 Oct; G0 passes when G0-T and G0-N both pass | IL, EL, B, Tushe | REQ-ENV-007, REQ-ENV-002 | ENV-05, ENV-06, BEN-04, ENV-08, ENV-09, ENV-12, ENV-13 | Signed report in `docs/poc/tushe/acceptance/` → **G0-T** |
+| ENV-12 | Walk through, agree and sign the acceptance worksheet with Tushe at the joint session (worksheet section 7); Tushe's final written response is due by Wed 11 Nov (DEC-2026-11-04-architect-rulings R13) | IL, EL | REQ-ENV-007 | ENV-01, GOV-19 | Signed worksheet committed in `docs/poc/tushe/acceptance/` → **G0-T** |
+| ENV-07 | **G0-T**, the Tushe half of G0 (DEC-2026-10-16 E4): joint session, second half: run AT-01 to AT-20 against the signed worksheet; record the outcomes; both sides sign the record. G0 passes when G0-T and G0-N both pass | IL, EL, B, Tushe | REQ-ENV-007, REQ-ENV-002 | ENV-05, ENV-06, BEN-04, ENV-08, ENV-09, ENV-12, ENV-13 | Signed report in `docs/poc/tushe/acceptance/` → **G0-T** |
 
 **Week 1 definition of done.**
 
-- G0-N passed (Thu 22 Oct, 17:00). G0-T passed on the date Tushe confirms. G1 now sits in week 2 (Mon 26 Oct, 10:00); its evidence counts only once G0 passes.
+- G0-N passed (§3). G0-T passed on Tushe's final written response. G1 is reviewed on its gate date (§3); its evidence counts only once G0 passes.
 - Every task above is Done.
 - CI blocks merges on lint, boundaries, codegen and trace IDs.
 - Every finding has become a regression case.
@@ -623,7 +623,13 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | UND-08 | Provider outage path (PUS-04): failover, then a safe "try again" with no guessed intent. A failover that reads the request differently produces a new Intent Object version; resolution and Trust run again and every decision, confirmation or grant on the old version is void (EC-E15) | C2 | REQ-INT-002 | UND-03 | PUS-04 and EC-E15 pass |
 | BEN-12 | Run US-01 to US-22 smoke by family; produce the G2 table | B | REQ-BEN-004 | TST-02 | Table produced from the run ID |
 | GOV-21 | Engage two external people under NDA for the comparison arms: ARM (the arm builder for arms A, B and D in week 4) and REV (the independent arm reviewer, a few hours, OQ-02). Both must be people outside the build (SoT §38.5) (DEC-2026-10-16 E2, point 3, corrected by DEC-2026-10-16 contract-and-pack-clarifications C8, item 2) | FND (Founder) | REQ-BEN-007 | — | Both people named and both NDAs signed by Fri 30 Oct; confirmed at the G2 review (GOV-11) |
-| GOV-11 | **G2 review** at 16:00; week retro; week 3 plan confirmed; arm builder (ARM) and arm reviewer (REV, OQ-02) confirmed for week 4 | EL, B, FND | REQ-BEN-007 | BEN-12, GOV-21, R3 received | Gate record committed; ARM and REV contracts signed. US-02 depends on R3; if R3 is late, histories are built with the fixture loader (SR-18) |
+| TRU-13 | Basis binding: the Decision's basis (policy rule versions, evidence snapshot, freshness) is built by the gate steps from what T9 and T11 actually read and evaluated, never supplied by the caller; the Decision Record refuses a decision whose basis differs from the evaluated set | C1+AG | REQ-TRU-001, REQ-TRU-004, REQ-TRU-007 | TRU-02, TRU-03 | A test that changes the basis between evaluation and recording is refused; 0 ALLOW or CONFIRM whose basis is not the evaluated set (property test) |
+| ENV-16 | Fixture-loader workflow: a GitHub Actions workflow, run from `main` only, that loads seeded synthetic fixtures into the Tushe environment through the `tushe-fixture` GitHub Environment (Founder as required reviewer). It holds no credential outside that Environment, records each run, and is unreachable from the runtime profiles (DEC-2026-11-04-architect-rulings R12, R17) | IL+AG | REQ-ENV-002, REQ-SEC-002 | ENV-05 | Two runs of the same seeded fixture set give identical Tushe state; the workflow runs from `main` only and waits for the Founder's review; no credential outside `tushe-fixture` is read (checked by the workflow's own test) |
+| PCK-04 | Action Graph verification: confirm the fintech graph has real nodes and edges with preconditions, postconditions, `on_unknown`, `on_failure`, recovery and escalation references; extend `packcheck` so a flat list fails; if the graph is a flat list today, rebuild it first | EL+AG | REQ-AG-001 | PCK-02 | A flat-list negative fixture fails `packcheck`; the fintech graph passes; findings recorded |
+| PLN-03 | The planner selects a path through the graph: every plan step is a node reached through a declared edge with satisfied preconditions | C1+AG | REQ-AG-003 | PCK-04, PLN-01 | Property test: every emitted plan is a valid path in the graph |
+| CAP-02 | Compensation declared per capability (`NONE_REQUIRED`, `INVERSE_CAPABILITY`, `ESCALATE_ONLY`) for all four POC capabilities, with the `packcheck` rules | C1+AG | REQ-CAP-004 | PCK-02 | All four declare compensation; negative fixtures fail `packcheck` |
+| RCV-04 | Compensation executed through Trust as recovery, under a new ALLOW and grant, verified by Outcome | C1 | REQ-RCV-005 | CAP-02, RCV-01 | A G2 partial-failure fixture yields the declared compensation or an escalation, never a silent partial state |
+| GOV-11 | **G2 review** at 16:00; week retro; week 3 plan confirmed; arm builder (ARM) and arm reviewer (REV, OQ-02) confirmed for week 4 | EL, B, FND | REQ-BEN-007 | BEN-12, GOV-21, R3 received, GOV-08, AMB-01, AMB-02, AMB-03, AMB-04, INP-01, STM-02, SEC-03, VOI-04, AMB-05, RES-02, RES-03, RES-04, TRU-06, EXE-04, VOI-05, TRU-07, TRU-08, TRU-09, SEC-04, CAP-01, GOV-10, VOI-06, UI-01, BEN-28, TRU-10, OUT-02, EXE-05, EXE-06, RCV-02, TRU-11, TRU-12, VOI-07, PCK-03, MEM-01, MEM-02, UND-07, UND-08, TRU-13, ENV-16, PCK-04, PLN-03, CAP-02, RCV-04 | Gate record committed; ARM and REV contracts signed. US-02 depends on R3; if R3 is late, histories are built with the fixture loader (SR-18) |
 
 **Week 2 definition of done.**
 
@@ -704,7 +710,22 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | UI-05 | Benchmark inspector: runs, Tier 0 first, per-family results, failure drill-down into the panel | FE+AG | REQ-UI-004 | BEN-16 | Renders the latest run. Scope: PERD §40 minimum only (DEC C8) |
 | OBS-03 | Thin engineering and benchmark dashboard | EL+AG | REQ-OBS-003 | OBS-01 | Dashboard shows last nightly run |
 | OPS-04 | Demo and benchmark environment availability: `demo` profile on a dedicated host, reset to a known seed in under 10 min | EL | REQ-NFR-008 | PLT-04 | Reset timed and recorded |
-| GOV-12 | **G3 review** at 16:00; week retro; freeze the week 4 plan; any G3 miss takes Monday | EL, B, SR, FND | — | BEN-18, SEC-10, SEC-06 | Gate record committed |
+| UND-09 | Context Fabric, part 1: session context (principal, tenant, channel, locale) and the open journey's turns and Intent Object versions as a typed, bounded, versioned context view | C2+AG | REQ-CTX-009 | UND-04, INP-01 | Context never authorises (property test); replay gives the same context view |
+| UND-10 | Context Fabric, part 2: the requester's prior cases read fresh through the Evidence Layer, principal-scoped, and prior journeys from the Record; no standing replica | C2+AG | REQ-CTX-010 | UND-09, ENV-05, REC-03 | No other principal's case in any view, prompt, log or trace; an unreachable case system gives UNAVAILABLE |
+| UND-11 | Scoped speculative prefetch of candidate evidence while the Intent Compiler runs; unused results discarded, never cached across journeys, never recorded as facts | C2+AG | REQ-CTX-006 | UND-05 | Latency measured before and after; the prefetch leak test passes |
+| UND-12 | Async-safety check of the provider transport: `_post_blocking` never runs on the event loop; fix if it does | C2 | REQ-TST-010 | — | A test proves the event loop is never blocked by a provider call |
+| BEN-30 | Scoring reports pass^k (k = 5) for Understanding-dependent cases, turns to resolution, unnecessary-clarification rate and auto-resolve precision | B | REQ-BEN-009 | BEN-01 | Every run report contains the four diagnostics with n |
+| UND-13 | Model-drift canary: pinned model and speech versions; the qualification subset including pass^k runs on every version or provider change; unqualified IDs refused | C2, B | REQ-INT-006 | TST-02, BEN-30 | The harness refuses a model ID with no qualification record |
+| PCK-05 | Convergence windows declared for every reconciled fact pair in `packs/fintech/recon_rules/` | EL+AG | REQ-RES-005 | PCK-02 | Every compared fact pair has a window; a missing window fails `packcheck` |
+| RES-05 | Reconciliation applies convergence windows: inside the window WAIT with a watch and deadline; outside it CONTRADICTORY, freeze and escalate | C2+AG | REQ-RES-005 | RES-01, PCK-05 | US-13, US-17, US-03, US-14 pass; boundary tests at the window edge pass on the simulated clock |
+| CAP-03 | Legacy-API protection: honour `Retry-After`, jittered exponential backoff on reads, per-target concurrency caps | C1+AG | REQ-CAP-005 | CAP-01, ENV-09 | Proven against the proxy's 429 and near-timeout faults with the observed request rate recorded |
+| MEM-03 | Labelled pairs by design: extraction of (request, resolved target, verified outcome) with tenant scope and provenance from the Record and memory | C1, C2 | REQ-MEM-003 | REC-03 | Extraction test on a benchmark run passes; no extraction for training before GOV-25 |
+| MEM-04 | Escalation resolutions recorded as structured operational-memory observations linked to the case | C1 | REQ-MEM-004 | MEM-01, RCV-03 | Every escalated benchmark case resolved in `mock-case` has one linked observation |
+| VOI-17 | Voice simulation library (Lagos noise, Nigerian accents, five locales with code-switching, low-quality microphones, 3G jitter and loss) and native-speaker testers for en-NG, pcm, yo, ha and ig, before every field session | V, B | REQ-VOI-007 | VOI-09 | A simulation report per locale precedes each field session |
+| VOI-18 | Modular voice pipeline guard: no speech-to-speech provider in the `bench` or `demo` profile | V | REQ-VOI-006 | VOI-01 | Configuration check refuses a speech-to-speech provider in those profiles |
+| EXP-06 | Operator testing of the evidence packet: at least three people who work escalations each work at least five escalated cases from the packet alone; times and lookups recorded; each gap becomes a change | C2, FND | REQ-EXP-004 | EXP-05 | Operator test record committed with changes or recorded decisions |
+| PLT-09 | Static-analysis gates: `golangci-lint` with `errcheck`, `contextcheck` and a `panic` ban outside `main` and tests; `mypy --strict`; Ruff with `ASYNC` rules; each a required check | EL+AG | REQ-TST-010 | PLT-02 | Each rule has a fixture that fails CI; all required checks green on `main` |
+| GOV-12 | **G3 review** at 16:00; week retro; freeze the week 4 plan; any G3 miss takes Monday | EL, B, SR, FND | — | BEN-18, SEC-10, SEC-06, OUT-03, OUT-04, RCV-03, EXP-02, EXP-03, UI-02, SEC-05, OUT-05, API-01, EXP-04, EXP-05, UI-03, REC-04, VOI-09, SEC-07, SEC-08, SEC-09, OBS-01, OBS-02, UI-04, VOI-10, TST-03, TST-04, PLN-02, DATA-01, DATA-02, OPS-01, OPS-02, VOI-16, OPS-03, SEC-11, BEN-19, UI-05, OBS-03, OPS-04, UND-09, UND-10, UND-11, UND-12, BEN-30, UND-13, PCK-05, RES-05, CAP-03, MEM-03, MEM-04, VOI-17, VOI-18, EXP-06, PLT-09 | Gate record committed |
 | SEC-14 | Evaluation of the write-once anchor store (leading candidate: S3-compatible object lock in compliance mode, for example MinIO in Compose): write-only credential, retention that no account can shorten, operations in Compose | SR | REQ-AUD-007 | — | Recommendation presented for founder approval under AGENT-14 |
 | REC-07 | Record-head anchoring implemented in the POC (OD-06 as amended by DEC-2026-10-31-proof-depth-and-completeness D19): chain heads anchored on a schedule and at every run boundary to the approved write-once store; the verifier proves the chain matches every anchor | C1+AG | REQ-AUD-007 | REC-05, SEC-14 | An offline chain rewrite in a test database is detected against the anchors; the word used is tamper-evident |
 | SEC-12 | W2: evaluation of PostgreSQL Ed25519 verification extensions from primary sources: pinned version, licence, maintenance, supply chain, constant-time and canonical-signature checks, support for the PostgreSQL major version the compose stack runs (17.11 today), behaviour when unavailable, compatibility with a migration-owned trusted-key table | SR | REQ-AUD-006 | — | Recommendation, or "none viable", presented for founder approval under AGENT-14 by Mon 2 Nov |
@@ -713,30 +734,10 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | EXE-08 | W4: database-side verification of receipts with the approved extension; trusted-key table, function and trigger owned by the migration role; `execution_rw` cannot alter them or bypass verification; then release `noema#94` and `noema#90` | C1 | REQ-AUD-006, REQ-EXE-004 | EXE-07, SEC-12 | Failing-first forgery, replay, rotation, revoked-key and verification-unavailable tests pass; DEBT-01 criteria (1)–(6) evidenced |
 | SEC-13 | DEBT-01 closure evidence: failing-first bypass test on the held code; independent validation of every closure criterion after EXE-08 | SR | REQ-AUD-006 | EXE-08 | DEBT-01 closed by EL with the evidence, or kept open with the gap named → **G3** |
 | REC-08 | Authenticated Record writers: each power signs each event (Ed25519, JCS, including the previous hash); the database refuses an event that does not verify; the chain verifier checks every signature | C1+AG | REQ-AUD-006 | GOV-28, SEC-12, REC-05 | Forgery by any database credential without a key fails; rotation with two active keys passes → **G3** |
-| UND-09 | Context Fabric, part 1: session context (principal, tenant, channel, locale) and the open journey's turns and Intent Object versions as a typed, bounded, versioned context view | C2+AG | REQ-CTX-009 | UND-04, INP-01 | Context never authorises (property test); replay gives the same context view |
-| UND-10 | Context Fabric, part 2: the requester's prior cases read fresh through the Evidence Layer, principal-scoped, and prior journeys from the Record; no standing replica | C2+AG | REQ-CTX-010 | UND-09, ENV-05, REC-03 | No other principal's case in any view, prompt, log or trace; an unreachable case system gives UNAVAILABLE |
-| UND-11 | Scoped speculative prefetch of candidate evidence while the Intent Compiler runs; unused results discarded, never cached across journeys, never recorded as facts | C2+AG | REQ-CTX-006 | UND-05 | Latency measured before and after; the prefetch leak test passes |
-| UND-12 | Async-safety check of the provider transport: `_post_blocking` never runs on the event loop; fix if it does | C2 | REQ-TST-010 | — | A test proves the event loop is never blocked by a provider call |
-| BEN-30 | Scoring reports pass^k (k = 5) for Understanding-dependent cases, turns to resolution, unnecessary-clarification rate and auto-resolve precision | B | REQ-BEN-009 | BEN-01 | Every run report contains the four diagnostics with n |
-| UND-13 | Model-drift canary: pinned model and speech versions; the qualification subset including pass^k runs on every version or provider change; unqualified IDs refused | C2, B | REQ-INT-006 | TST-02, BEN-30 | The harness refuses a model ID with no qualification record |
-| PCK-04 | Action Graph verification: confirm the fintech graph has real nodes and edges with preconditions, postconditions, `on_unknown`, `on_failure`, recovery and escalation references; extend `packcheck` so a flat list fails; if the graph is a flat list today, rebuild it first | EL+AG | REQ-AG-001 | PCK-02 | A flat-list negative fixture fails `packcheck`; the fintech graph passes; findings recorded |
-| PLN-03 | The planner selects a path through the graph: every plan step is a node reached through a declared edge with satisfied preconditions | C1+AG | REQ-AG-003 | PCK-04, PLN-01 | Property test: every emitted plan is a valid path in the graph |
-| PCK-05 | Convergence windows declared for every reconciled fact pair in `packs/fintech/recon_rules/` | EL+AG | REQ-RES-005 | PCK-02 | Every compared fact pair has a window; a missing window fails `packcheck` |
-| RES-05 | Reconciliation applies convergence windows: inside the window WAIT with a watch and deadline; outside it CONTRADICTORY, freeze and escalate | C2+AG | REQ-RES-005 | RES-01, PCK-05 | US-13, US-17, US-03, US-14 pass; boundary tests at the window edge pass on the simulated clock |
-| CAP-02 | Compensation declared per capability (`NONE_REQUIRED`, `INVERSE_CAPABILITY`, `ESCALATE_ONLY`) for all four POC capabilities, with the `packcheck` rules | C1+AG | REQ-CAP-004 | PCK-02 | All four declare compensation; negative fixtures fail `packcheck` |
-| RCV-04 | Compensation executed through Trust as recovery, under a new ALLOW and grant, verified by Outcome | C1 | REQ-RCV-005 | CAP-02, RCV-01 | A G2 partial-failure fixture yields the declared compensation or an escalation, never a silent partial state |
-| CAP-03 | Legacy-API protection: honour `Retry-After`, jittered exponential backoff on reads, per-target concurrency caps | C1+AG | REQ-CAP-005 | CAP-01, ENV-09 | Proven against the proxy's 429 and near-timeout faults with the observed request rate recorded |
 | TST-05 | Crash-point matrix: kill the core before the spend commits, after it and before dispatch, after dispatch and before the response, and after the target commits with the response lost; assert exactly one effect and the correct final state | IL, SR | REQ-TST-008 | EXE-02, OUT-01, RCV-01 | All four points pass, repeated with seeds; run ID recorded → **G3** |
 | ENV-15 | Corrupted-payload fault families in the hostility proxy: truncated body, invalid JSON, wrong `Content-Type`, empty body with success status, extra or missing required field | IL+AG | REQ-ENV-005 | ENV-09 | Each is observed by the adapter as UNAVAILABLE or a schema rejection, never a fact or a success |
 | TST-06 | Chaos subset (four crash points plus one fault per proxy family) as a required check on merges touching Trust, Execution, Outcome, the Evidence Layer or adapters; full chaos matrix nightly | B, IL | REQ-TST-009 | TST-02, TST-05, ENV-15, SEC-10 | Required check active under 15 minutes; nightly run IDs recorded → **G3** |
 | BEN-29 | Integration suite as one command: US-01 to US-22, the chaos matrix, the evil provider and the full suite (≥ 320 cases, ≥ 300 hidden-oracle), runnable from a clean environment | B | REQ-BEN-004, REQ-TST-005 | BEN-12, BEN-16, SEC-06, SEC-10 | One command runs each suite from `make reset`; run IDs recorded → **G3** |
-| BEN-31 | Public benchmark format and publication rules: state-based outcomes, pass^k, open harness and public cases, held-out private; full distribution, n, method, bound and CI on every number | B, FND | REQ-BEN-010 | BEN-16 | Format and rules committed; G7 checklist references them |
-| MEM-03 | Labelled pairs by design: extraction of (request, resolved target, verified outcome) with tenant scope and provenance from the Record and memory | C1, C2 | REQ-MEM-003 | REC-03 | Extraction test on a benchmark run passes; no extraction for training before GOV-25 |
-| MEM-04 | Escalation resolutions recorded as structured operational-memory observations linked to the case | C1 | REQ-MEM-004 | MEM-01, RCV-03 | Every escalated benchmark case resolved in `mock-case` has one linked observation |
-| VOI-17 | Voice simulation library (Lagos noise, Nigerian accents, five locales with code-switching, low-quality microphones, 3G jitter and loss) and native-speaker testers for en-NG, pcm, yo, ha and ig, before every field session | V, B | REQ-VOI-007 | VOI-09 | A simulation report per locale precedes each field session |
-| VOI-18 | Modular voice pipeline guard: no speech-to-speech provider in the `bench` or `demo` profile | V | REQ-VOI-006 | VOI-01 | Configuration check refuses a speech-to-speech provider in those profiles |
-| EXP-06 | Operator testing of the evidence packet: at least three people who work escalations each work at least five escalated cases from the packet alone; times and lookups recorded; each gap becomes a change | C2, FND | REQ-EXP-004 | EXP-05 | Operator test record committed with changes or recorded decisions |
-| PLT-09 | Static-analysis gates: `golangci-lint` with `errcheck`, `contextcheck` and a `panic` ban outside `main` and tests; `mypy --strict`; Ruff with `ASYNC` rules; each a required check | EL+AG | REQ-TST-010 | PLT-02 | Each rule has a fixture that fails CI; all required checks green on `main` |
 
 **Week 3 definition of done.**
 
@@ -790,7 +791,7 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | VOI-15 | If G5 passes: voice in the overlay for D1 (Pidgin), on the Tecno device. If not: D1 runs in text, and the field numbers are shown as measured | V, FE | REQ-VOI-001, REQ-UI-001 | VOI-14, R9 received | D1 path decided and rehearsed. D1 and its name-enquiry step depend on R9 (Fri 30 Oct); if R9 slips, EL raises it with Tushe the same day and the demo uses recorded responses for that step, labelled as recorded (SR-21) |
 | BIZ-03 | Business metrics and the Appendix B scoreboard generated from the run ID; no ROI claim; baseline labelled simulated | B | REQ-BIZ-001, REQ-BIZ-002 | BEN-24, BIZ-01 | Scoreboard regenerates identically from the run ID |
 | REL-01 | 12:00 **Release candidate**: tag code, contracts, packs, policy and fixtures; freeze lockfiles; regenerate docs and registers; rerun codegen, lint and security scans; every merged PR traces to IDs; debt register attached | EL | REQ-TST-005, REQ-SEC-007, REQ-AGT-001 | BEN-24 | Release manifest committed; commit SHAs stable; no open S0, no unresolved S1 |
-| GOV-13 | **G4 and G5 reviews** at 16:00; code freeze in force since 12:00 | B, REV, V, EL | — | BEN-24, VOI-14, REL-01 | Gate records committed |
+| GOV-13 | **G4 and G5 reviews** at 16:00; code freeze in force since 12:00 | B, REV, V, EL | — | BEN-24, VOI-14, REL-01, BEN-21, BEN-22, BIZ-01, ARM-04, BEN-23, BIZ-02, UI-06, BEN-25, VOI-15, BIZ-03 | Gate records committed |
 
 ### Wednesday 9 December · G6, the release run, and the code freeze at 12:00 (latest Thu 10 Dec 18:00)
 
@@ -802,13 +803,14 @@ The date is set by Tushe, who has not confirmed one. These two rows carry the da
 | REL-02 | **Clean-room reproduction**: IL (who did not build the core path) checks out the release SHA on a clean machine, follows only the written commands, seeds Tushe, runs the suites, launches the UI, reproduces three scenarios and one Record reconstruction, and reproduces Tier 0 and Tier 1 from the bundle | IL | REQ-NFR-004, REQ-BEN-008 | BEN-27 | Report with exact commands; every deviation fixed or listed as a release blocker |
 | DEM-01 | Demo dry run 1: D1 to D10 live from the release build with the evidence panel; time each; record failures | FND, EL, C1, C2, V | REQ-UI-003 | BEN-26, R9 received | Every scenario either runs live or is dropped; none is scripted. D1 and its name-enquiry step depend on R9 (Fri 30 Oct); if R9 slips, EL raises it with Tushe the same day and the demo uses recorded responses for that step, labelled as recorded (SR-21) |
 | GOV-15 | External claim wording: every number with n, method, bound and CI; clocks labelled SYNTHETIC; OQ-14 status stated | FND | REQ-BIZ-002 | BEN-27 | Wording approved by FND and B |
-| GOV-16 | **G6 review** at 18:00: founders sign the evidence bundle or record the misses | FND | REQ-BEN-008 | BEN-27, GOV-14, REL-02 | Signed gate record. DoD (pre-demo items): every PERD §68 item that does not depend on the demo itself is signed here, as G7 requires |
+| GOV-16 | **G6 review** at 18:00: founders sign the evidence bundle or record the misses | FND | REQ-BEN-008 | BEN-27, GOV-14, REL-02, DEM-01, GOV-15 | Signed gate record. DoD (pre-demo items): every PERD §68 item that does not depend on the demo itself is signed here, as G7 requires |
 
 ### Saturday 12 December · G7, external readiness: the dry run at 09:00 and the demo at 14:00
 
 | ID | Task | Owner | REQ | Needs | Done when |
 |---|---|---|---|---|---|
-| DEM-02 | 09:00 **G7 dry run**: `make reset` on the demo host, then D1 to D10 in order | FND, EL | REQ-NFR-008 | GOV-16 | Every scenario run or dropped; the decision is written |
+| BEN-31 | Public benchmark format and publication rules: state-based outcomes, pass^k, open harness and public cases, held-out private; full distribution, n, method, bound and CI on every number | B, FND | REQ-BEN-010 | BEN-16 | Format and rules committed; G7 checklist references them |
+| DEM-02 | 09:00 **G7 dry run**: `make reset` on the demo host, then D1 to D10 in order | FND, EL | REQ-NFR-008 | GOV-16, BEN-31 | Every scenario run or dropped; the decision is written |
 | DEM-03 | 14:00 **Demo**, live and unscripted, evidence panel open; scoreboard and comparison shown from the run ID | FND | — | DEM-02 | Demo delivered; recording kept |
 | GOV-17 | 16:00 **POC-done review** against PERD §68 and SoT §40.3. Decision is GO (every mandatory gate passed), CONDITIONAL (every mandatory gate passed; only named non-gating work remains, with owners and dates) or NO-GO (name the date the last gate will pass). A demo that worked while a gate failed is NO-GO. This review closes the PERD §68 items that depend on the demo itself; the others were signed at G6 (GOV-16) FND, EL, SR and B sign | FND, EL, SR, B | — | DEM-03 | Decision record merged |
 | GOV-18 | Retro and handover: debt register, open questions, design-partner path (OD-12), next phase plan | All | REQ-OPS-004 | GOV-17 | Retro note committed |
@@ -841,21 +843,21 @@ Tests come online in this order. A layer is "online" when it runs in CI on its s
 
 | Layer | Online from | Runs | Owner | Blocks |
 |---|---|---|---|---|
-| Lints (core terms, boundaries, clock, money, mocks, provider SDK) | Mon 19 Oct (PLT-03) | Every commit | EL | Merge |
-| Unit | Mon 19 Oct | Every commit | Task owner | Merge |
-| Contract (schemas; core and model service; adapters and Tushe) | Tue 20 Oct (CON-03, ENV-03) | Every merge; recorded Tushe responses for merges, live Tushe nightly (OQ-10) | C1, IL | Merge |
-| Property (invariants) | Tue 20 Oct; slice set by Fri 23 Oct (TST-01); all 30 deep by Thu 5 Nov (TST-03) | Subset every merge; full nightly | C1 | Merge, G1, G3 |
-| Integration (real Postgres and Temporal via Testcontainers; time-skipping) | Tue 20 Oct; Temporal from Mon 2 Nov | Every merge | C1 | Merge |
-| Fault injection (FaultPlans through Tushe test values, our proxy and `mock-case`) | Wed 21 Oct (ENV-06) | Nightly; release | IL, B | G0 onward |
-| Benchmark smoke (30 cases) | Fri 30 Oct (TST-02) | Every merge | B | Merge |
-| Benchmark full (≥ 320) | Nightly from Fri 30 Oct; complete from Wed 4 Nov | Nightly | B | G3, G6 |
-| Held-out | Dry run Fri 6 Nov; release Thu 12 Nov | Release only, by B | B | G6 |
-| Security (B6, authorisation matrix, isolation, scanners, evil provider) | Isolation Thu 22 Oct; full from Wed 4 Nov | Nightly; release | SR | G3, G6 |
-| End to end and UI (Playwright) | Wed 28 Oct (UI-01) | Smoke every merge; full nightly | FE | G3 |
-| Performance | Wed 4 Nov (OBS-02) | Nightly | C2 | Reported at G6 |
-| Voice | Recorded subset from Wed 28 Oct; field sessions 9 to 10 Nov | Weekly; before demos | V | G5 |
-| Replay | Fri 23 Oct (two slice cases); full suite Fri 6 Nov | Gate days; release | B | G1, G3, G6 |
-| Operational drills | Fri 6 Nov | Once before release | EL, SR | G3 |
+| Lints (core terms, boundaries, clock, money, mocks, provider SDK) | PLT-03 | Every commit | EL | Merge |
+| Unit | From the first merge | Every commit | Task owner | Merge |
+| Contract (schemas; core and model service; adapters and Tushe) | CON-03, ENV-03 | Every merge; recorded Tushe responses for merges, live Tushe nightly (OQ-10) | C1, IL | Merge |
+| Property (invariants) | From the first invariant; slice set at G1 (TST-01); all 30 deep by G3 (TST-03) | Subset every merge; full nightly | C1 | Merge, G1, G3 |
+| Integration (real Postgres and Temporal via Testcontainers; time-skipping) | From PLT-04; Temporal from G3 | Every merge | C1 | Merge |
+| Fault injection (FaultPlans through Tushe test values, our proxy and `mock-case`) | ENV-06 | Nightly; release | IL, B | G0 onward |
+| Benchmark smoke (30 cases) | TST-02 | Every merge | B | Merge |
+| Benchmark full (≥ 320) | Nightly from G2 (TST-02); complete from G3 | Nightly | B | G3, G6 |
+| Held-out | Dry run before G3 closes; release at G6 | Release only, by B | B | G6 |
+| Security (B6, authorisation matrix, isolation, scanners, evil provider) | Isolation at G0-N; full from G3 | Nightly; release | SR | G3, G6 |
+| End to end and UI (Playwright) | UI-01 | Smoke every merge; full nightly | FE | G3 |
+| Performance | OBS-02 | Nightly | C2 | Reported at G6 |
+| Voice | Recorded subset from G2; field sessions before G5 | Weekly; before demos | V | G5 |
+| Replay | Two slice cases at G1; full suite by G3 | Gate days; release | B | G1, G3, G6 |
+| Operational drills | Before G3 closes | Once before release | EL, SR | G3 |
 
 **Coverage rule.** Every user story (Appendix D), every one of the PERD's 105 edge cases (Appendix C), every fault family and every capability, including each prohibited one, has at least one benchmark case and one owning task.
 
@@ -945,7 +947,7 @@ The runner assembles the bundle from the release run ID with no manual editing; 
 
 The bundle hash is recorded in the docs repository.
 
-## 14. Demo plan for Friday 13 November
+## 14. Demo plan
 
 **Rules.** Every scenario runs live from the release build against Tushe, with the evidence panel open. Nothing is scripted, edited or replayed from video. If a scenario fails in the dry run, it is dropped and the drop is said out loud.
 
@@ -1010,14 +1012,14 @@ These are delivery risks for the four weeks. The product risks are in PERD §66;
 | ID | Risk | Trigger (when we will know) | Action |
 |---|---|---|---|
 | SR-01 | Tushe misses AT tests or fault hooks (R-01) | Any AT red at the G0-T joint session | Hostility proxy covers the faults (REQ-ENV-005); G0-T re-run on a date agreed with Tushe; G1 evidence is recorded but counts only once G0 passes |
-| SR-02 | Tushe case API lacks query-by-key or version tokens (R-02, OQ-03) | Mon 19 to Fri 23 Oct | Register the case capabilities with retry safety NONE (one dispatch, escalate on uncertainty) and adjust the US-06 expectation through a decision record |
-| SR-03 | Staffing below the §4 table (R-13) | Mon 19 Oct (GOV-05) | Apply the cut line from the top; the gates do not move; the date moves if needed and we say so. Two people is below the table: cut-line items 1 to 3 are applied now (DEC-2026-10-16 contract-and-pack-clarifications C8) |
-| SR-04 | Provider keys late | Wed 21 Oct | Build on the providers available; the PERD requires all three for provider runs, so the missing one is a G6 miss, recorded |
-| SR-05 | Voice misses 2.5 s on 3G (R-08) | Wed 11 Nov | Demo in text; no design-partner demo until it passes (SoT §37.5); the voice track keeps going after the demo |
-| SR-06 | Arm build overruns | Tue 10 Nov 17:00 | Cut order: A0, then D; arm B is never cut; the report says what was not run |
-| SR-07 | Week 3 full suite shows many Tier 0 failures | Wed 4 Nov | All hands on Tier 0 on Thu and Fri; UI polish and voice breadth are cut first; Saturday 7 Nov is used if EL calls it |
-| SR-08 | Temporal trouble (R-14) | Mon 2 Nov | Sweepers carry correctness; Temporal stays a scheduler only |
-| SR-09 | Lexicon quality in yo, ha and ig (R-15) | Wed 28 Oct review | Clarify more in those locales; demo in pcm and en-NG; measure all five |
+| SR-02 | Tushe case API lacks query-by-key or version tokens (R-02, OQ-03) | G0-N to G1 | Register the case capabilities with retry safety NONE (one dispatch, escalate on uncertainty) and adjust the US-06 expectation through a decision record |
+| SR-03 | Staffing below the §4 table (R-13) | GOV-05 | Apply the cut line from the top; the gates do not move; the date moves if needed and we say so. Two people is below the table: cut-line items 1 to 3 are applied now (DEC-2026-10-16 contract-and-pack-clarifications C8) |
+| SR-04 | Provider keys late | G0-N | Build on the providers available; the PERD requires all three for provider runs, so the missing one is a G6 miss, recorded |
+| SR-05 | Voice misses 2.5 s on 3G (R-08) | G4 and G5 | Demo in text; no design-partner demo until it passes (SoT §37.5); the voice track keeps going after the demo |
+| SR-06 | Arm build overruns | G4 and G5 | Cut order: A0, then D; arm B is never cut; the report says what was not run |
+| SR-07 | Week 3 full suite shows many Tier 0 failures | G3 | All hands on Tier 0 until they are zero; UI polish and voice breadth are cut first; Saturday is a work day (§3) |
+| SR-08 | Temporal trouble (R-14) | G3 | Sweepers carry correctness; Temporal stays a scheduler only |
+| SR-09 | Lexicon quality in yo, ha and ig (R-15) | G2 review | Clarify more in those locales; demo in pcm and en-NG; measure all five |
 | SR-11 | Held-out contamination | Any builder or agent identity in the held-out access log | Invalidate the affected runs; rotate credentials; B recreates the affected cases; rerun independently |
 | SR-12 | False success in an explanation | Validator mismatch or a B5 failure | Release blocked; regression case; template-only mode for that path |
 | SR-13 | Record append not fail-safe | EC-E16 or the chaos run shows a dispatch without its event | Stop the line; fix inside the spend transaction; rerun B4 and B7 |
@@ -1030,7 +1032,7 @@ These are delivery risks for the four weeks. The product risks are in PERD §66;
 | SR-19 | We grade a system we partly built | Any core engineer commits to `mock-case` or the proxy | Merge blocked by CODEOWNERS; the benchmark owner reviews every fault plan |
 | SR-21 | AT-09 ambiguous name enquiry (R9) late, which affects the first demo (D1) | Fri 30 Oct passes | EL raises it with Tushe the same day, and the founders are told. The demo then uses recorded responses for that step, labelled as recorded; every other step runs live (plan §14 rules) |
 | SR-20 | Hosted sandbox down or changed without notice | A failing nightly run with an unchanged commit | Recorded-response mode for that night; incident logged in `docs/poc/tushe/responses/`; raised with Tushe the same day |
-| SR-22 | The `noema` skeleton is late: PLT-01 was planned Mon 12 Oct (plan v1.4) and the repository was created Fri 16 Oct; PLT-02 to PLT-04 are unfinished | Now | Re-baselined by DEC-2026-10-16 E3: PLT-02 to PLT-04 run in parallel on Mon 19 Oct with agents; ENV-08 and ENV-09 start the moment PLT-01 merges; G1 (Mon 26 Oct) is reviewed at that morning's daily review |
+| SR-22 | The `noema` skeleton is late: PLT-01 was planned Mon 12 Oct (plan v1.4) and the repository was created Fri 16 Oct; PLT-02 to PLT-04 are unfinished | Now | Re-baselined by DEC-2026-10-16 E3: PLT-02 to PLT-04 run in parallel with agents; ENV-08 and ENV-09 start the moment PLT-01 merges; G1 is reviewed at that morning's daily review |
 | SR-23 | A CI secret or file crosses between services | Any failure of the DEC R2 or R3 checks | Merge blocked; the secret is rotated the same day |
 | SR-24 | Tushe has not confirmed a G0-T date | Our request went to Tushe (due Thu 22 Oct) and no date is confirmed at the next gate review | G1 and later evidence is recorded but does not count until G0 passes (E4); the founders escalate to Tushe's lead the same day; the date moves, never the gate (SoT §40.2); the hostility proxy and recorded responses keep adapter work moving |
 | SR-25 | Scope added by DEC-2026-10-31-proof-depth-and-completeness while G0-N, G0-T, G1 and G2 are not held | Now | OPS-09 assesses status first; GOV-30 re-baselines gate dates within two working days; gates never move, dates do (SoT §40.2) |
@@ -1134,13 +1136,13 @@ Every one of the PERD's 173 requirements (P0 142, P1 28, P2 3) is delivered by a
 | REQ-RES-003 | Resend advice | P0 | RES-03 |
 | REQ-RES-004 | Reversal precedence | P0 | RES-04 |
 | REQ-RES-005 | Convergence windows: expected lag versus real contradiction | P0 | PCK-05, RES-05 |
-| REQ-TRU-001 | Exactly one outcome, fully attributed | P0 | TRU-01, TRU-05 |
+| REQ-TRU-001 | Exactly one outcome, fully attributed | P0 | TRU-01, TRU-05, TRU-13 |
 | REQ-TRU-002 | Fail-closed gate order | P0 | TRU-02 |
 | REQ-TRU-003 | Target-bound three-layer authority | P0 | TRU-04 |
-| REQ-TRU-004 | Versioned, effective-dated policy evaluation | P0 | TRU-03 |
+| REQ-TRU-004 | Versioned, effective-dated policy evaluation | P0 | TRU-03, TRU-13 |
 | REQ-TRU-005 | Policy publication voids grants | P0 | TRU-08 |
 | REQ-TRU-006 | Clock evaluation | P1 | TRU-06 |
-| REQ-TRU-007 | Decision determinism | P0 | TRU-09 |
+| REQ-TRU-007 | Decision determinism | P0 | TRU-09, TRU-13 |
 | REQ-TRU-008 | Decision Grant issuance | P0 | CON-04, TRU-05 |
 | REQ-TRU-009 | Confirmation contract | P0 | TRU-07 |
 | REQ-TRU-010 | Escalation disposition linkage | P0 | TRU-10 |
@@ -1193,7 +1195,7 @@ Every one of the PERD's 173 requirements (P0 142, P1 28, P2 3) is delivered by a
 | REQ-MEM-003 | Labelled pairs by design | P1 | MEM-03 |
 | REQ-MEM-004 | Escalation resolutions are recorded | P1 | MEM-04 |
 | REQ-ENV-001 | Adapters per logical service, behind interfaces | P0 | ENV-03, ENV-11, ENV-10, ENV-05, ENV-08 |
-| REQ-ENV-002 | Oracle isolation | P0 | BEN-03, SEC-02, ENV-14, ENV-07, SEC-11 |
+| REQ-ENV-002 | Oracle isolation | P0 | BEN-03, SEC-02, ENV-14, ENV-07, ENV-16, SEC-11 |
 | REQ-ENV-003 | One clock | P0 | PLT-07 |
 | REQ-ENV-004 | Deterministic fault plans | P0 | ENV-01, ENV-09, ENV-06, ENV-08 |
 | REQ-ENV-005 | Hostility proxy contingency | P0 | ENV-09, ENV-06, ENV-13, ENV-15 |
@@ -1223,7 +1225,7 @@ Every one of the PERD's 173 requirements (P0 142, P1 28, P2 3) is delivered by a
 | REQ-UI-003 | Evidence panel | P0 | UI-03, DEM-01 |
 | REQ-UI-004 | Benchmark inspector | P1 | UI-05, UI-06 |
 | REQ-SEC-001 | Authenticated principals from a synthetic IdP | P0 | EDG-01 |
-| REQ-SEC-002 | mTLS and network isolation between deployables | P0 | PLT-01, GOV-20, PLT-03, UND-01, SEC-02, ENV-13 |
+| REQ-SEC-002 | mTLS and network isolation between deployables | P0 | PLT-01, GOV-20, PLT-03, UND-01, SEC-02, ENV-13, ENV-16 |
 | REQ-SEC-003 | Masking and PII redaction on every surface | P0 | REC-02, SEC-03, SEC-07 |
 | REQ-SEC-004 | Tenant isolation | P0 | PLT-06, SEC-08 |
 | REQ-SEC-005 | Key management | P0 | PLT-01, PLT-05, TRU-05, SEC-09, EXE-07 |
@@ -1278,17 +1280,17 @@ Every one of the PERD's 173 requirements (P0 142, P1 28, P2 3) is delivered by a
 
 ## Appendix B — Task count by workstream
 
-The plan holds **261 tasks**, including the five tasks before Monday.
+The plan holds **263 tasks**, including the five tasks before Monday.
 
 | Workstream | Tasks |
 |---|---|
 | GOV | 40 |
 | PLT | 17 |
 | CON | 11 |
-| ENV | 15 |
+| ENV | 16 |
 | UND | 19 |
 | EVD | 11 |
-| TRU | 12 |
+| TRU | 13 |
 | EXE | 14 |
 | OUT | 9 |
 | REC | 14 |
@@ -1296,7 +1298,7 @@ The plan holds **261 tasks**, including the five tasks before Monday.
 | VOI | 18 |
 | BEN | 40 |
 | SEC | 28 |
-| **Total** | **261** |
+| **Total** | **263** |
 
 ## Appendix C — Edge cases to tasks
 
