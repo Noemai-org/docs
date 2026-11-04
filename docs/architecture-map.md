@@ -2,7 +2,7 @@
 
 > **Derived, non-normative** (DEC-2026-10-31-proof-depth-and-completeness D1). This map exists so that the names used in conversation lead straight to the canonical component, the governing text, the code and the work. It defines nothing. If it disagrees with the SoT or the PERD, they win and this file is wrong. The **Status** column is filled only from evidence by the Repo Steward (task OPS-09) and kept current as work merges; `Unassessed` means nobody has checked yet, not that nothing exists.
 
-Governing versions: SoT v1.10, PERD v1.19, plan v1.10.
+Governing versions: SoT v1.10, PERD v1.20, plan v1.10.
 
 ## How to read it
 

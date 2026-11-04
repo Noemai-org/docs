@@ -16,6 +16,7 @@
 | [PLT-04](PLT-04.md) | Docker Compose with the six networks of PERD §65.1 and the profiles `dev`, `ci`, `bench` and `demo` | Wed 4 Nov |
 | [ENV-11](ENV-11.md) | Tushe adapter mapping to PERD §34.4 payloads | Wed 4 Nov |
 | [PCK-01](PCK-01.md) | Fintech pack v1 rewritten to SoT §15.3 shapes against the CON-01 pack schema | Wed 4 Nov |
+| [EVD-01](EVD-01.md) | Evidence Layer | Wed 4 Nov |
 | [UND-05](UND-05.md) | Intent Compiler on the fintech pack | Wed 4 Nov |
 | [ENV-09](ENV-09.md) | Hostility proxy | Wed 4 Nov |
 | [ENV-10](ENV-10.md) | Event-feed poller on Tushe `GET /v1/events` by sequence cursor, persisting into the inbox table | Wed 4 Nov |
