@@ -2,14 +2,18 @@
 
 Date: 2026-11-04 · Owner: Security Reviewer · Status: checklist, not yet verified against the live settings · Derived and non-normative: the credential scopes are those of [`trust-boundary-map.md`](trust-boundary-map.md) (DEC-2026-10-12 D6); this file adds no requirement.
 
-Three Environments in `Noemai-org/noema`, created by the Founder: `tushe-runtime`, `tushe-fixture`, `tushe-admin`. A tick below counts only against evidence the Founder attaches (a screenshot of each Environment page, or the output of `gh api repos/Noemai-org/noema/environments`). The Security Reviewer cannot read these settings; until they are attached, every row is **unknown**.
+Three Environments in `Noemai-org/noema`, created by the Founder: `tushe-runtime`, `tushe-fixture`, `tushe-admin` (the last holds no secret; see below). A tick below counts only against evidence the Founder attaches (a screenshot of each Environment page, or the output of `gh api repos/Noemai-org/noema/environments`). The Security Reviewer cannot read these settings; until they are attached, every row is **unknown**.
+
+## Secret names (Founder, 5 Nov 2026)
+
+`TUSHE_RUNTIME_KEY` (in `tushe-runtime`), `TUSHE_FIXTURE_KEY` (in `tushe-fixture`), `TUSHE_ADMIN_TOKEN` (held by the Founder; in no GitHub secret), `RELAY_PULL_TOKEN` (the webhook relay pull token; its Environment and scope are **not yet stated**, so it is unknown which Environment must hold it: the Integration Lead to say). A workflow that reads a name must have it listed in `.env.example` (E7).
 
 ## Rules for all three
 
 | # | Rule | Why (source) | Evidence |
 |---|---|---|---|
 | E1 | Deployment branches: **Selected branches and tags**, one rule: `main`. Not "All branches"; not "Protected branches only" (branch protection is not enabled, so that setting may allow every branch). | A branch workflow must not reach a secret before review (AGENTS.md section 11). | Environment page, "Deployment branches and tags" |
-| E2 | Required reviewers: the Founder. | Human gate before the credential is released. | "Required reviewers" |
+| E2 | Required reviewers: the Founder (all three, including `tushe-admin`). | Human gate before the credential is released. | "Required reviewers" |
 | E3 | "Allow administrators to bypass configured protection rules": **off**. | A bypass defeats E2. | Same page |
 | E4 | Every Tushe secret exists **only** as an Environment secret. No repository or organisation secret of the same or any Tushe name. | A repository secret is readable by any workflow that names it, so it would skip E1 and E2. | Settings > Secrets > Repository secrets lists none |
 | E5 | The three Environments hold **different** values, and no value is reused as another Environment's secret. | Scopes differ (D6). | Founder confirms in writing; the values are never shown to an agent |
@@ -32,10 +36,12 @@ Three Environments in `Noemai-org/noema`, created by the Founder: `tushe-runtime
 
 ## `tushe-admin`
 
-- Secret: the administrator credential (read-only partner-administrator surface). **Held by the Founder and never reaches an agent.**
-- Use: `workflow_dispatch` only, with E2 as the gate. No scheduled or push trigger. No agent-run or agent-edited workflow names it.
-- Output: whatever the job reads from `/partner/...` is ground truth. It must not go to a PR comment, a public artifact, a log, or any place an agent can read (INV-22, REQ-AGT-004). The workflow writes it to the benchmark runner's store only, with artifact retention short, and logs counts, not bodies.
-- **Reconcile first:** [`trust-boundary-map.md`](trust-boundary-map.md) says the benchmark owner and benchmark runner hold this credential. The Founder's standing order is that the Founder holds it and no agent does. If a CI job reads it, that job is an agent-reachable path. Decision needed from the Founder: (a) the Founder runs the admin reads by hand and attaches results, or (b) a `main`-only workflow runs with E1 to E3 and writes to the runner's store only. Recommendation: (a) until G0-T needs a repeat run; the map is edited after the answer.
+Founder decision of 5 Nov 2026 (option a): the Founder runs admin reads by hand and attaches the results. **No workflow holds `TUSHE_ADMIN_TOKEN`.**
+
+- The Environment `tushe-admin` exists only as a gate and a marker: it holds **no secret**, and no workflow names it. A secret named `TUSHE_ADMIN_TOKEN` at Environment, repository or organisation level is a FAIL of this checklist.
+- The credential is held by the Founder and never reaches an agent, a workflow, a log, an artifact or a PR.
+- What the Founder attaches is ground truth. It goes where the benchmark runner's store expects it, never into a PR comment or a place an agent can read (INV-22, REQ-AGT-004).
+- Check (CI, I will add it): `git grep -n "TUSHE_ADMIN_TOKEN\|tushe-admin" .github` finds nothing except this decision's allowlisted references.
 
 ## After the Founder attaches the evidence
 
