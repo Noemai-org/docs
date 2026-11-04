@@ -172,3 +172,48 @@ class NoCodeInDocs(TempRepoCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NamedVersions(TempRepoCase):
+    """OPS-09: a README names the highest plan and PERD on disk, compared as numbers."""
+
+    def disk(self, plan, perd):
+        for v in plan:
+            self.put(f"docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v{v}.md", "x")
+        for v in perd:
+            self.put(f"docs/poc/perd/NOEMA_POC_PERD_v{v}.md", "x")
+
+    def readme(self, plan, perd):
+        text = f"[four-week implementation plan](docs/poc/execution/README.md) v{plan}\n[POC PERD](docs/poc/perd/README.md) v{perd}\n"
+        self.put("README.md", text)
+        self.put("docs/README.md", f"execution/ four-week plan v{plan} (current)\nperd/ POC PERD v{perd} (current)\n")
+
+    def failures(self):
+        out = []
+        cdc.check_named_versions(out.append)
+        return out
+
+    def test_the_highest_version_on_disk_passes(self):
+        self.disk(["1.9", "1.10"], ["1.19", "1.9"])
+        self.readme("1.10", "1.19")
+        self.assertEqual(self.failures(), [])
+
+    def test_v1_10_beats_v1_9_as_a_number(self):
+        self.disk(["1.9", "1.10"], ["1.9"])
+        self.readme("1.9", "1.9")
+        out = self.failures()
+        self.assertTrue(any("names plan v1.9" in m and "v1.10" in m for m in out), out)
+
+    def test_a_stale_perd_fails_in_both_readmes(self):
+        self.disk(["1.10"], ["1.5", "1.19"])
+        self.readme("1.10", "1.5")
+        out = self.failures()
+        self.assertEqual(sum("names PERD v1.5" in m for m in out), 2, out)
+
+    def test_a_readme_that_names_no_version_fails(self):
+        self.disk(["1.10"], ["1.19"])
+        self.put("README.md", "nothing\n")
+        self.put("docs/README.md", "nothing\n")
+        out = self.failures()
+        self.assertTrue(any("does not name the plan version" in m for m in out), out)
+        self.assertTrue(any("does not name the PERD version" in m for m in out), out)
