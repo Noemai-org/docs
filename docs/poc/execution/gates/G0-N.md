@@ -3,7 +3,7 @@
 <!-- Template: ../templates/gate-record.md. Fill only at the gate meeting, from evidence on the screen (plan §3.1). Never pre-fill. Internal: TEN details stay out of the Tushe folder (DEC-2026-10-16 E4; AGENTS.md §4). -->
 
 - Gate: G0-N, Phase A exit, Noema half (DEC-2026-10-16 E4). G0 passes when G0-N and G0-T both pass; G1 may run before G0-T and counts only once G0 passes.
-- Date and time (WAT): scheduled Thu 22 Oct 2026, 17:00 (DEC-2026-10-16 E3; plan task ENV-14). Held on: _not yet held_
+- Date and time (WAT): scheduled **target Wed 4 Nov 2026; latest Fri 6 Nov 2026, 17:00** (DEC-2026-11-03; before: Thu 22 Oct 17:00, DEC-2026-10-16 E3; plan task ENV-14). Held on: _not yet held_
 - Deciders: Engineering lead, integration lead, benchmark owner (the roles are held by the Founder and the Technical Co-Founder, DEC-2026-10-16 E2)
 - Must be true (checklist): see below
 - Evidence links: _none yet_

@@ -87,11 +87,17 @@ PRE_MONDAY_DATE = datetime.date(2026, 10, 11)
 # Re-baselined by DEC-2026-10-16 E3: every date moved forward seven days. Dates up to Sun 18 Oct are
 # week 0: the pre-Monday tasks and the work delivered before the re-baseline.
 WEEK0_LAST_DAY = datetime.date(2026, 10, 18)
+# Weeks run Monday to Sunday, because work days are Monday to Saturday (founder's standing orders, 3 Nov 2026).
+# Weeks 1 to 4 are the original four weeks; weeks 5 to 8 carry the schedule to the demo on Sat 12 Dec 2026.
 WEEKS = [  # (first day, last day, week number)
-    (datetime.date(2026, 10, 19), datetime.date(2026, 10, 23), 1),
-    (datetime.date(2026, 10, 26), datetime.date(2026, 10, 30), 2),
-    (datetime.date(2026, 11, 2), datetime.date(2026, 11, 6), 3),
-    (datetime.date(2026, 11, 9), datetime.date(2026, 11, 13), 4),
+    (datetime.date(2026, 10, 19), datetime.date(2026, 10, 25), 1),
+    (datetime.date(2026, 10, 26), datetime.date(2026, 11, 1), 2),
+    (datetime.date(2026, 11, 2), datetime.date(2026, 11, 8), 3),
+    (datetime.date(2026, 11, 9), datetime.date(2026, 11, 15), 4),
+    (datetime.date(2026, 11, 16), datetime.date(2026, 11, 22), 5),
+    (datetime.date(2026, 11, 23), datetime.date(2026, 11, 29), 6),
+    (datetime.date(2026, 11, 30), datetime.date(2026, 12, 6), 7),
+    (datetime.date(2026, 12, 7), datetime.date(2026, 12, 13), 8),
 ]
 # Plan §6: the fourteen workstreams, and the narrower prefixes that roll up to them.
 WORKSTREAMS = ["GOV", "PLT", "CON", "ENV", "UND", "EVD", "TRU", "EXE", "OUT", "REC", "EXP", "VOI", "BEN", "SEC"]
@@ -247,7 +253,7 @@ def _parse(lines, label):
             "tbc_kind": tbc_kind if date == TBC else None,
         })
         if tasks[-1]["week"] is None:
-            errors.append(f"line {lineno}: {tid} date {date} is outside the four weeks")
+            errors.append(f"line {lineno}: {tid} date {date} is outside the schedule (Mon 19 Oct to Sun 13 Dec 2026)")
         if date == TBC and tbc_kind == TBC_TUSHE and "G0-T" not in gates:
             errors.append(f"line {lineno}: {tid} has the date {TBC}, which is accepted only on rows whose gate is G0-T")
 
