@@ -2,11 +2,19 @@
 
 Date: 2026-11-04 · Owner: Security Reviewer · Status: checklist, not yet verified against the live settings · Derived and non-normative: the credential scopes are those of [`trust-boundary-map.md`](trust-boundary-map.md) (DEC-2026-10-12 D6); this file adds no requirement.
 
-Three Environments in `Noemai-org/noema`, created by the Founder: `tushe-runtime`, `tushe-fixture`, `tushe-admin` (the last holds no secret; see below). A tick below counts only against evidence the Founder attaches (a screenshot of each Environment page, or the output of `gh api repos/Noemai-org/noema/environments`). The Security Reviewer cannot read these settings; until they are attached, every row is **unknown**.
+Environments in `Noemai-org/noema`, created by the Founder: `tushe-runtime`, `tushe-fixture`, `tushe-admin` (the last holds no secret; see below). A tick below counts only against evidence the Founder attaches (a screenshot of each Environment page, or the output of `gh api repos/Noemai-org/noema/environments`). The Security Reviewer cannot read these settings; until they are attached, every row is **unknown**.
 
 ## Secret names (Founder, 5 Nov 2026)
 
-`TUSHE_RUNTIME_KEY` (in `tushe-runtime`), `TUSHE_FIXTURE_KEY` (in `tushe-fixture`), `TUSHE_ADMIN_TOKEN` (held by the Founder; in no GitHub secret), `RELAY_PULL_TOKEN` (the webhook relay pull token; its Environment and scope are **not yet stated**, so it is unknown which Environment must hold it: the Integration Lead to say). A workflow that reads a name must have it listed in `.env.example` (E7).
+`TUSHE_RUNTIME_KEY` (in `tushe-runtime`), `TUSHE_FIXTURE_KEY` (in `tushe-fixture`), `TUSHE_ADMIN_TOKEN` (held by the Founder; in no GitHub secret), `RELAY_PULL_TOKEN` (held only in the Environment `relay-pull`, below). A workflow that reads a name must have it listed in `.env.example` (E7).
+
+## `relay-pull`
+
+A fourth Environment, `main`-only with the Founder as required reviewer and administrator bypass off (rules E1 to E3). It holds one secret, `RELAY_PULL_TOKEN`, and no other Environment, repository or organisation level holds it (E4).
+
+- **Scope: read-only pull of queued inbound events.** The token can read what the webhook relay has queued; it cannot write, acknowledge on behalf of another consumer, change relay configuration, or read anything else. **Verify when the relay is deployed** (what the relay's pull endpoint actually allows is UNVERIFIED until then; the check is a request with the token to a write route, which must be refused).
+- Use: only the job that pulls queued events, on `main`. No pull-request job names this Environment.
+- Founder ruling of 5 Nov 2026; binds once the Steward's decision record is merged.
 
 ## Rules for all three
 
