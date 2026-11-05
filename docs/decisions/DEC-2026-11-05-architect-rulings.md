@@ -32,6 +32,9 @@
 | D3 | **Migration numbering.** The first pull request to merge keeps its migration number. The second renumbers its migration when it merges `main` in. | `services/core/migrations` in `noema`; AGENTS §11 (forward-only migrations) |
 | D4 | **Production anchor retention is 365 days, in Compliance mode.** | REQ-AUD-007 (external anchoring of chain heads); DEC-2026-10-31-proof-depth-and-completeness D19 |
 | D5 | **`RELAY_PULL_TOKEN` lives only in the Environment named in docs#108, and it is a read-only pull of queued inbound events.** Its exact scope is marked **"verify when the relay is deployed"**: until then the scope is stated, not verified. | ENV-13 (webhook relay); docs#108 (GitHub Environments checklist); AGENTS §10 |
+| D6 | **Pack postconditions for the beneficiary and account capabilities come from the source that covers them (noema#104).** `lookup_beneficiary` takes its postcondition from `fin.src.beneficiary` (`beneficiary_list_and_aliases`). `lookup_account` takes an ownership-only postcondition from `fin.src.customer`. Neither declares a balance or state postcondition, because no source covers them and `core_ledger` is authoritative only for `debit_posted_or_reversed`. The descriptors in noema#148 re-point the same way. The account state and balance gap is filed as DEBT-12 (Tier 1) and is added to the open Tushe requests as proposed R14. | PCK-04 (noema#104, noema#148); REQ-OUT-001; `docs/poc/execution/debt.md` DEBT-12; `docs/poc/tushe/tushe-spec-delta-v1.3-draft.md` |
+| D7 | **The identity contract (OD-P-74 content).** It uses the claim names and role names the synthetic IdP slice defines (noema#156, handed over in the Engineering Lead's comment on docs#107): claims `sub`, `aud`, `exp`, `iat`, `tenant_id`, `roles`; roles `customer`, `operator`, `approver`. Constraints: exact-match issuer; signature verified against a configured key; mandatory tenant claim; closed role list; deny by default; no identity claim is ever read from a request body. **The issuer string is not written down.** The Engineering Lead states that the token has no `iss` claim and the verifier checks none. No value is adopted here (see §2, D7). | EDG-01 (noema#156); REQ-SEC-001, REQ-API-004, REQ-API-002; INV-12 |
+| D8 | **Alerts and the production anchor.** Pushover is the primary alert channel and ntfy the fallback, each in its own GitHub Environment named `alerts`. The production anchor bucket keeps objects for 365 days in Compliance mode (as D4). | DEBT-02; REQ-AUD-007; docs#111 (anchor click-script) |
 
 ## 2. Notes for the people who act on these rulings
 
@@ -40,6 +43,9 @@
 - **D3.** A renumbering moves the second migration only; it never edits the first one after merge.
 - **D4.** "Compliance mode" is stated as the Architect gave it. No retention number or mode is changed for non-production anchors.
 - **D5.** The Environment holding the token is the one docs#108 names. This record does not name it again, and no hostname or domain appears in any repository file; the relay's address lives only in a GitHub Environment variable.
+- **D6.** A balance or account-state postcondition is not declared until a source covers it. `core_ledger` is authoritative only for `debit_posted_or_reversed`. The request to Tushe is a draft, not sent; sending is for the Founders.
+- **D7.** One value is missing. The queue asks for an exact-match issuer, but the Engineering Lead's handover says no issuer string exists and adding an `iss` claim "needs a decision first". The record states the constraint and leaves the value empty; it does not invent one. Closing it needs a decision on the string and a contract change in EDG-01.
+- **D8.** "Each in its own Environment (alerts)" is recorded as the Architect gave it. Where the two Environments are created is in docs#111. The recipient of the human alert (DEBT-02) is not decided by this record.
 
 ## 3. Review asked for D2
 
