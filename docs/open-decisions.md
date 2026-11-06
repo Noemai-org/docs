@@ -904,7 +904,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-72: Adopt pgsodium for in-database Ed25519 verification (AGENT-14; PROPOSED, conditional on the W2 spike)
 
-- **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1). Approved by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A2, conditional on the Security Reviewer's independent validation of the 66 of 66 spike; it closes when that comment exists and the record is merged. Nothing is built from this entry before then.
+- **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1). Approved by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A2, conditional on the independent validation of the 66 of 66 spike by Core Engineer 2 (A16); it closes when C2's result is posted on docs#117 and the record is merged. Nothing is built from this entry before then.
 - **Missing decision:** whether pgsodium v3.1.11 (commit `a8b8a2739bab1f7a07445b1c911e2bd1abf67784`), built from source into Noema's own PostgreSQL 17.11 image with a checksum-verified libsodium, may be added as a dependency, using only `crypto_sign_verify_detached` behind a migration-owned wrapper.
 - **Why it matters:** DEBT-01 (Tier 0) and REQ-AUD-006 need the database to refuse a receipt or Record event whose Ed25519 signature does not verify; PostgreSQL has no Ed25519 verifier of its own.
 - **Default (smallest safe):** do not adopt until the Founders approve. The W2 spike passed T1 to T6 in CI on `postgres:17.11-alpine` (58 of 58, 1 Nov 2026), with one bootstrap step: pgsodium's event trigger is disabled and guarded against re-enabling (DEC-2026-11-01-receipt-and-record-signing D10a). If the Founders refuse, Option C applies (§11 of that record).
@@ -952,7 +952,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-76: Caddy as the webhook relay's TLS terminator (AGENT-14)
 
-- **Status:** [CLOSED] · decided by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11 (takes effect when that record is approved and merged). The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
+- **Status:** [OPEN] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11 (Proposed). It closes when that record is approved and merged; until then Caddy is not approved. The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
 - **Answer (A11):** Caddy terminates TLS for the relay, with HTTP-01 on ports 80 and 443 and no DNS plugin.
 - **Missing decision:** which component terminates TLS for the webhook relay (ENV-13), and how it gets its certificate.
 - **Why it matters:** it is a new component on the path of inbound events; the relay's public address and certificates must stay out of the repository (AGENTS §10).
