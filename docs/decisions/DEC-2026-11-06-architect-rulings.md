@@ -21,7 +21,7 @@
 - Migration notes: per row; no merged migration or frozen record is edited
 - Supersedes: None
 
-The identity contract (A1) is recorded as D7 of [DEC-2026-11-05-architect-rulings](DEC-2026-11-05-architect-rulings.md), not here. The work order has no A7.
+The identity contract (A1) is recorded as D7 of DEC-2026-11-05-architect-rulings (docs#112, not yet merged), not here. The work order has no A7.
 
 ---
 
