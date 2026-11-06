@@ -267,7 +267,7 @@ All of this section is **working practice**.
 **Task status.**
 
 - Task status lives on the board. The task owner moves the board.
-- An agent never edits the plan or `tasks.csv` to record progress.
+- An agent never edits the plan to record progress. The Repo Steward is the only writer of `tasks.csv` status (`current_status` and `blocked`), and writes it from merged evidence only: merged code and tests that meet the task's `done_when`, with a check-run link at the merged head. No other agent writes `tasks.csv` status. Every other agent reports progress in its PR description and session file, and the Steward reads them as claims, not as evidence.
 - An agent records progress in its PR description, using the hand-off report of plan §4.1 step 6 (template [`docs/poc/execution/templates/agent-handoff.md`](docs/poc/execution/templates/agent-handoff.md)), and in its session file.
 - The plan changes only by change request and a new version file (plan §19).
 
