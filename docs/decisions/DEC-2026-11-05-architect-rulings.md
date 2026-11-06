@@ -48,15 +48,15 @@
   1. One role per token, so no token carries `customer` with `approver` (self-approval); a token with zero or several roles is refused.
   2. The issuer is `noema-poc-idp`, exact match; a missing or different `iss` is refused. The signature against a configured key remains the second anchor.
   3. A token with header `none`, `jwk`, `jku`, `x5u`, `x5c` or `crit`, or a `kid` outside the configured set, is refused. The curve is P-256, and a signature that is not exactly 64 bytes (R and S) is refused.
-  4. A token whose `iat` is later than now plus a stated skew is refused, and so is a token whose `exp` is not after its `iat` or whose `exp - iat` is above 15 minutes (a per-token check, not only the configured maximum). The maximum lifetime must be set, non-zero and at or below 15 minutes, or the service does not start. The clock is injected (INV-21). No `nbf` is required; the skew value is a configuration the Engineering Lead states in the PR, not set here.
+  4. A token whose `iat` is later than now plus a stated skew is refused, and so is a token whose `exp` is not after its `iat` or whose `exp - iat` is above 15 minutes (a per-token check, not only the configured maximum). The maximum lifetime must be set, non-zero and at or below 15 minutes, or the service does not start. The clock is injected (INV-21). No `nbf` is required. The clock-skew leeway on `exp` and `iat` is 60 s, pack data, tested on the simulated clock (ruling A21 of 6 Nov 2026).
   5. `tenant_id` must equal the tenant of the database login the request runs on (DEBT-04); a mismatch is refused and tested across tenants. The IdP's signature is the only proof that `sub` belongs to that tenant, which is acceptable for the synthetic IdP.
   6. `aud` is one string; an array form is refused. `sub` is non-empty and length-bounded. A value read from a request body is never a principal.
   7. An `ops` token acts within its own `tenant_id` only, until a decision says otherwise (REQ-SEC-006).
   8. There is no `jti`, so a stolen token works until `exp`. This is a named residual risk at the 15-minute lifetime.
   9. The "[REC] 15 minutes" wording is replaced by the ceiling of 15 minutes in item 4.
-  Three further points come from the Security Reviewer's check of D7 (comment on docs#112, 6 Nov 2026). They are the safer reading, written down until the Architect decides otherwise (AGENT-20), not rulings:
-  10. An `audit` token acts within its own `tenant_id` only, as `ops` does in item 7.
-  11. Neither an `ops` token nor an `audit` token may reach a Record-writing path (DEBT-07, EDG-01 writers).
+  Three further points come from the Security Reviewer's check of D7 (comment on docs#112, 6 Nov 2026). Items 10 and 11 are now ruling A20 of 6 Nov 2026 (DEC-2026-11-06-architect-rulings); item 12 is housekeeping:
+  10. An `audit` token acts within its own `tenant_id` only, as `ops` does in item 7, and reads only through tenant-bound Record read functions.
+  11. Neither an `ops` token nor an `audit` token has a path to a Record writer; only service emitters write the Record (DEBT-07, EDG-01 writers).
   12. The D2 row points to D7, so no implementer reads the old list.
 - **D8.** "Each in its own Environment (alerts)" is recorded as the Architect gave it. Where the two Environments are created is in docs#111. The recipient of the human alert (DEBT-02) is not decided by this record.
 
