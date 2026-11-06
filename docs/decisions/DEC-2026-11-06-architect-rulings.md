@@ -50,7 +50,7 @@ The identity contract (A1) is recorded as D7 of DEC-2026-11-05-architect-rulings
 - **A8.** The templates are data that Understanding and Explanation read; no template text sits in code. The question of where they live (EXP-01 task card, Q1) is answered by this ruling.
 - **A9.** This is the one speech import `voice/` may have. Provider credentials still live only in the model service.
 - **A10.** The endpoint semantics of the Tushe adapters are not inferred; they follow Tushe's final written response (DEC-2026-11-04-architect-rulings R13).
-- **A11.** Caddy is a new component. This record is the approval AGENT-14 asks for; the Compose and relay changes go through their own pull requests.
+- **A11.** Caddy is a new component. This record is the approval AGENT-14 asks for, and OD-P-76 in `docs/open-decisions.md` is the entry it asks for; the Compose and relay changes go through their own pull requests.
 - **A12.** Tagging is for the Founders. The Repo Steward names the SHA when CON-04 and CON-06 are Done.
 
 ## 3. Condition on A2
