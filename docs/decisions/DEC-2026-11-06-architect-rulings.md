@@ -49,7 +49,7 @@ The identity contract (A1) is recorded as D7 of DEC-2026-11-05-architect-rulings
 | A20 | **`audit` reads only through tenant-bound Record read functions.** `ops` and `audit` have no path to Record writers (service emitters only). Where D2 and D7 conflict, D7 governs. | EDG-01; DEBT-04; DEBT-07; D7 |
 | A21 | **Clock-skew leeway on `exp` and `iat` is 60 s,** pack data, tested on the simulated clock. This sets the value D7 left open. | EDG-01; D7; INV-21 |
 | A22 | **The Integration Lead adds a per-start generation to `GET /control/v1/requests`,** with a test. | ENV-09; noema#170 |
-| A23 | **Docs merge order:** docs#116, docs#114, docs#112, docs#117, docs#115. docs#112 gets `main` merged in (no rebase), with the D1 to D8 text byte-identical. | OPS-09 |
+| A23 | **Docs merge order:** docs#116, docs#114, docs#112, docs#117, docs#115. docs#112 gets `main` merged in (no rebase), with the D1 to D8 text byte-identical. *Execution (Repo Steward, 6 Nov 2026):* docs#112 conflicts with `main` and the Steward's login is not its author's, so docs#123 (docs#112's commits plus one merge of `main`; the decision record byte-identical to docs#112's) takes docs#112's slot, and the Founders close docs#112 unmerged. Never merge both. | OPS-09 |
 | A24 | **Rollback after a cancelled context is bounded:** `context.WithTimeout(context.WithoutCancel(ctx), N)`, with `N` from configuration and a test that a hung rollback times out. It applies to noema#172 and everything stacked on it. | EVD-01 (noema#172, #174, #176); AGENTS §7 (a context deadline on every call) |
 | A25 | **A review finding of the form "tests could not run locally" is not a defect.** The CI check runs at the final head are the test evidence. Codex reads the check runs. | AGENTS §8; plan §12 |
 
