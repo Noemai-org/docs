@@ -1,4 +1,4 @@
-# DEC-2026-11-06 · Architect's rulings of 6 November 2026 (A2 to A23)
+# DEC-2026-11-06 · Architect's rulings of 6 November 2026 (A2 to A25)
 
 | | |
 |---|---|
@@ -50,6 +50,8 @@ The identity contract (A1) is recorded as D7 of DEC-2026-11-05-architect-rulings
 | A21 | **Clock-skew leeway on `exp` and `iat` is 60 s,** pack data, tested on the simulated clock. This sets the value D7 left open. | EDG-01; D7; INV-21 |
 | A22 | **The Integration Lead adds a per-start generation to `GET /control/v1/requests`,** with a test. | ENV-09; noema#170 |
 | A23 | **Docs merge order:** docs#116, docs#114, docs#112, docs#117, docs#115. docs#112 gets `main` merged in (no rebase), with the D1 to D8 text byte-identical. | OPS-09 |
+| A24 | **Rollback after a cancelled context is bounded:** `context.WithTimeout(context.WithoutCancel(ctx), N)`, with `N` from configuration and a test that a hung rollback times out. It applies to noema#172 and everything stacked on it. | EVD-01 (noema#172, #174, #176); AGENTS §7 (a context deadline on every call) |
+| A25 | **A review finding of the form "tests could not run locally" is not a defect.** The CI check runs at the final head are the test evidence. Codex reads the check runs. | AGENTS §8; plan §12 |
 
 ## 2. Notes for the people who act on these rulings
 
@@ -63,7 +65,7 @@ The identity contract (A1) is recorded as D7 of DEC-2026-11-05-architect-rulings
 - **A10.** The endpoint semantics of the Tushe adapters are not inferred; they follow Tushe's final written response (DEC-2026-11-04-architect-rulings R13).
 - **A11.** Caddy is a new component. This record is the approval AGENT-14 asks for, and OD-P-76 in `docs/open-decisions.md` is the entry it asks for; the Compose and relay changes go through their own pull requests.
 - **A12.** Tagging is for the Founders. The Repo Steward names the SHA when CON-04 and CON-06 are Done.
-- **A13 to A23.** These are given as written in the Architect's standing update of 6 November 2026. A13 refines A5 and does not replace it. A14 changes how this record's own pull request is judged: docs-only and data-only pull requests need a reviewer-role READY in the body; the Repo Steward has not given itself one and states below when a reviewer role has. A16 names who gives A2's independent validation; A2's condition is otherwise unchanged (§3). A20 and A21 settle two points D7 left to the Architect, and the D7 note in docs#115 is updated to match. A22 is the Integration Lead's work on noema#170.
+- **A13 to A25.** These are given as written in the Architect's standing updates of 6 November 2026. A13 refines A5 and does not replace it. A14 changes how this record's own pull request is judged: docs-only and data-only pull requests need a reviewer-role READY in the body; the Repo Steward has not given itself one and states below when a reviewer role has. A16 names who gives A2's independent validation; A2's condition is otherwise unchanged (§3). A20 and A21 settle two points D7 left to the Architect, and the D7 note in docs#115 is updated to match. A22 is the Integration Lead's work on noema#170. A24 and A25 were added at 14:00 WAT and apply to code pull requests, not to this record. The `N` of A24 is configuration the author of noema#172 sets and states in the PR; no value is set here.
 
 ## 3. Condition on A2
 
