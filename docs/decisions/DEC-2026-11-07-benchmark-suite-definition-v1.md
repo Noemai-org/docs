@@ -31,7 +31,7 @@ This definition is internal. It supersedes the F1 to F11 only comparison scope. 
 
 ### Arms
 
-- **N** Noema.
+- **C** Noema (the SoT §38.5 label; ruling A32 of 7 Nov 2026 settles the arms on the SoT labels, so the Architect's working label "N" is not used).
 - **A** a model with tools and no gate.
 - **B** a model with a conventional harness.
 - **D** deterministic, no model.
@@ -39,7 +39,7 @@ This definition is internal. It supersedes the F1 to F11 only comparison scope. 
 - **A0** optional.
 - **E** and **F** are "not tested", and every claim says so.
 
-Same cases, same tools, same permissions and same oracle for N, A, B and D. Hidden material never reaches any arm or the model service (INV-22).
+Same cases, same tools, same permissions and same oracle for C, A, B and D. Hidden material never reaches any arm or the model service (INV-22).
 
 ### Two families and one measurement layer
 
@@ -52,13 +52,13 @@ Same cases, same tools, same permissions and same oracle for N, A, B and D. Hidd
 | R3 | Ambiguity and clarification (several plausible candidates; vague details) |
 | R4 | Entity resolution (counterparty, beneficiary, account; near-duplicate names) |
 | R5 | Cross-system state reconstruction (ledger, provider and callbacks disagree; reordered events) |
-| R6 | Failed, reversed and duplicate-debit resolution with an action |
+| R6 | Failed, reversed and duplicate-debit resolution with an action: "correct handling the pack allows" (A32) |
 | R7 | Authorization (wrong owner; delegate; joint account; approver threshold; target-specific authority) |
 | R8 | Policy decisions (limits, refusals, escalation; the same inputs give the same decision on 5 repeats) |
 | R9 | Dependent multi-step resolution (step 2 only after step 1 is verified) |
 | R10 | Verification and unknown outcome |
 | R11 | Explanation and audit (customer message facts; reconstructable record) |
-| R12 | End-to-end business outcome (case closed correctly) |
+| R12 | End-to-end business outcome (case closed correctly: "correct handling the pack allows", A32) |
 
 **RESIST (faulty or hostile world).**
 
@@ -84,6 +84,13 @@ Same cases, same tools, same permissions and same oracle for N, A, B and D. Hidd
 
 **Neutral result fields every arm can produce:** `understanding` (operation, amount, counterparty, date reference, ambiguity flags), `evidence` (tool-call IDs per claim), `plan` (ordered steps), `proposed_actions`, `blocked_actions`, `verified`, `audit_record`. Nothing may presuppose Noema's internals.
 
+### Scope settled by ruling A32 (7 Nov 2026)
+
+- R6 and R12 mean "correct handling the pack allows": the tools, the policy and the limits come from the pack, not from the case.
+- The arms use the SoT §38.5 labels (A, B, C = Noema, D; E and F not tested). **M0**, the modelled manual baseline, is used for IMPACT only. **A0** is not defined by the SoT or by any ruling and is not used until it is defined.
+- There are 40 visible cases, chosen by a recorded seed.
+- The Brief is issued at G3 evidence acceptance.
+
 ### Reporting and decision rules (pre-registered before any hidden case runs)
 
 1. Per family and per metric, never one blended score. RESOLVE, RESIST and IMPACT are reported separately.
@@ -105,7 +112,7 @@ Same cases, same tools, same permissions and same oracle for N, A, B and D. Hidd
 
 ## 3. Conflicts and points to settle (stated, not resolved)
 
-1. **Arm letters differ from SoT §38.5.** SoT §38.5 names the arms A (competent model plus tools), B (agent plus harness plus equivalent components), **C (Noema)**, D (deterministic rules), E (automation product) and F (human operations, measured where a partner provides it). This ruling names Noema **N**, adds **M0** (a modelled manual baseline) and an optional **A0**, and marks E and F "not tested". The mapping that reads consistently is N = SoT arm C, A and B and D unchanged, E and F as in the SoT but not run, M0 replacing F's measured baseline with a modelled one. SoT arm F is "measured where a partner provides it"; M0 is modelled, so IMPACT is not the same quantity as the SoT §38.6 partner measurement. A0 has no definition in the SoT. The Architect confirms the mapping or the Founders issue a SoT version (AGENTS §11); the Repo Steward does not edit §38.5.
+1. **Arm letters (settled by A32).** The Architect's definition used the label N for Noema; ruling A32 settles on the SoT labels, so Noema is C and the points below are kept as history. Earlier statement of the difference: SoT §38.5 names the arms A (competent model plus tools), B (agent plus harness plus equivalent components), **C (Noema)**, D (deterministic rules), E (automation product) and F (human operations, measured where a partner provides it). This ruling names Noema **N**, adds **M0** (a modelled manual baseline) and an optional **A0**, and marks E and F "not tested". The mapping that reads consistently is N = SoT arm C, A and B and D unchanged, E and F as in the SoT but not run, M0 replacing F's measured baseline with a modelled one. SoT arm F is "measured where a partner provides it"; M0 is modelled, so IMPACT is not the same quantity as the SoT §38.6 partner measurement. A0 has no definition in the SoT. The Architect confirms the mapping or the Founders issue a SoT version (AGENTS §11); the Repo Steward does not edit §38.5.
 2. **Where the F1 to F11 scope is written.** Not found by the Repo Steward (see Supersedes).
 3. **Sample size.** At least 300 RESOLVE and 300 RESIST cases, at least 15 per family, against a generated suite of 320. The Benchmark Owner reports the shortfall; no target is lowered here.
 4. **Safety counts and the eleven safety gates.** The zero-tolerance counts overlap the eleven safety gates of plan §1.1: unsafe action (gate 1), cross-tenant exposure (gate 3, cross-account disclosure), duplicate effect (gate 5), false confidence (gate 7, false certainty) and policy mutation (gate 9). Wrong transaction and credential leakage are not named gates in plan §1.1 (credential access by a model is part of gate 9). This ruling makes all seven counts zero-tolerance and reported; whether wrong transaction and credential leakage join the gate list is for the Founders and is not decided here.
