@@ -7,7 +7,7 @@
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | The SoT v1.11 and PERD v1.21 text in §1: two more safety gates, the key policy, the benchmark arm labels, the identity contract, the benchmark quota and the case contract version. |
 | **Closes** | OD-P-72 on its condition (ruling A2) and OD-P-76 (ruling A11), when this record takes effect. OD-P-74 stays closed by DEC-2026-11-05 D2 and D7. |
-| **Amends** | `docs/NOEMA_SOURCE_OF_TRUTH.md` (v1.10 to v1.11, Appendix D entry); new `docs/poc/perd/NOEMA_POC_PERD_v1.21.md` (v1.20 stays unchanged). The plan is not edited (§3). |
+| **Amends** | `docs/NOEMA_SOURCE_OF_TRUTH.md` (v1.10 to v1.11, Appendix D entry); new `docs/poc/perd/NOEMA_POC_PERD_v1.21.md` (v1.20 stays unchanged); new `docs/poc/execution/NOEMA_POC_4WEEK_PLAN_v1.12.md` (v1.11 stays unchanged; Founder decision D1 of 7 Nov 2026, [DEC-2026-11-07-founder-decisions-block-d](DEC-2026-11-07-founder-decisions-block-d.md)). |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -46,7 +46,8 @@
 
 ## 3. What this record does not do
 
-- **The plan.** Plan §1.1 and the line that lists the evidence bundle still say eleven gates. A plan version (v1.12) and its own record carry that change; the Founders decide when. Until then SoT §38.3 (13 gates) governs and the plan is behind it.
+- **The plan.** Plan v1.12 (Founder decision D1) changes plan §1.1 to thirteen gates and the evidence file list that said eleven. No task, date or gate condition changes. The plan, PERD v1.21 and SoT v1.11 now agree on the gate count.
+- **The quota wording (D3).** PERD v1.21 §48.1 now states the denominator, the exact bound, that repeats do not add to n, which layers count toward the 600, the relation of the two taxonomies, and the consequence of a shortfall (the six findings of the Engineering Lead's technical review of 7 Nov 2026).
 - **The vendored copies.** Both PERD extracts in `noema` name PERD v1.20 in their headers. A re-point (REQ-OPS-005) follows the day this merges.
 - **The contract change** for the case contract v2 in `noema`, the pack change for the `ops` and `audit` roles (A37) and the benchmark generator.
 - **Reviewer READY.** docs#117, docs#115 and docs#127 get a reviewer-role READY after this record takes effect (A27). The Steward does not give it.
