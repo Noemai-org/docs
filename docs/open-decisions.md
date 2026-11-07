@@ -949,3 +949,24 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the default); Architect (the decision).
 - **Deadline:** before EVD-01 slice 2 is merged.
 - **Source:** PERD v1.20 §21.1, REQ-CTX-002; INV-10, INV-19; [`task-cards/EVD-01.md`](poc/execution/task-cards/EVD-01.md) D1.
+
+### OD-P-79: Control-plane route names (PROPOSAL, Founder decision D14)
+
+- **Status:** [OPEN] · NON-CANONICAL · proposal by EL from PERD §39.4; the Security Reviewer accepts (D14). Not authority for building until accepted and committed.
+- **Missing decision:** the exact route names of the control plane. PERD §39.4 lists them, but with one route for the kill switch, `POST /v1/admin/tenants/{id}/kill-switch` with `{enabled: bool, reason}`. Founder decision D5 says the verifier may set a tenant's kill switch and only a person clears it. One route with an `enabled` field cannot carry that difference: any credential allowed to call it could send `enabled: false`.
+- **Proposal (the only change to §39.4):** split the kill-switch route by direction, so the credential decides what a caller may do, not a body field.
+
+  | Route | Caller | Effect |
+  |---|---|---|
+  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:set` body `{reason}` | an administrator (person) or the verification service identity (D5) | switch on; `KILL_SWITCH_CHANGED` with the caller as actor; idempotent |
+  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:clear` body `{reason}` | an administrator (person) only | switch off; the verification service identity gets 403 `PERMISSION_DENIED`; `KILL_SWITCH_CHANGED` with the person as actor |
+  | `GET /v1/admin/tenants/{tenant_id}/kill-switch` | administrator, ops (own tenant), audit (own tenant) | the state, the last change and who made it |
+
+  All three take the conventions of §39.1 (`Idempotency-Key`, the error envelope, `Noema-Correlation-Id`). Every other route name in §39.4 stands as written: `POST /v1/admin/policies/{policy_id}/versions`, `POST /v1/admin/policies/{policy_id}/versions/{v}:publish`, `POST /v1/admin/packs:load`, `PUT /v1/admin/tenants/{id}/callback`. For publication, a version that is not higher than the active one (the same, or a downgrade) answers 409; the catalogue then needs a code for it (`POLICY_VERSION_NOT_NEWER`), which is a change to `errors.v1.json` under AGENT-15, not made here.
+- **Why it matters:** D5 is a safety property of who can undo a stop. If the route cannot express it, the check moves into code that reads a body field.
+- **Default (smallest safe):** the split above. Until accepted, no control-plane route is built (TRU-08 builds none in slice 1).
+- **What would change it:** SR finding that a person-only `:clear` cannot be enforced at the credential (for example, if the person and the verification identity share a credential type in the POC).
+- **Not covered:** the route for reading policy versions (needed once the control plane is built); authentication of the admin credential (OQ-09).
+- **Owner:** EL (the proposal); SR (accepts); Founders (D5, D14).
+- **Deadline:** before the control plane is built (TRU-08 slice 2).
+- **Source:** PERD v1.20 §39.1, §39.4; Founder decisions D5, D14; SoT KILL_SWITCH_CHANGED in §43.6.
