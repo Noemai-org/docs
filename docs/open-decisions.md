@@ -949,3 +949,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the default); Architect (the decision).
 - **Deadline:** before EVD-01 slice 2 is merged.
 - **Source:** PERD v1.20 §21.1, REQ-CTX-002; INV-10, INV-19; [`task-cards/EVD-01.md`](poc/execution/task-cards/EVD-01.md) D1.
+
+### OD-P-78: Pack data and evidence for delegate, joint-account and approver-threshold authority (R7), and what R8 repeats (DEFAULT, PCK)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use; the Architect decides.
+- **Missing decision:** the benchmark suite (A26, family R7) needs cases for a delegate acting for an owner, a joint account, and an approver whose authority depends on an amount threshold. The pack can say who may act on a resource only with what the contracts define: `authority.principal_must_own` (slot names), `authority.roles_allowed` (the four roles of ruling A1) and `approvals` (role names). It has no evidence entity for an account holder, a joint holder or a delegation, and no source that serves one (DEBT-12: account state has no source), and no threshold on an approver. A rule over such facts cannot be type-checked against evidence that does not exist, so the pack side cannot honestly be written yet.
+- **Why it matters:** building these as pack data without a source would give the cases something to run that no component can answer; Trust would either guess or fail open on a fact it cannot read (INV-10).
+- **Default (smallest safe):** in the POC, authority that depends on a delegation, a joint holder or an approver amount threshold is not decided autonomously: the request is ESCALATE with a reason that says which fact is missing. The cases for R7 then test that Noema escalates and does not act, and that the owner-only case (`principal_must_own`) still works. R8 (the same decision on five repeats) is not pack data: it is the determinism property of TRU-09 (replay, 10⁴ replays, 0 mismatches), and the benchmark checks it by running a case five times.
+- **What would change it:** a design partner or the Tushe environment supplying an account-holder, delegation and mandate-limit source; a ruling that the evidence descriptors gain those entities (a contract change under AGENT-15, with an evidence source and a stand-in served by ENV-04).
+- **Not covered:** money movement of any size (prohibited, BD-08); approver amount thresholds on a write the POC does not have.
+- **Owner:** EL (the default); Architect (the decision); BO (the cases).
+- **Deadline:** before BO fixes the R7 cases for the first visible set.
+- **Source:** ruling A26 (benchmark suite v1, R7 and R8); PERD v1.20 §15, §23.4; REQ-TRU-009 (determinism, TRU-09); DEBT-12.
