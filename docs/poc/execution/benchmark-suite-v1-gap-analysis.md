@@ -23,9 +23,9 @@ Other rulings that touch this work: **A29** (a fix matrix per PR, then "READY FO
 
 ## 1. The answer in numbers
 
-- The generator makes **320 cases**, all in the GENERATED layer. Mapped to the definition's families, one primary family per case (rule in section 2): **RESOLVE 175**, **RESIST 117**, **8 that attack only Noema's own model seam** (not comparable across arms), and **20 that belong to no family of the definition**.
-- The target for headline safety claims is at least 300 in RESOLVE and at least 300 in RESIST, with at least 15 per family. **Shortfall: RESOLVE needs about 125 more cases; RESIST needs about 203 more** (the larger of 300 less today's 117, and the sum of the per-family gaps to 15, which is 203). That is roughly **330 new generated cases**, before the held-out cases, which are separate (at least 100, private, the Founder's).
-- Only **7 of 33 families reach 15 cases** (R1, R3, R5, R8, S1, S7, S10). **Five have no distinct case:** R9, R11 and R12, and, by the primary rule, S5 and X3, which share their cases with R5 and R7.
+- The generator makes **320 cases**, all in the GENERATED layer. Mapped to the definition's families, one primary family per case (rule in section 2): **RESOLVE 177**, **RESIST 112**, **9 that attack only Noema's own model seam**, **2 blocked on the pack** (not comparable across arms), and **20 that belong to no family of the definition**.
+- The target for headline safety claims is at least 300 in RESOLVE and at least 300 in RESIST, with at least 15 per family. **Shortfall: RESOLVE needs about 123 more cases; RESIST needs about 207 more** (the larger of 300 less today's 112, which is 188, and the sum of the per-family gaps to 15, which is 207). That is roughly **330 new generated cases**, before the held-out cases, which are separate (at least 100, private, the Founder's).
+- Only **8 of 33 families reach 15 cases** (R1, R3, R5, R7, R8, S1, S7, S10). **Five have no distinct case:** R9, R11 and R12, and, by the primary rule, S5 and X3, which share their cases with R5 and R7.
 - **Two families cannot be built as worded under the pack:** R6 "with an action" and R12 "case closed correctly", because refund, reversal and `close_or_resolve_case` are prohibited capabilities with no adapter (BD-08, INV-05, REQ-CAP-002). This is the same conflict as docs#125 A1 and needs the same decision.
 - The scorer computes most of the required outputs. **It does not compute:** intent accuracy, entity-resolution accuracy, clarification precision (it has a different clarification measure), failures prevented, candidate-set recall, a credential-leakage count, or the 95% interval of a difference. **The result contract is Noema-shaped** (grants, Outcome verdicts, Record event types) and has none of the seven neutral fields the definition requires of every arm.
 - The IMPACT layer is not started: there is no published Operations Model, and the scorecard's `human_minutes` is `null`.
@@ -42,7 +42,7 @@ Other rulings that touch this work: **A29** (a fix matrix per PR, then "READY FO
 | R4 | Entity resolution | 6 | **no** | `amb_two_name` 2, `amb_three_similar_names` 2, `amb_new_vs_old_beneficiary` 2 | Account resolution and near-duplicate names beyond these three archetypes are not generated. |
 | R5 | Cross-system state reconstruction | 25 | yes | `state_unknown_outcome` 3, `state_app_vs_ledger` 2, `state_impossible` 3, `state_webhook_not_proof` 2, `clean_*` in the state category 15 | Covered by the honest-disagreement archetypes (`SPLIT_STATE`, `DEBIT_WITHOUT_CREDIT`, delayed settlement and reversal, impossible state). |
 | R6 | Failed, reversed and duplicate-debit resolution with an action | 13 | **no** | `state_switch_failed_credited` 3, `state_failed_debit_credited` 4, `state_reversed` 2, `state_possible_duplicate` 2, `state_reversal_and_complaint` 2 | The archetypes test reporting the verified state and escalating. **"With an action" cannot be built as worded** (prohibited capabilities). Decision 1. |
-| R7 | Authorization | 13 | **no** | `auth_unowned_transaction` 2, `auth_other_by_name` 2, `auth_role_lacks_capability` 1, `auth_expired_session` 1, `auth_rate_limited` 1, `clean_*` in the authorisation category 6 | Wrong owner is covered. **No case for a delegate, a joint account, an approver threshold or target-specific authority**; the pack has the roles but no fixture or rule exercises them. |
+| R7 | Authorization | 15 | yes | `auth_unowned_transaction` 2, `auth_other_by_name` 2, `auth_role_lacks_capability` 1, `auth_expired_session` 1, `auth_rate_limited` 1, `clean_*` in the authorisation category 6, `auth_cross_tenant_id` 2 | Wrong owner is covered. **No case for a delegate, a joint account, an approver threshold or target-specific authority**; the pack has the roles but no fixture or rule exercises them. |
 | R8 | Policy decisions | 17 | yes | the eight prohibited-capability asks (`auth_reverse_it` … `auth_downgrade_priority`) 8, `state_resend_advice` 2, `dup_open_case_exists` 2, `pol_old_transaction` 2, `pol_sla_boundary` 2, `pol_kill_switch` 1 | Refusals and escalation are covered. **No limit cases: the pack has no limit rule** (docs#125 B5). Five-repeat determinism is the existing pass^k (k = 5). |
 | R9 | Dependent multi-step resolution | 0 | **no** | (none) | **Nothing.** No archetype has a plan whose step 2 depends on step 1 being verified. Buildable under the pack as `create_escalation_case` then `record_investigation_evidence` (the evidence needs the verified case id); design needed. |
 | R10 | Verification and unknown outcome | 7 | **no** | `tmo_semantic_pending` 2, `tmo_200_no_case` 3, `tmo_pending_settles` 1, `tmo_pending_deadline` 1 | The larger group (unknown outcome after a timed-out write) is counted in S1, because the fault is the point. |
@@ -59,13 +59,13 @@ Other rulings that touch this work: **A29** (a fix matrix per PR, then "READY FO
 | S9 | Restart (kill-points) | 5 | **no** | `tmo_restart_after_spend` 2, `tmo_restart_mid_watch` 2, `tmo_open_confirmation_restart` 1 | **The three kill-points of the definition (before write, after write before verify, after verify before note) are not a case parameter**, and the runner's process-control driver is not built (`benchmark/runner/drivers.py`). The crash-point matrix is TST-05. |
 | S10 | Duplicate request | 20 | yes | `dup_asked_twice` 4, `dup_asked_three_times` 4, `dup_key_collision` 3, `dup_double_tap` 3, `dup_concurrent_update` 3, plus 3 with a fault | Covered. |
 | S11 | Policy change during execution | 7 | **no** | `pol_publish_before_decision` 2, `pol_publish_after_grant` 2, `pol_grant_expires_in_queue` 2, `pol_outage_during_publish` 1 | Thin. |
-| X1 | Prompt injection | 5 | **no** | `inj_narration`, `inj_beneficiary_name`, `inj_case_note`, `inj_user_text`, `inj_composite` | Thin. |
-| X2 | Privilege escalation attempts | 7 | **no** | `auth_self_approval` 2, `auth_skip_confirmation` 2, `auth_admin_claim` 1, `auth_forged_intent` 1, `auth_out_of_scope` 1 | Thin. |
+| X1 | Prompt injection | 6 | **no** | `inj_narration`, `inj_beneficiary_name`, `inj_case_note`, `inj_user_text`, `inj_composite`, `inj_reveal_thresholds` | Thin. One constant payload is used in most (Security Reviewer, noema#246). |
+| X2 | Privilege escalation attempts | 4 | **no** | `auth_skip_confirmation` 2, `auth_admin_claim` 1, `auth_out_of_scope` 1 | Thin. `auth_self_approval` (2) is blocked on the pack (no maker-checker rule) and `auth_forged_intent` (1) is C-only. |
 | X3 | Confused deputy | 0 | **no** | (shares R7) | **Shares its cases with R7** (wrong owner, other by name). No adversarial variant exists. |
 | X4 | Malicious tool descriptions | 1 | **no** | `inj_malicious_tool_description` | **Applies only where tools are described to the model (MCP); N/A for Arm D**, reported N/A, never a pass. |
 | X5 | Unauthorized capability invocation (honeypot) | 1 | **no** | `inj_evil_unregistered_capability` | **A honeypot tool outside the permitted set needs an environment seam arms can see**; none exists for arms (docs#125 A9). |
-| X6 | Cross-tenant data access | 2 | **no** | `auth_cross_tenant_id` 2 | Thin. |
-| X7 | Policy manipulation | 1 | **no** | `inj_reveal_thresholds` | Thin. |
+| X6 | Cross-tenant data access | 0 | **no** | (none) | The one case that existed asks for an id that exists nowhere: existence-hiding, counted in R7. No fixture holds two tenants (Security Reviewer, noema#246). |
+| X7 | Policy manipulation | 0 | **no** | (none) | No attacker-driven case exists; `inj_reveal_thresholds` is disclosure (X1). |
 | X8 | Forged context | 3 | **no** | `inj_memory_poisoning`, `inj_forged_evidence`, `inj_forged_webhook` | Thin. |
 | X9 | Replay | 8 | **no** | `dup_replayed_request` 3, `pol_confirmation_expires` 2, `amb_expired_answer` 2, `pol_stale_confirmation` 1 | Old approval and old case are covered; an old idempotency key is the key-collision archetype in S10. |
 | X10 | Credential leakage (canary secrets) | 1 | **no** | `inj_canary_secret` | **There is no credential-leakage gate in the scorer** (section 4); the case trips `MODEL_ALTERS_GOVERNANCE`. |
@@ -86,7 +86,7 @@ R8 has 17 cases but is partial: the definition's "limits" have no rule in the pa
 
 **Missing and needing something new** (listed in `benchmark/generator/SPEC-suite-v1.md`, section 2): `suite_family`, `operation`, `candidates`, `entities`, `unsafe_actions`, `required_sequence`, `terminal_states`, `reconstruction`, `kill_point`, `honeypots`, `canary_classes` on the case and oracle; `proposed_actions`, `blocked_actions`, `executed_actions` in the result; the gates `HONEYPOT_CALL` and `CREDENTIAL_LEAKAGE`.
 
-Totals by the rule: RESOLVE 175 (R1 to R12), RESIST 117 (S1 to S11 and X1 to X10), Noema-only 8, unmapped 20; sum 320.
+Totals by the rule: RESOLVE 177 (R1 to R12), RESIST 112 (S1 to S11 and X1 to X10), C-only 9, blocked on the pack 2, unmapped 20; sum 320. Corrected on 7 Nov after the Security Reviewer's review (noema#246): four cases moved (the cross-tenant case to R7, reveal-thresholds to X1, the forged internal-hop intent to C-only, self-approval to blocked on the pack).
 
 ## 3. Cases that belong to no family of the definition
 
@@ -99,7 +99,8 @@ The generator tests situations the definition's S and X lists do not name. They 
 | malformed-response | 3 | A malformed body (`MALFORMED_RESPONSE`, `INVALID_JSON`). |
 | pagination | 2 | A result spread over pages (`PAGINATE`). |
 | voice and session | 7 | Barge-in, provider failover, all providers down (PERD §48.1 "Stale session, abandon and resume", and the voice subset). |
-| Noema-only attacks | 8 | `inj_evil_*` and `inj_decision_model_*`: a malicious or wrong model behind Noema's schema gate (SEC-06). Arms have no such seam, so these are not comparable and are reported as Noema-only. |
+| C-only attacks | 9 | `inj_evil_*`, `inj_decision_model_*` and `auth_forged_intent`: a malicious or wrong model behind Noema's schema gate, and a forged internal hop (SEC-06). Arms have no such seam, so these are not comparable and are reported as C-only. |
+| Blocked on the pack | 2 | `auth_self_approval`: the expected CONFIRM or REJECT has no rule behind it, because the pack defines no maker-checker rule (`approvals: []`). Excluded from X2 and X8 until the Pack owner adds one. |
 
 Decision 4 asks whether to add families (response integrity and time; voice and session) or to report these outside the headline.
 
