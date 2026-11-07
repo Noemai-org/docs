@@ -4,6 +4,23 @@ Date: 7 Nov 2026 · Owner: Benchmark Owner (role agent) for the Founder (benchma
 
 The suite definition of 6 Nov 2026 ("BENCHMARK SUITE DEFINITION, v1") becomes authoritative once the Repo Steward records it as A26 in a committed decision record (AGENTS §2, item 3). Until then this document is the answer to its instruction to the Benchmark Owner: *confirm what the generator supports and flag any shortfall*. It also supplies the three definitions the Benchmark Owner must write exactly (section 6). Measured on `noema` `main` at `9d00e34`: generator 1.3.0, seed 20261020, 320 generated cases; `python -m benchmark.generator coverage` reports 0 gaps against the PERD §48.1 rule.
 
+## 0. What the rulings of 7 Nov (A27 to A40) have already decided
+
+Written 7 Nov 2026 after the analysis below. The numbers and the family table are unchanged; the decisions are updated.
+
+| Decision in section 9 | Ruling | State |
+|---|---|---|
+| 1. R6 and R12 as worded | **A32**: R6 and R12 mean correct handling the pack allows; tools, policy and limits come from the pack | **Decided.** My recommendation was adopted. No limit cases exist because the pack has no limit rule. |
+| 4. The unmapped and Noema-only cases | none directly | **Open.** |
+| 5. The contract changes | **A27**: the Steward drafts one SoT and PERD edit PR that adds credential leakage and cross-tenant exposure as safety gates and amends the PERD §48.1 quota with a case-contract major; the Founders issue the version | **Decided in principle.** It also settles the quota constraint found in `SPEC-suite-v1.md` section 8. The case-contract major and the neutral arm result (noema#249) follow that edit. |
+| 2, 3. How cases count towards the 300 and the 15 | **A40**: no headline safety claim below n = 300 | **Partly decided.** The floor of 300 stands; whether a case may count in more than one family is still open. |
+| 6. R11 family or measurement | **A40**: reconstruction is reported as "consistent, not authenticated" until slice B and REC-08 | **Wording decided; family question open.** |
+| 7. The interval method | none | **Open** (the Founders approve the method before it is pre-registered). |
+| 8. The Operations Model values | none | **Open.** The data file keeps every parameter ASSUMED. |
+| 9. Who builds the cases | **A39**: one owner per PR (the tasks.csv owner column) | **Owner rule decided**; the schedule is not. |
+
+Other rulings that touch this work: **A29** (a fix matrix per PR, then "READY FOR CODEX at <sha>"; the Founders run the sweeps, I do not trigger Codex; docs-only and data-only PRs need CI plus a reviewer READY from a role that did not write them), **A30** (TST-05 is a Go test with a real SIGKILL and no new CI job, **one kill-point list shared with RESIST S9**: `SPEC-suite-v1.md` is updated), **A31** (REVERSAL_PENDING is non-terminal and its decision is wait or escalate: noema#255 fixes the one archetype that expected ALLOW) and **A37** (`ops_agent` to `ops`, `viewer` to `audit` in the pack: noema#235 makes the generator agree).
+
 ## 1. The answer in numbers
 
 - The generator makes **320 cases**, all in the GENERATED layer. Mapped to the definition's families, one primary family per case (rule in section 2): **RESOLVE 175**, **RESIST 117**, **8 that attack only Noema's own model seam** (not comparable across arms), and **20 that belong to no family of the definition**.
