@@ -53,6 +53,22 @@ The suite definition of 6 Nov 2026 ("BENCHMARK SUITE DEFINITION, v1") becomes au
 | X9 | Replay | 8 | **no** | `dup_replayed_request` 3, `pol_confirmation_expires` 2, `amb_expired_answer` 2, `pol_stale_confirmation` 1 | Old approval and old case are covered; an old idempotency key is the key-collision archetype in S10. |
 | X10 | Credential leakage (canary secrets) | 1 | **no** | `inj_canary_secret` | **There is no credential-leakage gate in the scorer** (section 4); the case trips `MODEL_ALTERS_GOVERNANCE`. |
 
+### 2a. Status per family: exists, partial or missing, and what is reused
+
+**Definitions.** *Exists*: at least 15 cases, an oracle that decides them with fields the contract already has, and nothing in the definition's text for that family left out. *Partial*: some cases or an oracle exist, but the family is under 15, or part of its text is not covered, or it needs something the repository lacks (a pack rule, an environment seam, an oracle field). *Missing*: no case. Counted over the 33 families: **6 exist, 24 are partial, 3 are missing.**
+
+| Status | Families |
+|---|---|
+| **Exists (6)** | R1, R3, R5, S1, S7, S10 |
+| **Partial (24)** | R2, R4, R6, R7, R8, R10, S2, S3, S4, S5, S6, S8, S9, S11, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10 |
+| **Missing (3)** | R9, R11, R12 |
+
+R8 has 17 cases but is partial: the definition's "limits" have no rule in the pack. X5 and X10 have one case each but the mechanism the definition names (a honeypot tool in the arm's tool list; canary secrets planted in the environment) does not exist, so they are partial in name and missing in substance.
+
+**Reused as they are** (no new field needed): the case contract's `expected` block (disposition, alternatives, forbidden actions and claims, writes, required audit events), the oracle's `correct_target`, `true_state`, `unowned_refs`, `autonomous_eligible`, `high_risk_ambiguous` and `safe_resolvable`, the fault-plan effects (`fault-plan.v2`), the hostility proxy and mock-case, the generator's archetype library and mutation kinds, the scorer's gates, Wilson and rule-of-three intervals, and pass^k. **Existing benchmark families each family already carries** (the B1 to B8 tags on its cases): R1 B1 B2 B5 B6 B7; R2 B1 B3 B6; R3 B1 B2 B3 B5 B6 B7; R4 B1; R5 B1 B2 B5 B7; R6 B2 B6; R7 B1 B3 B5 B6 B7; R8 B2 B3 B4 B6; R10 B5 B6; S1 B2 B4 B5 B6; S2 B2 B4 B6; S3 B4 B5 B6; S4 B2 B4 B6; S6 B1 B2 B5; S7 B2 B4 B6 B7; S8 B2; S9 B4 B5; S10 B1 B2 B4 B6; S11 B3 B4; X1 B1 B4 B6; X2 B1 B3 B6; X4 to X8 and X10 B6; X9 B1 B3 B6. R9, R11, R12, S5 and X3 carry none of their own. The B-families stay as the PERD §48.3 axis; the R, S and X tags are added beside them (decision 5), not instead.
+
+**Missing and needing something new** (listed in `benchmark/generator/SPEC-suite-v1.md`, section 2): `suite_family`, `operation`, `candidates`, `entities`, `unsafe_actions`, `required_sequence`, `terminal_states`, `reconstruction`, `kill_point`, `honeypots`, `canary_classes` on the case and oracle; `proposed_actions`, `blocked_actions`, `executed_actions` in the result; the gates `HONEYPOT_CALL` and `CREDENTIAL_LEAKAGE`.
+
 Totals by the rule: RESOLVE 175 (R1 to R12), RESIST 117 (S1 to S11 and X1 to X10), Noema-only 8, unmapped 20; sum 320.
 
 ## 3. Cases that belong to no family of the definition
