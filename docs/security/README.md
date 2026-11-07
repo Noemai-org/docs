@@ -7,3 +7,4 @@
 - [`w2-ed25519-extension-evaluation.md`](w2-ed25519-extension-evaluation.md): SEC-12 (W2), evaluation of PostgreSQL Ed25519 verification extensions for DEBT-01 Option B and REQ-AUD-006 (2026-10-31; recommendation for founder approval, nothing adopted).
 - [`debt-02-alert-design.md`](debt-02-alert-design.md): DEBT-02, how a human is alerted when a signature fails (2026-11-03; Proposed, for founder decision).
 - [`perd-v1.21-amendment-draft.md`](perd-v1.21-amendment-draft.md): draft PERD v1.21 text for the three SEC-01 gaps (2026-11-03; for the Engineering Lead to record and the Steward to apply).
+- [`control-plane-authz-matrix.md`](control-plane-authz-matrix.md): SEC-04, the control-plane authorization matrix (ADV-14): credential classes by route, written against OD-P-79 before any route is built (2026-11-07; Proposed; do not merge before docs#133).
