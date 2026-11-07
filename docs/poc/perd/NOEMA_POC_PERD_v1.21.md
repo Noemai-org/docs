@@ -2903,10 +2903,19 @@ Each state below lists what it means, what moves the investigation into and out 
 
 - Meaning: the explanation is being rendered and validated.
 - Entry: verdict(s) ready, or ALLOW read.
-- Exit and allowed next states: → COMPLETED, ESCALATED or REJECTED (whichever disposition applies); → EXPLAINING_BLOCKED → fallback.
+- Exit and allowed next states: → COMPLETED, ESCALATED or REJECTED (whichever disposition applies); → EXPLAINING_BLOCKED.
 - Prohibited: a claim not bound to a fact.
 - Customer is told: the answer.
 - Audit: EXPLANATION_RENDERED / BLOCKED.
+
+**EXPLAINING_BLOCKED** (Founder decision E4 of 7 Nov 2026, closing OD-P-60)
+
+- Meaning: the explanation could not be rendered without a claim that is not bound to a fact (REQ-EXP-002).
+- Entry: EXPLAINING, when the validator blocks the explanation.
+- Exit and allowed next states: → ESCALATING, which opens an escalation case routed to OPS (operations). It never returns to EXPLAINING and never writes.
+- Prohibited: any write; any unbound claim to the person.
+- Customer is told: the safe fallback text of REQ-EXP-002.
+- Audit: EXPLANATION_BLOCKED{rule}, then the escalation events of ESCALATING.
 
 **COMPLETED** (terminal)
 

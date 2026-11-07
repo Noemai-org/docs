@@ -777,7 +777,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-60"></a>
 ### OD-P-60: The state EXPLAINING_BLOCKED has no definition and no exit
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · decided by the Founders on 7 Nov 2026 (Block E, E4): the state exits to ESCALATING, an escalation case routed to OPS. Written into PERD v1.21 §28.2 in docs#130; it counts once that pull request is merged.
 - **Missing decision:** what EXPLAINING_BLOCKED is and where it goes. PERD §28.2 lists "→ EXPLAINING_BLOCKED → fallback" as an exit of EXPLAINING, but gives the state no entry, no exit, no customer text and no audit trail, and "fallback" names no state.
 - **Why it matters:** a blocked explanation (REQ-EXP-002: a claim not bound to a fact) must end in a safe, defined state, and the transition table (REQ-STM-001) cannot be complete without one.
 - **Minimum safe default (meanwhile):** `transitions.yaml` has the row EXPLAINING → EXPLAINING_BLOCKED and no row leaving it, so an investigation that reaches it stays there and the safe fallback text is shown (REQ-EXP-002 failure behaviour).
