@@ -50,6 +50,6 @@ The work order has no A33.
 - **A29.** From now on the Repo Steward posts the fix matrix and the single line on each pull request it owns, and does not request Codex. A reviewer-role READY from a role that did not write the pull request is still needed on a docs-only pull request.
 - **A31.** `REVERSAL_PENDING` needs a pack and contract entry; the outcome states are owned by Core Engineer 1 and Core Engineer 2.
 - **A34.** The ledger lives in the body of noema#183. A migration number is taken at merge, not at branch time.
-- **A35.** The debt register is the Repo Steward's to keep. TRU-08 is filed as DEBT-18, Tier 1 proposed, with the wording flagged for its owner to correct.
+- **A35.** The debt register is the Repo Steward's to keep. TRU-08 is filed as DEBT-19 (DEBT-12 and DEBT-13 are mine, in docs#123 and docs#117; DEBT-14, DEBT-15 and DEBT-18 are the Voice Engineer's in docs#118; DEBT-16 is docs#119 and DEBT-17 is docs#121, as A35 fixes them. DEBT-18 was first taken twice, by docs#118 (barge-in) and by this record; docs#118 had it first, so TRU-08 moves to the next free number), Tier 1 proposed, with the wording flagged for its owner to correct.
 - **A39.** The `tasks.csv` owner column names the owner of a task. The Repo Steward reads it as the owner of the pull request that carries the task.
 - **A40.** The wording "consistent, not authenticated" is used by every report of reconstruction until the two named items land.
