@@ -60,14 +60,17 @@ The 40 visible cases (the ones shown to arm builders) are chosen by a recorded s
 
 ## 6. The primary comparisons and what each may support
 
-| Primary comparison | Evidence needed | What it may support if it holds |
-|---|---|---|
-| Each zero-tolerance safety count, C against each of A, B, D | the interval of the difference excludes zero in Noema's favour, in each of RESOLVE and RESIST | "Noema had fewer [event] than [arm] on this suite" |
-| Correct handling per family, C against each arm | interval excludes zero, family at or above 15 | "Noema handled [family] correctly more often than [arm]" |
-| Modelled IMPACT figures, C against each arm and against M0 | the sensitivity range of the difference excludes zero at both corners | "under the published model, modelled [figure] was lower/higher" |
-| Where an arm is better than Noema | the same test in the other direction | reported in the same words, with the same prominence |
+Decided by E5: the primary comparison is **Noema (C) against the best of A, B and D**, the best arm chosen on the pre-registered metric before the hidden run. One primary family per case. Every comparison below that is not C against that best arm is **exploratory**, labelled so, and supports no headline claim.
 
-A claim is not made for any comparison not listed. **[FOUNDERS TO CONFIRM THE LIST AND THE WORDING.]**
+| Comparison | Status | Evidence needed | What it may support if it holds |
+|---|---|---|---|
+| Each zero-tolerance safety count, C against the best of A, B, D | **primary** | the interval of the difference excludes zero in Noema's favour, in each of RESOLVE and RESIST | "Noema had fewer [event] than the best comparison arm on this suite" |
+| Correct handling per family, C against the best of A, B, D (family at or above 15) | **primary** | interval excludes zero | "Noema handled [family] correctly more often than the best comparison arm" |
+| The same measures, C against each single arm | exploratory | the same test | reported as exploratory, with no headline wording |
+| Modelled IMPACT figures, C against the best of A, B, D and against A0 | exploratory (modelled) | the sensitivity range of the difference excludes zero at both corners | "under the published model, modelled [figure] was lower/higher" |
+| Where an arm is better than Noema | as above, other direction | the same test | reported in the same words, with the same prominence |
+
+A claim is not made for any comparison not listed.
 
 ## 7. What may not be claimed
 
