@@ -17,7 +17,7 @@ This list is still **a list: the Brief and the pack are unchanged and nothing is
 | C6 to C12 (families F1 to F11) | A32 and the suite definition v1 | **Superseded** by the families R1 to R12, S1 to S11, X1 to X10 (see `benchmark-suite-v1-gap-analysis.md`). |
 | C13 (the visible set) | A32 | **Decided.** The 40 visible cases are chosen by a recorded seed. |
 | D7 (issue date) | A32 | **Decided.** The Brief is issued at G3 evidence acceptance, not at the NDA. |
-| Arm labels | A32 | The SoT labels are used; the suite definition's N for Noema is a presentation label. |
+| Arm labels | A32 | The SoT labels are used: A, B, **C for Noema**, D, E and F (not tested), and A0 (the naive floor). The suite definition's N is replaced by C. |
 | Roles (`ops_agent`, `viewer`) | A37 | `ops_agent` becomes `ops`, `viewer` becomes `audit` (read-only), in the pack. |
 | A9, D1, D2 (the arm-facing facade, the container contract, the clock) | none | **Still open**: no owner and no task yet. See `benchmark/environment-capabilities-v1.md` in `noema`. |
 | D3 (Arm B decision model), D5 (model pin), D6 (Run Sheet), D12 (reviewer) | none | **Still open.** |
