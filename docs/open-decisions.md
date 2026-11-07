@@ -949,3 +949,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the default); Architect (the decision).
 - **Deadline:** before EVD-01 slice 2 is merged.
 - **Source:** PERD v1.20 §21.1, REQ-CTX-002; INV-10, INV-19; [`task-cards/EVD-01.md`](poc/execution/task-cards/EVD-01.md) D1.
+
+### OD-P-77: Operations Model parameters for the benchmark IMPACT layer (AWAITING THE FOUNDER'S VALUES)
+
+- **Status:** [OPEN] · NON-CANONICAL · no value has been chosen. Named by [DEC-2026-11-07-benchmark-suite-definition-v1](decisions/DEC-2026-11-07-benchmark-suite-definition-v1.md) (ruling A26, Proposed).
+- **Missing decision:** the values of the published Operations Model that turns RESOLVE and RESIST results into the modelled IMPACT figures: human minutes per escalation type, the loaded cost per human minute, the SLA thresholds and the arrival rate. The model is identical for all arms, with M0 as the manual baseline, and every IMPACT figure is labelled "modelled" and reported across a sensitivity range.
+- **Why it matters:** IMPACT figures (resolution time, human investigation minutes, human touches, escalation rate, first-contact resolution, SLA exposure, cost per exception, backlog, customer effort) are not computable without these values, and an invented value would turn a modelled figure into a claim (AGENT-18; SoT §0.6; SoT §38.6: partner variables are supplied by the partner, never invented).
+- **Default (smallest safe):** none. No IMPACT figure is computed or reported until the Founder supplies the values, each with its source. RESOLVE and RESIST are reported without it.
+- **What would change it:** a design partner who supplies measured values (SoT §38.6); a sensitivity range wide enough that no single value matters.
+- **Not covered:** the choice of the sensitivity range; the REV sampling rule; the arms' configuration.
+- **Owner:** Founder (the values and their sources); Benchmark Owner (the published model document).
+- **Deadline:** before IMPACT is computed, and in any case published before the hidden run whose results feed it (A26 rule: pre-registered before any hidden case runs).
+- **Source:** DEC-2026-11-07 (A26), "IMPACT"; SoT §38.5, §38.6.
+
