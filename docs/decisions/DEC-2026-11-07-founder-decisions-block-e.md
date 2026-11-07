@@ -41,7 +41,7 @@
 | OD-P | Ruling | Register |
 |---|---|---|
 | 46, 47 to 51 | Accept the stated defaults. | Decided |
-| 52, 53, 55, 56, 58 | EL proposes the safer fail-closed reading, SR concurs, the Steward records it today. | Not decided here; see the table posted for the Founder |
+| 52, 53, 55, 56, 58 | EL proposes the safer fail-closed reading, SR concurs, the Steward records it today. EL's proposals are in the comment on docs#129 (issuecomment-6709557558): **52** no rule yields REJECTED_CONFIRMED until the Tushe worksheet gives the "not debited" and "rejected" values; a missing or unreadable value is UNKNOWN and escalates (INV-19). **53** debit KNOWN with credit UNKNOWN or UNAVAILABLE and a non-terminal switch is a non-terminal state (WAIT or ESCALATE), never a success; without the worksheet's switch value the case is UNKNOWN. **55** no PARTIAL rule is built; a transaction not established as single-leg is UNKNOWN and escalates. **56** when the order of events cannot be established the case is held as uncertain and escalates; Noema never picks an order (INV-21, INV-10). **58** accept the three deviations and the certainty tiers (definitive 2, indefinite 1) as written, because each withholds certainty and none grants it (REQ-RES-001). | **Proposed by EL; recorded here. SR's concurrence is not yet posted, so the register entries stay [OPEN] until it is. This record must not merge before SR concurs.** |
 | 54 | Closed by A31. | Decided |
 | 57 | Not allowed under freeze. | Decided |
 | 59 | Bind only through a confirmed slot. | Decided |
