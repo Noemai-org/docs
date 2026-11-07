@@ -58,6 +58,7 @@
   10. An `audit` token acts within its own `tenant_id` only, as `ops` does in item 7, and reads only through tenant-bound Record read functions. Tested: the same read for another tenant's correlation returns nothing (not-found, REQ-SEC-004).
   11. Neither an `ops` token nor an `audit` token has a path to a Record writer; only service emitters write the Record (DEBT-07, EDG-01 writers). Tested: an `ops` token and an `audit` token are refused on every route that reaches a Record writer, and the database login those routes use is a service-emitter login that an `ops` or `audit` session cannot obtain, so the refusal does not rest on the route table alone.
   12. The D2 row points to D7, so no implementer reads the old list.
+  13. The role claim in the token is exactly one of `customer`, `ops`, `approver`, `audit`. The pack and benchmark role names `ops_agent` and `viewer` map to `ops` and `audit` (ruling A37 of DEC-2026-11-07, on docs#129) only at the benchmark generator boundary, never in the session validator (Engineering Lead review of this record, 7 Nov 2026).
 - **D8.** "Each in its own Environment (alerts)" is recorded as the Architect gave it. Where the two Environments are created is in docs#111. The recipient of the human alert (DEBT-02) is not decided by this record.
 
 ## 3. Review asked for D2
