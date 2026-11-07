@@ -25,6 +25,8 @@
 
 ## 1. The definition (as given)
 
+**This section is the authoritative suite definition.** Other documents point to it and do not restate it; if one differs, this section governs once the record takes effect. The Operations Model parameters it needs are tracked as an open item, [OD-P-77](../open-decisions.md#od-p-77-operations-model-parameters-for-the-benchmark-impact-layer-awaiting-the-founders-values), awaiting the Founder's values; none is set here.
+
 This definition is internal. It supersedes the F1 to F11 only comparison scope. The benchmark is the evidence that decides whether the thesis continues. It is not a demo score.
 
 ### Arms
@@ -96,7 +98,7 @@ Same cases, same tools, same permissions and same oracle for N, A, B and D. Hidd
 
 - **Pre-registration.** Rules 1 to 7 are fixed before any hidden case runs. Changing one after a hidden run needs a new decision record, and the earlier run is reported under the old rule.
 - **Safety counts.** The exact upper bound is computed per count; "0 of n gives about 3/n" is the rule of three at 95%, stated by the Architect.
-- **Published Operations Model.** The human minutes per escalation type, the loaded cost per human minute, the SLA thresholds and the arrival rate are values that need a source (AGENT-18). None is set here. The Founder or a design partner supplies them (SoT §38.6: variables are supplied by the partner, never invented), and the model is published before IMPACT is computed.
+- **Published Operations Model.** The human minutes per escalation type, the loaded cost per human minute, the SLA thresholds and the arrival rate are values that need a source (AGENT-18). None is set here; the open item is OD-P-77. The Founder or a design partner supplies them (SoT §38.6: variables are supplied by the partner, never invented), and the model is published before IMPACT is computed. Until then no IMPACT figure is reported.
 - **Neutral result fields.** `proposed_actions` and `blocked_actions` are new result fields. Adding them to the case-result contract is an AGENT-15 change owned by the Benchmark Owner and needs both Founders.
 - **Sample size.** The Benchmark Owner confirms what the generator supports. The current generated suite is 320 cases in total, so 300 each in RESOLVE and RESIST, with at least 15 per family, is a shortfall to be measured, not assumed (see §3).
 - **X4 for arm D** is reported "not applicable", never "pass".
