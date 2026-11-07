@@ -955,7 +955,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · proposal by EL from PERD §39.4; the Security Reviewer accepted the route names and the `:set` / `:clear` split (7 Nov 2026) and asked for the credential classes below; the Architect rules on them. Not authority for building until accepted and committed.
 - **Missing decision:** (1) the exact route names of the control plane, and (2) the credential classes that call them. PERD §39.4 lists the routes, but with one route for the kill switch, `POST /v1/admin/tenants/{id}/kill-switch` with `{enabled: bool, reason}`. Founder decision D5 says the verifier may set a tenant's kill switch and only a person clears it; one route with an `enabled` field cannot carry that difference.
 - **Credential classes (answer to the Security Reviewer's finding 1).** The session roles stay as ruling A1 has them: `customer`, `ops`, `approver`, `audit` (a fifth session role would reopen A1 and D7). The control plane is a **separate listener and credential**, as §39.1 already says ("a separate admin credential, MFA-protected in shared environments"). Two classes:
-  - **C-ADMIN**: the control-plane administrator credential, held by a person (MFA in shared environments).
+  - **C-ADMIN**: the control-plane administrator credential, held by a person (MFA in shared environments). In a non-shared development environment there is no MFA, so C-ADMIN is one credential there and must not be read as MFA-protected.
   - **C-VERIFY**: a service credential for the verification identity, mTLS with a service identity (REQ-SEC-002), held by the verification job. It is **not** a person and **not** a session role.
 
   Until both classes exist, a person-only `:clear` is a sentence, not a control. What enforces D5 today is the database rule on `record_verify` (noema#190 has the failing-first test), and **no control-plane route is built** (this is the reason, not only that this entry is pending).
@@ -963,7 +963,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
   | Route | Credential class | Effect |
   |---|---|---|
-  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:set` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN or C-VERIFY | switch on; `KILL_SWITCH_CHANGED` with the caller as actor; idempotent |
+  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:set` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN or C-VERIFY (C-VERIFY may call `:set` for any tenant, by design: the verifier is cross-tenant; the matrix tests that it can call nothing else) | switch on; `KILL_SWITCH_CHANGED` with the caller as actor; idempotent |
   | `POST /v1/admin/tenants/{tenant_id}/kill-switch:clear` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN only | switch off; C-VERIFY gets 403 `PERMISSION_DENIED`; `KILL_SWITCH_CHANGED` with the person as actor |
   | `GET /v1/admin/tenants/{tenant_id}/kill-switch` **(new route)** | C-ADMIN only | the state, the last change and who made it; ops and audit see the effect through `GET /v1/ops/alerts` |
 
