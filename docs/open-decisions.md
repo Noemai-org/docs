@@ -689,7 +689,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-52"></a>
 ### OD-P-52: Reconciliation rule for REJECTED_CONFIRMED
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the situation is classified INSUFFICIENT_EVIDENCE with disposition UNKNOWN or ESCALATE; no rule yields REJECTED_CONFIRMED until the worksheet gives the values ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces REJECTED_CONFIRMED. Not debited, and the authoritative source confirms rejection. Needs the ledger and switch values that mean "not debited" and "rejected", from the Tushe worksheet (INV-19: absence is never negative).
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -700,7 +700,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-53"></a>
 ### OD-P-53: Reconciliation rule for DEBIT_POSTED_CREDIT_UNCONFIRMED
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: a non-terminal state (WAIT with a deadline, then ESCALATE); never a success; UNKNOWN without the worksheet switch value ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces DEBIT_POSTED_CREDIT_UNCONFIRMED. Debit KNOWN, credit UNKNOWN or UNAVAILABLE, switch non-terminal. Needs the switch value that means non-terminal.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -722,7 +722,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-55"></a>
 ### OD-P-55: Reconciliation rule for PARTIAL
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [OPEN] · NON-CANONICAL · EL proposed and SR concurred with an amendment under Founder decision E4 of 7 Nov 2026 (single-leg treatment; more than one leg, or a mismatched leg count, is UNKNOWN and escalates); **EL to confirm the amendment** before it is Decided ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)).
 - **Missing decision:** a rule in rule set v1 that produces PARTIAL. A multi-leg transaction with a missing leg. Needs the multi-leg facts, which no pack entity models yet.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -733,7 +733,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-56"></a>
 ### OD-P-56: Reconciliation rule for EVENT_ORDER_UNCERTAIN
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the case is held as uncertain and escalates; Noema never picks an order ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces EVENT_ORDER_UNCERTAIN. Ordering cannot be established. Needs the ordering facts and the rule that detects them.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -755,7 +755,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-58"></a>
 ### OD-P-58: Reconciliation rule set v1 differs from the PERD text in three places
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the three deviations and the certainty tiers (definitive 2, indefinite 1) are accepted ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** whether rule set v1 may differ from PERD §22.3 where the PERD's own properties need it: R1 also requires no pending settlement, no pending reversal and no unavailable required source; R3 does not fire when the reversal conflicts with another fact; two KNOWN rows of a single-valued fact with different states are a contradiction. The certainty tiers are also set (definitive 2, indefinite 1)
 - **Why it matters:** without these, a pending settlement past its window or a lost required source gave SUCCESS_CONFIRMED, which breaks "no pending state is collapsed into a terminal one" and "losing a source never raises certainty" (REQ-RES-001)
 - **Minimum safe default (meanwhile):** the safer reading as built in noema#27, proposed for adoption in [DEC-2026-10-20-reconciliation-ruleset-v1](decisions/DEC-2026-10-20-reconciliation-ruleset-v1.md) (Proposed)
