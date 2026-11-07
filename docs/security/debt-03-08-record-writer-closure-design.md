@@ -6,7 +6,7 @@
 
 | Fact | Where it is read from |
 |---|---|
-| A Record write goes through `record_lock_head_t()` and `record_insert_t(...)`. The tenant comes from the calling login (`session_user` mapped in `tenant_login`), never from an argument (DEBT-04, closed on `main`). | `services/core/migrations/0004`, `0005`; `record/chain/chain.go` |
+| A Record write goes through `record_lock_head_t()` and `record_insert_t(...)`. The tenant comes from the calling login (`session_user` mapped in `tenant_login`), never from an argument (DEBT-04's fix is merged, noema#145; the register entry is still open until the Security Reviewer's cross-tenant tests pass on `main` and the Record-function hardening lands, docs#122). | `services/core/migrations/0004`, `0005`; `record/chain/chain.go` |
 | `written_by` must be the emitter the login is bound to (a power's own emitter, or the one emitter a `record_emitter` login is bound to). A login of one power cannot write in another power's name through `record_insert_t`. | `record_insert_t`, `tenant_login.emitter` (DEBT-07 slice, noema#145) |
 | Nothing in the database holds a key. The event's `hash` is computed by the caller; the function checks only that the event extends the head. So a holder of **one runtime credential** is limited to its own emitter and tenant, but **can still append any well-formed event as that emitter**, and a holder of `outcome_rw` can still call `outcome_record_verdict(...)` and write a verdict nobody reached. | DEBT-03, DEBT-08 text; `0007` |
 | After REC-08 the database refuses an event whose Ed25519 signature does not verify under a registered, ACTIVE key of its `written_by` identity. | D1, D11, D12, REQ-AUD-006 |
@@ -18,11 +18,11 @@ Honest reading: DEBT-04 and DEBT-07 already narrowed the blast radius (tenant an
 1. `record-event.v4` with a required `sig` (D1 and §4.3 of the decision record); `hash` keeps its v3 meaning and `sig` is outside the hashed body. v3 is not edited.
 2. `record_event.signed_jcs` and `sig_key_id`/`sig_value` columns; a `BEFORE INSERT` trigger, `ENABLE ALWAYS`, owned by `noema_migrator`, that rebuilds the message `noema/record-event/v1\n` + `JCS(event without hash and without sig)`, runs the D7/D8 consistency checks (tenant, `seq`, `prev_hash`, `written_by` against the row), calls `noema_sig.verify('record-event', …)` (already built for receipts in migration 0012) and raises `NS001` on false (D12).
 3. Fail closed when verification is unavailable (D13): a Record append that fails fails its enclosing transaction (REQ-AUD-001, EC-E16).
-4. Every writer signs with its own identity key (D2): `core-execution`, `core-outcome`, `core-trust`, `core-evidence`, `core-workflows`, `core-edge`, `core-record`, `admin`. An identity with no registered key cannot append. The eight runtime emitters of `record/chain/actors.json` (model service and the mocks) have no key under the OD-P-73 default (a proposal, not a decision), so the database refuses their events; that default must be adopted before DEBT-07 closes.
+4. Every writer signs with its own identity key (D2): `core-execution`, `core-outcome`, `core-trust`, `core-evidence`, `core-workflows`, `core-edge`, `core-record`, `admin`. An identity with no registered key cannot append. The model service holds no Record key: `core-edge` signs and appends the events that stand for model output (Founder decision D6 of 7 Nov 2026, and E4's record of OD-P-73 as "the edge signs for the model service"). The seven adapter identities of `record/chain/actors.json` (`mock-ledger` to `mock-clock`) are not named by D6; they have no key, so the database refuses their events, and how they are written (by the core on their behalf, as `core-edge` does for the model service) is the question that remains open for DEBT-07.
 5. The chain verifier (REC-05) checks every signature and reports a revoked key's events.
 6. `outcome_record_verdict` (DEBT-08): the verdict document is signed by `core-outcome` and verified by the same function (purpose `outcome-verdict`); the table `outcome_verdict` gets its trigger (D12). `outcome_rw` alone no longer suffices.
 
-Dependencies already merged or in review: 0012 (`noema_sig.verify`, `signing_key`, rotation and revocation; noema#229), `refuseEnabledExtensionEventTrigger`, `internal/sigfixture` and `execution/signing/signingtest` (signing helpers for tests that must not import Execution's signer). Not built: any signer for a non-Execution identity, record-event v4, and the Record trigger.
+Dependencies already merged or in review: migration 0013 by the D12 ledger (`noema_sig.verify`, `signing_key`, rotation and revocation; noema#229; renumbered if the merge order changes), `refuseEnabledExtensionEventTrigger`, `internal/sigfixture` and `execution/signing/signingtest` (signing helpers for tests that must not import Execution's signer). Not built: any signer for a non-Execution identity, record-event v4, and the Record trigger.
 
 ## 3. The closure test, written before the code (failing first)
 
@@ -61,7 +61,7 @@ Run it **before** any REC-08 code, on the `main` of that day; it must fail by th
 
 ## 5. Open points to take to the Engineering Lead (not decided here)
 
-- **OD-P-73** (no key for the eight runtime emitters): must be adopted, or those events stay unwritable and DEBT-07's closure needs EDG-01 to carry them.
+- **OD-P-73**: recorded by E4 as the default (the edge signs for the model service; D6). Open for the seven adapter identities only: unwritable until the core writes their events on their behalf, and DEBT-07's closure needs EDG-01 to carry them.
 - **Existing rows.** Record chains exist only in tests and local Compose today, as for receipts. If a longer-lived chain existed, its v3 rows would have no `sig`; the trigger would apply to inserts only and the verifier must accept v3 rows below a recorded cut-over `seq`. The decision record is silent on a cut-over; ask.
 - **Who signs `admin` events** (D2a) and where that key is held for the POC.
 - **Per-insert cost.** Decision-record test 15 measures it against the PERD §47 budget; Record appends are on every consequential path.
