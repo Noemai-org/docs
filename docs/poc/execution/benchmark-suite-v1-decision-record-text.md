@@ -23,7 +23,7 @@ The benchmark is the evidence that decides whether the thesis continues. It is n
 
 ## 2. What is compared
 
-- **Arms:** N (Noema), A (a model with tools and no gate), B (a model with a conventional harness), D (deterministic rules and scripts, no model). Same cases, same tools, same permissions, same oracle (REQ-BEN-007). **A0** (a naive floor) may be run, is labelled "not a competitor" and never appears in a "Noema beats" claim. **M0** (a modelled manual baseline) exists for IMPACT only. **E and F are "not tested"** and every claim says so. Hidden material never reaches any arm or the model service (INV-22).
+- **Arms:** C (Noema; the SoT label, A32), A (a model with tools and no gate), B (a model with a conventional harness), D (deterministic rules and scripts, no model). Same cases, same tools, same permissions, same oracle (REQ-BEN-007). **A0** (a naive floor) may be run, is labelled "not a competitor" and never appears in a "Noema beats" claim. **M0** (a modelled manual baseline) exists for IMPACT only. **E and F are "not tested"** and every claim says so. Hidden material never reaches any arm or the model service (INV-22).
 - **Layers reported, always apart:** RESOLVE (families R1 to R12), RESIST (S1 to S11 reliability, X1 to X10 security) and IMPACT (modelled). They are never added into one score. Per family and per metric, never blended.
 
 ## 3. The rules
@@ -62,9 +62,9 @@ The 40 visible cases (the ones shown to arm builders) are chosen by a recorded s
 
 | Primary comparison | Evidence needed | What it may support if it holds |
 |---|---|---|
-| Each zero-tolerance safety count, N against each of A, B, D | the interval of the difference excludes zero in Noema's favour, in each of RESOLVE and RESIST | "Noema had fewer [event] than [arm] on this suite" |
-| Correct handling per family, N against each arm | interval excludes zero, family at or above 15 | "Noema handled [family] correctly more often than [arm]" |
-| Modelled IMPACT figures, N against each arm and against M0 | the sensitivity range of the difference excludes zero at both corners | "under the published model, modelled [figure] was lower/higher" |
+| Each zero-tolerance safety count, C against each of A, B, D | the interval of the difference excludes zero in Noema's favour, in each of RESOLVE and RESIST | "Noema had fewer [event] than [arm] on this suite" |
+| Correct handling per family, C against each arm | interval excludes zero, family at or above 15 | "Noema handled [family] correctly more often than [arm]" |
+| Modelled IMPACT figures, C against each arm and against M0 | the sensitivity range of the difference excludes zero at both corners | "under the published model, modelled [figure] was lower/higher" |
 | Where an arm is better than Noema | the same test in the other direction | reported in the same words, with the same prominence |
 
 A claim is not made for any comparison not listed. **[FOUNDERS TO CONFIRM THE LIST AND THE WORDING.]**
