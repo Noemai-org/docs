@@ -2912,8 +2912,8 @@ Each state below lists what it means, what moves the investigation into and out 
 
 - Meaning: the explanation could not be rendered without a claim that is not bound to a fact (REQ-EXP-002).
 - Entry: EXPLAINING, when the validator blocks the explanation.
-- Exit and allowed next states: → ESCALATING, which opens an escalation case routed to OPS (operations). It never returns to EXPLAINING and never writes.
-- Prohibited: any write; any unbound claim to the person.
+- Exit and allowed next states: → ESCALATING, whose escalation case is routed to OPS (operations). It never returns to EXPLAINING. EXPLAINING_BLOCKED itself writes nothing; the case is opened by ESCALATING, under a new Decision Grant (INV-03, AGENT-08).
+- Prohibited: any write in this state; any unbound claim to the person.
 - Customer is told: the safe fallback text of REQ-EXP-002.
 - Audit: EXPLANATION_BLOCKED{rule}, then the escalation events of ESCALATING.
 
