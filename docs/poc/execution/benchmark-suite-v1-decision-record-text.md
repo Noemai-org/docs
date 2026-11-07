@@ -83,7 +83,7 @@ REQ-BEN-004, REQ-BEN-005, REQ-BEN-007, REQ-BEN-008, REQ-BEN-009, REQ-BEN-010, RE
 ## 9. Open for the Founders
 
 1. ~~The interval procedure (section 4)~~ and ~~the reviewer sample size (rule 7)~~: decided by E5. The reviewer sample is **100 decisions, stratified** by family and outcome class.
-2. The list of primary comparisons and the exact claim wording (section 6).
+2. The exact claim wording (section 6); the list of primary comparisons is decided by E5.
 4. The Operations Model values and sources (a sourced parameter replaces each ASSUMED one).
 5. The pass^k floor for model qualification (a separate record, text posted on docs#117).
 6. Whether a case may count in more than one family towards the floors (docs#128 decision 3).
