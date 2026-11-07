@@ -1,5 +1,7 @@
 # Comparison Arm Brief v1.0 against the real pack and environment: the mismatches
 
+**Do not merge before docs#128 and noema#248.**
+
 Date: 6 Nov 2026 · Owner: Benchmark Owner (role agent) for the Founder (benchmark owner) · Status: **for decision. Neither side has been changed.** · Derived and non-normative: the SoT, the PERD and the pack decide (AGENTS §2). Tasks: BEN-20, ARM-01 to ARM-05. REQ-BEN-007.
 
 The Brief (`Comparison_Arm_Brief.md`, version 1.0, issued 5 Nov 2026) says it wins on "what to build". The instruction for this reconciliation is that the pack wins over the Brief. Every row below is a place where they disagree, with what each side says and where the real side is written. "Real" means `noema` `main` at `9d00e34`, PERD v1.20, plan v1.11, `packs/fintech_v1.json` (policy `fin.pol@3.1`). A row's recommendation is the strongest reading of "the pack wins" and changes the **Brief**, never the pack, unless the row says otherwise. No row has been applied.
