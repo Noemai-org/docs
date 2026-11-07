@@ -1,6 +1,6 @@
 # Task card: EXP-01
 
-Plan task EXP-01 (owner C2; REQ-EXP-002; Needs OUT-01, now merged; week 4, 9 Nov 2026; G1 path: US-01 requires the explanation to cite the masked account). Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Repository: `noema` (the card lives in `docs`). Drafted 5 Nov 2026 by the Core Engineer 2 role agent. **Status: DRAFT until the Founder approves and merges it. Nothing is built before then.** Two decisions below are the agent's defaults and one is a question for the Architect.
+Plan task EXP-01 (owner C2; REQ-EXP-002; Needs OUT-01, now merged; week 4, 9 Nov 2026; G1 path: US-01 requires the explanation to cite the masked account). Template: [`../../perd/templates/task-card.md`](../../perd/templates/task-card.md). Repository: `noema` (the card lives in `docs`). Drafted 5 Nov 2026 by the Core Engineer 2 role agent. **Status: DRAFT until the Founder approves and merges it. Nothing is built before then.** The decisions below are the agent's defaults. Where the template texts live is settled by DEC-2026-11-04-architect-rulings R3 (c) (below); there is no open question.
 
 ```
 TASK-EXP-01  EXP-01 · Template-only explanations for the slice: facts in, deterministic template text out, no model; every statement maps to a verified fact or a template
@@ -10,12 +10,12 @@ Rationale: US-01 and US-06 end with an explanation that cites the masked account
 Modules touched (allowlist; paths in `noema`):
   services/core/explanation/                       (new package: template selection, slot filling, the deterministic claim rules)
   services/core/explanation/README.md
-  packs/fintech_v1.json                            (template texts for the five existing template IDs, locale en-NG only; see Q1)
-  packs/README.md, packs/tests/                    (shape tests for the new pack section)
+  packs/fintech/templates/en-NG.json               (template texts, one JSON file per locale keyed `<outcome_id>/<classification>`, locale en-NG only; DEC-2026-11-04-architect-rulings R3 (c))
+  packs/fintech/templates/README.md, packs/tests/  (shape tests for the templates file)
   status/EXP-01.md
-  ← nothing else may change. contracts/ is read-only (explanation-facts.v1 exists). No new dependency (AGENT-14): the standard library only. If Q1 requires a pack-schema change, that is a contract change (AGENT-15) and a change request first.
-Contracts: none; bump required? Only if Q1 is answered "new pack section with its own schema" (then Y, by change request).
-Inputs/outputs: `Render(facts ExplanationFacts) (Explanation, error)`, pure and deterministic. `Explanation` is `{text, claims[], template_id, template_version}` where every sentence is a template with slots filled from `facts`, `unknowns`, `actions`, `advice` or `next_steps`. No fact, no sentence: a slot with no fact makes the sentence an "unknown" sentence from the template set, never a guess.
+  ← nothing else may change. contracts/ is read-only (explanation-facts.v1 exists). `packs/fintech_v1.json` stays untouched: the texts are data files under `packs/fintech/templates/`, not a pack-schema change. No new dependency (AGENT-14): the standard library only.
+Contracts: none; bump required? N.
+Inputs/outputs: `Render(facts ExplanationFacts) (Explanation, error)`, pure and deterministic. The template is looked up by (outcome, classification) and locale, keyed `<outcome_id>/<classification>` in the locale's file; `template_id` is an output of that lookup, never the key. `Explanation` is `{text, claims[], template_id, template_version}` where every sentence is a template with slots filled from `facts`, `unknowns`, `actions`, `advice` or `next_steps`. No fact, no sentence: a slot with no fact makes the sentence an "unknown" sentence from the template set, never a guess.
 Acceptance criteria:
   REQ-EXP-002:
   - Every sentence of the output SHALL map to a template ID, and every number, time and masked identifier in it SHALL appear in `facts` (PERD §31.2 checks 1 and 2).
@@ -40,9 +40,9 @@ If blocked or conflicting: STOP and emit the CONFLICT block (§71.3)
 
 Owner: C2. Needs: OUT-01 (merged). Gate: G1.
 
-## Question for the Architect (blocks the build)
+## Where the template texts live (settled, no question open)
 
-- **Q1: where do the template texts live, and in what shape?** PERD §31.2 says the pattern lists are pack data and `packs/fintech/templates/` is in the §64.2 layout, but `packs/fintech_v1.json` today holds only template IDs (`fin.expl.case_opened.v1`, `fin.expl.case_routed.v1`, `fin.expl.complaint_logged.v1`, `fin.expl.evidence_recorded.v1`, `fin.expl.status_explained.v1`) and no text, and the pack schema has no templates section. The §64.2 layout also names no core package for the deterministic renderer. **Agent default (smallest safe):** a new `templates` section in the pack (`template_id → {locale → text with {slot} markers, slot kinds}`), en-NG only; the renderer in `services/core/explanation/`. That is a pack-schema change (AGENT-15), so it needs the Architect's yes and a change request before any code. **What would invalidate it:** a decision that texts live in `packs/fintech/templates/*.json` files loaded as data, or that EXP-04 owns the schema.
+DEC-2026-11-04-architect-rulings **R3 (c)**, on `main`: "Template format: one JSON file per locale at `packs/fintech/templates/<locale>.json`, keyed `<outcome_id>/<classification>`. Locales: `en-NG`, `pcm`, `yo`, `ha`, `ig`." This task writes `en-NG` only. `packs/fintech_v1.json` holds only the five template IDs and is not changed, so there is no pack-schema change and no change request (AGENT-15 does not apply). The renderer lives in `services/core/explanation/`, imported by no power package (D4).
 
 ## Decisions taken by the agent (reversible)
 
