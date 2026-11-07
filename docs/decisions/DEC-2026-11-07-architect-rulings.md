@@ -39,8 +39,8 @@ The work order has no A33.
 | A35 | **DEBT-16 is docs#119 (unrun shell tests) and DEBT-17 is docs#121.** Everything else takes the next free number. TRU-08 is registered as debt. | debt register; REQ-OPS-004; AGENTS §7 |
 | A36 | **noema#212 is closed (ported to noema#199).** noema#246 is an adjudication list. | noema#199, #212, #246 |
 | A37 | **`ops_agent` becomes `ops`, and `viewer` becomes `audit` (read-only), in the pack.** | DEC-2026-11-06 A15; DEC-2026-11-05 D7 |
-| A38 | **The script job for `test_init.sh` and `test_secrets_local.sh` runs against PostgreSQL 17.11.** | DEBT-16 (docs#119); PLT-06 |
-| A39 | **One owner per pull request,** from the `tasks.csv` owner column. Only the owner pushes; others comment. | AGENTS §11; tasks.csv |
+| A38 | **The script job for `test_init.sh` and `test_secrets_local.sh` runs against PostgreSQL 17.11.** *(Amended by Founder decision D7 of 7 Nov 2026, Block D: the database scripts run on PostgreSQL 17.11; `test_secrets_local.sh` may run on the runner because it needs no database.)* | DEBT-16 (docs#119); PLT-06 |
+| A39 | **One owner per pull request,** from the `tasks.csv` owner column. Only the owner pushes; others comment. *(Amended by Founder decision E1 of 7 Nov 2026, Block E: the role that opened a PR is the only one that pushes to it; the `tasks.csv` owner only breaks ties.)* | AGENTS §11; tasks.csv |
 | A40 | **Reconstruction is reported as "consistent, not authenticated"** until slice B and REC-08. There is no headline safety claim below n = 300. There is one shared kill-point list. | REC-03, REC-08; DEBT-03; DEC-2026-11-07 A26 |
 
 ## 2. Notes for the people who act on these rulings
@@ -50,6 +50,6 @@ The work order has no A33.
 - **A29.** From now on the Repo Steward posts the fix matrix and the single line on each pull request it owns, and does not request Codex. A reviewer-role READY from a role that did not write the pull request is still needed on a docs-only pull request.
 - **A31.** `REVERSAL_PENDING` needs a pack and contract entry; the outcome states are owned by Core Engineer 1 and Core Engineer 2.
 - **A34.** The ledger lives in the body of noema#183. A migration number is taken at merge, not at branch time.
-- **A35.** The debt register is the Repo Steward's to keep. TRU-08 is filed as DEBT-18 (Founder decision of 7 Nov 2026, Block E: Voice's barge-in debt is DEBT-24 in docs#118, so DEBT-18 is free for TRU-08; DEBT-12 and DEBT-13 are mine, in docs#123 and docs#117; DEBT-14 and DEBT-15 are the Voice Engineer's in docs#118, with barge-in as DEBT-24; DEBT-16 is docs#119 and DEBT-17 is docs#121; DEBT-20 to DEBT-23 are the Engineering Lead's in docs#131), Tier 1 proposed, with the wording flagged for its owner to correct.
+- **A35.** The debt register is the Repo Steward's to keep. TRU-08 is filed as DEBT-18; DEBT-19 is unused, a gap by design, and is not reused (Founder decision of 7 Nov 2026, Block E: Voice's barge-in debt is DEBT-24 in docs#118, so DEBT-18 is free for TRU-08; DEBT-12 and DEBT-13 are mine, in docs#123 and docs#117; DEBT-14 and DEBT-15 are the Voice Engineer's in docs#118, with barge-in as DEBT-24; DEBT-16 is docs#119 and DEBT-17 is docs#121; DEBT-20 to DEBT-23 are the Engineering Lead's in docs#131), Tier 1 proposed, with the wording flagged for its owner to correct.
 - **A39.** The `tasks.csv` owner column names the owner of a task. The Repo Steward reads it as the owner of the pull request that carries the task.
 - **A40.** The wording "consistent, not authenticated" is used by every report of reconstruction until the two named items land.
