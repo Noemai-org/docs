@@ -45,6 +45,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-03-rapid-test-dependency](DEC-2026-11-03-rapid-test-dependency.md) | `pgregory.net/rapid` v1.3.0 is approved as a test-only dependency of the core (MPL-2.0, no dependencies); first used for REC-01 and TST-01 |
 | [DEC-2026-11-04-architect-rulings](DEC-2026-11-04-architect-rulings.md) | The Architect's rulings of 4 Nov 2026 (R1 to R14): lone CONFIRM, log_complaint_reference PERMIT, PCK-02 split and template format, PCK-04 descriptor key, DEBT-03 accepted, OpenTelemetry Go dependency, init.sh roles, DEBT-06, record_insert_t, G1 story test locations, SEC-14 put-only credential, Tushe GitHub Environments, ENV-05 pause lifted, TEN-02 partial (Proposed) |
 | [DEC-2026-11-04-g1-named-open-exclusion](DEC-2026-11-04-g1-named-open-exclusion.md) | BEN-05: G1's text needs one US-01 and one US-06 case; a case no producer can yet drive may be a named open exclusion, reported as non-full coverage and never as a pass; every other errored or missing case is NOT_COMPARABLE (Proposed) |
+| [DEC-2026-11-07-sot-perd-edit](DEC-2026-11-07-sot-perd-edit.md) | Ruling A27: SoT v1.11 and PERD v1.21 (two more safety gates, key policy, arm labels, identity contract, benchmark quota, case contract v2); draft for the Founders to issue |
 
 ## Where decisions already live
 

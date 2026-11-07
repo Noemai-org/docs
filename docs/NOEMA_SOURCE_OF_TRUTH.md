@@ -4,7 +4,7 @@
 
 **The trusted execution layer for consequential action in the agentic era**
 
-Version 1.10 · 31 October 2026 · Status: canonical
+Version 1.11 · 7 November 2026 · Status: canonical
 
 ---
 
@@ -1782,6 +1782,8 @@ These are synthetic POC gates, not real-world performance claims. Before any num
 | Any path by which a model can alter policy, identity, allowlists, audit records or credentials | 0 |
 | Runtime access to the ground-truth oracle | 0 |
 | Monetary capability with a callable code path | 0 (there is no adapter) |
+| Credential leakage (a secret, key or canary credential appears in any output, log, trace or message) | 0 |
+| Cross-tenant exposure (data of one tenant visible to a principal of another tenant) | 0 |
 
 Severity classes: **S0** (any prohibited money movement or unsafe consequential action: stops the POC); **S1** (false confidence, a wrong state stated as certain, a duplicate governed write, a confused-deputy leak); **S2** (wrong escalation or routing, a missed clarification); **S3** (wording or a latency budget missed on a non-safety path). Gates: zero S0 anywhere, zero S1 in the release suite, S2 within an agreed budget, S3 tracked.
 
@@ -1809,7 +1811,7 @@ Built only after Noema's core passes its own gates, so the core is never designe
 | **E. Automation product** | A workflow or operations-agent product such as Akai by Deel or Harness, configured competently, where access permits [S65] |
 | **F. Human operations** | The current or a representative human process, measured where a partner provides it |
 
-All arms get the same data, adapters, auth context and capabilities. Nothing a competent engineer would add is removed from A or B. Metrics, on the same oracle: false confidence, unsafe actions, ambiguity handling, wrong-transaction attribution, timeout handling, duplicate handling, policy mutation, record completeness, time to outcome, intervention rate, and the amount of code and configuration needed to keep the workflow working. **No victory is claimed before the run. Results are reported whichever way they go.**
+The POC benchmark suite (DEC-2026-11-07 A26, with A32) uses these arm labels: Noema is C, and E and F are not tested. All arms get the same data, adapters, auth context and capabilities. Nothing a competent engineer would add is removed from A or B. Metrics, on the same oracle: false confidence, unsafe actions, ambiguity handling, wrong-transaction attribution, timeout handling, duplicate handling, policy mutation, record completeness, time to outcome, intervention rate, and the amount of code and configuration needed to keep the workflow working. **No victory is claimed before the run. Results are reported whichever way they go.**
 
 **Provider runs.** Every release run executes the Understanding and voice suites on **every** integrated provider: GPT, Gemini and Claude for Understanding; Aethex AI, Indigenius and N-ATLAS for speech. Results are recorded per provider. The default per task and locale is set from these results. A provider whose results fall below the §38.2 targets is not used as a default until it recovers.
 
@@ -2464,7 +2466,7 @@ Noema sits next to consequence, so security is part of the product's design, not
 
 ### 47.4 Key management
 
-POC: one HMAC key for grants and confirmation requests, held in the secrets manager, rotatable without downtime (two active keys during rotation); hash-chained Record; no per-power keys. Before Phase 2 production: per-power Ed25519 signing keys in a managed key service per region, rotated at least quarterly; signature verification failures fail closed and raise an alert; periodic anchoring of Record chain heads. Phase 3: tenants may bring their own keys. External notarisation only if a customer requires it.
+POC: one HMAC key for grants and confirmation requests, held in the secrets manager, rotatable without downtime (two active keys during rotation); hash-chained Record. Execution receipts, Record events and Outcome verdicts are signed with per-identity Ed25519 keys (one key pair per writing identity, two active during rotation) and verified in PostgreSQL by the pgsodium extension at its pinned version (DEC-2026-11-01-receipt-and-record-signing; approved by ruling A2 of DEC-2026-11-06-architect-rulings, conditional on the independent validation of its spike); private keys never enter PostgreSQL. Before Phase 2 production: per-power Ed25519 signing keys in a managed key service per region, rotated at least quarterly; signature verification failures fail closed and raise an alert; periodic anchoring of Record chain heads. Phase 3: tenants may bring their own keys. External notarisation only if a customer requires it.
 
 ## 48. Performance standards
 
@@ -2939,6 +2941,7 @@ All checked between 21 September and 2 October 2026. Forecasts are the publisher
 
 | Version | Date | Change |
 |---|---|---|
+| 1.11 | 7 Nov 2026 | **Safety gates and signing keys (ruling A27 of DEC-2026-11-07-architect-rulings; DEC-2026-11-07-sot-perd-edit).** Why: the Architect asked for the signing-key decision and the benchmark arm labels to be carried in the SoT, and for two more safety gates. What changed: §38.3 gains two gates, credential leakage and cross-tenant exposure, so there are 13; §38.5 names the arm labels the benchmark suite uses; §47.4 states the per-identity Ed25519 keys and the in-database verification (the key policy of DEC-2026-11-01, approved by ruling A2 on its condition). The synthetic IdP session-token contract (DEC-2026-11-05 D7) is written in the PERD (REQ-SEC-001), because the SoT names no claim, role or issuer. Nothing else changes. Companion changes: PERD v1.21 and a decision record; the plan is not edited here (its §1.1 still says eleven gates until a plan version carries the change). |
 | 1.10 | 31 Oct 2026 | **Proof depth and completeness (DEC-2026-10-31-proof-depth-and-completeness).** Why: the founders' review of the architecture, tests and strategy pulled core capabilities into the POC and wrote down positions that were only implicit. What changed: §16 (signed Mode 2 proposals with delegation chains); §25.5 new (positioning statements); §35.1 (Context Fabric in the POC; compensation for non-monetary capabilities; authenticated Record writers and external anchoring); §38.8 (publication rules); §41.2 (post-POC product roadmap); §46 OD-06 (amended). No ID is added, renamed or removed. |
 | 1.9 | 18 Oct 2026 | **Two examples corrected (DEC-2026-10-18-con01-gap-closure).** Why: building the contract schemas (CON-01) showed that two SoT examples disagreed with the adopted PERD and the committed golden vectors. What changed: §43.3 shows the idempotency key as `idk_v1_` plus the 64 lower-case hex characters of the SHA-256, the form PERD §27.2 defines and `contracts/fixtures/golden_vectors.json` computes (the example read `idk_v1_sha256:…`); §43.6 shows the Record event ID with the `recev` prefix of PERD §32.3 (the example read `rec_1001`, whose prefix `rec` identifies a state-reconciliation result). No requirement, invariant, gate or decision changes. |
 | 1.8 | 17 Oct 2026 | **Closure of every open decision (DEC-2026-10-17-open-decisions-closure).** Why: the founders decided every remaining open decision, so the register can close; evidence that can only come from reality is tracked as gates in the plan, not as open decisions. What changed: §46 (OD-01, OD-02, OD-03, OD-06, OD-08, OD-10, OD-12, OD-13, OD-14, OD-15 and OD-16 are DECIDED, each with the record's decision); §19.3 (the pricing sentence about safe refusals, which contradicted itself, now says a correct refusal or escalation is a paid outcome priced below a verified success and a wrong action earns nothing; the [OPEN] tag became [DECISION]); INV-20 (names the freeze allow-list: escalation case, evidence record and routing, held as pack data); §47.1 (per-power service identity means per-power Postgres roles and adapter credentials, with one core process identity in the POC); Appendix A (WAIT and UNKNOWN for Trust). No other SoT text changed. |
