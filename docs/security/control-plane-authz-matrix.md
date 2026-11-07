@@ -14,13 +14,13 @@ A cell is a *credential class*, not only a session role. Session tokens are the 
 | C2 `approver` | session token, role `approver`, tenant T | A1 |
 | C3 `ops-own` / C4 `ops-other` | session token, role `ops`, acting on its own tenant T / on tenant U | A1, D7 item 7 |
 | C5 `audit-own` / C6 `audit-other` | session token, role `audit`, own tenant / another tenant | A1, A20 |
-| C7 `administrator` | a person on the control plane (PERD §39.4 "admin"); credential and MFA are OQ-09 | **no** |
-| C8 `verifier` | the verification service identity (D5) | **no** |
+| C7 `C-ADMIN` | the control-plane administrator credential, held by a person, on a separate listener (OD-P-79; MFA in shared environments, OQ-09) | **proposed in OD-P-79; the Architect rules** |
+| C8 `C-VERIFY` | the verification job's service credential, mTLS with a service identity (REQ-SEC-002); not a person, not a session role (OD-P-79, D5) | **proposed in OD-P-79; the Architect rules** |
 | C9 `benchmark-owner` | separate credentials and network (PERD §39.4) | PERD only |
 | C10 `service-login` | a runtime database login (`trust_rw`, `execution_rw`, ... ) presented to HTTP | n/a: must never be accepted |
 | D1 to D8 `defective` | no token; expired past the leeway; signed by another key; wrong audience; wrong issuer; zero roles; two roles (`ops` + `approver`); a token for tenant T with `ops` presented for tenant U's resource | A1 |
 
-C7 and C8 cannot be tested with real tokens until the Architect rules how they authenticate (OD-P-79 finding 1). Their rows are written now and marked **PENDING-CREDENTIAL**; the test fails loudly for them, it does not skip.
+C7 and C8 (C-ADMIN and C-VERIFY) cannot be tested with real credentials until the Architect rules the classes (OD-P-79). Their rows are written now and marked **PENDING-CREDENTIAL**; the test fails loudly for them, it does not skip.
 
 ## 2. Routes (the rows) and who may call them
 
@@ -30,7 +30,7 @@ C7 and C8 cannot be tested with real tokens until the Architect rules how they a
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `POST /v1/admin/tenants/{t}/kill-switch:set` | - | - | - | - | - | - | A | A | - | 401 |
 | 2 | `POST /v1/admin/tenants/{t}/kill-switch:clear` | - | - | - | - | - | - | A | **P** | - | 401 |
-| 3 | `GET /v1/admin/tenants/{t}/kill-switch` | - | - | A (t = T) | - | A (t = T) | - | A | - | - | 401 |
+| 3 | `GET /v1/admin/tenants/{t}/kill-switch` (new route, OD-P-79) | - | - | - | - | - | - | A | - | - | 401 |
 | 4 | `POST /v1/admin/policies/{id}/versions` | - | - | - | - | - | - | A | - | - | 401 |
 | 5 | `POST /v1/admin/policies/{id}/versions/{v}:publish` | - | - | - | - | - | - | A | - | - | 401 |
 | 6 | `POST /v1/admin/packs:load` | - | - | - | - | - | - | A | - | - | 401 |
