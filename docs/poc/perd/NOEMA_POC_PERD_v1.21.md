@@ -395,7 +395,7 @@ Noema is a global, cross-industry trusted execution layer: it sits between what 
 
 It moves no money. Money-moving and loop-closing capabilities are registered as `PROHIBITED`, and no code path can call them [SoT §34.2, BD-08].
 
-**How we will know it worked.** At least 320 seeded, adversarial cases, at least 100 of them held out from the builders, with eleven safety gates that must all read zero [SoT §38.1, §38.3]. Primary metric: the correct terminal handling rate, reported only alongside zero unsafe actions and zero false success [SoT §38]. Noema is compared head-to-head with competent baselines built to the same standard [SoT §38.5], and autonomy is published as a curve, never as a single number [SoT §38.4].
+**How we will know it worked.** At least 320 seeded, adversarial cases, at least 100 of them held out from the builders, with thirteen safety gates that must all read zero [SoT §38.1, §38.3]. Primary metric: the correct terminal handling rate, reported only alongside zero unsafe actions and zero false success [SoT §38]. Noema is compared head-to-head with competent baselines built to the same standard [SoT §38.5], and autonomy is published as a curve, never as a single number [SoT §38.4].
 
 **What this document adds.** It adds no ambition. It adds specificity:
 
@@ -4613,14 +4613,14 @@ It shows:
 
 #### REQ-SEC-001 · Authenticated principals from a synthetic IdP · P0
 
-- **Requirement:** The POC includes a synthetic enterprise IdP that issues signed session tokens (JWT, `alg` ES256 only) for synthetic customers, operators and approvers. The issuer is the string `noema-poc-idp`, an exact match. Every token carries the claims `sub`, `aud`, `exp`, `iat`, `iss`, `tenant_id` and `roles`; `roles` holds exactly one of `customer`, `ops`, `approver`, `audit`, and a token with zero roles, several roles or an unknown role is refused. The maximum lifetime is 15 minutes, checked per token (`exp - iat`), and the clock-skew leeway on `exp` and `iat` is 60 s (pack data, tested on the simulated clock). Core validates the signature against a configured key, the issuer, the expiry, the audience and the tenant, and denies by default. No identity claim is read from a request body. An `ops` or `audit` token acts within its own tenant only; `audit` reads only through tenant-bound Record read functions; neither has a path to a Record writer (DEC-2026-11-05 D7, rulings A1, A20, A21).
+- **Requirement:** The POC includes a synthetic enterprise IdP that issues signed session tokens (JWT, `alg` ES256 only) for synthetic customers, operators and approvers. The issuer is the string `noema-poc-idp`, an exact match. Every token carries the claims `sub`, `aud`, `exp`, `iat`, `iss`, `tenant_id` and `roles`; `roles` holds exactly one of `customer`, `ops`, `approver`, `audit`, and a token with zero roles, several roles or an unknown role is refused. The maximum lifetime is 15 minutes, checked per token (`exp - iat`), and the clock-skew leeway on `exp` and `iat` is 60 s (pack data, tested on the simulated clock). The leeway applies to the comparison with the clock only; the per-token ceiling of 15 minutes has none. Core validates the signature against a configured key, the issuer, the expiry, the audience and the tenant, and denies by default. No identity claim is read from a request body. An `ops` or `audit` token acts within its own tenant only; `audit` reads only through tenant-bound Record read functions; neither has a path to a Record writer (DEC-2026-11-05 D7, rulings A1, A20, A21).
 - **Rationale:** INV-12, SoT §47.1.
 - **Inputs:** —
 - **Expected behaviour:** —
 - **Failure behaviour:** —
 - **Security:** Short lifetimes (REQ-API-004). The token's `sub` is the only principal source.
 - **Audit:** `SESSION_VALIDATED`.
-- **Acceptance criteria:** Tokens that are forged, expired, issued for the wrong audience, or issued for the wrong tenant SHALL be rejected 100% of the time.
+- **Acceptance criteria:** Tokens that are forged, expired, issued for the wrong audience, or issued for the wrong tenant SHALL be rejected 100% of the time. A token with no or another issuer, zero or several roles, an unknown role, a header member other than `alg`, `typ` and `kid`, a lifetime above 15 minutes, an `iat` beyond the skew, or an audience that is an array SHALL be rejected 100% of the time; an `ops` or `audit` token SHALL be refused on every route that reaches a Record writer.
 - **Tests:** Token fuzzing.
 - **Dependencies:** —
 
