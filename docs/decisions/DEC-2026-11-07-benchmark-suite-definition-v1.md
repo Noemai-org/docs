@@ -25,7 +25,7 @@
 
 ## 1. The definition (as given)
 
-**This section is the authoritative suite definition.** Other documents point to it and do not restate it; if one differs, this section governs once the record takes effect. The Operations Model parameters it needs are tracked as an open item, [OD-P-77](../open-decisions.md#od-p-77-operations-model-parameters-for-the-benchmark-impact-layer-awaiting-the-founders-values), awaiting the Founder's values; none is set here.
+**This section is the suite definition this record adopts, and the one other benchmark documents point to rather than restate.** It does not override the SoT: where it differs from SoT §38.5 (the arm letters and scope, §3 below), the SoT governs until the Founders decide the mapping or issue a SoT version (AGENTS §2, §11). A Proposed record cannot raise its own authority. The Operations Model parameters it needs are tracked as an open item, [OD-P-77](../open-decisions.md#od-p-77-operations-model-parameters-for-the-benchmark-impact-layer-awaiting-the-founders-values), awaiting the Founder's values; none is set here.
 
 This definition is internal. It supersedes the F1 to F11 only comparison scope. The benchmark is the evidence that decides whether the thesis continues. It is not a demo score.
 
