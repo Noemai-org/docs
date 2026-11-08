@@ -85,7 +85,7 @@ REQ-BEN-004, REQ-BEN-005, REQ-BEN-007, REQ-BEN-008, REQ-BEN-009, REQ-BEN-010, RE
 1. ~~The interval procedure (section 4)~~ and ~~the reviewer sample size (rule 7)~~: decided by E5. The reviewer sample is **100 decisions, stratified** by family and outcome class.
 2. The exact claim wording (section 6); the list of primary comparisons is decided by E5.
 4. The Operations Model values and sources (a sourced parameter replaces each ASSUMED one).
-5. The pass^k floor for model qualification (a separate record, text posted on docs#117).
+5. ~~The pass^k floor for model qualification~~: decided (F6 as corrected by A17). The first-qualification floor is pass^5 of at least 0.90 on at least 40 cases, with Tier 0 at zero; afterwards a version is qualified only if its pass^k is **not below the pinned baseline's own pass^k** (A17's wording; the 'higher of' wording is dropped). It can be raised and never lowered. The Steward records it.
 6. Whether a case may count in more than one family towards the floors (docs#128 decision 3).
 
 Decided since this text was first written: R6 and R12 mean correct handling the pack allows, and tools, policy and limits come from the pack (A32); the PERD §48.1 quota amendment and the case-contract major are drafted by the Steward (A27); one kill-point list is shared with TST-05 (A30).
