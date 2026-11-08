@@ -53,6 +53,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-07-founder-decisions-block-d](DEC-2026-11-07-founder-decisions-block-d.md) | Founder decisions D1 to D14 (Block D): plan v1.12 and the gate count, quota meaning, kill switch, Record keys, migration numbers, R7 |
 | [DEC-2026-11-07-sot-perd-edit](DEC-2026-11-07-sot-perd-edit.md) | Ruling A27: SoT v1.11 and PERD v1.21 (two more safety gates, key policy, arm labels, identity contract, benchmark quota, case contract v2); draft for the Founders to issue |
 | [DEC-2026-11-07-founder-decisions-block-e](DEC-2026-11-07-founder-decisions-block-e.md) | Founder decisions E1 to E7 (Block E): push rule, reviewer table, audit correction, open-decision rulings, quota bound, housekeeping, unowned PRs |
+| [DEC-2026-11-08-perd-39-4-control-plane-callers](DEC-2026-11-08-perd-39-4-control-plane-callers.md) | Ruling A110 (Founders, option A): the reconstruction and record-verify routes stay audit-only; no PERD v1.22; the SEC-04 matrix is unchanged |
 | [DEC-2026-11-08-rec-09-record-export](DEC-2026-11-08-rec-09-record-export.md) | Ruling A109: the Founders approve new task REC-09, the Noema record export (a library function, not a route), on four conditions |
 
 ## Where decisions already live
