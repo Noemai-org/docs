@@ -50,7 +50,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-07-architect-rulings](DEC-2026-11-07-architect-rulings.md) | The Architect's rulings of 7 Nov 2026 (A27 to A40): the SoT/PERD edit, docs#112 closed for docs#123, fix matrices and no Codex trigger, TST-05 option B, REVERSAL_PENDING, suite scope, migration ledger, DEBT numbering, owners, reconstruction wording (Proposed) |
 | [DEC-2026-11-07-benchmark-suite-definition-v1](DEC-2026-11-07-benchmark-suite-definition-v1.md) | Ruling A26: benchmark suite definition v1 (arms C, A, B, D, M0; RESOLVE R1 to R12, RESIST S1 to S11 and X1 to X10, IMPACT; measures and pre-registered rules) (Proposed) |
 | [DEC-2026-11-08-rulings-a41-onward](DEC-2026-11-08-rulings-a41-onward.md) | Founder decisions and Architect rulings A41 to A98 (gate 1 wording, pass^k floor, credential classes, signature domain separation, and the rulings sent to the agents) |
-| [DEC-2026-11-08-perd-39-4-control-plane-callers](DEC-2026-11-08-perd-39-4-control-plane-callers.md) | DRAFT amendment: who may call the reconstruction and record-verify routes (PERD 39.4, matrix rows 10 and 11); options A, B, C for the Founders |
+| [DEC-2026-11-08-perd-39-4-control-plane-callers](DEC-2026-11-08-perd-39-4-control-plane-callers.md) | Ruling A110 (Founders, option A): the reconstruction and record-verify routes stay audit-only; no PERD v1.22; the SEC-04 matrix is unchanged |
 
 ## Where decisions already live
 
