@@ -70,7 +70,7 @@ Decided by E5: the primary comparison is **Noema (C) against the best of A, B an
 | Modelled IMPACT figures, C against the best of A, B, D and against A0 | exploratory (modelled) | the sensitivity range of the difference excludes zero at both corners | "under the published model, modelled [figure] was lower/higher" |
 | Where an arm is better than Noema | as above, other direction | the same test | reported in the same words, with the same prominence |
 
-A claim is not made for any comparison not listed.
+Every "fewer" or "more often" claim prints **"k of m primary comparisons"** beside it (for example "fewer in 5 of 6 primary comparisons"), so a reader sees how many were made and how many held. A zero count is stated with its exact bound, `1 − 0.05^(1/n)` (E5), not with `3/n`. A claim is not made for any comparison not listed.
 
 ## 7. What may not be claimed
 
