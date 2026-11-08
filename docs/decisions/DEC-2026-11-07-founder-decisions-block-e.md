@@ -34,7 +34,7 @@
 | E5 | The quota bound is 1 − 0.05^(1/n), one-sided 95%. docs#128 §9: paired design, exact McNemar with Newcombe's interval, 100 stratified decisions for the audit sample, primary comparison C against the best of A, B and D, one primary family per case (other tags are analysis-only and never add to n). |
 | E6 | The Steward opens one docs PR flipping "Proposed" to "Decided" on the four merged records. |
 | E7 | Unowned PRs: docs#132 to EL; docs#119 and noema#257 to C1; noema#256 to IL; noema#240 to BO; noema#254 duplicates noema#253 (A37): whoever opened noema#254 closes it after confirming noema#253 covers everything. |
-| RelayRoute | A temporary `RelayRoute/` folder in `noema` (noema#269) for role-to-role requests; deleted when development is done; independent of every other folder. |
+| Relay rule (superseded the same day) | The first Block E instruction created a temporary `RelayRoute/` folder in `noema`. The Founders superseded it on 8 Nov 2026 before this record merged: **no folder**. A role that needs another role opens one issue in Noemai-org/noema titled `[WAITING: <role> needs <role>] <task>`; the role it waits on replies as a comment; the asker retitles it `Case Resolved: <task>` and closes it; the Steward closes any remaining relay issues at the end of development. noema#269 (the Steward's RelayRoute PR) was closed unmerged. |
 
 ## 2. Open-decision rulings (E4)
 
@@ -58,5 +58,6 @@
 
 ## 3. Notes by the Steward
 
+- **Reviewer of this record:** the Engineering Lead (records), who reviewed it at 07846c7; E2 lists no reviewer for Steward-authored records, so this line names one.
 - E1 and E7 change who pushes: the Steward pushes only to the PRs it opened (docs#115, 117, 120, 123, 126, 127, 129, 130, and noema#269).
 - This record does not mark the Block D record or the Architect's records Decided; E6 does that for the four already merged ones.

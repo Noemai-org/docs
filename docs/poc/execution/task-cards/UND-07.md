@@ -29,7 +29,18 @@ If blocked or conflicting: STOP and emit the CONFLICT block (§71.3)
 
 Owner: C2. Needs: TRU-02. Dated Wed 18 Nov (plan v1.11).
 
+## Allowlist confirmed by EL and C1 (noema#327, 8 Nov 2026), on conditions
+
+C2 proposed, and EL (for EL) and C1 (for C1, as second human reviewer) CONFIRMED: a new sub-package `services/core/trust/scope/` (pure, no I/O, no evidence read) plus tests-only edits in `services/core/trust/decide/`; also `services/model/noema_model/understanding/compiler/` (remedy fallback), `packs/fintech/templates/en-NG.json` (decline templates, keyed the way EXP-01's lookup keys them: by outcome class and locale, `template_id` an output, ruling A18), `packs/tests/`, `status/UND-07.md`. Conditions:
+
+1. No import across powers (SoT §51): `Screen` takes Trust-owned `CapabilityLookup` and `NodeSet` interfaces and does not import `execution/registry`; `cmd/core` builds the lookup from the registry (`Registered`, `IsProhibited`, `IDs`, `Prohibited`, read-only).
+2. Fail closed: an unknown node, a registry error or a missing remedy is `FailStep` (UNKNOWN), never `Continue()`, with a test for each. A prohibited remedy is REJECT from the registry, never from a model's refusal.
+3. Zero evidence reads before the rejection, proved with a counting reader, for US-10, US-22 and PUS-03.
+4. P0 path: the PR description carries the plan (files, tests first, faults, Record events `DECISION_MADE (REJECT)` and `noema_prohibited_attempt_total`); two human reviews (EL plus C1 or C2; the owner does not approve its own PR).
+5. Python side: the compiler only proposes `requested_remedy`; a missing one falls back to the investigate intent with no remedy; no refusal logic in the model service.
+
 ## Open points for the owner (not decided here)
 
-1. The allowlist of module paths (see "Modules touched").
-2. The three phrasings per locale per prohibited capability: who writes them, and whether they live in the benchmark generator or the pack (OD-P-51 covers cases per capability; its default is now accepted by the Founders, Block E E4).
+1. ~~The allowlist~~ (confirmed above).
+2. The location of the three phrasings per locale per prohibited capability: C2 suggests the benchmark generator, with the pack holding only the decline templates. **Benchmark Owner to confirm** (noema#327, item 2; OD-P-51's default, accepted by the Founders, counts cases per capability).
+3. **Date.** The card is dated Wed 18 Nov (plan v1.11 row). Whether UND-07 lands before the Wed 11 Nov 12:00 WAT code freeze of plan §11 is the Founders' scope call; a date change needs a change request (plan §19). The Tushe credential test stays a stop condition until the Tushe behaviour has been shown.
