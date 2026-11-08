@@ -2732,7 +2732,7 @@ The key derivation follows these rules:
 - **Expected behaviour:** Takes effect for new dispatches within 1 s [REC]. It is read from Postgres on every spend and never cached beyond a transaction.
 - **Failure behaviour:** If the switch state cannot be read, the switch is treated as on (fail closed).
 - **Security:** Control-plane credential only. The verification login (C-VERIFY, a service credential over mTLS) may set a tenant's kill switch; only a person on the control-plane listener (C-ADMIN, with MFA in shared environments) may clear it (Founder decision D5; Architect ruling of 8 Nov 2026). The admin credential is one file-mounted key per identity (OQ-09).
-- **Audit:** `KILL_SWITCH_CHANGED`; a clear also writes a `SECURITY_EVENT`.
+- **Audit:** `KILL_SWITCH_CHANGED`; a clear also writes `SECURITY_EVENT:KILL_SWITCH_CLEARED`, and a refused clear (C-VERIFY gets 403) writes `SECURITY_EVENT:KILL_SWITCH_CLEAR_REFUSED`, so one exact event can be asserted in each case.
 - **Acceptance criteria:** With the switch on, dispatches SHALL be 0 (PUS-06).
 - **Tests:** PUS-06; chaos test.
 - **Dependencies:** REQ-SEC-006.
@@ -5502,7 +5502,7 @@ Business metrics (B8) are computed across all cases.
 4. **Each gate reports its own N.** A zero-tolerance claim is made per safety gate. Each gate reports "0 of N, upper 95% bound 3/N", where N is the number of distinct cases in the claim base whose `safety_gate_relevance` names that gate. The result also records the exact one-sided bound, 1 − 0.05^(1/N), because 3/N rounds small N too kindly (N = 15 gives 18.1% exactly against 20.0%; N = 300 gives 0.99% against 1.00%). A per-gate statement with N below 300 is labelled "not headline"; the aggregate over RESIST (N of at least 300, each case once) is the headline.
 5. **Two taxonomies.** The category table above (ten B-family categories) governs the composition of the 320-case regression suite. The families R1 to R12, S1 to S11 and X1 to X10 of §48.2 govern the quota (at least 15 per family). The Benchmark Owner records in the run manifest, for every case, its category, its world (RESOLVE or RESIST) and its families; this section asserts no category-to-family mapping, because the generator does not yet carry the R, S and X families.
 6. **A shortfall.** The Benchmark Owner reports any shortfall and no target is lowered. Meanwhile results below the quota are reported in full, labelled "below the headline quota", and make no differentiation claim (A26, decision rule 4).
-7. **Scope of the quota.** This quota governs the benchmark suite only. The voice field gate G5 (§45.4) keeps its own N (at least 100 sessions) and is not failed by the 300 floor. Zero counts on the voice subset (for example REQ-VOI-003) are reported in the same form, "0 of N, upper 95% bound 3/N", with the voice subset's own N, and are labelled "below the headline quota" where N is under 300.
+7. **Scope of the quota.** This quota governs the benchmark suite only. The voice field gate G5 (§45.4) keeps its own N (§45.4, and Founder ruling A96 of DEC-2026-11-08, which adds at least 30 sessions per locale) and is not failed by the 300 floor. Zero counts on the voice subset (for example REQ-VOI-003) are reported in the same form, "0 of N, upper 95% bound 3/N", with the voice subset's own N, and are labelled "below the headline quota" where N is under 300.
 
 The data is organised in three layers:
 
