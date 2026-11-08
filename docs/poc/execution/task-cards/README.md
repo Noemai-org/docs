@@ -27,4 +27,5 @@
 | [OUT-01](OUT-01.md) | Outcome Verifier, verify-by-key scope | Mon 9 Nov |
 | [EXP-01](EXP-01.md) | Template-only explanations for the slice | Mon 9 Nov |
 | [ENV-12](ENV-12.md) | Walk through, agree and sign the acceptance worksheet with Tushe at the joint session | Wed 11 Nov |
+| [REC-09](REC-09.md) | Noema record export | Wed 18 Nov |
 | [UND-12](UND-12.md) | Async safety of the model service's blocking HTTP transports | Tue 1 Dec |
