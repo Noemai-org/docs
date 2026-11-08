@@ -1,6 +1,6 @@
 # Founder click-script: the AWS anchor store and the alert channel
 
-Date: 2026-11-05 · Owner: Security Reviewer · Status: draft for the Founder · Derived and non-normative. The choices below (AWS only; S3 Object Lock in a separate AWS account; put-only writer; 365-day Compliance retention; Pushover with ntfy as fallback) are Founder rulings given in work orders. Under AGENTS.md section 2 a ruling binds only once it is committed, and the Steward is committing them. **Steps marked [needs decision record] must not be run until that record is merged**; this file will then link it. Steps 1 to 11 only prepare and test the TEST bucket, and carry no such mark.
+Date: 2026-11-05 · Owner: Security Reviewer · Status: draft for the Founder · Derived and non-normative. The choices below (AWS only; S3 Object Lock in a separate AWS account; put-only writer; 365-day Compliance retention; Pushover with ntfy as fallback) are Founder rulings given in work orders. Under AGENTS.md section 2 a ruling binds only once it is committed, and the Steward is committing them. **Steps marked must not be run until that record is merged**; this file will then link it. Steps 1 to 11 only prepare and test the TEST bucket, and carry no such mark.
 
 **Every AWS and Pushover fact below is UNVERIFIED** (vendor sites were unreachable when this was written; names of screens and settings come from memory and may have moved). The click-through and the CI test (`anchor-aws`, noema) verify them. If a screen differs, do what its label means and tell me which step moved. **Never paste a secret into chat, a PR or a file.** Replace `BUCKET`, `ACCT` and `REGION` yourself.
 
@@ -32,11 +32,11 @@ Date: 2026-11-05 · Owner: Security Reviewer · Status: draft for the Founder ·
 
 ## C. The alert channel
 
-12. **[needs decision record] Pushover.** Create an account at pushover.net, install the app on your phone, note your **User Key**. Create an Application/API Token named `noema-alerts`; note the **API Token**. For the fallback, choose a long random ntfy topic name (the name is the secret) and subscribe to it in the ntfy app.
-13. **[needs decision record] Environment `alerts`.** Same settings as step 9 (`main` only, you as reviewer, no admin bypass). Secrets: `PUSHOVER_USER_KEY`, `PUSHOVER_APP_TOKEN`, `NTFY_TOPIC`.
+12. **Pushover** (ruling D8, DEC-2026-11-05-architect-rulings). Create an account at pushover.net, install the app on your phone, note your **User Key**. Create an Application/API Token named `noema-alerts`; note the **API Token**. For the fallback, choose a long random ntfy topic name (the name is the secret) and subscribe to it in the ntfy app.
+13. **Environment `alerts`** (ruling D8). Same settings as step 9 (`main` only, you as reviewer, no admin bypass). Secrets: `PUSHOVER_USER_KEY`, `PUSHOVER_APP_TOKEN`, `NTFY_TOPIC`.
 
 ## D. Production and hand-back
 
-14. **[needs decision record] Production bucket (after step 11 passes).** Repeat steps 4 and 6 to 8 with names `noema-anchor-prod-<random>`, `anchor-prod-writer`, `anchor-prod-verifier`. Default retention: **365 days, mode Compliance** (ruled by the Founder; the Steward is committing it). Compliance retention cannot be shortened or removed during that period, by anyone, including the account root. Skip step 5. Put the **writer** key only in the core's file-mounted secret store, never in GitHub; the verifier key goes to the verification job's secret the same way. Cost is UNVERIFIED; it should be negligible at this size, inside the $10 bound.
+14. **Production bucket (after step 11 passes)** (rulings D4 and D8). Repeat steps 4 and 6 to 8 with names `noema-anchor-prod-<random>`, `anchor-prod-writer`, `anchor-prod-verifier`. Default retention: **365 days, mode Compliance** (ruled by the Founder; the Steward is committing it). Compliance retention cannot be shortened or removed during that period, by anyone, including the account root. Skip step 5. Put the **writer** key only in the core's file-mounted secret store, never in GitHub; the verifier key goes to the verification job's secret the same way. Cost is UNVERIFIED; it should be negligible at this size, inside the $10 bound.
 15. **Tell me** "done", the account ID, `REGION`, the bucket names (not keys), and the run link from step 11.
 
