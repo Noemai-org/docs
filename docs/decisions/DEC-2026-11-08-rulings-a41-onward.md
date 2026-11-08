@@ -61,7 +61,7 @@
 | A57 | EL | The policy version spelling has one form. |
 | A58 | EL | `logical_action` is decided by the schema. |
 | A59 | EL | The work order before the freeze is set. |
-| A60 | C1 | The anchor store (SEC-14) is a self-hosted S3-compatible store with Object Lock in compliance mode on a separate host. noema#164 is not merged, and docs#111 is aligned to this. |
+| A60 | C1 | The anchor store (SEC-14) is **AWS S3 with Object Lock in Compliance mode**, in a separate AWS account (the Founders reversed the earlier self-hosted S3-compatible proposal on 8 Nov 2026; docs#111 holds the click-by-click setup). noema#164 is not merged. The AWS choice is not recorded as a DEBT entry. |
 | A61 | C1 | Key custody (OQ-09) is one file-mounted key per identity. |
 | A62 | C1 | Pack ceilings: `max_dispatches` at most 2 and `min_samples` at most 20. |
 | A63 | C1 | `signing_key_public()` is provided for `reconstruct`. |
