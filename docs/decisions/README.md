@@ -52,6 +52,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-08-rulings-a41-onward](DEC-2026-11-08-rulings-a41-onward.md) | Founder decisions and Architect rulings A41 to A98 (gate 1 wording, pass^k floor, credential classes, signature domain separation, and the rulings sent to the agents) |
 | [DEC-2026-11-07-founder-decisions-block-d](DEC-2026-11-07-founder-decisions-block-d.md) | Founder decisions D1 to D14 (Block D): plan v1.12 and the gate count, quota meaning, kill switch, Record keys, migration numbers, R7 |
 | [DEC-2026-11-07-sot-perd-edit](DEC-2026-11-07-sot-perd-edit.md) | Ruling A27: SoT v1.11 and PERD v1.21 (two more safety gates, key policy, arm labels, identity contract, benchmark quota, case contract v2); draft for the Founders to issue |
+| [DEC-2026-11-07-founder-decisions-block-e](DEC-2026-11-07-founder-decisions-block-e.md) | Founder decisions E1 to E7 (Block E): push rule, reviewer table, audit correction, open-decision rulings, quota bound, housekeeping, unowned PRs |
 
 ## Where decisions already live
 
