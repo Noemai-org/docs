@@ -14,13 +14,13 @@ A cell is a *credential class*, not only a session role. Session tokens are the 
 | C2 `approver` | session token, role `approver`, tenant T | A1 |
 | C3 `ops-own` / C4 `ops-other` | session token, role `ops`, acting on its own tenant T / on tenant U | A1, D7 item 7 |
 | C5 `audit-own` / C6 `audit-other` | session token, role `audit`, own tenant / another tenant | A1, A20 |
-| C7 `C-ADMIN` | the control-plane administrator credential, held by a person, on a separate listener (OD-P-79; MFA in shared environments, OQ-09) | **proposed in OD-P-79; the Architect rules** |
-| C8 `C-VERIFY` | the verification job's service credential, mTLS with a service identity (REQ-SEC-002); not a person, not a session role (OD-P-79, D5) | **proposed in OD-P-79; the Architect rules** |
+| C7 `C-ADMIN` | the control-plane administrator credential, held by a person, on a separate listener (OD-P-79; MFA in shared environments, OQ-09) | **Ruled 8 Nov 2026 (Architect, noema#305): approved as proposed** |
+| C8 `C-VERIFY` | the verification job's service credential, mTLS with a service identity (REQ-SEC-002); not a person, not a session role (OD-P-79, D5) | **Ruled 8 Nov 2026 (Architect, noema#305): approved as proposed** |
 | C9 `benchmark-owner` | separate credentials and network (PERD §39.4) | PERD only |
 | C10 `service-login` | a runtime database login (`trust_rw`, `execution_rw`, ... ) presented to HTTP | n/a: must never be accepted |
 | D1 to D8 `defective` | no token; expired past the leeway; signed by another key; wrong audience; wrong issuer; zero roles; two roles (`ops` + `approver`); a token for tenant T with `ops` presented for tenant U's resource | A1 |
 
-C7 and C8 (C-ADMIN and C-VERIFY) cannot be tested with real credentials until the Architect rules the classes (OD-P-79). Their rows are written now and marked **PENDING-CREDENTIAL**; the test fails loudly for them, it does not skip.
+C7 and C8 (C-ADMIN and C-VERIFY) are ruled (Architect, 8 Nov 2026, noema#305): C-ADMIN is a person credential on a separate admin listener, MFA required in shared environments; C-VERIFY is a distinct service-identity credential for the verification job, set-only on the kill switch; no fifth session role. They cannot be tested with real credentials until the listener and the service identity are built. Their rows are marked **PENDING-CREDENTIAL**; the test fails loudly for them, it does not skip.
 
 ## 2. Routes (the rows) and who may call them
 
@@ -66,7 +66,7 @@ Rows 10 and 11 follow PERD §39.4 (audit only). OD-P-79 gives them to ops as wel
 
 ## 5. Open questions (named, not decided here)
 
-1. **C7 and C8 authentication** (OD-P-79 finding 1): the Architect rules the credential classes. Recommended: a separate control-plane listener and credentials, `administrator` distinct from the verification service identity; no fifth session role.
-2. **Rows 10 and 11:** keep audit only (PERD §39.4), or widen to ops (OD-P-79)?
+1. **C7 and C8 authentication** (OD-P-79 finding 1): **ruled** (Architect, 8 Nov 2026, noema#305) as recommended: a separate admin listener, `administrator` distinct from the verification service identity, no fifth session role.
+2. **Rows 10 and 11:** **ruled** (8 Nov 2026): audit only until the PERD is amended; the Steward prepares the amendment.
 3. **Key rotation:** confirm there is no API in the POC (rule 7).
 4. **`POLICY_VERSION_NOT_NEWER`** (row 5): the new error code is an AGENT-15 change to `errors.v1.json`; the matrix asserts `409` with that code once it exists.
