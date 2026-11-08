@@ -2893,7 +2893,7 @@ Each state below lists what it means, what moves the investigation into and out 
 **ESCALATING**
 
 - Meaning: an ESCALATE disposition with the escalation plan in progress.
-- Entry: DECISION_MADE (ESCALATE).
+- Entry: DECISION_MADE (ESCALATE); or EXPLAINING_BLOCKED, through a new DECISION_MADE (ESCALATE) and a new Decision Grant.
 - Exit and allowed next states: → PLANNED (action decisions); ESCALATED (case verified, or handoff).
 - Prohibited: a non-escalation write while frozen.
 - Customer is told: "Passing this to the team that can act."
@@ -2912,7 +2912,7 @@ Each state below lists what it means, what moves the investigation into and out 
 
 - Meaning: the explanation could not be rendered without a claim that is not bound to a fact (REQ-EXP-002).
 - Entry: EXPLAINING, when the validator blocks the explanation.
-- Exit and allowed next states: → ESCALATING, whose escalation case is routed to OPS (operations). It never returns to EXPLAINING. EXPLAINING_BLOCKED itself writes nothing; the case is opened by ESCALATING, under a new Decision Grant (INV-03, AGENT-08).
+- Exit and allowed next states: → a new DECISION_MADE (ESCALATE), then ESCALATING, whose escalation case is routed to OPS (operations). It never returns to EXPLAINING and never goes to ESCALATING without that decision. EXPLAINING_BLOCKED itself writes nothing; the case is opened by ESCALATING, under a new Decision Grant issued from that decision (INV-03, AGENT-08).
 - Prohibited: any write in this state; any unbound claim to the person.
 - Customer is told: the safe fallback text of REQ-EXP-002.
 - Audit: EXPLANATION_BLOCKED{rule}, then the escalation events of ESCALATING.
