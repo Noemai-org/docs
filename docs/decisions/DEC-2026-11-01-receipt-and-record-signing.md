@@ -1,6 +1,6 @@
 # DEC-2026-11-01-receipt-and-record-signing
 
-- **Status:** **Proposed.** Nothing here is decided or adopted. The Founders decide; the Technical Co-Founder and the Founder confirm by approving the pull request that adds this record. W2's spike checks T1 to T6 passed in CI (58 of 58, 1 Nov 2026; §1), so under the Architect's condition the direction is pgsodium, not Option C. It remains subject to the Founders' approval of the dependency (AGENT-14, OD-P-72) and to W4. If the Founders refuse the dependency, §11 (Option C) applies instead. **Updated 1 Nov 2026** for the spike's findings: Alpine kept (D10), the pgsodium event trigger disabled at bootstrap (D10a), the T6 pass condition (D13).
+- **Status:** **Decided as a record** (housekeeping, Block E E6 of 7 Nov 2026: this record was merged into `main` by both Founders' approval, so it counts; the Status line is the only change); the pgsodium dependency itself stays subject to OD-P-72, which closes with docs#117 (ruling A2, conditional on independent validation). Originally: **Proposed.** Nothing here is decided or adopted. The Founders decide; the Technical Co-Founder and the Founder confirm by approving the pull request that adds this record. W2's spike checks T1 to T6 passed in CI (58 of 58, 1 Nov 2026; §1), so under the Architect's condition the direction is pgsodium, not Option C. It remains subject to the Founders' approval of the dependency (AGENT-14, OD-P-72) and to W4. If the Founders refuse the dependency, §11 (Option C) applies instead. **Updated 1 Nov 2026** for the spike's findings: Alpine kept (D10), the pgsodium event trigger disabled at bootstrap (D10a), the T6 pass condition (D13).
 - **Date:** 1 November 2026
 - **Task:** GOV-28 (W1). Owners in tasks.csv: EL, FND. Prepared by the Engineering Lead role agent; the Founders own the decision.
 - **Closes:** none. Proposes the design that DEBT-01 closure criterion (1) requires, and the PERD text that adopts it. The same design is what REC-08 implements to close **DEBT-03** (Record writers not authenticated; [`debt.md`](../poc/execution/debt.md)): §4 D6 to D8 and §5 for `record_event`, §9 step 6. It opens [OD-P-72](../open-decisions.md#od-p-72) (pgsodium, AGENT-14) and [OD-P-73](../open-decisions.md#od-p-73) (keys for `model-service` and the adapter emitters).
@@ -377,7 +377,7 @@ And its acceptance criterion, appended:
 
 ## 14. Record fields (decisions README template)
 
-- Status: Proposed (see the top of this record)
+- Status: Decided as a record (see the top of this record)
 - Date: 1 November 2026
 - Closes: none
 - Owner: Founder and Technical Co-Founder
