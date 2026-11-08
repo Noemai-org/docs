@@ -49,9 +49,9 @@
 | ID | Ruling | Source |
 |---|---|---|
 | A52 | A18 covers `explanation-facts` only, not `canonical-input.v1` `voice.audio_ref`. docs#137 (`canonical-input.v2`) is the change request and is approved. The field is non-null only when audio was retained with consent. The edge refuses a non-null value until a retention path exists. | noema#322; docs#137 |
-| A53 | Domain separation for HMAC signatures: grants sign `noema/decision-grant/v1` + 0x00 + JCS; confirmation requests sign `noema/confirmation-request/v1` + 0x00 + JCS. | noema#292 |
+| A53 | Domain separation for HMAC signatures: grants sign `noema/decision-grant/v1` + 0x00 + JCS; confirmation requests sign `noema/confirmation-request/v1` + 0x00 + JCS. The test that makes it true (Security Reviewer, noema#292): a signature made for one type must not verify as the other with the same key over the same JCS bytes; golden vectors are regenerated; it lands before the second signer (confirmation requests) exists. | noema#292 |
 | A54 | C-ADMIN is a person on a separate control-plane listener, with MFA in shared environments. C-VERIFY is a service credential over mTLS. The admin credential depends on OQ-09, which is decided: one file-mounted key per identity. "No MFA in development" is registered as a DEBT entry (DEBT-25). | noema#305; docs#133 |
-| A55 | `BENCH_OUT` is accepted as an observability-only exception, with a debt entry (DEBT-26). The Security Reviewer's condition governs: it lives in the benchmark runner's output directory only, never in runtime code. | noema#293 |
+| A55 | `BENCH_OUT` is an observability-only exception with a debt entry (DEBT-26). The Security Reviewer's condition governs: it lives in the benchmark runner's output directory only, never in runtime code. **Where it lives today is runtime code (`services/model/noema_model/main.py`, `platform/telemetry/__init__.py`), so the branch is to be moved into the runner, not accepted where it is;** DEBT-26 is the debt for that move (Security Reviewer, noema#293). | noema#293 |
 
 ### Rulings the Founders sent to the agents
 
