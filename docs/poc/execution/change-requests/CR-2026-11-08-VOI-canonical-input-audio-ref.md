@@ -1,6 +1,6 @@
 # Change request: CR-2026-11-08-VOI-canonical-input-audio-ref · a nullable `voice.audio_ref` in the canonical input (canonical-input.v2)
 
-> **Status: PROPOSAL for review. It is not approved and authorises no work.** Drafted 8 Nov 2026 by the Core Engineer 2 role agent, as the Engineering Lead asked in noema relay issue #321. The Architect's answer to noema relay issue #322 (does ruling A18 already cover this?) decides whether this request is needed at all; if A18 is read to cover it, withdraw this file.
+> **Status: APPROVED IN PRINCIPLE by the Architect (decision A1, 8 Nov 2026); the Security Reviewer's review and both Founders' approval are still owed.** It authorises no work until those two are recorded. The Architect answered relay issue #322: ruling A18 does **not** cover `canonical-input.v1`, and this change request is approved as the way to change it. It stays separate from noema#211. No tag (A12). Drafted 8 Nov 2026 by the Core Engineer 2 role agent, as the Engineering Lead asked in noema relay issue #321.
 
 - **Change ID:** CR-2026-11-08-VOI-canonical-input-audio-ref
 - **Requester:** Core Engineer 2 (C2), proposer; relay issues noema#296 (Voice needs C2) and noema#321 (C2 needs EL).
@@ -18,7 +18,7 @@ A new `canonical-input.v2.json` (no tag, A12; `<name>.v<major>.json`, AGENT-15).
 - **Non-null** (`rec_…`, the `raw_ref`) **only when audio was retained with consent**, that is, an `AUDIO_RETAINED{consent_ref}` Record event exists for it.
 - **Null when the audio was discarded after transcription**, which is the default.
 - **No retention path exists in the POC today** (the voice pipeline, noema#193, keeps audio in memory for the call only and closes it), so Voice's builder emits `null` in every case until one is built. A future retention path must decide *while the audio is still in memory*: after the call it is gone, so "disputed later" can only mean "retained at the time, on a consent flag". This request does not imply, and does not authorise, retaining audio after the fact. (Voice Engineer's fact, docs#137 comment.)
-- A non-null `audio_ref` with no retained-audio consent record is invalid. JSON Schema cannot state that (the event lives in the Record), so core's edge refuses it at runtime and a test pins it; the schema carries the shape and the pattern (`^[a-z]+_[A-Za-z0-9_]{2,64}$`, as in `explanation-facts.v2`).
+- **Until a retention path exists, the edge refuses any non-null `audio_ref`** (the Architect's decision A1, matching the Engineering Lead's ruling). A non-null reference is valid only when audio was retained with consent, that is, an `AUDIO_RETAINED{consent_ref}` event exists for it; JSON Schema cannot state that (the event lives in the Record), so core's edge checks it and a test pins it. The schema carries the shape and the pattern (`^[a-z]+_[A-Za-z0-9_]{2,64}$`, as in `explanation-facts.v2`).
 - Everything else in the canonical input is unchanged. The Gateway (noema#270) accepts `null` for `audio_ref` and still requires the key and the other five voice keys; Voice's builder emits `null` unless a retained-audio record exists.
 
 ## Safety and security impact
@@ -39,7 +39,7 @@ PERD: yes, one cell. The §19.3 field table lists `audio_ref` among the voice ke
 
 ## Decision owner
 
-The Architect decides, with the Security Reviewer and both Founders (a P0 contract, AGENT-15), as the Engineering Lead set out in noema#321. The Engineering Lead reviews. The requester does not approve its own change.
+The Architect decided (A1, 8 Nov 2026: approved). The Security Reviewer reviews it and both Founders approve it (a P0 contract, AGENT-15), as the Engineering Lead set out in noema#321. The Engineering Lead reviews. The requester does not approve its own change.
 
 ## Decision record
 
