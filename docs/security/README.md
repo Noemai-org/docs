@@ -7,3 +7,4 @@
 - [`w2-ed25519-extension-evaluation.md`](w2-ed25519-extension-evaluation.md): SEC-12 (W2), evaluation of PostgreSQL Ed25519 verification extensions for DEBT-01 Option B and REQ-AUD-006 (2026-10-31; recommendation for founder approval, nothing adopted).
 - [`debt-02-alert-design.md`](debt-02-alert-design.md): DEBT-02, how a human is alerted when a signature fails (2026-11-03; Proposed, for founder decision).
 - [`perd-v1.21-amendment-draft.md`](perd-v1.21-amendment-draft.md): draft PERD v1.21 text for the three SEC-01 gaps (2026-11-03; for the Engineering Lead to record and the Steward to apply).
+- [`debt-03-08-record-writer-closure-design.md`](debt-03-08-record-writer-closure-design.md): DEBT-03 and DEBT-08, what REC-08 builds and the forgery test that starts it (2026-11-06; derived, for the Engineering Lead and the Security Reviewer).
