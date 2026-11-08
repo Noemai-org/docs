@@ -17,7 +17,7 @@ This list is still **a list: the Brief and the pack are unchanged and nothing is
 | A1 (money-moving tools), A2, A3 | A32: tools, policy and limits come from the pack | **Decided.** No refund or retry tool. The arms' tools are the pack's capabilities. |
 | B3, B4 (P3, P4), B5 (the NGN 500,000 limit) | A32 | **Decided.** The rules are the pack's `fin.pol@3.1`; there is no limit rule, so P5 and its number are removed. R6 and R12 of the suite definition mean correct handling the pack allows. |
 | C6 to C12 (families F1 to F11) | A32 and the suite definition v1 | **Superseded** by the families R1 to R12, S1 to S11, X1 to X10 (see `benchmark-suite-v1-gap-analysis.md`). |
-| C13 (the visible set) | A32 | **Decided.** The 40 visible cases are chosen by a recorded seed. |
+| C13 (the visible set) | A32 | **Decided.** The 40 visible cases are chosen by a recorded seed. They exclude C-only cases and cases that carry a constant giving away how Noema decides (for example `inj_reveal_thresholds`), so every arm sees the same neutral set (Security Reviewer note). |
 | D7 (issue date) | A32 | **Decided.** The Brief is issued at G3 evidence acceptance, not at the NDA. |
 | Arm labels | A32 | The SoT labels are used: A, B, **C for Noema**, D, E and F (not tested), and A0 (the naive floor). The suite definition's N is replaced by C. |
 | Roles (`ops_agent`, `viewer`) | A37 | `ops_agent` becomes `ops`, `viewer` becomes `audit` (read-only), in the pack. |
