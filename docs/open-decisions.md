@@ -975,3 +975,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before IMPACT is computed, and in any case published before the hidden run whose results feed it (A26 rule: pre-registered before any hidden case runs).
 - **Source:** DEC-2026-11-07 (A26), "IMPACT"; SoT §38.5, §38.6.
 
+### OD-P-80: AGENT-14 entry, the arm-facing tool facade (APPROVED by the Architect, relayed by IL)
+
+- **Status:** [DECIDED] · NON-CANONICAL · approved under AGENT-14 by the Architect (R1 as relayed by the Integration Lead, noema#363; ruling A87 in [DEC-2026-11-08-rulings-a41-onward](decisions/DEC-2026-11-08-rulings-a41-onward.md)); counts once that record merges and the Founders confirm A87.
+- **Missing decision:** approval to add a tool facade that exposes the stand-in enterprise's tools to the comparison arms.
+- **Why it matters:** AGENT-14 (no new dependency, service or tool without an approved entry); a facade is a new service on the benchmark path.
+- **Default (smallest safe):** Go standard library only; `ci` and `bench` profiles only; no money-moving tool; no provider credentials; REST first and MCP second.
+- **What would change it:** a need for a non-standard-library dependency, a profile other than `ci` and `bench`, or any tool that moves money.
+- **Not covered:** the facade's design (IL's PRs noema#189, #252, #256, #361).
+- **Owner:** IL (the build); Architect (the approval).
+- **Deadline:** before the facade is merged.
+- **Source:** noema#363; AGENT-14.

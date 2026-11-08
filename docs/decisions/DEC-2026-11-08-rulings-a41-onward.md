@@ -5,7 +5,7 @@
 | **Status** | **Decided by the Founders and the Architect on 7 and 8 Nov 2026; recorded by the Repo Steward as given.** Counts once both Founders approve and merge this pull request (AGENTS §2, item 3). Until then these rulings, which the Founders sent to the agents in a session, have no authority. |
 | **Date** | 8 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
-| **Decides** | A41 to A98 in §1. |
+| **Decides** | A41 to A108 in §1. |
 | **Closes** | OQ-09 (one file-mounted key per identity, A54); the open value in A17 (A43, through docs#126). It does not close OD-P-77 (A46 keeps it open). |
 | **Amends** | Nothing by itself. The text changes it calls for are in docs#130 (SoT v1.11, PERD v1.21, plan v1.12), docs#126 and `debt.md` (DEBT-25, DEBT-26) in this pull request. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
@@ -88,7 +88,7 @@
 | A84 | BO | A two-tenant fixture. |
 | A85 | BO | The A3 breaker parameters are in the pack. |
 | A86 | BO | The primary claim wording. |
-| A87 | IL | AGENT-14 approval for the arm-facing tool facade. |
+| A87 | IL | AGENT-14 approval for the arm-facing tool facade, with these limits (as relayed by IL, noema#363): Go standard library only; `ci` and `bench` profiles only; no money-moving tool; no provider credentials; REST first and MCP second. The register entry is OD-P-80. |
 | A88 | IL | The stand-in defaults. |
 | A89 | IL | One instance per tenant. |
 | A90 | IL | Per-tenant credentials in `mock-case`. |
@@ -102,6 +102,25 @@
 | A98 | Voice | DEBT-14, DEBT-15 and DEBT-24 are Tier 1, expiring 2026-11-30. |
 
 Rows A56 to A98 are recorded in the words the Founders used in their list; where a row names only a topic (for example A57, A64, A67, A92) the detail lives in the PR or issue where the role works it, and the role cites this row. The Repo Steward added no detail.
+
+### Items relayed by the Integration Lead (noema#363), not in the Founders' list to the Steward
+
+The Integration Lead asked (noema#363) for the 8 Nov decisions it is building to to be committed. Items that duplicate the rulings above (R1 to R7 are A87 to A93; F6b and F6c are A94; F8 is A51) are not repeated. These are **relayed to IL in session and unconfirmed to the Steward; the Founders confirm them by approving this record, or strike them before merging**:
+
+| ID | Role | Ruling (as relayed by IL) |
+|---|---|---|
+| A99 | Founders | F1: merges in the order noema#209, then noema#206 and noema#244. |
+| A100 | Founders | F2: the Codex sweep order: noema#207 and noema#205, then noema#252 and noema#189, then noema#256 after SR's re-check. |
+| A101 | Founders | F3: the `compose.yml` step in noema#189 is approved. |
+| A102 | Founders | F4: the relay runbook and the confirmed name; the name stays out of repository files (DEC-2026-11-05 D5). |
+| A103 | Founders | F5: the Tushe address message is approved. |
+| A104 | Founders | F6: the Tushe items are approved, plus ENV-12 (Tushe must show it rejects money-moving calls made with the Noema credential). |
+| A105 | Founders | F6a: no invented rate-limit figures; no objection to Tushe's hosting region (synthetic data only). |
+| A106 | Founders | F6d: credentials go into the three Environments by the Founder. |
+| A107 | Founders | F7: the G0-T joint session is proposed for Fri 13 Nov 10:00 WAT (a date needs Tushe's agreement; it is external). |
+| A108 | Architect | R2: the three defaults (stand-in event-feed shape, the `Policy` port, role and delegation data) with fail-closed handling. |
+
+The next free number is therefore **A109**, not A99; the ledger in section 3 is corrected below.
 
 ## 2. Effects
 
@@ -117,4 +136,4 @@ Rows A56 to A98 are recorded in the words the Founders used in their list; where
 |---|---|---|
 | DEC-2026-11-06 | A2 to A25 | |
 | DEC-2026-11-07-architect-rulings | A27 to A40 (no A33) | |
-| This record | A41 to A98 | **A99** |
+| This record | A41 to A108 | **A109** |
