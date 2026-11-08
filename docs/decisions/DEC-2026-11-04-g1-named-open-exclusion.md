@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed for the Founders. The Founder gave this ruling in a work-order reply of 3 to 4 November 2026 (after the benchmark owner agent put both options to the founders); an instruction given in a session is not authoritative until committed (AGENTS §2, item 3), and Codex has said so on noema#102. It counts once both Founders approve and merge this pull request. |
+| **Status** | **Decided** (housekeeping, Block E E6 of 7 Nov 2026: this record was merged into `main` by both Founders' approval, so it counts; the Status line is the only change). Originally: Proposed for the Founders. The Founder gave this ruling in a work-order reply of 3 to 4 November 2026 (after the benchmark owner agent put both options to the founders); an instruction given in a session is not authoritative until committed (AGENTS §2, item 3), and Codex has said so on noema#102. It counts once both Founders approve and merge this pull request. |
 | **Date** | 4 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Closes** | None |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; counts once both Founders approve and merge this pull request (see the table above)
+- Status: Decided (merged); counts once both Founders approve and merge this pull request (see the table above)
 - Date: 4 November 2026
 - Closes: none
 - Owner: Founder and Technical Co-Founder
