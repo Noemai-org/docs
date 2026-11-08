@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed for the Founders. The Architect approved the dependency in a work order of 3 November 2026 and asked for it to be recorded under AGENT-14; an instruction given in a session is not authoritative until committed (AGENTS §2, item 3). It counts once both Founders approve and merge this pull request. |
+| **Status** | **Decided** (housekeeping, Block E E6 of 7 Nov 2026: this record was merged into `main` by both Founders' approval, so it counts; the Status line is the only change). Originally: Proposed for the Founders. The Architect approved the dependency in a work order of 3 November 2026 and asked for it to be recorded under AGENT-14; an instruction given in a session is not authoritative until committed (AGENTS §2, item 3). It counts once both Founders approve and merge this pull request. |
 | **Date** | 3 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Closes** | None. Answers the AGENT-14 approval that the Go property-testing library needed |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; counts once both Founders approve and merge this pull request (see the table above)
+- Status: Decided (merged); counts once both Founders approve and merge this pull request (see the table above)
 - Date: 3 November 2026
 - Closes: none
 - Owner: Founder and Technical Co-Founder
