@@ -17,6 +17,7 @@ A new `canonical-input.v2.json` (no tag, A12; `<name>.v<major>.json`, AGENT-15).
 
 - **Non-null** (`rec_…`, the `raw_ref`) **only when audio was retained with consent**, that is, an `AUDIO_RETAINED{consent_ref}` Record event exists for it.
 - **Null when the audio was discarded after transcription**, which is the default.
+- **No retention path exists in the POC today** (the voice pipeline, noema#193, keeps audio in memory for the call only and closes it), so Voice's builder emits `null` in every case until one is built. A future retention path must decide *while the audio is still in memory*: after the call it is gone, so "disputed later" can only mean "retained at the time, on a consent flag". This request does not imply, and does not authorise, retaining audio after the fact. (Voice Engineer's fact, docs#137 comment.)
 - A non-null `audio_ref` with no retained-audio consent record is invalid. JSON Schema cannot state that (the event lives in the Record), so core's edge refuses it at runtime and a test pins it; the schema carries the shape and the pattern (`^[a-z]+_[A-Za-z0-9_]{2,64}$`, as in `explanation-facts.v2`).
 - Everything else in the canonical input is unchanged. The Gateway (noema#270) accepts `null` for `audio_ref` and still requires the key and the other five voice keys; Voice's builder emits `null` unless a retained-audio record exists.
 
