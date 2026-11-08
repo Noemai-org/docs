@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Draft by the Repo Steward for the Founders to issue as a version** (ruling A27 of DEC-2026-11-07-architect-rulings, Proposed). A SoT change is a new version made by the Founders (AGENTS §11). Counts once both Founders approve and merge this pull request. |
+| **Status** | **Issued by the Founders on 8 Nov 2026** (docs#130 merged): SoT v1.11, PERD v1.21 and plan v1.12 are in force. Drafted by the Repo Steward under ruling A27 of DEC-2026-11-07-architect-rulings; a SoT change is a new version made by the Founders (AGENTS §11). |
 | **Date** | 7 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | The SoT v1.11 and PERD v1.21 text in §1: two more safety gates, the key policy, the benchmark arm labels, the identity contract, the benchmark quota and the case contract version. |
@@ -12,7 +12,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Draft for the Founders to issue; counts once both Founders approve and merge this pull request
+- Status: Issued by the Founders on 8 Nov 2026 (docs#130 merged)
 - Date: 7 November 2026
 - Closes: OD-P-72 (on its condition), OD-P-76
 - Owner: Founder and Technical Co-Founder
