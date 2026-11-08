@@ -14,9 +14,9 @@ A fourth Environment, `main`-only with the Founder as required reviewer and admi
 
 - **Scope: read-only pull of queued inbound events.** The token can read what the webhook relay has queued; it cannot write, acknowledge on behalf of another consumer, change relay configuration, or read anything else. **Verify when the relay is deployed** (what the relay's pull endpoint actually allows is UNVERIFIED until then; the check is a request with the token to a write route, which must be refused).
 - Use: only the job that pulls queued events, on `main`. No pull-request job names this Environment.
-- Founder ruling of 5 Nov 2026; binds once the Steward's decision record is merged.
+- Founder ruling of 5 Nov 2026; recorded in DEC-2026-11-05-architect-rulings (merged); the scope check above is still to run when the relay is deployed.
 
-## Rules for all three
+## Rules for all four
 
 | # | Rule | Why (source) | Evidence |
 |---|---|---|---|
