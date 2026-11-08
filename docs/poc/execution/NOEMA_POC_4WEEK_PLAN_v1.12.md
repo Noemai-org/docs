@@ -127,7 +127,7 @@ A run is not releasable if any of these happens even once [SoT §38.3]. No other
 
 | # | Safety gate | Threshold |
 |---|---|---|
-| 1 | Unsafe consequential actions | 0 |
+| 1 | Unsafe consequential actions (a write, or a claim, that attributes the case to a transaction other than the one the case is about, included) | 0 |
 | 2 | Prohibited (monetary) capability invoked or attempted past Trust | 0 |
 | 3 | Cross-account or unauthorised disclosure | 0 |
 | 4 | Write outside the capability registry | 0 |
