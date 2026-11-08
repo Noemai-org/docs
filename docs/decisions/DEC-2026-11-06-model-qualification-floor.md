@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Draft, not for merge until the Founder sets the number.** Proposed for the Founders once the bracketed fields are filled. Counts once both Founders approve and merge. The text was supplied for the Repo Steward on docs#117 (6 Nov 2026) with the number left open; the Repo Steward has not chosen one (AGENT-16, REQ-AGT-005, AGENT-18). |
+| **Status** | **Decided by the Founders on 8 Nov 2026 (the number and the wording); counts once both Founders approve and merge this pull request.** The text was supplied for the Repo Steward on docs#117 (6 Nov 2026) with the number left open; the Founders set it on 8 Nov 2026 (noema#312). The Repo Steward chose no value (AGENT-16, REQ-AGT-005, AGENT-18). |
 | **Date** | 6 November 2026 |
 | **Owner** | Founder (benchmark owner) and Technical Co-Founder |
 | **Closes** | The open value in A17 of DEC-2026-11-06-architect-rulings: the pass^k floor for a first qualification. |
@@ -11,27 +11,27 @@
 
 **Record fields (decisions README template).**
 
-- Status: Draft; proposed for the Founders once the bracketed fields are filled; counts once both Founders approve and merge
+- Status: Decided by the Founders on 8 Nov 2026; counts once both Founders approve and merge
 - Date: 6 November 2026
 - Closes: the open value in A17 of DEC-2026-11-06-architect-rulings (the pass^k floor for a first qualification)
 - Owner: Founder (benchmark owner) and Technical Co-Founder
 - Decision: the Decision paragraph below
-- Rationale and evidence: [FOUNDER TO WRITE], see below
+- Rationale and evidence: the Founders' message of 8 Nov 2026 (noema#312), see below
 - Affected requirement IDs / SoT sections: REQ-INT-006, REQ-BEN-009; AGENT-28; INV-22
 - Migration notes: none; see below
 - Supersedes: None
 
 ---
 
-**Decision.** A first qualification of a model or speech provider version, which has no pinned baseline of its own, is QUALIFIED only if its pass^k (k = 5, over the Understanding-dependent cases of the qualification subset) is **at least [FOUNDER TO SET: a number between 0 and 1, with its source]**. A later version is QUALIFIED if its pass^k is not below the higher of the pinned baseline's own pass^k and this floor. All other conditions of A17 apply unchanged: the run is complete, every Tier 0 gate is zero, and the drift check result is PASS.
+**Decision.** A first qualification of a model or speech provider version, which has no pinned baseline of its own, is QUALIFIED only if its pass^k (k = 5, over the Understanding-dependent cases of the qualification subset) is **at least 0.90, measured on at least 40 cases, with Tier 0 at zero** (Founders, 8 Nov 2026). A later version is QUALIFIED if its pass^k is not below the pinned baseline's own pass^k (the wording of A17); the "higher of" wording of the first draft is dropped. The two are equivalent in effect, because a baseline that qualified is already at least 0.90. All other conditions of A17 apply unchanged: the run is complete, every Tier 0 gate is zero, and the drift check result is PASS. After the first measured baseline run, the Repo Steward records that run's ID as the pinned baseline.
 
-**Rationale.** [FOUNDER TO WRITE. The number needs a source (AGENT-18): for example a run of the pinned model on the development suite, cited by run ID, or a stated target.]
+**Rationale.** The Founders' message of 8 Nov 2026 (noema#312): the first-qualification floor is a target set by the Founders, not a measured value, and it is stated as a floor so that no agent can lower it (AGENT-16, REQ-AGT-005). The source of the number is that decision. Once a baseline run exists its run ID replaces the floor as the bar for every later version.
 
 **Affected requirement IDs.** REQ-INT-006, REQ-BEN-009; AGENT-28; INV-22 (the qualification subset is generated-layer only).
 
 **Where it lives.** The floor is pack data, not code. `qualification-record.v1` carries it as `bar.floor` with the id of this record in `bar.floor_source`. The benchmark tool takes it as `--floor` and `--floor-source`. **Open:** the current pack schema (`pack.v1`) has no field for it, so adding one is a contract change with its own AGENT-15 steps (version, migration note, regenerated models), or the floor is read from a file in the pack folder. The Engineering Lead decides which; until then the value is passed on the command line and written into every record.
 
-**Migration notes.** None. No record exists yet; the first QUALIFIED record can be written only after this record is merged. Until then every first qualification is NOT_QUALIFIED with the reason "a first qualification waits for a Founder-set floor".
+**Migration notes.** None. No record exists yet; the first QUALIFIED record can be written only after this record is merged. The floor now exists, so a first qualification can be QUALIFIED when it meets the Decision; the pinned baseline run ID is recorded after the first measured run.
 
 **Supersedes.** None.
 
