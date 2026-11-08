@@ -623,7 +623,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-46"></a>
 ### OD-P-46: Value types in the Action Graph node
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the types of `on_unknown`, `on_failure`, `recovery_ref` and `escalation_ref` (PERD §24 lists the fields with no value)
 - **Why it matters:** the Planner and packcheck cannot check a graph without them
 - **Minimum safe default (meanwhile):** `on_*` are the PERD §30.1 recovery types (RETRY_READ, VERIFY_BY_IDEMPOTENCY_KEY, RETRY_UNDER_NEW_GRANT, ESCALATE); `recovery_ref` is one of the capability's own `recovery[]`; `escalation_ref` is CASE or HANDOFF (PERD §30.2)
@@ -634,7 +634,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-47"></a>
 ### OD-P-47: Evidence-descriptor vocabulary for predicate type-checking
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the typed fields of each evidence entity and the typed predicate variables a pack declares (SoT §43.7 requires the type-check, and names no vocabulary)
 - **Why it matters:** pack load cannot reject an unknown field without it
 - **Minimum safe default (meanwhile):** `evidence_descriptors` and `predicate_variables` in the pack, with the grammar and shared corpus in `contracts/predicates/`
@@ -645,7 +645,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-48"></a>
 ### OD-P-48: Per-kind fields of memory observations
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the fields of each of the six `memory_observation` kinds (PERD §33 gives the envelope and says each kind has its own schema)
 - **Why it matters:** free text is forbidden, so each kind needs typed fields before anything is written
 - **Minimum safe default (meanwhile):** `observation` holds typed scalars only (codes, IDs, integers, booleans)
@@ -656,7 +656,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-49"></a>
 ### OD-P-49: Missing SoT §15.1 minimum properties
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** five minimum properties have no schema field: urgency; compiler model and prompt version on the Intent Object; fraud and risk signals; consent; acceptable uncertainty
 - **Why it matters:** SoT §15.1 says a vertical may add fields but never remove these, so the abstract schemas must carry them
 - **Minimum safe default (meanwhile):** none is carried; the POC pack needs none of them, and the table in `contracts/schemas/README.md` lists each as a gap
@@ -667,7 +667,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-50"></a>
 ### OD-P-50: Payload schemas of the outbound events `case.created` and `confirmation.recorded`
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the payloads of two of the three signed events (only `outcome.updated` has a schema)
 - **Why it matters:** REQ-API-001 says every object in §39.2 to §39.7 is a schema
 - **Minimum safe default (meanwhile):** the integration contract names the events only
@@ -678,7 +678,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-51"></a>
 ### OD-P-51: Benchmark cases per capability, and template coverage
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · the stated default is accepted by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** packcheck cannot check that every capability has benchmark cases (AGENT-06) or that every template ID resolves, because there is no benchmark case set and no template container in the pack schema
 - **Why it matters:** two PCK-02 checks cannot run
 - **Minimum safe default (meanwhile):** both checks are listed as not run
@@ -689,7 +689,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-52"></a>
 ### OD-P-52: Reconciliation rule for REJECTED_CONFIRMED
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the situation is classified INSUFFICIENT_EVIDENCE with disposition UNKNOWN or ESCALATE; no rule yields REJECTED_CONFIRMED until the worksheet gives the values ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces REJECTED_CONFIRMED. Not debited, and the authoritative source confirms rejection. Needs the ledger and switch values that mean "not debited" and "rejected", from the Tushe worksheet (INV-19: absence is never negative).
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -700,7 +700,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-53"></a>
 ### OD-P-53: Reconciliation rule for DEBIT_POSTED_CREDIT_UNCONFIRMED
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: a non-terminal state (WAIT with a deadline, then ESCALATE); never a success; UNKNOWN without the worksheet switch value ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces DEBIT_POSTED_CREDIT_UNCONFIRMED. Debit KNOWN, credit UNKNOWN or UNAVAILABLE, switch non-terminal. Needs the switch value that means non-terminal.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -711,7 +711,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-54"></a>
 ### OD-P-54: Reconciliation rule for REVERSAL_PENDING
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · closed by ruling A31 of DEC-2026-11-07-architect-rulings (REVERSAL_PENDING is non-terminal), confirmed by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once both records merge.
 - **Missing decision:** a rule in rule set v1 that produces REVERSAL_PENDING. Reversal initiated, not yet posted. Needs the rule and the reversal values that mean initiated.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -722,7 +722,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-55"></a>
 ### OD-P-55: Reconciliation rule for PARTIAL
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed, SR amended and EL confirmed under Founder decision E4 of 7 Nov 2026: the pack models one debit leg per transaction and no multi-leg facts, so anything not established as a single leg is UNKNOWN and escalates; no PARTIAL rule is built until a pack entity models legs ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces PARTIAL. A multi-leg transaction with a missing leg. Needs the multi-leg facts, which no pack entity models yet.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -733,7 +733,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-56"></a>
 ### OD-P-56: Reconciliation rule for EVENT_ORDER_UNCERTAIN
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the case is held as uncertain and escalates; Noema never picks an order ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** a rule in rule set v1 that produces EVENT_ORDER_UNCERTAIN. Ordering cannot be established. Needs the ordering facts and the rule that detects them.
 - **Why it matters:** the outcome definition `status_explained` names three of these classifications, but no rule yields them
 - **Minimum safe default (meanwhile):** the situation falls to INSUFFICIENT_EVIDENCE (PERD REQ-RES-001: never a default success); a test in noema#27 asserts the fallback and that no rule produces it
@@ -744,7 +744,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-57"></a>
 ### OD-P-57: `allowed_under_freeze` on the capability descriptor
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · `allowed_under_freeze` is not allowed under freeze: the default is false and a capability is refused while frozen (Founders, Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the descriptor field REQ-RES-002 says declares which capabilities are allowed under a contradiction freeze (CREATE_ESCALATION_CASE, RECORD_INVESTIGATION_EVIDENCE, ROUTE_TO_INTERNAL_OWNER)
 - **Why it matters:** the freeze gate in `trust/reconcile` needs the list from pack data, and the schema has no such field
 - **Minimum safe default (meanwhile):** the gate takes the list as an argument
@@ -755,7 +755,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-58"></a>
 ### OD-P-58: Reconciliation rule set v1 differs from the PERD text in three places
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · EL proposed and SR concurred under Founder decision E4 of 7 Nov 2026: the three deviations and the certainty tiers (definitive 2, indefinite 1) are accepted ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** whether rule set v1 may differ from PERD §22.3 where the PERD's own properties need it: R1 also requires no pending settlement, no pending reversal and no unavailable required source; R3 does not fire when the reversal conflicts with another fact; two KNOWN rows of a single-valued fact with different states are a contradiction. The certainty tiers are also set (definitive 2, indefinite 1)
 - **Why it matters:** without these, a pending settlement past its window or a lost required source gave SUCCESS_CONFIRMED, which breaks "no pending state is collapsed into a terminal one" and "losing a source never raises certainty" (REQ-RES-001)
 - **Minimum safe default (meanwhile):** the safer reading as built in noema#27, proposed for adoption in [DEC-2026-10-20-reconciliation-ruleset-v1](decisions/DEC-2026-10-20-reconciliation-ruleset-v1.md) (Proposed)
@@ -766,7 +766,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-59"></a>
 ### OD-P-59: Free-text and speech answer binding
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · a free-text or speech answer binds only through a confirmed slot (Founders, Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** how REQ-AMB-005's deterministic label matching and model-assisted mapping to an option ID are split between the model service and Trust (noema#28 binds only clicks and negations)
 - **Why it matters:** the answer path for voice and free text is not built
 - **Minimum safe default (meanwhile):** only option IDs and negations are bound
@@ -777,7 +777,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-60"></a>
 ### OD-P-60: The state EXPLAINING_BLOCKED has no definition and no exit
 
-- **Status:** [OPEN] · NON-CANONICAL
+- **Status:** [DECIDED] · NON-CANONICAL · decided by the Founders on 7 Nov 2026 (Block E, E4): the state exits to ESCALATING, an escalation case routed to OPS. Written into PERD v1.21 §28.2 in docs#130; it counts once that pull request is merged.
 - **Missing decision:** what EXPLAINING_BLOCKED is and where it goes. PERD §28.2 lists "→ EXPLAINING_BLOCKED → fallback" as an exit of EXPLAINING, but gives the state no entry, no exit, no customer text and no audit trail, and "fallback" names no state.
 - **Why it matters:** a blocked explanation (REQ-EXP-002: a claim not bound to a fact) must end in a safe, defined state, and the transition table (REQ-STM-001) cannot be complete without one.
 - **Minimum safe default (meanwhile):** `transitions.yaml` has the row EXPLAINING → EXPLAINING_BLOCKED and no row leaving it, so an investigation that reaches it stays there and the safe fallback text is shown (REQ-EXP-002 failure behaviour).
@@ -817,7 +817,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-65"></a>
 ### OD-P-65: The core's pull client for the webhook relay does not exist
 
-- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Status:** [OPEN] · NON-CANONICAL · **DEFERRED** by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); not blocking.
 - **Missing decision:** which task builds the core's outbound pull from the webhook relay (REQ-API-008) and with what credential handling. The relay (noema#48) and the matrix row exist; no core client does, and the proxy forwards relay pulls in the benchmark profile.
 - **Why it matters:** until it exists, deliveries stored by the relay are never read.
 - **Minimum safe default (meanwhile):** none; nothing pulls.
@@ -828,7 +828,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-66"></a>
 ### OD-P-66: `.env.example` has no entries for the relay and the proxy
 
-- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Status:** [OPEN] · NON-CANONICAL · **DEFERRED** by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); not blocking.
 - **Missing decision:** the secret and configuration names the relay (noema#48) and the hostility proxy (noema#51) need in `.env.example`, including the pull token the relay derives and the proxy's bench credential and number-map key. Both read their secrets from mounted files today, so the CI check that every workflow secret is listed has nothing to catch yet.
 - **Why it matters:** a name that is not listed will not be found by the secret-name check when a workflow starts to use it.
 - **Minimum safe default (meanwhile):** file-mounted secrets only; no names invented here.
@@ -839,7 +839,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-67"></a>
 ### OD-P-67: Whether Tushe supplies the webhook signing secret
 
-- **Status:** [OPEN] · NON-CANONICAL · not blocking
+- **Status:** [OPEN] · NON-CANONICAL · not blocking · the Founders ask Tushe whether it supplies the webhook signing secret (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); open until Tushe answers.
 - **Missing decision:** whether Tushe gives Noema the signing secret for its webhooks, or Noema generates it and gives it to Tushe. The relay generates one into a named volume and says the secret Tushe was given can be written there instead (noema#48).
 - **Why it matters:** the secret decides who can forge a delivery, and the vendor register (docs/vendors/README.md) has to name its owner.
 - **Minimum safe default (meanwhile):** the relay-generated secret, synthetic, local only.
@@ -850,7 +850,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-68"></a>
 ### OD-P-68: Automating vendored-copy drift (proposal, not built)
 
-- **Status:** [OPEN] · NON-CANONICAL · proposal, not built, not blocking
+- **Status:** [OPEN] · NON-CANONICAL · **DEFERRED** by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); not blocking.
 - **Missing decision:** how a docs change that touches vendored text becomes a matching `noema` re-point pull request without a person having to notice. Today `noema` keeps five copies (`AGENTS.md`, `CLAUDE.md`, `contracts/state-registry.md`, the PERD §32.2 and §28.2 extracts) and a daily workflow (`docs-drift`) turns red when they differ from docs `main`. Each time, a person runs `tools/vendor/repoint_docs.py` and opens a pull request (noema#39, noema#55, noema#56). No PERD requirement governs this drift (PERD §64.2 says only that `AGENTS.md` and `CLAUDE.md` are copied from docs and state the commit; §64.1 covers `/contracts` only).
 - **Why it matters:** the guard goes red after almost every docs merge, a red check that is expected stops being noticed, and the copies are read by CI (the state-machine test and the event-type drift check).
 - **Proposal (smallest, no new access):** extend the existing `docs-drift` workflow in `noema`. It already has read access to docs through `DOCS_READ_TOKEN`. When `repoint_docs.py --check --ignore-commit` finds drift, the same job runs `repoint_docs.py` on a fresh branch `chore/repoint-docs-<docs sha7>` off `main`, commits only the files the script owns, and opens one pull request titled "GOV-22: re-point vendored docs copies to docs <sha7>", using `noema`'s own `GITHUB_TOKEN` (`contents: write`, `pull-requests: write`). It never pushes to `main`, never merges, and never edits a branch it did not create; if docs moves again it opens a new branch and closes the superseded pull request with a comment. Its pull request needs the same review as any other (one approval from the founder who did not open it; the bot is not a founder). The text of the docs files is data: the job runs only `noema`'s own script. The schedule is the cron it has today; a docs-side trigger would need write access from docs to `noema`, which is a new credential and is not proposed.
@@ -864,7 +864,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-69"></a>
 ### OD-P-69: The format of `counterparty_display` in the candidate response (PROPOSAL)
 
-- **Status:** [OPEN] · NON-CANONICAL · **proposal, not a decision**; not blocking
+- **Status:** [OPEN] · NON-CANONICAL · **DEFERRED** by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); not blocking.
 - **Missing decision:** what `counterparty_display` carries. PERD REQ-CTX-006 says "counterparty_display (masked)" and "No unmasked names". The recipient matcher (REQ-AMB-003, D5) is deterministic code in the model service that matches name tokens, aliases, transliterations, phonetic keys and initials. Session D reports that if core masks with asterisks, matching has nothing to work on (noema#43, `docs/sessions/2026-10-21-1211-T5-T6.3.md`). The contract (`candidates-response.v1.json`, noema#42) today only forbids a run of five or more digits.
 - **Why it matters:** the Recipient feature carries a weight of 0.25 in the ranking; with no readable token it scores 0 for every candidate, so identification depends on amount and time alone and more cases clarify or escalate.
 - **Options:**
@@ -879,7 +879,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-70"></a>
 ### OD-P-70: Certificates and the pack mount in the Compose setup (DEFAULT, WAITING FOR THE FOUNDER'S "YES")
 
-- **Status:** [OPEN] · NON-CANONICAL · **default proposed, waiting for the Founder's "yes"**; nothing is built from it until the "yes" is recorded
+- **Status:** [DECIDED] · NON-CANONICAL · the default is adopted: an internal certificate authority created by the Compose setup (Founders, Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** where the mTLS certificates between the two services come from in the local Compose setup (PERD §36.1, §65.1; INV-29), and how the pack directory reaches the core.
 - **Why it matters:** the services need certificates to start with mTLS, and a pack must reach the core as data that nothing can change at run time (SoT §51: packs are data).
 - **Default (smallest safe):** (1) an internal certificate authority that the Compose setup creates itself on first start; it issues the service certificates, and no certificate or key is committed; (2) synthetic data only; the authority and its certificates are labelled synthetic and are valid for the local setup only; (3) the pack directory is mounted into the core read-only.
@@ -904,19 +904,19 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-72: Adopt pgsodium for in-database Ed25519 verification (AGENT-14; PROPOSED, conditional on the W2 spike)
 
-- **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1); nothing is built from this entry until the Founders approve it.
+- **Status:** [OPEN] · NON-CANONICAL · proposed by GOV-28 (W1). Approved by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A2, conditional on the independent validation of the 66 of 66 spike by Core Engineer 2 (A16); it closes when C2's result is posted on docs#117 and the record is merged. Nothing is built from this entry before then.
 - **Missing decision:** whether pgsodium v3.1.11 (commit `a8b8a2739bab1f7a07445b1c911e2bd1abf67784`), built from source into Noema's own PostgreSQL 17.11 image with a checksum-verified libsodium, may be added as a dependency, using only `crypto_sign_verify_detached` behind a migration-owned wrapper.
 - **Why it matters:** DEBT-01 (Tier 0) and REQ-AUD-006 need the database to refuse a receipt or Record event whose Ed25519 signature does not verify; PostgreSQL has no Ed25519 verifier of its own.
 - **Default (smallest safe):** do not adopt until the Founders approve. The W2 spike passed T1 to T6 in CI on `postgres:17.11-alpine` (58 of 58, 1 Nov 2026), with one bootstrap step: pgsodium's event trigger is disabled and guarded against re-enabling (DEC-2026-11-01-receipt-and-record-signing D10a). If the Founders refuse, Option C applies (§11 of that record).
 - **What would change it:** a failed check on a later run; a security issue in pgsodium or libsodium; an upstream deprecation; an extension upgrade that re-enables its event trigger; a PostgreSQL major that pgsodium does not support.
 - **Not covered:** key custody (DEC-2026-11-01 §3); the write-once anchor store (SEC-14).
-- **Owner:** Founders (the approval); SR (the evaluation and the spike's validation); C1 (the spike and the image, EXE-08); EL (the design).
+- **Owner:** Founders (the approval); SR (the evaluation and the spike, which SR built); C2 (the independent validation of the spike, A16); C1 (the image, EXE-08); EL (the design).
 - **Deadline:** with GOV-28, Wed 4 Nov 2026.
 - **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §5; the W2 evaluation (SEC-12, docs#78, not yet merged) and its spike (run 41314576829, noema#106); DEBT-01; PERD REQ-AUD-006.
 
 ### OD-P-73: Record keys for `model-service` and the adapter emitters (PROPOSAL)
 
-- **Status:** [OPEN] · NON-CANONICAL · default proposed; nothing is built from this entry.
+- **Status:** [DECIDED] · NON-CANONICAL · the default is adopted, with the Founder decision D6 (Block D): the model service holds no Record key and core-edge signs and appends the events for it ([DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** record-event v3 lists `model-service` and seven adapter identities (`mock-ledger`, `mock-switch`, `mock-destination`, `mock-customer`, `mock-policy`, `mock-case`, `mock-clock`) as `RUNTIME` emitters (`services/core/record/chain/actors.json`). REQ-AUD-006 makes each emitter sign with its own key. The model service cannot hold a core credential (INV-29) and does not append to the Record itself, and the adapters run inside the core, so for each of them it is undecided who holds the key, or whether the core appends such events under its own identity instead.
 - **Why it matters:** a key held by the core for another identity would let the core sign as that identity, which defeats the point of per-emitter keys.
 - **Default (smallest safe):** register no key for these eight identities in the POC. The database then refuses any event that claims them (fail closed). No code appends as them today (checked 1 Nov 2026: only `core-execution` appends).
@@ -926,9 +926,10 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the first event attributed to one of these identities.
 - **Source:** [DEC-2026-11-01-receipt-and-record-signing](decisions/DEC-2026-11-01-receipt-and-record-signing.md) §3 D2; PERD §32.1, REQ-AUD-006; INV-29.
 
-### OD-P-74: Claim names and roles of the synthetic IdP's session token (DEFAULT, built in noema#156)
+### OD-P-74: Claim names and roles of the synthetic IdP's session token (built in noema#156)
 
-- **Status:** [OPEN] · NON-CANONICAL · default in use; the Architect or the Founders decide.
+- **Status:** [CLOSED] · adopted as canonical by [DEC-2026-11-05-architect-rulings](decisions/DEC-2026-11-05-architect-rulings.md) D2 (takes effect when that record is approved and merged). The NON-CANONICAL label is removed.
+- **Answer (DEC-2026-11-05 D7, ruling A1 of 6 Nov 2026, which supersedes D2's claim and role lists):** the identity contract is D7's, not the default below. Issuer `noema-poc-idp`, exact match; claims `sub`, `aud`, `exp`, `iat`, `iss`, `tenant_id`, `roles`; `roles` holds exactly one of `customer`, `ops`, `approver`, `audit`; ES256 only; 15 minute ceiling; deny by default; and the Security Reviewer's nine gaps as requirements. The default below is kept as the history of what noema#156 first built: it has no `iss`, a list of roles and `operator` instead of `ops`, and implementers follow D7.
 - **Missing decision:** which claims a session token carries and what they are called, and which roles exist. PERD REQ-SEC-001 says the synthetic IdP issues ES256 JWTs "for synthetic customers, operators and approvers, with roles" and that the core validates "signature, expiry, audience and tenant", and that `sub` is the only principal source. No document names the tenant claim, the roles claim, their values, or the issuer and key identification.
 - **Why it matters:** the claim mapping decides which signed data becomes the principal, the tenant and the authority (INV-12). The synthetic IdP, the core's verifier and the benchmark's session provider must agree on it.
 - **Default (smallest safe):** the claims `sub` (the principal), `aud` (one string, the core's audience), `exp` and `iat` (required, integer seconds; the token's lifetime, `exp - iat`, may not exceed a configured maximum, PERD REQ-API-004 [REC] 15 minutes), `tenant_id` (must be one of the tenants the deployment serves) and `roles` (a non-empty list of `customer`, `operator` or `approver`; any other value rejects the token); a JWT header `alg` of `ES256` only and a `kid` that names a configured P-256 public key. Every failure is one rejection. Built in `services/core/edge/session` (noema#156).
@@ -940,7 +941,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-75: Status of a well-formed value from a corroborating-only source (DEFAULT, EVD-01)
 
-- **Status:** [OPEN] · NON-CANONICAL · default in use; the Architect decides.
+- **Status:** [DECIDED] · NON-CANONICAL · UNKNOWN: a well-formed value from a corroborating-only source is UNKNOWN (Founders, Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); counts once that record merges.
 - **Missing decision:** the FactStatus of a well-formed value, within its freshness limit, read from a source whose authority for the fact is CORROBORATING (not AUTHORITATIVE). PERD v1.20 §21.1 says KNOWN needs an authoritative source and does not say what a corroborating one gives.
 - **Why it matters:** KNOWN is the status Trust and Outcome act on (INV-10, INV-19); giving it to a corroborating source would let a weaker source authorise an action.
 - **Default (smallest safe):** UNKNOWN. Corroboration never confers KNOWN on its own; a later reconciliation rule (RES tasks) may raise it to INFERRED. Built in `AssignStatus` (noema#160).
@@ -950,9 +951,33 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before EVD-01 slice 2 is merged.
 - **Source:** PERD v1.20 §21.1, REQ-CTX-002; INV-10, INV-19; [`task-cards/EVD-01.md`](poc/execution/task-cards/EVD-01.md) D1.
 
+### OD-P-76: Caddy as the webhook relay's TLS terminator (AGENT-14)
+
+- **Status:** [OPEN] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11 (Proposed). It closes when that record is approved and merged; until then Caddy is not approved. The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
+- **Answer (A11):** Caddy terminates TLS for the relay, with HTTP-01 on ports 80 and 443 and no DNS plugin.
+- **Missing decision:** which component terminates TLS for the webhook relay (ENV-13), and how it gets its certificate.
+- **Why it matters:** it is a new component on the path of inbound events; the relay's public address and certificates must stay out of the repository (AGENTS §10).
+- **Default (smallest safe):** none was proposed; the Architect ruled.
+- **What would change it:** a hosting choice that cannot answer HTTP-01 on port 80, or a need for a wildcard certificate (which needs a DNS plugin).
+- **Not covered:** the Compose and relay changes (their own pull requests); the relay's hostname, which lives only in a GitHub Environment variable.
+- **Owner:** IL (ENV-13); Architect (the decision).
+- **Deadline:** before the relay is deployed.
+- **Source:** DEC-2026-11-06 A11; ENV-13; AGENT-14.
+### OD-P-77: Operations Model parameters for the benchmark IMPACT layer (AWAITING THE FOUNDER'S VALUES)
+
+- **Status:** [OPEN] · NON-CANONICAL · no value has been chosen. Named by [DEC-2026-11-07-benchmark-suite-definition-v1](decisions/DEC-2026-11-07-benchmark-suite-definition-v1.md) (ruling A26, Proposed).
+- **Missing decision:** the values of the published Operations Model that turns RESOLVE and RESIST results into the modelled IMPACT figures: human minutes per escalation type, the loaded cost per human minute, the SLA thresholds and the arrival rate. The model is identical for all arms, with M0 as the manual baseline, and every IMPACT figure is labelled "modelled" and reported across a sensitivity range.
+- **Why it matters:** IMPACT figures (resolution time, human investigation minutes, human touches, escalation rate, first-contact resolution, SLA exposure, cost per exception, backlog, customer effort) are not computable without these values, and an invented value would turn a modelled figure into a claim (AGENT-18; SoT §0.6; SoT §38.6: partner variables are supplied by the partner, never invented).
+- **Default (smallest safe):** none. No IMPACT figure is computed or reported until the Founder supplies the values, each with its source. RESOLVE and RESIST are reported without it.
+- **What would change it:** a design partner who supplies measured values (SoT §38.6); a sensitivity range wide enough that no single value matters.
+- **Not covered:** the choice of the sensitivity range; the REV sampling rule; the arms' configuration.
+- **Owner:** Founder (the values and their sources); Benchmark Owner (the published model document).
+- **Deadline:** before IMPACT is computed, and in any case published before the hidden run whose results feed it (A26 rule: pre-registered before any hidden case runs).
+- **Source:** DEC-2026-11-07 (A26), "IMPACT"; SoT §38.5, §38.6.
+
 ### OD-P-79: Control-plane route names and credential classes (PROPOSAL, Founder decision D14)
 
-- **Status:** [OPEN] · NON-CANONICAL · proposal by EL from PERD §39.4; the Security Reviewer accepted the route names and the `:set` / `:clear` split (7 Nov 2026) and asked for the credential classes below; the Architect rules on them. Not authority for building until accepted and committed.
+- **Status:** [OPEN] · NON-CANONICAL · proposal by EL from PERD §39.4; the Security Reviewer accepted the route names and the `:set` / `:clear` split (7 Nov 2026) and asked for the credential classes below; the Architect rules on them. The credential classes are ruled in A54 (DEC-2026-11-08-rulings-a41-onward, with docs#140). Rows 10 and 11 of the matrix (`GET /v1/reconstructions/{correlation_id}` and `GET /v1/record/verify?tenant_id=`) stay audit-only (ruling A110, docs#141); the widening in finding 3 is not adopted. Not authority for building until accepted and committed.
 - **Missing decision:** (1) the exact route names of the control plane, and (2) the credential classes that call them. PERD §39.4 lists the routes, but with one route for the kill switch, `POST /v1/admin/tenants/{id}/kill-switch` with `{enabled: bool, reason}`. Founder decision D5 says the verifier may set a tenant's kill switch and only a person clears it; one route with an `enabled` field cannot carry that difference.
 - **Credential classes (answer to the Security Reviewer's finding 1).** The session roles stay as ruling A1 has them: `customer`, `ops`, `approver`, `audit` (a fifth session role would reopen A1 and D7). The control plane is a **separate listener and credential**, as §39.1 already says ("a separate admin credential, MFA-protected in shared environments"). Two classes:
   - **C-ADMIN**: the control-plane administrator credential, held by a person (MFA in shared environments). In a non-shared development environment there is no MFA, so C-ADMIN is one credential there and must not be read as MFA-protected.
@@ -978,3 +1003,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the proposal); SR (accepts, SEC-04); Architect (the credential-class ruling); Founders (D5, D14).
 - **Deadline:** before the control plane is built (TRU-08 slice 2).
 - **Source:** PERD v1.20 §39.1, §39.4; Founder decisions D5, D7, D14; DEC-2026-11-01 D3a; ruling A1, A20; REQ-SEC-001, REQ-SEC-002.
+
+### OD-P-80: AGENT-14 entry, the arm-facing tool facade (APPROVED by the Architect, relayed by IL)
+
+- **Status:** [DECIDED] · NON-CANONICAL · approved under AGENT-14 by the Architect (R1 as relayed by the Integration Lead, noema#363; ruling A87 in [DEC-2026-11-08-rulings-a41-onward](decisions/DEC-2026-11-08-rulings-a41-onward.md)); counts once that record merges and the Founders confirm A87.
+- **Missing decision:** approval to add a tool facade that exposes the stand-in enterprise's tools to the comparison arms.
+- **Why it matters:** AGENT-14 (no new dependency, service or tool without an approved entry); a facade is a new service on the benchmark path.
+- **Default (smallest safe):** Go standard library only; `ci` and `bench` profiles only; no money-moving tool; no provider credentials; REST first and MCP second.
+- **What would change it:** a need for a non-standard-library dependency, a profile other than `ci` and `bench`, or any tool that moves money.
+- **Not covered:** the facade's design (IL's PRs noema#189, #252, #256, #361).
+- **Owner:** IL (the build); Architect (the approval).
+- **Deadline:** before the facade is merged.
+- **Source:** noema#363; AGENT-14.
