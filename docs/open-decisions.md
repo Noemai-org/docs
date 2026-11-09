@@ -975,6 +975,34 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before IMPACT is computed, and in any case published before the hidden run whose results feed it (A26 rule: pre-registered before any hidden case runs).
 - **Source:** DEC-2026-11-07 (A26), "IMPACT"; SoT §38.5, §38.6.
 
+### OD-P-79: Control-plane route names and credential classes (PROPOSAL, Founder decision D14)
+
+- **Status:** [OPEN] · NON-CANONICAL · proposal by EL from PERD §39.4; the Security Reviewer accepted the route names and the `:set` / `:clear` split (7 Nov 2026) and asked for the credential classes below; the Architect rules on them. The credential classes are ruled in A54 (DEC-2026-11-08-rulings-a41-onward, with docs#140). Rows 10 and 11 of the matrix (`GET /v1/reconstructions/{correlation_id}` and `GET /v1/record/verify?tenant_id=`) stay audit-only (ruling A110, docs#141); the widening in finding 3 is not adopted. Not authority for building until accepted and committed.
+- **Missing decision:** (1) the exact route names of the control plane, and (2) the credential classes that call them. PERD §39.4 lists the routes, but with one route for the kill switch, `POST /v1/admin/tenants/{id}/kill-switch` with `{enabled: bool, reason}`. Founder decision D5 says the verifier may set a tenant's kill switch and only a person clears it; one route with an `enabled` field cannot carry that difference.
+- **Credential classes (answer to the Security Reviewer's finding 1).** The session roles stay as ruling A1 has them: `customer`, `ops`, `approver`, `audit` (a fifth session role would reopen A1 and D7). The control plane is a **separate listener and credential**, as §39.1 already says ("a separate admin credential, MFA-protected in shared environments"). Two classes:
+  - **C-ADMIN**: the control-plane administrator credential, held by a person (MFA in shared environments). In a non-shared development environment there is no MFA, so C-ADMIN is one credential there and must not be read as MFA-protected.
+  - **C-VERIFY**: a service credential for the verification identity, mTLS with a service identity (REQ-SEC-002), held by the verification job. It is **not** a person and **not** a session role.
+
+  Until both classes exist, a person-only `:clear` is a sentence, not a control. What enforces D5 today is the database rule on `record_verify` (noema#190 has the failing-first test), and **no control-plane route is built** (this is the reason, not only that this entry is pending).
+- **Routes (changes to §39.4 are marked):**
+
+  | Route | Credential class | Effect |
+  |---|---|---|
+  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:set` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN or C-VERIFY (C-VERIFY may call `:set` for any tenant, by design: the verifier is cross-tenant; the matrix tests that it can call nothing else) | switch on; `KILL_SWITCH_CHANGED` with the caller as actor; idempotent |
+  | `POST /v1/admin/tenants/{tenant_id}/kill-switch:clear` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN only | switch off; C-VERIFY gets 403 `PERMISSION_DENIED`; `KILL_SWITCH_CHANGED` with the person as actor, and a `SECURITY_EVENT` in the same transaction (A71, docs#140); **its kind is not in the PERD §32.2 list yet: adding it (proposed name `KILL_SWITCH_CLEARED`) is a versioned PERD change plus a `record-event` contract change under AGENT-15, to be ruled and done before any route writes it** |
+  | `GET /v1/admin/tenants/{tenant_id}/kill-switch` **(new route)** | C-ADMIN only | the state, the last change and who made it; ops and audit see the effect through `GET /v1/ops/alerts` |
+
+  Every other route of §39.4 stands as written, **with the callers of §39.4 unchanged**: `GET /v1/reconstructions/{correlation_id}` and `GET /v1/record/verify?tenant_id=` are audit; the panel and the alerts are ops and audit or ops as §39.4 says. `POST /v1/admin/policies/{policy_id}/versions` and `.../versions/{v}:publish`, `POST /v1/admin/packs:load` and `PUT /v1/admin/tenants/{id}/callback` take C-ADMIN. For publication, a version that is not higher than the active one (the same, or a downgrade) answers 409; the catalogue then needs a code for it (`POLICY_VERSION_NOT_NEWER`), which is a change to `errors.v1.json` under AGENT-15, not made here.
+- **Two notes for SEC-04 (Security Reviewer's finding 4):**
+  - **Key rotation has no route.** Public keys are registered by the migrator at deploy (`key_register`, an operator step, DEC-2026-11-01 D3a); the callback route rotates a callback secret only. A test of the absence is meaningful: no route matches rotate or key, and the runtime roles cannot execute `key_register`, `key_retire` or `key_revoke`.
+  - **`GET /v1/record/verify?tenant_id=`** takes a tenant in the query. For `ops` and `audit` it must equal the token's tenant or the call is refused with the not-found shape (INV-12, D7 item 7).
+- **Why it matters:** D5 is a safety property of who can undo a stop. If the route and the credential class cannot express it, the check moves into code that reads a body field.
+- **Default (smallest safe):** the routes and the two credential classes above. Until accepted and built, no control-plane route exists (TRU-08 slice 1 builds none). The not-found shape is returned to a caller who may not know a route; `403 PERMISSION_DENIED` only for C-VERIFY on `:clear`; `POST /v1/benchmark/runs` is not served by the runtime core in any runtime profile.
+- **What would change it:** the Architect defining the credential classes differently (for example a second human credential for `:set`), or a finding that C-VERIFY and C-ADMIN cannot be told apart at the listener in the POC.
+- **Not covered:** authentication of the admin credential (OQ-09); the route that reads policy versions (needed once the control plane is built).
+- **Owner:** EL (the proposal); SR (accepts, SEC-04); Architect (the credential-class ruling); Founders (D5, D14).
+- **Deadline:** before the control plane is built (TRU-08 slice 2).
+- **Source:** PERD v1.20 §39.1, §39.4; Founder decisions D5, D7, D14; DEC-2026-11-01 D3a; ruling A1, A20; REQ-SEC-001, REQ-SEC-002.
 ### OD-P-78: Pack data and evidence for delegate, joint-account and approver-threshold authority (R7), and what R8 repeats (DEFAULT, PCK)
 
 - **Status:** [OPEN] · NON-CANONICAL · default in use. Founder decision D13 (7 Nov 2026) confirms the default ("if authority depends on facts the pack lacks, escalate and do not act"); the entry closes when D13 is committed to a decision record.
