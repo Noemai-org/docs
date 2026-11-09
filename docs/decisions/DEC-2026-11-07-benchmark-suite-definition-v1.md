@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed for the Founders. The Architect gave this definition on 7 November 2026 and asked the Repo Steward to record it as A26. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). It counts once both Founders approve and merge this pull request. |
+| **Status** | **Decided** (housekeeping, 9 Nov 2026, following the precedent of Block E E6 of 7 Nov 2026: this record was merged into `main` by the Founders' approval, so it counts; the Status line is the only change). Originally: Proposed for the Founders. The Architect gave this definition on 7 November 2026 and asked the Repo Steward to record it as A26. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). It counts once both Founders approve and merge this pull request. |
 | **Date** | 7 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | The comparison scope and the measurement of the POC benchmark: the arms, the case families, the measured quantities and the pre-registered reporting and decision rules (SoT §38.5, §38.6). |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; counts once both Founders approve and merge this pull request
+- Status: Decided (merged); counts once both Founders approve and merge this pull request (see the table above)
 - Date: 7 November 2026
 - Decides: the benchmark suite definition v1 (arms, families, measures, reporting rules)
 - Owner: Founder and Technical Co-Founder

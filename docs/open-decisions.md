@@ -953,7 +953,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-76: Caddy as the webhook relay's TLS terminator (AGENT-14)
 
-- **Status:** [OPEN] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11 (Proposed). It closes when that record is approved and merged; until then Caddy is not approved. The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
+- **Status:** [DECIDED] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11: the relay's TLS terminator is Caddy (HTTP-01, ports 80 and 443, no DNS plugin). That record is merged, so Caddy is approved (housekeeping, 9 Nov 2026). The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
 - **Answer (A11):** Caddy terminates TLS for the relay, with HTTP-01 on ports 80 and 443 and no DNS plugin.
 - **Missing decision:** which component terminates TLS for the webhook relay (ENV-13), and how it gets its certificate.
 - **Why it matters:** it is a new component on the path of inbound events; the relay's public address and certificates must stay out of the repository (AGENTS §10).
