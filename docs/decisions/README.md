@@ -56,6 +56,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-08-perd-39-4-control-plane-callers](DEC-2026-11-08-perd-39-4-control-plane-callers.md) | Ruling A110 (Founders, option A): the reconstruction and record-verify routes stay audit-only; no PERD v1.22; the SEC-04 matrix is unchanged |
 | [DEC-2026-11-06-model-qualification-floor](DEC-2026-11-06-model-qualification-floor.md) | UND-13 / A17: the pass^k floor for a first model or speech-provider qualification (DRAFT; the number is the Founder's to set) |
 | [DEC-2026-11-08-rec-09-record-export](DEC-2026-11-08-rec-09-record-export.md) | Ruling A109: the Founders approve new task REC-09, the Noema record export (a library function, not a route), on four conditions |
+| [DEC-2026-11-09-one-founder-approval](DEC-2026-11-09-one-founder-approval.md) | Ruling A111 (Founder): one approval from the Founder who did not drive the pull request merges any pull request in `docs` or `noema`; supersedes the "both Founders" wording |
 
 ## Where decisions already live
 
