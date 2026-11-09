@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed for the Founders. The Architect gave these rulings in a work order of 4 November 2026 and asked for them to be committed as one record. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). They count once both Founders approve and merge this pull request. |
+| **Status** | **Decided** (housekeeping, Block E E6 of 7 Nov 2026: this record was merged into `main` by both Founders' approval, so it counts; the Status line is the only change). Originally: Proposed for the Founders. The Architect gave these rulings in a work order of 4 November 2026 and asked for them to be committed as one record. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). They count once both Founders approve and merge this pull request. |
 | **Date** | 4 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Closes** | None. Opens DEBT-06 (Tier 1) and DEBT-07 (Tier 0 until closed with EDG-01) in the debt register, in this pull request. |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; counts once both Founders approve and merge this pull request
+- Status: Decided (merged); counts once both Founders approve and merge this pull request
 - Date: 4 November 2026
 - Closes: none
 - Owner: Founder and Technical Co-Founder
