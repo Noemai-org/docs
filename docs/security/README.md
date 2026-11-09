@@ -8,3 +8,4 @@
 - [`debt-02-alert-design.md`](debt-02-alert-design.md): DEBT-02, how a human is alerted when a signature fails (2026-11-03; Proposed, for founder decision).
 - [`perd-v1.21-amendment-draft.md`](perd-v1.21-amendment-draft.md): draft PERD v1.21 text for the three SEC-01 gaps (2026-11-03; for the Engineering Lead to record and the Steward to apply).
 - [`debt-03-08-record-writer-closure-design.md`](debt-03-08-record-writer-closure-design.md): DEBT-03 and DEBT-08, what REC-08 builds and the forgery test that starts it (2026-11-06; derived, for the Engineering Lead and the Security Reviewer).
+- [`control-plane-authz-matrix.md`](control-plane-authz-matrix.md): SEC-04, the control-plane authorization matrix (ADV-14): credential classes by route, written against OD-P-79 before any route is built (2026-11-07; Proposed; do not merge before docs#133).
