@@ -375,6 +375,8 @@ The sources are SoT §47, PERD §41 and §42, and the threat-to-test map in [`do
 
 **Reviews.** P0-path PRs need two human reviews: EL plus C1 or C2 (plan §4). An agent's report is not acceptance (plan §4.1).
 
+**Approval and merge.** One approval from a Founder who did not author or drive the pull request is enough to merge any pull request in `docs` or `noema`, whatever paths it changes (A111, [DEC-2026-11-09-one-founder-approval](docs/decisions/DEC-2026-11-09-one-founder-approval.md)). The other gates above and in plan §13.1 are unchanged.
+
 **In the `docs` repository** (carried forward unchanged):
 
 - Do not edit `docs/NOEMA_SOURCE_OF_TRUTH.md` in place. A SoT change is a new version, made by the founders, with an Appendix D entry.
