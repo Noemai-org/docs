@@ -30,3 +30,4 @@
 | [UND-07](UND-07.md) | Out-of-scope and prohibited intents end to end | Wed 18 Nov |
 | [REC-09](REC-09.md) | Noema record export | Wed 18 Nov |
 | [UND-12](UND-12.md) | Async safety of the model service's blocking HTTP transports | Tue 1 Dec |
+| [SEC-15](SEC-15.md) | Per-login secrets | Tue 1 Dec |
