@@ -88,8 +88,8 @@ Added 12 Oct 2026 from [DEC-2026-10-12](../decisions/DEC-2026-10-12-tushe-enviro
 
 | Credential | Scope | Held by | Network |
 |---|---|---|---|
-| Runtime API key | Tushe **reads only**, test mode | Core service | Egress allowlisted to the Tushe API host only |
-| Fixture key | Test-mode payout creation, to build transaction histories for scenarios | Benchmark owner; fixture loader only | Benchmark network only |
-| Administrator credential | Read-only partner-administrator surface | Benchmark owner; benchmark runner only | Benchmark network only |
+| Runtime API key (`TUSHE_RUNTIME_KEY`) | Tushe **reads only**, test mode | Core service | Egress allowlisted to the Tushe API host only |
+| Fixture key (`TUSHE_FIXTURE_KEY`) | Test-mode payout creation, to build transaction histories for scenarios | Benchmark owner; fixture loader only | Benchmark network only |
+| Administrator credential (`TUSHE_ADMIN_TOKEN`) | Read-only partner-administrator surface | **The Founder only.** No agent, workflow, benchmark runner or service holds it. The Founder runs admin reads by hand and attaches the results (Founder decision, 5 Nov 2026; the GitHub Environment `tushe-admin` therefore holds no secret) | None: not on any network of the build |
 | `mock-case` write | Non-monetary case operations | Core service, through its adapter | Internal |
 | `mock-case` truth | Read of the case service's true state | Benchmark runner only | Benchmark network only |
