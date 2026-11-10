@@ -37,7 +37,7 @@
 
 - **A127 and the follow-up.** The ruling names no task or owner for the follow-up. The Steward asks the owner of noema#168 (EL) to open it; it is not numbered or tracked here. The "text fix" is not described in the ruling and is not described here.
 - **A128 and merges already made.** Several pull requests merged on 10 Nov, before this record. This record does not judge them. Where a merged pull request lacked a reviewer-role READY at its head, the Steward lists it for the Founders and does not reopen anything.
-- **Numbering.** A113 to A122 are in docs#148 and A123 to A126 in docs#150, both open. This record follows them; next free is **A129**. If either record changes a number, this one moves with it.
+- **Numbering.** A113 to A122 are in docs#148 (merged 10 Nov) and A123 to A126 in docs#150 (open). This record follows them; next free is **A129**. If either record changes a number, this one moves with it.
 
 ## 3. The Steward's ledger
 
@@ -45,6 +45,6 @@
 |---|---|---|
 | DEC-2026-11-08-rulings-a41-onward | A41 to A108 | |
 | A109, A110, A111, A112 | REC-09, control-plane callers, one non-author Founder approval, DEBT-13 and SEC-15 | |
-| DEC-2026-11-10-architect-sync-a113-a122 (docs#148, open) | A113 to A122 | |
+| DEC-2026-11-10-architect-sync-a113-a122 (docs#148, merged) | A113 to A122 | |
 | DEC-2026-11-10-architect-sync-2-a123-a126 (docs#150, open) | A123 to A126 | |
 | This record | A127, A128 | **A129** |
