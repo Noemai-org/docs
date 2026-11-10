@@ -4,7 +4,7 @@
 
 **From Monday 19 October to Saturday 12 December 2026 (re-baselined by DEC-2026-11-03-demo-date-and-no-scope-cut; the work delivered on 12 to 16 October is shown as week 0): Monday to Saturday are work days; one hostile proof, one demo, on Saturday 12 December at 14:00.**
 
-Version 1.15 · 10 November 2026 · Governing documents: Noema Single Source of Truth v1.11 (SoT) and Noema POC Product & Engineering Requirements Document v1.22 (PERD, 10 November 2026)
+Version 1.15 · 10 November 2026 · Governing documents: Noema Single Source of Truth v1.11 (SoT) and Noema POC Product & Engineering Requirements Document v1.22 (PERD, 10 November 2026; **draft until docs#148 is merged: the last Accepted PERD is v1.20**)
 
 Version 1.15 applies ruling A120 of 10 November 2026 (DEC-2026-11-10-architect-sync-a113-a122): the §11 code-freeze paragraph said Wed 11 Nov; the calendar in §3 (Wed 9 Dec 12:00) is right, and §11 now says so. No task, gate, requirement or other date changes; the task count stays 265, and Version 1.14 stays unchanged.
 

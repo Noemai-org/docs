@@ -3421,7 +3421,7 @@ Every number in a payload is an integer from −(2^53−1) to 2^53−1, written 
 | Providers | PROVIDER_FAILOVER |
 | Memory | MEMORY_OBSERVATION_RECORDED |
 
-**Added in v1.22 [ADOPTED DEC-2026-11-10, ruling A114].** The two `SECURITY_EVENT` kinds `KILL_SWITCH_CLEARED` and `KILL_SWITCH_CLEAR_REFUSED` are named here, as REQ-EXE-008 already uses them. `KILL_SWITCH_CLEAR_REFUSED` is written only for an authenticated caller; an unauthenticated request writes no Record event. The `record-event` contract gains both kinds in a version bump in TRU-08 slice 2 (AGENT-15), not before.
+**Added in v1.22 [DRAFT: ruling A114 of DEC-2026-11-10; not adopted until a Founder who did not author docs#148 approves and merges it].** The two `SECURITY_EVENT` kinds `KILL_SWITCH_CLEARED` and `KILL_SWITCH_CLEAR_REFUSED` are named here, as REQ-EXE-008 already uses them. `KILL_SWITCH_CLEAR_REFUSED` is written only for an authenticated caller; an unauthenticated request writes no Record event. The `record-event` contract gains both kinds in a version bump in TRU-08 slice 2 (AGENT-15), not before.
 
 **Added in v1.9 [ADOPTED DEC-2026-10-18].** `AUDIO_RETAINED{consent_ref}` (REQ-VOI-004), `INBOUND_EVENT_RECEIVED` (REQ-API-008), `RESOLUTION_POSTED` (REQ-API-007) and `CONFIG_CHANGED` (REQ-OPS-003) are used by those requirements and now sit in the table. These three strings are **not** Record event types: `INTENT_SUPERSEDED` (REQ-INT-004) and `STATE_CHANGED` (REQ-RES-004) are reasons carried by `GRANT_VOIDED`, and `RECORD_ACCESSED` (REQ-AUD-003) is written to the access log, not the chain.
 
