@@ -58,6 +58,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-08-rec-09-record-export](DEC-2026-11-08-rec-09-record-export.md) | Ruling A109: the Founders approve new task REC-09, the Noema record export (a library function, not a route), on four conditions |
 | [DEC-2026-11-09-one-founder-approval](DEC-2026-11-09-one-founder-approval.md) | Ruling A111 (Founder): one approval from the Founder who did not drive the pull request merges any pull request in `docs` or `noema`; supersedes the "both Founders" wording |
 | [DEC-2026-11-09-sec-15-per-login-secrets](DEC-2026-11-09-sec-15-per-login-secrets.md) | Ruling A112 (Principal Architect, noema#385): DEBT-13 does not block noema#181; new task SEC-15 (per-login secrets for tenant and power logins, owner C1, reviewer SR) |
+| [DEC-2026-11-10-architect-sync-3-a127-a128](DEC-2026-11-10-architect-sync-3-a127-a128.md) | Rulings A127 and A128 (afternoon Architect sync): noema#168's text fix goes in a follow-up with its head unchanged; merge only after the reviewer-role READY at the current head, on the owner's READY TO MERGE line |
 
 ## Where decisions already live
 
