@@ -8,7 +8,7 @@
 | **Decides** | Four rulings, A123 to A126 (§1). Each states what it supersedes. |
 | **Closes** | Nothing by itself. It gives the authority the Codex findings on noema#272, noema#358 and noema#193 ask for (noema#423). |
 | **Supersedes** | Per ruling, in §1: A124 replaces the "design review only" part of A29; A123 and A126 supersede nothing earlier that is committed; A125 supersedes nothing. |
-| **Amends** | Nothing in the SoT, the PERD or the plan. The AGENTS.md §11 sentence on P0 reviews and plan §4 are applied as A123 states; a wording change to them is a separate change. |
+| **Amends** | `docs/poc/execution/tasks.csv` (VOI-01 `blocked` = true; Steward-owned field). Nothing in the SoT, the PERD or the plan. The AGENTS.md §11 sentence on P0 reviews and plan §4 are applied as A123 states; a wording change to them is a separate change. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -41,6 +41,7 @@
 - **A123 and the gate.** The ruling does not name which roles review when C1 or C2 is the author. The Steward reads "two of EL, C1, C2, author excluded" literally. The Steward asks EL to confirm on the pull request that adds the first P0 review under it.
 - **A124 and what counts.** A commit-group map is a list of the child's own commits grouped by purpose, posted on the pull request. The Steward does not lower any A14 requirement: the Codex READY must be at the current head or carry by D11 (clean merge of `main`, own diff unchanged, CI green).
 - **A126(b).** The ruling names no gate and no number. It does not set the F5 field gate, the session plan or the per-locale floor: those stay the Founder's decision on noema#349. The Steward changes no threshold.
+- **A126(a) and `tasks.csv`.** VOI-01 stays "In progress" and is set `blocked` = true in `tasks.csv` in this change; the reason is: vendor API documents from the Founder are not yet supplied (VOI-01's done_when needs an interface test against a recorded sample per provider, F4). The gap is carried by DEBT-14, DEBT-15 and DEBT-24 (Tier 1, expiry 30 Nov). The row for the Needs gate, as the Engineering Lead worded it on noema#413: "VOI-02 and VOI-18 may merge before VOI-01 is Done, because VOI-01's done_when waits on provider documents and synthetic samples (F4); the gap is DEBT-14 (Tier 1, expires 2026-11-30); VOI-02 and VOI-18 run against synthetic audio only until VOI-01 is Done." The Architect's ruling names noema#193 only; the row's mention of VOI-18 (already merged as #187) is EL's wording and is recorded as such.
 - **A126(c).** noema#358 stays blocked on A116 until docs#148 merges; A116 is recorded there.
 
 ## 3. The Steward's ledger
