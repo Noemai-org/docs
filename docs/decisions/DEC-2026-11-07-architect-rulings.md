@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed for the Founders. The Architect gave these rulings in a work order of 7 November 2026 (Block C) and they are recorded here as given. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). They count once both Founders approve and merge this pull request. |
+| **Status** | **Decided** (housekeeping, 9 Nov 2026, following the precedent of Block E E6 of 7 Nov 2026: this record was merged into `main` by the Founders' approval, so it counts; the Status line is the only change). Originally: Proposed for the Founders. The Architect gave these rulings in a work order of 7 November 2026 (Block C) and they are recorded here as given. An instruction given in a session is not authoritative until committed (AGENTS §2, item 3). They count once both Founders approve and merge this pull request. |
 | **Date** | 7 November 2026 |
 | **Owner** | Founder and Technical Co-Founder |
 | **Decides** | The rulings in §1. |
@@ -11,7 +11,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; counts once both Founders approve and merge this pull request
+- Status: Decided (merged); counts once both Founders approve and merge this pull request (see the table above)
 - Date: 7 November 2026
 - Decides: the rulings in §1
 - Owner: Founder and Technical Co-Founder

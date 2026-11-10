@@ -953,7 +953,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-76: Caddy as the webhook relay's TLS terminator (AGENT-14)
 
-- **Status:** [OPEN] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11 (Proposed). It closes when that record is approved and merged; until then Caddy is not approved. The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
+- **Status:** [DECIDED] · ruled by [DEC-2026-11-06-architect-rulings](decisions/DEC-2026-11-06-architect-rulings.md) A11: the relay's TLS terminator is Caddy (HTTP-01, ports 80 and 443, no DNS plugin). That record is merged, so Caddy is approved (housekeeping, 9 Nov 2026). The entry exists because AGENT-14 asks for an [OPEN] entry before a new component.
 - **Answer (A11):** Caddy terminates TLS for the relay, with HTTP-01 on ports 80 and 443 and no DNS plugin.
 - **Missing decision:** which component terminates TLS for the webhook relay (ENV-13), and how it gets its certificate.
 - **Why it matters:** it is a new component on the path of inbound events; the relay's public address and certificates must stay out of the repository (AGENTS §10).
@@ -1003,6 +1003,17 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (the proposal); SR (accepts, SEC-04); Architect (the credential-class ruling); Founders (D5, D14).
 - **Deadline:** before the control plane is built (TRU-08 slice 2).
 - **Source:** PERD v1.20 §39.1, §39.4; Founder decisions D5, D7, D14; DEC-2026-11-01 D3a; ruling A1, A20; REQ-SEC-001, REQ-SEC-002.
+### OD-P-78: Pack data and evidence for delegate, joint-account and approver-threshold authority (R7), and what R8 repeats (DEFAULT, PCK)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use. Founder decision D13 (7 Nov 2026) confirms the default ("if authority depends on facts the pack lacks, escalate and do not act"); the entry closes when D13 is committed to a decision record.
+- **Missing decision:** the benchmark suite (A26, family R7) needs cases for a delegate acting for an owner, a joint account, and an approver whose authority depends on an amount threshold. The pack can say who may act on a resource only with what the contracts define: `authority.principal_must_own` (slot names), `authority.roles_allowed` (the four roles of ruling A1) and `approvals` (role names). It has no evidence entity for an account holder, a joint holder or a delegation, and no source that serves one (DEBT-12: account state has no source), and no threshold on an approver. A rule over such facts cannot be type-checked against evidence that does not exist, so the pack side cannot honestly be written yet.
+- **Why it matters:** building these as pack data without a source would give the cases something to run that no component can answer; Trust would either guess or fail open on a fact it cannot read (INV-10).
+- **Default (smallest safe):** in the POC, authority that depends on a delegation, a joint holder or an approver amount threshold is not decided autonomously: the request is ESCALATE with a reason that says which fact is missing. That reason is for the case and the operator only. The customer-facing message keeps the not-found shape for a non-owner (as in the X3 cases) and never reveals that a joint holder, a delegate or an approver threshold exists on someone else's account, so the R7 cases and the explanation templates cannot leak it (Security Reviewer, 7 Nov 2026). The cases for R7 then test that Noema escalates and does not act, and that the owner-only case (`principal_must_own`) still works. R8 (the same decision on five repeats) is not pack data: it is the determinism property of TRU-09 (replay, 10⁴ replays, 0 mismatches), and the benchmark checks it by running a case five times.
+- **What would change it:** a design partner or the Tushe environment supplying an account-holder, delegation and mandate-limit source; a ruling that the evidence descriptors gain those entities (a contract change under AGENT-15, with an evidence source and a stand-in served by ENV-04).
+- **Not covered:** money movement of any size (prohibited, BD-08); approver amount thresholds on a write the POC does not have.
+- **Owner:** EL (the default); Architect (the decision); BO (the cases).
+- **Deadline:** before BO fixes the R7 cases for the first visible set.
+- **Source:** ruling A26 (benchmark suite v1, R7 and R8); PERD v1.20 §15, §23.4; REQ-TRU-009 (determinism, TRU-09); DEBT-12.
 
 ### OD-P-80: AGENT-14 entry, the arm-facing tool facade (APPROVED by the Architect, relayed by IL)
 
@@ -1015,3 +1026,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** IL (the build); Architect (the approval).
 - **Deadline:** before the facade is merged.
 - **Source:** noema#363; AGENT-14.
+
+### OD-P-81: What a pack tool's input schema may contain (DECIDED with the Integration Lead, noema#362)
+
+- **Status:** [DECIDED] · NON-CANONICAL · proposed by EL (pack owner) under AGENT-02 on noema#362; the Integration Lead (facade owner) answered yes on 10 Nov 2026, as the Architect sync of 10 Nov asked. Built in noema#417.
+- **Missing decision:** which fields a published tool schema (`packs/schemas/fin/*.v1.json`, the capabilities' `input_schema`) holds. The stand-in's request bodies mix fields a caller supplies with fields Noema fills from the session or from Trust and Execution.
+- **Why it matters:** the comparison arms are offered the same tools as Noema. An arm must never be asked for an identity (INV-12) or for a value Trust or Execution derives, or the tool surface itself becomes a way to forge one.
+- **Default (smallest safe):** only the fields a caller supplies, with `additionalProperties: false`. Never the tenant, the principal, the epoch, `created_by_intent`, version tokens, idempotency keys or payload hashes. Reads take only lookup keys (transaction, account, time window). No schema exists for a prohibited capability (BD-08, REQ-CAP-002).
+- **What would change it:** a facade or arm that cannot work without a derived field passed through by the caller; then the field is added by a pack change with its reason.
+- **Not covered:** the field list of each tool (in noema#417; `lookup_transaction_history` is the least-sourced one).
+- **Owner:** EL (pack data); IL (the facade).
+- **Deadline:** before the facade's schema conformance test is enabled.
+- **Source:** noema#362, noema#417; INV-12; AGENT-02.
