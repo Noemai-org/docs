@@ -58,6 +58,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-08-rec-09-record-export](DEC-2026-11-08-rec-09-record-export.md) | Ruling A109: the Founders approve new task REC-09, the Noema record export (a library function, not a route), on four conditions |
 | [DEC-2026-11-09-one-founder-approval](DEC-2026-11-09-one-founder-approval.md) | Ruling A111 (Founder): one approval from the Founder who did not drive the pull request merges any pull request in `docs` or `noema`; supersedes the "both Founders" wording |
 | [DEC-2026-11-09-sec-15-per-login-secrets](DEC-2026-11-09-sec-15-per-login-secrets.md) | Ruling A112 (Principal Architect, noema#385): DEBT-13 does not block noema#181; new task SEC-15 (per-login secrets for tenant and power logins, owner C1, reviewer SR) |
+| [DEC-2026-11-10-architect-sync-a113-a122](DEC-2026-11-10-architect-sync-a113-a122.md) | Rulings A113 to A122 (Architect sync): migration gap accepted and strict merge order; kill-switch event kinds (PERD v1.22 draft); `outputs_digest`; `permit_case_writes`; `DISPATCH_ATTEMPTED` key; no arm run before G3; evidence-set hash trigger; code freeze Wed 9 Dec; A14 unchanged; recovery CLARIFY/CONFIRM escalates |
 | [DEC-2026-11-10-architect-sync-2-a123-a126](DEC-2026-11-10-architect-sync-2-a123-a126.md) | Rulings A123 to A126 (second Architect sync): P0 second-review rule; Codex READY on a stacked child's own commit range; noema#156 and #198 merge together; #193 on DEBT-14/15/24, interval bounds, #272 cites D10 |
 
 ## Where decisions already live
