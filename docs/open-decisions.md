@@ -1026,3 +1026,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** IL (the build); Architect (the approval).
 - **Deadline:** before the facade is merged.
 - **Source:** noema#363; AGENT-14.
+
+### OD-P-81: What a pack tool's input schema may contain (DECIDED with the Integration Lead, noema#362)
+
+- **Status:** [DECIDED] · NON-CANONICAL · proposed by EL (pack owner) under AGENT-02 on noema#362; the Integration Lead (facade owner) answered yes on 10 Nov 2026, as the Architect sync of 10 Nov asked. Built in noema#417.
+- **Missing decision:** which fields a published tool schema (`packs/schemas/fin/*.v1.json`, the capabilities' `input_schema`) holds. The stand-in's request bodies mix fields a caller supplies with fields Noema fills from the session or from Trust and Execution.
+- **Why it matters:** the comparison arms are offered the same tools as Noema. An arm must never be asked for an identity (INV-12) or for a value Trust or Execution derives, or the tool surface itself becomes a way to forge one.
+- **Default (smallest safe):** only the fields a caller supplies, with `additionalProperties: false`. Never the tenant, the principal, the epoch, `created_by_intent`, version tokens, idempotency keys or payload hashes. Reads take only lookup keys (transaction, account, time window). No schema exists for a prohibited capability (BD-08, REQ-CAP-002).
+- **What would change it:** a facade or arm that cannot work without a derived field passed through by the caller; then the field is added by a pack change with its reason.
+- **Not covered:** the field list of each tool (in noema#417; `lookup_transaction_history` is the least-sourced one).
+- **Owner:** EL (pack data); IL (the facade).
+- **Deadline:** before the facade's schema conformance test is enabled.
+- **Source:** noema#362, noema#417; INV-12; AGENT-02.
