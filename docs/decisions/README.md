@@ -61,6 +61,7 @@ This directory holds **decision records**: dated, owned records of decisions. It
 | [DEC-2026-11-10-architect-block-f-a129-a136](DEC-2026-11-10-architect-block-f-a129-a136.md) | Architect Block F: A130 to A134 (a READY follows the PR's own diff; the definition of done; at most 10 open PRs; no polling; Codex only on READY FOR CODEX) and the Founder's G5 field-gate decision (noema#349); the texts of A129, A135, A136 are pending |
 | [DEC-2026-11-10-architect-sync-a113-a122](DEC-2026-11-10-architect-sync-a113-a122.md) | Rulings A113 to A122 (Architect sync): migration gap accepted and strict merge order; kill-switch event kinds (PERD v1.22 draft); `outputs_digest`; `permit_case_writes`; `DISPATCH_ATTEMPTED` key; no arm run before G3; evidence-set hash trigger; code freeze Wed 9 Dec; A14 unchanged; recovery CLARIFY/CONFIRM escalates |
 | [DEC-2026-11-10-architect-sync-2-a123-a126](DEC-2026-11-10-architect-sync-2-a123-a126.md) | Rulings A123 to A126 (second Architect sync): P0 second-review rule; Codex READY on a stacked child's own commit range; noema#156 and #198 merge together; #193 on DEBT-14/15/24, interval bounds, #272 cites D10 |
+| [DEC-2026-11-10-architect-sync-3-a127-a128](DEC-2026-11-10-architect-sync-3-a127-a128.md) | Rulings A127 and A128 (afternoon Architect sync): noema#168's text fix goes in a follow-up with its head unchanged; merge only after the reviewer-role READY at the current head, on the owner's READY TO MERGE line |
 
 ## Where decisions already live
 
