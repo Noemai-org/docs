@@ -8,7 +8,7 @@ This file adds no product rules. It adds the working practice for applying the [
 
 - **Noema:** models understand; Noema makes understanding safe to act on, makes the action happen correctly, and proves the outcome (SoT §0.1, item 4).
 - **What we are building now:** the POC, one narrow, hostile workflow. Noema is not its POC (SoT §0.1, item 1).
-- **Dates:** build from Mon 19 Oct to Fri 13 Nov 2026 (re-baselined by DEC-2026-10-16 E3). If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
+- **Dates:** build from Mon 19 Oct to Sat 12 Dec 2026, with the demo on Sat 12 Dec at 14:00 (re-baselined by DEC-2026-11-03-demo-date-and-no-scope-cut). If the time box and the safety gates conflict, the gates win and the date moves (SoT §40.2).
 - **The three documents, in order:** the SoT, then the PERD, then the plan. Code comes last.
 - **The one rule:** when in doubt, take the safer reading, write the ambiguity down, and ask (AGENT-20). Never invent.
 
