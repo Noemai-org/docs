@@ -79,5 +79,5 @@ Relayed by the Founder at the Architect sync of 10 Nov 2026 (afternoon) and rest
 | A109 to A112 | REC-09, control-plane callers, one non-author Founder approval, DEBT-13 and SEC-15 | |
 | DEC-2026-11-10-architect-sync-a113-a122 (merged) | A113 to A122 | |
 | DEC-2026-11-10-architect-sync-2-a123-a126 (merged) | A123 to A126 | |
-| DEC-2026-11-10-architect-sync-3-a127-a128 (docs#152, open) | A127, A128 | |
+| DEC-2026-11-10-architect-sync-3-a127-a128 (docs#152, merged) | A127, A128 | |
 | This record | A129 to A136 (A129, A135, A136 pending text) | **A137** |
