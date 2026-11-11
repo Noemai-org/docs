@@ -30,14 +30,14 @@
 
 | ID | Ruling (as given) | Supersedes |
 |---|---|---|
-| **A129** | **Text not supplied to the Steward.** The only description received: it narrows A14 for a main-red hotfix. The conditions of the narrowing (who may merge, which reviews, which checks) are not recorded here and **nobody may apply A129 until its text is committed**. | Pending its text. |
+| **A129** | **Text not supplied to the Steward when this record was written; it is now in `DEC-2026-11-11-architect-rulings-a129-a147`.** The only description received then: it narrows A14 for a main-red hotfix. The conditions of the narrowing (who may merge, which reviews, which checks) are not recorded here and **nobody may apply A129 until its text is committed**. | Pending its text. |
 | **A130** | **A READY follows the PR's own diff, not its head.** A clean merge of `main`, or a comment-only or status-only commit, keeps every READY. Post the patch-id before and after. Nobody re-reads. | **Generalises D11** (DEC-2026-11-07-founder-decisions-block-d): D11 covered a clean merge of `main` for a Codex READY; A130 covers every READY and also comment-only and status-only commits, and requires the patch-id before and after. |
 | **A131** | **Definition of done.** Before posting `READY FOR CODEX at <sha>`, the PR body carries and fills the table in §2. If any row is empty, the task is **not** done. After one `READY FOR CODEX` line, push only to fix a named finding. | **Adds** to the PR-description rules of AGENTS §11 and plan §13.1. Supersedes nothing. |
 | **A132** | Any Draft you have not finished: complete it now. **The end-of-day open pull request count must be 10 or less.** | Nothing. It sits beside the plan §5 limit (at most 4 open PRs per driving founder), which is unchanged. |
 | **A133** | No polling, no "nothing needs action" messages, no repeated status. If blocked on a named gate, end the turn. Report once, when done or when a human is needed. | Nothing. A process rule for agents. |
 | **A134** | **Codex reviews only on one line:** `READY FOR CODEX at <sha>`. | **Narrows A29** (the same line, "the Founders run sweeps") and **bears on A121** (a Founder sweep or the Codex bot at the current head counts): see §5, a question for the Architect. |
-| **A135** | **Text not supplied to the Steward.** Number reserved. | Pending its text. |
-| **A136** | **Text not supplied to the Steward.** Number reserved. | Pending its text. |
+| **A135** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Pending its text. |
+| **A136** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Pending its text. |
 
 ## 2. The definition of done (A131), as given
 
