@@ -36,8 +36,8 @@
 | **A132** | Any Draft you have not finished: complete it now. **The end-of-day open pull request count must be 10 or less.** | Nothing. It sits beside the plan §5 limit (at most 4 open PRs per driving founder), which is unchanged. |
 | **A133** | No polling, no "nothing needs action" messages, no repeated status. If blocked on a named gate, end the turn. Report once, when done or when a human is needed. | Nothing. A process rule for agents. |
 | **A134** | **Codex reviews only on one line:** `READY FOR CODEX at <sha>`. | **Narrows A29** (the same line, "the Founders run sweeps") and **bears on A121** (a Founder sweep or the Codex bot at the current head counts): see §5, a question for the Architect. |
-| **A135** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Pending its text. |
-| **A136** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Pending its text. |
+| **A135** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Per the record of 11 Nov. |
+| **A136** | **Text now in `DEC-2026-11-11-architect-rulings-a129-a147`.** | Per the record of 11 Nov. |
 
 ## 2. The definition of done (A131), as given
 
