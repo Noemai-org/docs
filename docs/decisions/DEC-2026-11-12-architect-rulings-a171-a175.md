@@ -38,7 +38,8 @@
 
 ## 2. What the Steward did where the rulings are silent
 
-- **A171 and the OD-P numbers.** OD-P-82 stays with docs#159. The Steward allocates OD-P-83 to BO's link-format entry and OD-P-84 to FE's frontend-dependency entry, in the order they open. The Steward files neither entry; their owners do. **OD-P-85** in docs#163 (the intent signature, A177) is the next after those two; if either owner has not opened an entry by the time docs#163 merges, the numbers stay reserved.
+- **A171 and the OD-P numbers.** OD-P-82 stays with docs#159. The Steward allocates OD-P-83 to BO's link-format entry and OD-P-84 to FE's frontend-dependency entry, in the order they open. The Steward files neither entry; their owners do. **OD-P-85** is the resume-of-a-stranded-run entry that EL asked the Steward to file on docs#159 (it refines A168 and A172). **OD-P-86** in docs#163 (the intent signature, A177) follows it. If BO or FE has not opened an entry by the time these merge, 83 and 84 stay reserved.
+- **OD-P-82 completed.** EL stated the missing fields on docs#159 (what would change it, the deadline, and that the same reader pools serve the reconstruction route of noema#486). The Steward copied them into the entry as EL wrote them.
 - **A171 and the board.** The Steward does not repeat any PR's migration number on noema#183 or in a record; it points to C1's table.
 - **A172 and noema#495.** The Steward takes the owner assignment in noema#495 as superseded and says so on that issue when the ruling counts. The task row for the `Trust.Decide` lookup follow-up is not created here (no task ID was given); EL's PR carries its own task ID.
 - **A173 and A166.** A166 item (2) told C2 to replace a loosened canonical JSON rule with integer basis points through a contract bump. A173 names the contracts (`intent-slot.v2`, `intent-object.v3`), the order (after noema#480 merges) and the owners. No contract file changes in this record (AGENT-15 steps are the PRs').

@@ -1045,8 +1045,20 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Missing decision:** how the SSE events route (`GET /v1/conversations/{conversation_ref}/events`, PERD §39.2) reads the Record and the investigation state per tenant.
 - **Why it matters:** tenant isolation is enforced in the database (REQ-SEC-004); a shared reader credential would let the route read across tenants.
 - **Default (smallest safe, ruling A170):** a file-mounted, read-only DSN per tenant. The route stays unmounted until it is configured.
-- **What would change it:** to be stated by EL when filing (the ruling gives the default only).
-- **Not covered:** the route's event contents (PERD §39.2).
+- **What would change it:** (1) a decision to serve the Record and the investigation state from a pooled reader that is not per-tenant, which would need row-level security to carry the isolation alone (today the tenant is bound by the login, DEBT-04 option A); (2) the platform configuration (OPS-01) defining the secret layout for per-tenant logins differently from one read-only DSN file per tenant (noema#181 already mounts per-tenant secrets for the emitters); (3) the Record export (REC-09) replacing a live read for the events route. Evidence that would invalidate the default: a tenant whose reader login cannot read its own chain, or a login that can read another tenant's. (Stated by EL on docs#159.)
+- **Not covered:** the route's event contents (PERD §39.2). The same reader pools serve the reconstruction route (`GET /v1/reconstructions/{correlation_id}`, noema#486), so this entry covers both routes.
 - **Owner:** EL (files and builds); Architect (the decision).
-- **Deadline:** before the route is mounted.
+- **Deadline:** before the SSE events route or the reconstruction route is mounted in a deployed profile (both stay unmounted until the DSN files are set).
 - **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
+
+### OD-P-85: Resume of a stranded run (DEFAULT, EL; ruling A168)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A168 and A172, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md) and [DEC-2026-11-12-architect-rulings-a171-a175](decisions/DEC-2026-11-12-architect-rulings-a171-a175.md); count once those records are merged). Filed by the Steward from EL's answer on noema#477, posted on docs#159.
+- **Missing decision:** what happens to an input that is recorded but not processed. PERD 28.2 has no failure state or arrow for it, and re-running `Trust.Decide` would record a second decision.
+- **Why it matters:** a stranded run that is retried must not record a second decision for the same input (INV-03 spirit: no action without a single, recorded decision; the Record is the proof, AGENT-21).
+- **Default (smallest safe):** resume from the last recorded state, never close the run. The retry goes through `Start` (noema#490), as A168 rules. Resume itself waits for the `Trust.Decide` follow-up PR (lookup on `(tenant_id, intent_id, intent_hash)` and its unique index), as A172 rules.
+- **What would change it:** C1's check that `Trust.Decide` returns the existing decision for the same input and appends nothing; or a ruling that adds a failure state to PERD 28.2 (a PERD change, by a new version file).
+- **Not covered:** the state machine itself (PERD 28.2); the follow-up PR's design.
+- **Owner:** EL (the build); Architect (the decision); C1 (the check).
+- **Deadline:** before the persistence slice is wired into the runner.
+- **Source:** rulings A168 and A172; noema#466, noema#477, noema#490; PERD 28.2.
