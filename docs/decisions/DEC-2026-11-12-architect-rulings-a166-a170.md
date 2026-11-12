@@ -7,7 +7,7 @@
 | **Owner** | Principal Architect (the rulings); Founder (the approval); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Five rulings, A166 to A170 (§1). Each states what it supersedes. |
 | **Closes** | The four decisions asked on noema#484 (A166), the Codex P1 on noema#466 (A168) and the Codex P2 on noema#465 (A169). |
-| **Supersedes** | Per ruling, in §1. In short: A167 resolves the 0022 clash recorded in `DEC-2026-11-12-architect-rulings-a148-a160`, §2. |
+| **Supersedes** | Per ruling, in §1. In short: A167 resolves the 0022 clash recorded in `DEC-2026-11-12-architect-rulings-a148-a160`, §2; its statement that noema#410 holds 0022 is corrected by A171. |
 | **Amends** | Nothing in the SoT, the PERD or the plan. The task row for A170 is a change request (§2): [CR-2026-11-12-A170-sse-events-task-row](../poc/execution/change-requests/CR-2026-11-12-A170-sse-events-task-row.md). |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -41,7 +41,7 @@
 - **The A170 task row.** The change request `CR-2026-11-12-A170-sse-events-task-row` is written. It proposes the row's fields, which the ruling does not give: the ID, the gate date and the done_when are the Steward's smallest defaults, marked as such, for EL or the Architect to correct. **The plan version that adds the row is written after docs#157 merges**, because plan v1.17 (A159) is in that pull request and a second plan version cannot be started from v1.16 beside it.
 - **The A170 [OPEN] entry.** The Steward filed `OD-P-82` from the ruling's own words (the default, the unmounted route). EL, who the ruling says files it, states the missing fields ("what would change it", the deadline) on noema#484 or in a reply on docs.
 - **A167 and the board.** The migration table on noema#183 is C1's from now on; the Steward's board points to it and renumbers nothing.
-- **A167 and noema#410 (needs the Architect).** noema#410 is **closed without a merge** on GitHub, so no open PR currently holds 0022 apart from noema#471, which has it in its file. The Steward changes nothing; the Architect is asked whether 0022 is meant to stay reserved for the evidence-set binding (A119) when it is reopened.
+- **A167 and noema#410: corrected by A171.** noema#410 is closed without a merge, so A167's words "which noema#410 holds" are no longer true. A171 (in `DEC-2026-11-12-architect-rulings-a171-a175`) corrects them: **0022 stays reserved for C2's evidence-set binding; no other PR uses it.** C1's migration table on noema#183 governs every migration number. The Steward does not restate any PR's current number here; the table is the source (a reviewer read noema#471 at head `9403e0b7` as using `0026_admitted_intent.sql`).
 - **A166 and A163.** A163 is in `DEC-2026-11-12-architect-rulings-a162-a165` (docs#158, open). A166 "confirms" it; the Steward adds no text to A163.
 - **Numbering.** A148 to A161 are in docs#157 and A162 to A165 in docs#158, both open when this was written. This record follows them; next free is **A171**.
 
