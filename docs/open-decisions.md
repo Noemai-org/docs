@@ -1038,3 +1038,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (pack data); IL (the facade).
 - **Deadline:** before the facade's schema conformance test is enabled.
 - **Source:** noema#362, noema#417; INV-12; AGENT-02.
+
+### OD-P-85: The Intent Object's signature in the POC (OPEN, check against the SoT; ruling A177)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A177, noema#484).
+- **Missing decision:** whether the POC may leave the Intent Object's own `sig` field as an unsigned marker and treat the Record's signature on `INTENT_ADMITTED` (made by the REC-08 emitter signer) as the signature that counts. SoT §7 says the Intent Object is "signed by Understanding" and lists "schema and signature of the Intent Object" among Trust's checks. The model service never signs (INV-29), and no signing domain for Understanding exists.
+- **Why it matters:** if the SoT reading stands, Trust has a check it cannot perform in the POC. If A177 stands, the SoT sentence and the build differ, and a reader of the SoT could expect a signature that is not there. AGENT-02 forbids inventing a signing domain.
+- **Default (smallest safe):** A177 as ruled. The core computes `intent_hash` over canonical JSON. The Record signs `INTENT_ADMITTED`. The Intent Object's `sig` stays the unsigned marker. No new signing domain. The model-side gate stays on v1 until the v2 contract is live.
+- **What would change it:** a ruling that Understanding signs (that needs a signing domain, a key outside the model service's reach, and a contract change under AGENT-15); or a SoT edit that moves the signature check from the Intent Object to the Record.
+- **Not covered:** the v2 contract's shape; the content of noema#484 and #489.
+- **Owner:** Architect (the decision); Founders (a SoT edit, if one is needed); EL and C1 (the build).
+- **Deadline:** before the v2 intent contract goes live.
+- **Source:** ruling A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
