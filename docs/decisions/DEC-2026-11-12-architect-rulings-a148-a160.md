@@ -56,7 +56,20 @@
 - **A156 and A149.** The open-decision entry for MEM-02 is BO's. The Steward adds no entry.
 - **Closing.** Each asker closes its own issue once this merges.
 
-## 3. The Steward's ledger
+## 3. A148 in detail: the four ENV-04 evidence defaults, as written on noema#443 and noema#441
+
+noema#460 (C2) asked for the defaults to be in a committed record, because noema#443's reviewer gave a P1 at `89ee1cf`: the evidence-status rules were not decided in a committed record. The Architect's answer on noema#441, as C2 quoted it: "your task card is approved; the four defaults on #443 are accepted as proposed (final read = ledger/switch/destination all read with KNOWN status; no settlement item; scope strings as written; payload shape as written)". The ruling is A148 in §1. The text below is C2's statement of the four defaults; **if the Architect's text differs, the Architect's text governs** and the code follows it.
+
+1. A read is determinate (KNOWN) only when it is final: the ledger has at least one entry and none pending; the switch is terminal and not UNKNOWN; the destination is a credit, not UNKNOWN or PENDING, with a terminal settlement (`REVERSAL_PENDING` is non-terminal, A31). Otherwise UNKNOWN.
+2. There is no `fin.src.settlement` item: the destination answer is recorded under the destination source only.
+3. `resource_scope` is `<resource kind from the pack>:<transaction ref>`; `principal_scope` is the session principal.
+4. The payload is the normalised port answer, with sensitivity from the pack's source descriptor.
+
+**Affected IDs:** REQ-CTX-001, REQ-CTX-002, REQ-ENV-001, REQ-AUD-001; INV-19, INV-23; A31. **Owner:** Principal Architect. **Date:** 12 November 2026.
+
+**What would invalidate it** (C2's statement): a requirement that pending states count as determinate. Then default 1 changes, and the code and its tests change with it by a new ruling.
+
+## 4. The Steward's ledger
 
 | Block | Numbers | Next free |
 |---|---|---|
