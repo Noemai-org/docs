@@ -36,7 +36,7 @@ The prompts the harness sends to a model are an outward surface. The PERD wins o
 
 ## 2. Why it is safe
 
-Tightening masking is safer: a shorter unmasked run exposes less. **No comparison-arm run has taken place** (no arm runs before G3, A118), so no result was produced under the old value and no result has to be redone.
+Tightening masking is safer: a shorter unmasked run exposes less. **No comparison-arm run has taken place** (no arm runs before G3, A118), so no comparison result was produced under the old value and none has to be redone. **Earlier live calls are not comparison results but did use the old value:** the pilot of the 27 Oct freeze, the cancelled run mentioned on noema#342, and any UND-05 qualification call made before the re-freeze merges. Those results stay labelled as made under `account_run_min_digits: 8` and are not mixed with results under the new floor. A live call made after this record is approved should wait for the re-freeze to merge.
 
 ## 3. What this record does not do
 
