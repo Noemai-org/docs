@@ -6,7 +6,7 @@
 | **Date** | 12 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Two interim rulings, A177 and A178 (§1). |
-| **Closes** | Nothing by itself. Opens OD-P-85 (§2). |
+| **Closes** | Nothing by itself. Opens OD-P-86 (§2). |
 | **Supersedes** | Nothing committed. See §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
@@ -15,7 +15,7 @@
 
 - Status: Interim; counts once a Founder who did not author this pull request approves and merges
 - Date: 12 November 2026
-- Closes: nothing by itself; opens OD-P-85
+- Closes: nothing by itself; opens OD-P-86
 - Owner: Principal Architect; Founder; Technical Co-Founder
 - Decides: A177 (interim), A178 (interim)
 - Decision: §1
@@ -35,8 +35,8 @@
 
 ## 2. What the Steward did where the rulings are silent
 
-- **The [OPEN] entry for A177 is OD-P-85.** The Steward read the SoT before writing it and found a difference to check, not a decision. SoT §7 describes the Intent Object as "signed by Understanding", and its Trust row lists "schema and signature of the Intent Object" among the checks. A177 keeps the Intent Object's `sig` as an unsigned marker and takes the Record's signature on `INTENT_ADMITTED` as the one that counts. The entry records that as the default and asks the Architect or the Founders to say whether this needs a SoT edit, a decision record that amends the SoT reading, or nothing. The Steward does not decide it.
-- **The OD-P number.** docs#159 holds OD-P-82. The Steward understands BO and FE take the next two, so this record uses OD-P-85 and leaves 83 and 84 free. If BO or FE already hold 85, the Steward renumbers in one push.
+- **The [OPEN] entry for A177 is OD-P-86.** The Steward read the SoT before writing it and found a difference to check, not a decision. SoT §7 describes the Intent Object as "signed by Understanding", and its Trust row lists "schema and signature of the Intent Object" among the checks. A177 keeps the Intent Object's `sig` as an unsigned marker and takes the Record's signature on `INTENT_ADMITTED` as the one that counts. The entry records that as the default and asks the Architect or the Founders to say whether this needs a SoT edit, a decision record that amends the SoT reading, or nothing. The Steward does not decide it.
+- **The OD-P number.** A171 (docs#159) gives OD-P-83 and OD-P-84 to BO's and FE's next entries. OD-P-85 is the stranded-run entry filed in docs#159 from EL's comment. This record therefore uses **OD-P-86**. If the order of merges changes the numbers, the Steward renumbers in one push.
 - **Ruling numbers.** A171 to A175 are still not recorded; their texts have not been given. A176 is in docs#162 (open). Next free after this record: **A179**.
 - **Who does what.** C2 fixes the noema#489 README and comments; the Steward does not touch noema#489. The Steward asks nothing of the model service.
 - **A178 and the review comments.** The Steward will not count a reviewer's READY at an unchanged head as closing an inline P1. On a PR with an open inline P1 the Steward will say so on the board and wait for Codex's per-thread answer.

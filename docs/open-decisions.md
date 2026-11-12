@@ -1039,7 +1039,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the facade's schema conformance test is enabled.
 - **Source:** noema#362, noema#417; INV-12; AGENT-02.
 
-### OD-P-85: The Intent Object's signature in the POC (OPEN, check against the SoT; ruling A177)
+### OD-P-86: The Intent Object's signature in the POC (OPEN, check against the SoT; ruling A177)
 
 - **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A177, noema#484).
 - **Missing decision:** whether the POC may leave the Intent Object's own `sig` field as an unsigned marker and treat the Record's signature on `INTENT_ADMITTED` (made by the REC-08 emitter signer) as the signature that counts. SoT §7 says the Intent Object is "signed by Understanding" and lists "schema and signature of the Intent Object" among Trust's checks. The model service never signs (INV-29), and no signing domain for Understanding exists.
