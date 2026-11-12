@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Decided by the Principal Architect on 12 Nov 2026, relayed to the Repo Steward; recorded by the Repo Steward.** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). **A162 also needs the Founder's approval of the harness re-freeze record** (`DEC-2026-11-12-harness-masking-refreeze`, D10 frozen values). |
+| **Status** | **Decided by the Principal Architect on 12 Nov 2026, relayed to the Repo Steward; recorded by the Repo Steward.** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). **A162's harness re-freeze record was approved by the Founder in the session of 12 Nov 2026** (`DEC-2026-11-12-harness-masking-refreeze`, D10 frozen values). |
 | **Date** | 12 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Four rulings, A162 to A165 (§1). Each states what it supersedes. |

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Proposed by the Principal Architect's ruling A162 (12 Nov 2026). Needs the Founder's approval** because it changes frozen values (D10). It counts once a Founder who did not author this pull request approves and merges it (A111). |
+| **Status** | **Proposed by the Principal Architect's ruling A162 (12 Nov 2026). The Founder approved it in the session of 12 Nov 2026, with the two conditions in §2** (frozen values, D10); the approval is recorded here by the Repo Steward and counts once a Founder who did not author this pull request approves and merges this pull request (A111; AGENTS §2, item 3). |
 | **Date** | 12 November 2026 |
 | **Owner** | Founder (the approval); Benchmark Owner (the re-freeze in `noema`); Principal Architect (the ruling) |
 | **Decides** | The two harness configurations are re-frozen without the masking key, and the harness reads the shared `masking-limits.v1`, whose floor is 4. |
@@ -13,7 +13,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Proposed; needs the Founder's approval (frozen values)
+- Status: Approved by the Founder in session, 12 Nov 2026; counts once merged (frozen values)
 - Date: 12 November 2026
 - Closes: EL's finding on the harness masking floor
 - Owner: Founder; Benchmark Owner; Principal Architect
