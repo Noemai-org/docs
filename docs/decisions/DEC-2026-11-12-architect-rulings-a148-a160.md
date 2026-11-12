@@ -50,6 +50,8 @@
 - **A159 and statuses.** `tasks.csv` status fields stay as they are. A159 says GOV-03 and PRE-05 are done, but the plan requires a linked piece of evidence for Done (AGENTS §9). The Steward sets the status when the owners link the evidence (the access list for GOV-03, the delivery for PRE-05). The change request edits only the GOV-08 and GOV-10 rows.
 - **A159 and the person named.** The name in A159 is recorded as given, for the GOV-03 row's evidence.
 - **A160.** `AGENTS.md` §11's "Reviews" line now states the A143 gates; PERD v1.23 changes only the §71.2 "Code review" row. The `noema` copy of `AGENTS.md` and `CLAUDE.md` is re-pointed after this merges (REQ-OPS-005).
+- **A154 against the PERD (needs the Architect; raised by C1 in review).** A154 sets digit masking to runs of 8 or more. The PERD's acceptance criteria say "no unmasked digit runs longer than 4" in two places, and the reconstruction handler in `noema` masks runs of 5 or more today. The record does not say whether A154 covers only the log redactor or also served facts and the UI. The Steward changes nothing; the Architect is asked, before EL builds the shared constant in noema#458.
+- **A149 and A150 against noema#447 (C1's report).** The orchestrator in noema#447 does not yet append `INPUT_RECEIVED` first (A149). EL needs a follow-up for it; the ruling names no task or owner for it.
 - **A156 and A149.** The open-decision entry for MEM-02 is BO's. The Steward adds no entry.
 - **Closing.** Each asker closes its own issue once this merges.
 

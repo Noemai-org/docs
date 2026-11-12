@@ -4,7 +4,7 @@
 
 **From Monday 19 October to Saturday 12 December 2026 (re-baselined by DEC-2026-11-03-demo-date-and-no-scope-cut; the work delivered on 12 to 16 October is shown as week 0): Monday to Saturday are work days; one hostile proof, one demo, on Saturday 12 December at 14:00.**
 
-Version 1.17 · 12 November 2026 · Governing documents: Noema Single Source of Truth v1.11 (SoT) and Noema POC Product & Engineering Requirements Document v1.22 (PERD, 10 November 2026)
+Version 1.17 · 12 November 2026 · Governing documents: Noema Single Source of Truth v1.11 (SoT) and Noema POC Product & Engineering Requirements Document v1.23 (PERD, 12 November 2026)
 
 Version 1.17 applies ruling A159 of 12 November 2026 (DEC-2026-11-12-architect-rulings-a148-a160) by the change request CR-2026-11-12-A159-gov-decisions: **GOV-08** no longer contracts reviewers (it keeps the OQ-12 Africa/Lagos time-zone confirmation) and **GOV-10** uses the field contributors. GOV-03 and PRE-05 are decided as done; their status fields change when their evidence is linked (AGENTS §9). No task is added or removed, no gate, requirement or date changes; the task count stays 265, and Version 1.16 stays unchanged.
 
