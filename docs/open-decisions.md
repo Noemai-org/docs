@@ -1038,3 +1038,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (pack data); IL (the facade).
 - **Deadline:** before the facade's schema conformance test is enabled.
 - **Source:** noema#362, noema#417; INV-12; AGENT-02.
+
+### OD-P-82: Per-tenant reader pools for the SSE events route (DEFAULT, EL; ruling A170)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A170, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md); counts once that record is merged).
+- **Missing decision:** how the SSE events route (`GET /v1/conversations/{conversation_ref}/events`, PERD §39.2) reads the Record and the investigation state per tenant.
+- **Why it matters:** tenant isolation is enforced in the database (REQ-SEC-004); a shared reader credential would let the route read across tenants.
+- **Default (smallest safe, ruling A170):** a file-mounted, read-only DSN per tenant. The route stays unmounted until it is configured.
+- **What would change it:** to be stated by EL when filing (the ruling gives the default only).
+- **Not covered:** the route's event contents (PERD §39.2).
+- **Owner:** EL (files and builds); Architect (the decision).
+- **Deadline:** before the route is mounted.
+- **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
