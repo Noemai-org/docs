@@ -1038,3 +1038,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** EL (pack data); IL (the facade).
 - **Deadline:** before the facade's schema conformance test is enabled.
 - **Source:** noema#362, noema#417; INV-12; AGENT-02.
+
+### OD-P-82: The link format of a fix PR's regression case (MEM-02; proposed default, accepted by ruling A156)
+
+- **Status:** [DECIDED] · NON-CANONICAL · proposed by the Benchmark Owner under AGENT-02 on noema#452; accepted by the Principal Architect as ruling A156 (12 Nov 2026), which is recorded in docs#157 (DEC-2026-11-12-architect-rulings-a148-a160) and counts once a Founder who did not author that pull request merges it.
+- **Missing decision:** the format of the regression link that REQ-MEM-002 requires on a fix PR. The requirement says a fix links the regression case it adds; it fixes no format.
+- **Why it matters:** the check that enforces the link (`tools/ci/check_regression_link.py`, noema#452) needs a rule it can test, and the Definition of Done (AGENTS.md section 8: regression case committed before the fix merges) needs a place a reviewer can find the case.
+- **Default (smallest safe):** a fix PR (head branch `fix/...`, or a title that says fix) carries one line `Regression case: <ref>` in its body, outside any code block or quote. `<ref>` is a benchmark case ID (`BEN-<CATEGORY>-<4 digits>`) or a test file that the PR itself changes (`test_*.py`, `*_test.py`, `*_test.go`, `*.test.ts[x]`, optionally `::name`). "none", "n/a", "TBD" and empty are refused. The check follows CommonMark for fenced code.
+- **What would change it:** a regression-case registry (a directory of permanent cases) that the check should resolve IDs against instead of the shape alone; or a requirement to prove the order of the commits (the PR's file list cannot show that the test came before the fix; the reviewer reads the commits).
+- **Not covered:** wiring the check into a workflow (a separate PR after noema#452 merges; `.github` needs a Founder's approval, AGENTS.md section 11); the order of commits.
+- **Owner:** Benchmark Owner (the entry and the check); Architect (the decision, A156); Founder (the workflow wiring).
+- **Deadline:** before the workflow wiring PR.
+- **Source:** ruling A156; noema#452; REQ-MEM-002, REQ-BEN-006; AGENT-02, AGENT-11, AGENT-23.
