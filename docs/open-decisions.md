@@ -58,7 +58,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · Founder approval required before installation or use. The Steward allocates the register number; concurrent proposals already use OD-P-82.
 - **Missing decision:** Approve the exact UI-01 runtime and test dependencies and versions under AGENT-14.
 - **Why it matters:** The fixed stack calls for React and Playwright, but the UI manifest currently contains only TypeScript. UI-01 needs a React runtime, TypeScript declarations and browser tests; pinning avoids floating versions.
-- **Proposed minimal list:** `react` 19.3.1, `react-dom` 19.3.1, `@types/react` 19.3.0, `@types/react-dom` 19.3.0 and `@playwright/test` 1.65.0. Keep the existing TypeScript 5.9.3; add no other direct dependency. These versions are proposals, not approval.
+- **Proposed minimal list:** `react` 19.3.1, `react-dom` 19.3.1, `@types/react` 19.3.0, `@types/react-dom` 19.3.0 and `@playwright/test` 1.64.1. Keep the existing TypeScript 5.9.3; add no other direct dependency. These versions are proposals, not approval.
 - **What would invalidate it:** a Founder decision for different versions or tools, a security or compatibility issue, or evidence that a listed package is unnecessary.
 - **Owner:** Founder decides; Steward allocates the ID and records the decision. Until approval, do not install the proposed packages.
 - **Source:** UI-01, REQ-UI-001, AGENT-14; noema#502.
