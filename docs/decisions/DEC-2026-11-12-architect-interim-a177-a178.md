@@ -40,6 +40,7 @@
 - **Ruling numbers.** A171 to A175 are still not recorded; their texts have not been given. A176 is in docs#162 (open). Next free after this record: **A179**.
 - **Who does what.** C2 fixes the noema#489 README and comments; the Steward does not touch noema#489. The Steward asks nothing of the model service.
 - **A178 and the review comments.** The Steward will not count a reviewer's READY at an unchanged head as closing an inline P1. On a PR with an open inline P1 the Steward will say so on the board and wait for Codex's per-thread answer.
+- **A177 and A166 item (1).** A166 (docs#159, open) says the core computes the hash and the signature after the gate. A177 narrows that: the core computes `intent_hash`; the signature that counts is the Record's on `INTENT_ADMITTED`; the Intent Object's `sig` stays an unsigned marker. The Steward reads A177 as the later ruling and does not edit A166's given text. Because A166 is not yet committed, this record supersedes nothing committed.
 - **Interim.** Both rulings are marked interim by the Architect. They stay until a later ruling replaces them.
 
 ## 3. The Steward's ledger
