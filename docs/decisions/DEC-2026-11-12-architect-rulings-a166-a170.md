@@ -1,8 +1,8 @@
-# DEC-2026-11-12 · Architect rulings A166 to A170 (Founder-approved)
+# DEC-2026-11-12 · Architect rulings A166 to A170 (relayed as Founder-approved)
 
 | | |
 |---|---|
-| **Status** | **Decided by the Principal Architect and approved by the Founder on 12 Nov 2026, relayed to the Repo Steward; recorded by the Repo Steward.** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
+| **Status** | **Decided by the Principal Architect on 12 Nov 2026 and relayed to the Repo Steward as approved by the Founder; recorded by the Repo Steward. The relayed approval counts as the Founder's only when a Founder who did not author this pull request merges it (A111).** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 12 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder (the approval); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Five rulings, A166 to A170 (§1). Each states what it supersedes. |
@@ -13,7 +13,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Decided 12 Nov 2026; counts once a Founder who did not author this pull request approves and merges
+- Status: Recorded 12 Nov 2026 (the Founder's approval is relayed); counts on merge by a non-author Founder (A111)
 - Date: 12 November 2026
 - Closes: the questions on noema#484, noema#466 (P1) and noema#465 (P2)
 - Owner: Principal Architect; Founder; Technical Co-Founder
