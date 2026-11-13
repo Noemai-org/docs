@@ -1145,3 +1145,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Voice Engineer (what Intron returns); Founder or pack data (the value).
 - **Deadline:** before the first gate run on Intron.
 - **Source:** ruling A181; REQ-VOI-003; INV-02; UND-13.
+
+### OD-P-93: A TypeScript codegen target for the UI's contract types (OPEN; AGENT-14; for the Founders' approval)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (noema#523, [DEC-2026-11-13-architect-rulings-a193-a198](decisions/DEC-2026-11-13-architect-rulings-a193-a198.md)). **The Steward files it; the Founders approve it.** The approach was chosen in a session, which is not authoritative until committed (AGENTS §2, item 3).
+- **Missing decision:** approval of a third generator target, TypeScript, in the in-repository generator `tools/codegen`, so that the UI has types and runtime parsers for the contracts it reads (generated into `ui/src/contract_types/`).
+- **Why it matters:** the UI shows only what the core sent and never an unmasked number (PERD §40.4), so every response and event is parsed before it is shown. The fixed stack gives codegen to Go and Pydantic only, and hand-written types per language are forbidden (PERD §36.1). A new generator target is a new tool (AGENT-14).
+- **Default (smallest safe):** the target in noema#523: Python standard library only, no new dependency, scoped by `tools/codegen/ts.json` (a contract the UI does not read does not reach the bundle), output never edited by hand, `generate.py --check` failing on a difference. Owners agree: C1 for `tools/codegen`, the frontend engineer for `ui/`.
+- **What would change it:** a decision to use a schema-to-TypeScript tool from outside (a new dependency), or to keep UI types hand-written (against PERD §36.1); or a finding that the parsers need the conditional rules of the schemas (the Security Reviewer's note on noema#523).
+- **Not covered:** the UI's API client; the conditional rules (`if`, `then`, `not`), which stay with the JSON Schema validator.
+- **Owner:** Founders (the approval); EL (the PR); C1 and the frontend engineer (the owners of the paths).
+- **Deadline:** before noema#523 merges.
+- **Source:** noema#523; AGENT-14, AGENT-15; PERD §36.1, §40.4; ruling A187.
+
