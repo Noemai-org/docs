@@ -12,4 +12,4 @@
 - SoT or PERD text changes: no.
 - Decision owner: Principal Architect
 - Decision record: [DEC-2026-11-12-architect-rulings-a166-a170](../../../decisions/DEC-2026-11-12-architect-rulings-a166-a170.md), A170
-- Migration and rollback: none. Apply by adding the row in a new plan version after docs#157 merges (plan v1.17 is there); roll back by returning to the previous plan version.
+- Migration and rollback: none. Applied in plan v1.18 (the row was added after docs#157 and docs#159 merged); roll back by returning to the previous plan version.
