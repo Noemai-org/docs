@@ -1051,6 +1051,17 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the SSE events route or the reconstruction route is mounted in a deployed profile (both stay unmounted until the DSN files are set).
 - **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
 
+<a id="od-p-84"></a>
+### OD-P-84: UI-01 frontend dependencies (AGENT-14; DECIDED by the Founder, 13 Nov 2026)
+
+- **Status:** [CLOSED] · NON-CANONICAL · decided 13 November 2026 by [DEC-2026-11-13-ui-01-frontend-dependencies](decisions/DEC-2026-11-13-ui-01-frontend-dependencies.md) D1 to D6 (takes effect when that record is approved and merged).
+- **Missing decision:** Approve the exact UI-01 runtime and test dependencies and versions under AGENT-14.
+- **Why it matters:** The fixed stack calls for React and Playwright, but the UI manifest currently contains only TypeScript. UI-01 needs a React runtime, TypeScript declarations and browser tests; pinning avoids floating versions.
+- **Decision:** `react` 19.3.1, `react-dom` 19.3.1, `@types/react` 19.3.0, `@types/react-dom` 19.3.0 and `@playwright/test` 1.64.1, exact-pinned, with the existing TypeScript 5.9.3. No other direct dependency. The record sets three conditions: exact pins and a committed lockfile, an `npm audit` result in the UI-01 pull request, and a stated way for CI to obtain the Playwright browsers.
+- **What would invalidate it:** a Founder decision for different versions or tools, a security or compatibility issue, or evidence that a listed package is unnecessary.
+- **Owner:** Founder decided; Steward records the decision.
+- **Source:** UI-01, REQ-UI-001, AGENT-14; noema#502; proposed in docs#161.
+
 ### OD-P-85: Resume of a stranded run (DEFAULT, EL; ruling A168)
 
 - **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A168 and A172, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md) and [DEC-2026-11-12-architect-rulings-a171-a175](decisions/DEC-2026-11-12-architect-rulings-a171-a175.md); count once those records are merged). Filed by the Steward from EL's answer on noema#477, posted on docs#159.
