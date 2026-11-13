@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | **Decided by the Principal Architect on 12 Nov 2026, relayed to the Repo Steward; recorded by the Repo Steward.** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). **A162's harness re-freeze record was approved by the Founder in the session of 12 Nov 2026** (`DEC-2026-11-12-harness-masking-refreeze`, D10 frozen values). |
+| **Status** | **Decided by the Principal Architect on 12 Nov 2026, relayed to the Repo Steward; recorded by the Repo Steward.** Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). **A162's harness re-freeze record is Proposed; the Founder's in-session approval of 12 Nov 2026 is recorded in it and counts on merge by a non-author Founder (A111)** (`DEC-2026-11-12-harness-masking-refreeze`, D10 frozen values). |
 | **Date** | 12 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Four rulings, A162 to A165 (§1). Each states what it supersedes. |
 | **Closes** | The questions behind noema#462 (A165) and noema#472 (A164), and EL's finding on the harness masking floor (A162). |
 | **Supersedes** | Per ruling, in §1. |
-| **Amends** | Nothing in the SoT, the PERD or the plan. The rulings of A148 to A161 are in `DEC-2026-11-12-architect-rulings-a148-a160` (docs#157, open when this was written). |
+| **Amends** | Nothing in the SoT, the PERD or the plan. The rulings of A148 to A161 are in `DEC-2026-11-12-architect-rulings-a148-a160` (docs#157, merged on 12 Nov). |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -37,7 +37,7 @@
 
 ## 2. What the Steward did where the rulings are silent
 
-- **A162 and the new record.** The Steward wrote the decision record the ruling asks for in the docs repository: `DEC-2026-11-12-harness-masking-refreeze`. It names what changes and what it supersedes, and **needs the Founder's approval**. The re-freeze itself (the two config files and the new SHA-256 hashes in a `benchmark/decisions/` record) is the Benchmark Owner's work in `noema`; the Steward computes no hash and edits no benchmark file.
+- **A162 and the new record.** The Steward wrote the decision record the ruling asks for in the docs repository: `DEC-2026-11-12-harness-masking-refreeze`. It names what changes and what it supersedes, and records the Founder's in-session approval, which counts on merge by a non-author Founder (A111). It also requires the new freeze record to name the path and SHA-256 of `masking-limits.v1`. The re-freeze itself (the two config files and the new SHA-256 hashes in a `benchmark/decisions/` record) is the Benchmark Owner's work in `noema`; the Steward computes no hash and edits no benchmark file.
 - **A162 against A154.** A154 already puts the maximum unmasked digit run at 4 on every outward surface, including model prompts. A162 applies it to the harness. They do not conflict.
 - **A164 and A165 and numbers.** The migration number 0024 is A165's. 0022 stays unresolved between noema#410 and the admitted-intent store (record `DEC-2026-11-12-architect-rulings-a148-a160`, §2); this record does not decide it.
 - **`tasks.csv`.** No change is made: the message says "UND-05 and EXE-05 notes per Architect" but gives no text, and the CSV has no note column. The session note records what is already decided for both (UND-05: the USD 5 hard stop and the key names, DEC-2026-11-11-architect-rulings-a129-a147 §3; EXE-05: the allowlist of A157). The Steward asks the Architect for the notes.
@@ -47,5 +47,5 @@
 | Block | Numbers | Next free |
 |---|---|---|
 | Earlier records (merged) | A41 to A147 | |
-| DEC-2026-11-12-architect-rulings-a148-a160 (docs#157, open) | A148 to A161 | |
+| DEC-2026-11-12-architect-rulings-a148-a160 (docs#157, merged) | A148 to A161 | |
 | This record | A162 to A165 | **A166** |

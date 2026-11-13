@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Proposed by the Principal Architect's ruling A162 (12 Nov 2026). The Founder approved it in the session of 12 Nov 2026, with the two conditions in §2** (frozen values, D10); the approval is recorded here by the Repo Steward and counts once a Founder who did not author this pull request approves and merges this pull request (A111; AGENTS §2, item 3). |
+| **Status** | **Proposed by the Principal Architect's ruling A162 (12 Nov 2026). The Founder said in the session of 12 Nov 2026 that they approve it, with the two conditions in §2** (frozen values, D10). The Repo Steward records that statement here; it is not an approval until a Founder who did not author this pull request merges it (A111; AGENTS §2, item 3). |
 | **Date** | 12 November 2026 |
 | **Owner** | Founder (the approval); Benchmark Owner (the re-freeze in `noema`); Principal Architect (the ruling) |
 | **Decides** | The two harness configurations are re-frozen without the masking key, and the harness reads the shared `masking-limits.v1`, whose floor is 4. |
@@ -13,7 +13,7 @@
 
 **Record fields (decisions README template).**
 
-- Status: Approved by the Founder in session, 12 Nov 2026; counts once merged (frozen values)
+- Status: Proposed; the Founder's in-session approval of 12 Nov 2026 is recorded here and counts on merge by a non-author Founder (A111) (frozen values)
 - Date: 12 November 2026
 - Closes: EL's finding on the harness masking floor
 - Owner: Founder; Benchmark Owner; Principal Architect
@@ -33,6 +33,7 @@ The prompts the harness sends to a model are an outward surface. The PERD wins o
 1. `benchmark/decisions/harness-gpt-6-luna.json` and `harness-gpt-6.1-terra.json` are re-frozen **without** the `masking` key.
 2. The harness reads the masking floor from the shared `masking-limits.v1`, the one constant shared by the core and the model service (A154).
 3. A new freeze record in `noema` (`benchmark/decisions/`) carries the new hashes of the two files.
+4. **The same record names the path and the SHA-256 of `masking-limits.v1`** (the file that noema#468 adds; it is not on `main` yet) at the commit the re-freeze covers. The masking value is no longer pinned inside the two hashed configs, so without this hash a later run has no frozen proof of the floor. The re-freeze is not complete until the record carries it.
 
 ## 2. Why it is safe
 
@@ -40,7 +41,7 @@ Tightening masking is safer: a shorter unmasked run exposes less. **No compariso
 
 ## 3. What this record does not do
 
-- It does not change any file in `noema`. The Benchmark Owner makes the two config edits, computes the new SHA-256 hashes and merges the new freeze record; the benchmark tests that check the hashes fail until the new record is merged (`benchmark/decisions/README.md`).
+- It does not change any file in `noema`. The Benchmark Owner makes the two config edits, computes the new SHA-256 hashes of the two configs and of `masking-limits.v1` and merges the new freeze record; the benchmark tests that check the hashes fail until the new record is merged (`benchmark/decisions/README.md`).
 - It does not touch the corpus, the scoring code, the gates or the retry policy of the 27 Oct freeze.
 
 ## 4. What would invalidate it
