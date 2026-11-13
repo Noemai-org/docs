@@ -1039,6 +1039,18 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the facade's schema conformance test is enabled.
 - **Source:** noema#362, noema#417; INV-12; AGENT-02.
 
+### OD-P-82: Per-tenant reader pools for the SSE events route (DEFAULT, EL; ruling A170)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A170, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md); counts once that record is merged).
+- **Missing decision:** how the SSE events route (`GET /v1/conversations/{conversation_ref}/events`, PERD §39.2) reads the Record and the investigation state per tenant.
+- **Why it matters:** tenant isolation is enforced in the database (REQ-SEC-004); a shared reader credential would let the route read across tenants.
+- **Default (smallest safe, ruling A170):** a file-mounted, read-only DSN per tenant. The route stays unmounted until it is configured.
+- **What would change it:** (1) a decision to serve the Record and the investigation state from a pooled reader that is not per-tenant, which would need row-level security to carry the isolation alone (today the tenant is bound by the login, DEBT-04 option A); (2) the platform configuration (OPS-01) defining the secret layout for per-tenant logins differently from one read-only DSN file per tenant (noema#181 already mounts per-tenant secrets for the emitters); (3) the Record export (REC-09) replacing a live read for the events route. Evidence that would invalidate the default: a tenant whose reader login cannot read its own chain, or a login that can read another tenant's. (Stated by EL on docs#159.)
+- **Not covered:** the route's event contents (PERD §39.2). The same reader pools serve the reconstruction route (`GET /v1/reconstructions/{correlation_id}`, noema#486), so this entry covers both routes.
+- **Owner:** EL (files and builds); Architect (the decision).
+- **Deadline:** before the SSE events route or the reconstruction route is mounted in a deployed profile (both stay unmounted until the DSN files are set).
+- **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
+
 ### OD-P-83: The link format of a fix PR's regression case (MEM-02; default; the test-file alternative stays off in the check until the workflow wiring PR)
 
 - **Status:** [OPEN] · NON-CANONICAL · proposed by the Benchmark Owner under AGENT-02 on noema#452. The Principal Architect accepted the format as ruling A156 (12 Nov 2026), which is now committed in `docs/decisions/DEC-2026-11-12-architect-rulings-a148-a160.md` (docs#157, merged); the number OD-P-83 is the Steward's allocation under ruling A171. The entry stays [OPEN] for one reason: ruling A156 says the workflow wiring is a separate PR after noema#452 merges, and until that PR sets `REGRESSION_ALLOW_TEST_FILE=1` the check accepts only a benchmark case ID, which is what REQ-MEM-002 itself requires. The status becomes [DECIDED] in the wiring PR.
@@ -1051,3 +1063,27 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Benchmark Owner (the entry and the check); Architect (the decision, A156); Founder (the workflow wiring).
 - **Deadline:** before the workflow wiring PR.
 - **Source:** ruling A156; noema#452; REQ-MEM-002, REQ-BEN-006; AGENT-02, AGENT-11, AGENT-23.
+
+### OD-P-85: Resume of a stranded run (DEFAULT, EL; ruling A168)
+
+- **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A168 and A172, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md) and [DEC-2026-11-12-architect-rulings-a171-a175](decisions/DEC-2026-11-12-architect-rulings-a171-a175.md); count once those records are merged). Filed by the Steward from EL's answer on noema#477, posted on docs#159.
+- **Missing decision:** what happens to an input that is recorded but not processed. PERD 28.2 has no failure state or arrow for it, and re-running `Trust.Decide` would record a second decision.
+- **Why it matters:** a stranded run that is retried must not record a second decision for the same input (INV-03 spirit: no action without a single, recorded decision; the Record is the proof, AGENT-21).
+- **Default (smallest safe):** resume from the last recorded state, never close the run. The retry goes through `Start` (noema#490), as A168 rules. Resume itself waits for the `Trust.Decide` follow-up PR (lookup on `(tenant_id, intent_id, intent_hash)` and its unique index), as A172 rules.
+- **What would change it:** C1's check that `Trust.Decide` returns the existing decision for the same input and appends nothing; or a ruling that adds a failure state to PERD 28.2 (a PERD change, by a new version file).
+- **Not covered:** the state machine itself (PERD 28.2); the follow-up PR's design.
+- **Owner:** EL (the build); Architect (the decision); C1 (the check).
+- **Deadline:** before the persistence slice is wired into the runner.
+- **Source:** rulings A168 and A172; noema#466, noema#477, noema#490; PERD 28.2.
+
+### OD-P-86: The Intent Object's signature in the POC (OPEN, check against the SoT; ruling A177)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A177, noema#484).
+- **Missing decision:** whether the POC may leave the Intent Object's own `sig` field as an unsigned marker and treat the Record's signature on `INTENT_ADMITTED` (made by the REC-08 emitter signer) as the signature that counts. SoT §7 says the Intent Object is "signed by Understanding" and lists "schema and signature of the Intent Object" among Trust's checks. The model service never signs (INV-29), and no signing domain for Understanding exists.
+- **Why it matters:** if the SoT reading stands, Trust has a check it cannot perform in the POC. If A177 stands, the SoT sentence and the build differ, and a reader of the SoT could expect a signature that is not there. AGENT-02 forbids inventing a signing domain.
+- **Default (smallest safe):** A177 as ruled. The core computes `intent_hash` over canonical JSON. The Record signs `INTENT_ADMITTED`. The Intent Object's `sig` stays the unsigned marker. No new signing domain. The model-side gate stays on v1 until the v2 contract is live.
+- **What would change it:** a ruling that Understanding signs (that needs a signing domain, a key outside the model service's reach, and a contract change under AGENT-15); or a SoT edit that moves the signature check from the Intent Object to the Record.
+- **Not covered:** the v2 contract's shape; the content of noema#484 and #489.
+- **Owner:** Architect (the decision); Founders (a SoT edit, if one is needed); EL and C1 (the build).
+- **Deadline:** before the v2 intent contract goes live.
+- **Source:** ruling A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
