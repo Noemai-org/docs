@@ -34,7 +34,7 @@
 
 ## 2. What the Steward did where the ruling is silent
 
-- **The numbering.** The Architect's rulings from A171 to A175 have not been given to the Steward in text. This record does not use those numbers and does not guess them. **Next free after this record: A177**; the Steward adds A171 to A175 in a follow-up pull request when their texts arrive.
+- **The numbering.** A171 to A175 are recorded in `DEC-2026-11-12-architect-rulings-a171-a175` (docs#159, merged). A177 and A178 are in docs#163. This record carries A176 only. **Next free after A178: A179.**
 - **Rule (5) and who checks.** The Steward will not approve the `actions/cache` pin until IL names the tag and the full SHA and the SHA is checked on GitHub's release page (for the tag, the commit SHA of the tag in `actions/cache`). Nothing is approved here.
 - **Rules (1) to (3) and the Steward's own branches.** The Steward follows them from this record's date: it merges `main` into a pull request only to clear a conflict, and it does not push to a branch while a run on it is in progress.
 - **Interim.** The ruling is marked interim by the Architect. It stays until a later ruling replaces it.
@@ -44,8 +44,8 @@
 | Block | Numbers | Next free |
 |---|---|---|
 | Earlier records (merged) | A41 to A147 | |
-| docs#157 (open) | A148 to A161 | |
-| docs#158 (open) | A162 to A165 | |
-| docs#159 (open) | A166 to A170 | |
-| A171 to A175 | used by the Architect; texts not yet given to the Steward | |
+| docs#157 (merged) | A148 to A161 | |
+| docs#158 (merged) | A162 to A165 | |
+| docs#159 (merged) | A166 to A170 | |
+| docs#159 (merged) | A171 to A175 | |
 | This record | A176 (interim) | **A177** |
