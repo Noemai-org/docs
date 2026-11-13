@@ -5,7 +5,7 @@
 | **Status** | **DRAFT for the Founders to author or approve. This file edits nothing.** The SoT is changed only by a new version made by the Founders, with an Appendix D entry (AGENTS §11, docs repository). Interim ruling A189; counts as recorded once a Founder who did not author this pull request merges it (A111). |
 | **Date** | 13 November 2026 |
 | **Owner** | Founders |
-| **Ruling** | A189 (interim), in [DEC-2026-11-13-architect-rulings-a183-a192](DEC-2026-11-13-architect-rulings-a183-a192.md); A177 stays interim until this edit. |
+| **Ruling** | A189 (interim), in `DEC-2026-11-13-architect-rulings-a183-a192` (docs#169); A177 stays interim until this edit. |
 | **Version number** | **v1.13.** The Intron change (rulings A179 to A182) is v1.12 and is a separate pull request (docs#168). This draft is applied after v1.12. |
 
 **Record fields (decisions README template).**
