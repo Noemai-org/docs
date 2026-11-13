@@ -47,19 +47,19 @@
 - **OD-P-85 and OD-P-86 reconciled.** A189 says the signature conflict is "OD-P-85". In the register OD-P-85 is the stranded-run resume (A168, A172) and **the signature conflict is OD-P-86** (the numbers moved when BO and FE took 83 and 84). The Steward applied A189 to OD-P-86 and A186 to OD-P-85, and changed no other entry's number.
 - **A184 and the number 4.** "Longer than 4" is read as A154's maximum unmasked digit run of 4: a run of 5 or more is refused. The Steward did not restate which characters count beyond what A184 names (all Unicode digits and the separator set from noema#492).
 - **A186 and A172.** A172's lookup key and unique index are replaced by A186. OD-P-85 now says so. No migration number is taken; 0027 stays reserved.
-- **A188 needs an approval that is not the Steward's.** The Steward filed **OD-P-92** (the recorded-replay Understanding provider) as [OPEN] and **awaiting the Founder's approval (AGENT-14)**. The Steward does not approve a new component. The ruling's "your approval" is read as the Founder's.
+- **A188 and OD-P-92: approved by the Founder.** A188 says the replay provider "needs an [OPEN] entry and your approval (AGENT-14)". The Steward filed **OD-P-92** and does not approve a new component. **The Founder approved it in session on 13 Nov 2026** (the Founder's statement to the Steward, recorded here and in OD-P-92; it counts as committed once a non-author Founder merges this pull request, A111). The approval covers exactly the default in OD-P-92.
 - **The task rows (A188 and the Architect's list).** [CR-2026-11-13-A188-task-rows](../poc/execution/change-requests/CR-2026-11-13-A188-task-rows.md) proposes six rows and records that EDG-02 stays with EL and is marked Done on the merge evidence of noema#496 (merged 13 Nov). The rows enter the plan in a new version after plan v1.18 (docs#166) merges; plan v1.18 carries EDG-02. The Steward writes no plan version in this pull request.
 - **G1.** Recorded **BLOCKED, no date yet**, in `docs/poc/execution/gates/G1.md`, with a re-baseline template that has no date ([templates/gate-rebaseline.md](../poc/execution/templates/gate-rebaseline.md)). The gate did not run; nothing is pre-filled except the outcome the ruling names.
-- **docs#168.** The Founder commits the v1.12 SoT edit on that branch before any review; the Steward does not push to docs#168 after any approval (and has not touched it since). OD-P-88, 89, 90 and 91 are **adopted as written**. Their register entries are in docs#168; the Steward changes their Status line only after docs#168 merges, in a pull request that touches nothing else.
+- **docs#168 (now merged).** The Architect's instruction was that the Founder commits the v1.12 SoT edit on that branch before any review; docs#168 merged with the SoT unchanged (SoT v1.11 on `main`), so A179 to A182 are still not in effect and the Founders decide when the v1.12 edit lands. The Steward pushed once to it, at the Founder's request, only to clear a README conflict. OD-P-88, 89, 90 and 91 are **adopted as written**. Their register entries are in docs#168; the Steward changes their Status line only after docs#168 merges, in a pull request that touches nothing else.
 - **UND-05 and EXE-05 task notes: dropped.** `tasks.csv` is unchanged; the notes were never given in text and the CSV has no note column.
 - **A189 and the SoT.** The Steward drafts the SoT v1.13 change for A189 in a separate pull request and edits nothing in the SoT.
 - **Not done here (waiting on others).** The device holder (the Founder names it; noema#514). Closing noema#391 and #423 (after Codex's note). The retro reads on the governance issues (the Security Reviewer).
-- **Numbering.** Next free ruling: **A193**. Next free OD-P: 93 (87 to 91 are in docs#168, 92 here; 83 and 84 stay with BO and FE).
+- **Numbering.** Next free ruling: **A193**. Next free OD-P: 93 (87 to 91 are in the merged docs#168, 92 is here; 83 and 84 stay with BO and FE).
 
 ## 3. The Steward's ledger
 
 | Block | Numbers | Next free |
 |---|---|---|
 | Earlier records (merged) | A41 to A178 | |
-| docs#168 (open) | A179 to A182 | |
+| docs#168 (merged) | A179 to A182 | |
 | This record | A183 to A192 | **A193** |

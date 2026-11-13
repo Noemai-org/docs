@@ -1085,12 +1085,74 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Not covered:** the v2 contract's shape; the content of noema#484 and #489.
 - **Owner:** Architect (the decision); Founders (a SoT edit, if one is needed); EL and C1 (the build).
 - **Deadline:** before the v2 intent contract goes live.
+- **Source:** ruling A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
+
+### OD-P-87: The SoT edit for BD-16 and OD-04 when Intron becomes the sole speech provider (OPEN; ruling A179)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A179, [DEC-2026-11-13-voice-provider-intron](decisions/DEC-2026-11-13-voice-provider-intron.md); counts once that record is merged).
+- **Missing decision:** the Founders' authoring or approval of the SoT edit that A179 needs: BD-16 (SoT lines 101 and 729), §35.3 (1511), §37 "Provider runs" (1816), OD-04 (2381) and the §51 `/providers` layout (2575), with an Appendix D entry. The ruling names "SoT v1.7"; the SoT on `main` is v1.11 and Appendix D already lists v1.7, so the next version is v1.12 and the number needs confirming.
+- **Why it matters:** the SoT outranks every record. BD-16 says "speech integrates at least Aethex AI, Indigenius and N-ATLAS"; A179 integrates only Intron. Until the SoT changes, the SoT text stands and no one builds against A179 (AGENT-20, AGENT-27).
+- **Default (smallest safe):** the draft in [DEC-2026-11-13-voice-provider-intron-sot-draft](decisions/DEC-2026-11-13-voice-provider-intron-sot-draft.md), which edits nothing. The Steward does not edit the SoT. BD-16 is not reinterpreted.
+- **What would change it:** the Founders reword the draft, or decide the SoT stays and A179 is withdrawn.
+- **Not covered:** a second speech provider (OD-P-88); data terms (OD-P-89).
+- **Owner:** Founders (the SoT edit); Architect (the ruling).
+- **Deadline:** before any task that builds against A179 starts (VOI-01, VOI-04, VOI-10, BEN-23, UND-13 and PRE-04 as changed by CR-2026-11-13-A179-intron-voice-provider).
+- **Source:** ruling A179; SoT BD-16, OD-04, §35.3, §37, §51; AGENTS §11 (the SoT is not edited in place).
+
+### OD-P-88: Whether to add a second speech provider at pilot readiness (OPEN; ruling A179)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A179).
+- **Missing decision:** whether the POC adds a second speech provider, decided by the Founder at pilot readiness.
+- **Why it matters:** one provider is a single point of failure for voice; A179 accepts that for the POC because a failure degrades safely to text and replacing Intron needs no change to Trust, Execution, Outcome or the Record.
+- **Default (smallest safe):** no second provider in the POC.
+- **What would change it:** the POC evidence A179 names: the G5 voice gate result, the field report (VOI-14), the latency lab report (VOI-16), Intron's answer on capacity, the data-terms outcome (GOV-25) and the failure drills. The gate thresholds already in the pack and the plan decide; agents set none.
+- **Not covered:** which provider a second one would be.
+- **Owner:** Founder (the decision); Voice Engineer and Benchmark Owner (the evidence).
+- **Deadline:** pilot readiness.
+- **Source:** ruling A179; G5; VOI-14, VOI-16, GOV-25.
+
+### OD-P-89: Intron's written data terms (OPEN; ruling A180)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A180).
+- **Missing decision:** the Founder's commit of Intron's written terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
+- **Why it matters:** no real speaker's audio or transcript goes to Intron before this (A180, PERD R-18, AGENTS §10). "Zero data retention" is an unverified claim until it is in writing.
+- **Default (smallest safe):** synthetic audio only. The VOI-05 consent form names Intron.
+- **What would change it:** the Founder commits the written terms and says they are acceptable; or Intron's terms are not acceptable, which reopens OD-P-88.
+- **Not covered:** any claim of regulatory compliance (SoT §50.2).
+- **Owner:** Founder; GOV-25 and PRE-04 carry the work.
+- **Deadline:** before the first real speaker's recording (VOI-06).
+- **Source:** ruling A180; PERD R-18; GOV-25; VOI-05.
+
+### OD-P-90: Intron's rate limits and capacity (OPEN; rulings A179 and A182)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (rulings A179 and A182).
+- **Missing decision:** which rate limits and what capacity bind the voice subset run (BEN-23), the field work and a pilot, and whether Intron's answer on capacity is enough for the pilot.
+- **Why it matters:** A182 requires BEN-23 to pace for the documented rate limits. The rulings give no figure; the Steward invents none (AGENT-18).
+- **Default (smallest safe):** pace every run to Intron's documented limits; report the measured results as they come; the adapter splits TTS input into Intron's documented 10 to 100 character chunks (A181).
+- **What would change it:** Intron's written answer on capacity; the latency lab report (VOI-16); a failure drill that shows the limits bind earlier than documented.
+- **Not covered:** G5 thresholds, which do not change (A182).
+- **Owner:** Voice Engineer (the adapter and pacing); Benchmark Owner (BEN-23); Founder (the capacity decision).
+- **Deadline:** before the first gate run on Intron.
+- **Source:** rulings A179, A181, A182; BEN-23; VOI-16.
+
+### OD-P-91: Per-token confidence from Intron's speech-to-text (OPEN; ruling A181)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A181).
+- **Missing decision:** whether Intron's speech-to-text returns a confidence for each token, so that the key-slot rule of the PERD (a key slot below the configured confidence forces CLARIFY) can use it; and what the value for "insufficient confidence" is.
+- **Why it matters:** spoken amounts, account identifiers and transaction references are never trusted (A181). If a confidence is not returned, the rule has no input.
+- **Default (smallest safe):** a missing confidence counts as low. Partial transcripts never set a slot. "Insufficient confidence" is Founder or pack data; no agent sets it. A spoken "yes" is never a confirmation; only the signed card submit is.
+- **What would change it:** Intron's documentation or the qualification run (UND-13) showing which confidences it returns; the Founder or the pack setting the value.
+- **Not covered:** the existing thresholds in the pack and the plan, which do not change.
+- **Owner:** Voice Engineer (what Intron returns); Founder or pack data (the value).
+- **Deadline:** before the first gate run on Intron.
+- **Source:** ruling A181; REQ-VOI-003; INV-02; UND-13.
+
 - **Source:** rulings A177 and A189; A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
 
-### OD-P-92: A recorded-replay Understanding provider for the G1 run (AGENT-14; AWAITING THE FOUNDER'S APPROVAL; ruling A188)
+### OD-P-92: A recorded-replay Understanding provider for the G1 run (APPROVED by the Founder in session, 13 Nov 2026; AGENT-14; ruling A188)
 
-- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A188, [DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), interim). **A new component needs an approved entry (AGENT-14); the Steward does not approve it. The Founder does.**
-- **Missing decision:** approval to add a recorded-replay Understanding provider under `providers/` in the model service, for the G1 run.
+- **Status:** [DECIDED] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A188, [DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), interim). **The Founder approved it in session on 13 Nov 2026 (AGENT-14: a new component needs an approved entry).** The approval is recorded here by the Repo Steward as the Founder stated it; it counts as committed once a Founder who did not author this pull request merges it (A111; AGENTS §2, item 3). The approval is for exactly the default below: bench and test profiles only, refused in the demo profile, recordings from a real live compile run as synthetic fixtures with provenance, evidence labelled "Understanding: recorded replay of live output".
+- **Decision:** approved. The question was: approval to add a recorded-replay Understanding provider under `providers/` in the model service, for the G1 run.
 - **Why it matters:** G1 requires two runs of US-01 and US-06 with identical Trust decisions. Live model output differs between runs, so a live provider cannot give identical decisions. Replay can.
 - **Default (smallest safe, ruling A188):** the provider is selected by configuration in the bench and test profiles only and is **refused in the demo profile**. Its recordings come from a real live compile run and are stored as synthetic fixtures with provenance. The G1 evidence is labelled "Understanding: recorded replay of live output". Nothing in Trust, Execution or the Outcome verdict changes; the model output still crosses the schema gate (INV-02).
 - **What would change it:** the Founder declines (G1 would then run on live output and "identical decisions" could not be shown); or the Founder asks for the live compile run to be part of G1, which needs its own cost approval (UND-05).

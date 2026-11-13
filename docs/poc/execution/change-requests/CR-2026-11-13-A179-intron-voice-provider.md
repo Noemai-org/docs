@@ -1,0 +1,21 @@
+# Change request: CR-2026-11-13-A179-intron-voice-provider
+
+- Change ID: CR-2026-11-13-A179-intron-voice-provider
+- Requester: Principal Architect (rulings A179 to A182, Founder decision of 13 Nov 2026), relayed to the Repo Steward
+- REQ IDs affected: REQ-VOI-002 (PERD v1.24, Proposed), REQ-VOI-003, REQ-INT-002, REQ-INT-006, REQ-BEN-005
+- Behaviour before: the plan integrates three speech providers (Aethex AI, Indigenius, N-ATLAS) behind one `SpeechProvider` interface.
+- Behaviour after: **from the SoT edit that adopts A179**, Intron Sahara v2.5 is the sole integrated speech provider, behind separate speech-to-text and text-to-speech interfaces. **Nothing changes in the plan until then**; this request is applied in a new plan version after the Founders approve the SoT edit (plan §19).
+- **Proposed task changes** (the wording keeps each row's owner, REQ, Needs and date; only the provider content changes; owners may correct):
+  - **PRE-04** (provider accounts): GPT, Gemini, Claude and **Intron** (not Aethex AI, Indigenius, N-ATLAS). Ask Intron for its written data terms (retention, zero data retention, no training, sub-processors, hosting region, deletion timeline, incident notice) and its answer on capacity and rate limits (A179, A180). "Zero data retention" stays unverified until in writing.
+  - **VOI-01** (speech provider interface): two provider-neutral interfaces, speech-to-text (audio in, partial and final events with per-token confidence where the provider gives it) and text-to-speech; an Intron adapter behind each; the capability matrix covers Intron only. The adapter splits TTS input into Intron's documented 10 to 100 character chunks (A181). No speech SDK or secret enters core. A missing confidence counts as low.
+  - **VOI-04** (TTS options): Intron's text-to-speech for the five locales; OQ-07 answered with Intron's samples; text on screen where TTS is missing. TTS speaks only the core's masked answer text, never progress text or an execution claim the core did not send (A181). The cut of DEC C8 stays as it is.
+  - **VOI-10** (barge-in and provider failover): barge-in as before; the failover test becomes a **degrade-to-text** test: a speech provider failure mid-utterance gives text, no guessed intent, no unsafe retry, no compromised execution (A179). There is no second provider to fail over to; a second provider is a Founder decision at pilot readiness.
+  - **BEN-23** (provider runs): becomes "Intron on the voice subset": per-locale key-slot accuracy, latency and cost, paced for Intron's documented rate limits; G5 thresholds do not change; a weak result is reported as measured (A182).
+  - **UND-13** (model-drift canary): Intron's speech-to-text and text-to-speech model IDs are pinned and qualified before any gate run; the harness refuses an unqualified ID (A182).
+- Safety and security impact: no Tier 0 gate, threshold, TTL or confidence limit changes (A181: "insufficient confidence" is Founder or pack data). A spoken "yes" is never a confirmation; only the signed card submit is. Spoken amounts, account identifiers and transaction references enter only through canonical input and the schema gate; partial transcripts never set a slot (INV-02, A154). No real speaker's audio or transcript goes to Intron until the Founder commits written terms (A180); until then only synthetic audio, and the VOI-05 consent form names Intron.
+- Tests added or changed: the owners', failing first (AGENT-11). None here.
+- Schedule and dependency impact: GOV-25 (data terms), VOI-05 (consent form naming Intron), VOI-14 (field report) and VOI-16 (latency lab report) feed the pilot-readiness decision of OD-P-88. No date moves in this request; the owners may propose date changes in the plan version.
+- SoT or PERD text changes: yes, drafted: [DEC-2026-11-13-voice-provider-intron-sot-draft](../../../decisions/DEC-2026-11-13-voice-provider-intron-sot-draft.md) (SoT, for the Founders) and PERD v1.24 (Proposed).
+- Decision owner: Founders
+- Decision record: [DEC-2026-11-13-voice-provider-intron](../../../decisions/DEC-2026-11-13-voice-provider-intron.md), A179 to A182
+- Migration and rollback: none for code. Apply by writing a new plan version after the SoT edit takes effect; roll back by returning to the previous plan version and the previous SoT version.
