@@ -37,7 +37,7 @@
 
 - **The [OPEN] entry for A177 is OD-P-86.** The Steward read the SoT before writing it and found a difference to check, not a decision. SoT §7 describes the Intent Object as "signed by Understanding", and its Trust row lists "schema and signature of the Intent Object" among the checks. A177 keeps the Intent Object's `sig` as an unsigned marker and takes the Record's signature on `INTENT_ADMITTED` as the one that counts. The entry records that as the default and asks the Architect or the Founders to say whether this needs a SoT edit, a decision record that amends the SoT reading, or nothing. The Steward does not decide it.
 - **The OD-P number.** A171 (docs#159) gives OD-P-83 and OD-P-84 to BO's and FE's next entries. OD-P-85 is the stranded-run entry filed in docs#159 from EL's comment. This record therefore uses **OD-P-86**. If the order of merges changes the numbers, the Steward renumbers in one push.
-- **Ruling numbers.** A171 to A175 are still not recorded; their texts have not been given. A176 is in docs#162 (open). Next free after this record: **A179**.
+- **Ruling numbers.** A171 to A175 are recorded in docs#159 (merged). A176 is in docs#162 (open). Next free after this record: **A179**.
 - **Who does what.** C2 fixes the noema#489 README and comments; the Steward does not touch noema#489. The Steward asks nothing of the model service.
 - **A178 and the review comments.** The Steward will not count a reviewer's READY at an unchanged head as closing an inline P1. On a PR with an open inline P1 the Steward will say so on the board and wait for Codex's per-thread answer.
 - **A177 and A166 item (1).** A166 (docs#159, open) says the core computes the hash and the signature after the gate. A177 narrows that: the core computes `intent_hash`; the signature that counts is the Record's on `INTENT_ADMITTED`; the Intent Object's `sig` stays an unsigned marker. The Steward reads A177 as the later ruling and does not edit A166's given text. Because A166 is not yet committed, this record supersedes nothing committed.
@@ -48,8 +48,8 @@
 | Block | Numbers | Next free |
 |---|---|---|
 | Earlier records (merged) | A41 to A161 | |
-| docs#158 (open) | A162 to A165 | |
+| docs#158 (merged) | A162 to A165 | |
 | docs#159 (open) | A166 to A170 | |
-| A171 to A175 | used by the Architect; texts not yet given to the Steward | |
+| docs#159 (merged) | A171 to A175 | |
 | docs#162 (open) | A176 (interim) | |
 | This record | A177, A178 (interim) | **A179** |
