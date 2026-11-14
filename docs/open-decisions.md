@@ -1113,7 +1113,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-89: Intron's written data terms (ADOPTED as written; ruling A180)
 
-- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A180). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A180). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider. **Intron's written terms are still unverified: `[DEFAULT]` here does not mean the terms are settled.**
 - **Missing decision:** the Founder's commit of Intron's written terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
 - **Why it matters:** no real speaker's audio or transcript goes to Intron before this (A180, PERD R-18, AGENTS §10). "Zero data retention" is an unverified claim until it is in writing.
 - **Default (smallest safe):** synthetic audio only. The VOI-05 consent form names Intron.
