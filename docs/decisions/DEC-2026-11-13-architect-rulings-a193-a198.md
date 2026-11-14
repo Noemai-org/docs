@@ -56,3 +56,7 @@ The Architect's instruction to the Steward, which this pull request follows: rec
 |---|---|---|
 | Earlier records (merged) | A41 to A192 (A183 to A192 in docs#169) | |
 | This record | A193 to A198 | **A199** |
+
+## Steward note (14 Nov 2026, from the Security Reviewer's read of docs#172)
+
+A198's live compile run (the `bench-live` mode of the live workflow) sends only **synthetic inputs** to the provider, and no held-out case (INV-22, AGENTS section 10), consistent with A180. This note adds no ruling; it records the reading that the Security Reviewer asked to be written down. The Architect may correct it.
