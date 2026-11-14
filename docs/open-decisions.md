@@ -1099,9 +1099,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before any task that builds against A179 starts (VOI-01, VOI-04, VOI-10, BEN-23, UND-13 and PRE-04 as changed by CR-2026-11-13-A179-intron-voice-provider).
 - **Source:** ruling A179; SoT BD-16, OD-04, §35.3, §37, §51; AGENTS §11 (the SoT is not edited in place).
 
-### OD-P-88: Whether to add a second speech provider at pilot readiness (OPEN; ruling A179)
+### OD-P-88: Whether to add a second speech provider at pilot readiness (ADOPTED as written; ruling A179)
 
-- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A179).
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A179). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
 - **Missing decision:** whether the POC adds a second speech provider, decided by the Founder at pilot readiness.
 - **Why it matters:** one provider is a single point of failure for voice; A179 accepts that for the POC because a failure degrades safely to text and replacing Intron needs no change to Trust, Execution, Outcome or the Record.
 - **Default (smallest safe):** no second provider in the POC.
@@ -1111,9 +1111,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** pilot readiness.
 - **Source:** ruling A179; G5; VOI-14, VOI-16, GOV-25.
 
-### OD-P-89: Intron's written data terms (OPEN; ruling A180)
+### OD-P-89: Intron's written data terms (ADOPTED as written; ruling A180)
 
-- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A180).
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A180). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
 - **Missing decision:** the Founder's commit of Intron's written terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
 - **Why it matters:** no real speaker's audio or transcript goes to Intron before this (A180, PERD R-18, AGENTS §10). "Zero data retention" is an unverified claim until it is in writing.
 - **Default (smallest safe):** synthetic audio only. The VOI-05 consent form names Intron.
@@ -1123,9 +1123,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the first real speaker's recording (VOI-06).
 - **Source:** ruling A180; PERD R-18; GOV-25; VOI-05.
 
-### OD-P-90: Intron's rate limits and capacity (OPEN; rulings A179 and A182)
+### OD-P-90: Intron's rate limits and capacity (ADOPTED as written; rulings A179 and A182)
 
-- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (rulings A179 and A182).
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (rulings A179 and A182). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
 - **Missing decision:** which rate limits and what capacity bind the voice subset run (BEN-23), the field work and a pilot, and whether Intron's answer on capacity is enough for the pilot.
 - **Why it matters:** A182 requires BEN-23 to pace for the documented rate limits. The rulings give no figure; the Steward invents none (AGENT-18).
 - **Default (smallest safe):** pace every run to Intron's documented limits; report the measured results as they come; the adapter splits TTS input into Intron's documented 10 to 100 character chunks (A181).
@@ -1135,9 +1135,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the first gate run on Intron.
 - **Source:** rulings A179, A181, A182; BEN-23; VOI-16.
 
-### OD-P-91: Per-token confidence from Intron's speech-to-text (OPEN; ruling A181)
+### OD-P-91: Per-token confidence from Intron's speech-to-text (ADOPTED as written; ruling A181)
 
-- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A181).
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A181). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
 - **Missing decision:** whether Intron's speech-to-text returns a confidence for each token, so that the key-slot rule of the PERD (a key slot below the configured confidence forces CLARIFY) can use it; and what the value for "insufficient confidence" is.
 - **Why it matters:** spoken amounts, account identifiers and transaction references are never trusted (A181). If a confidence is not returned, the rule has no input.
 - **Default (smallest safe):** a missing confidence counts as low. Partial transcripts never set a slot. "Insufficient confidence" is Founder or pack data; no agent sets it. A spoken "yes" is never a confirmation; only the signed card submit is.
@@ -1160,3 +1160,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder (the approval); C2 (the provider); EL (the G1 path and the label).
 - **Deadline:** before the G1 evidence run.
 - **Source:** ruling A188; AGENT-14; plan §3.1 (G1); PERD REQ-INT-002.
+
+### OD-P-93: A TypeScript codegen target for the UI's contract types (OPEN; AGENT-14; for the Founders' approval)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (noema#523, [DEC-2026-11-13-architect-rulings-a193-a198](decisions/DEC-2026-11-13-architect-rulings-a193-a198.md)). **The Steward files it; the Founders approve it.** The approach was chosen in a session, which is not authoritative until committed (AGENTS §2, item 3).
+- **Missing decision:** approval of a third generator target, TypeScript, in the in-repository generator `tools/codegen`, so that the UI has types and runtime parsers for the contracts it reads (generated into `ui/src/contract_types/`).
+- **Why it matters:** the UI shows only what the core sent and never an unmasked number (PERD §40.4), so every response and event is parsed before it is shown. The fixed stack gives codegen to Go and Pydantic only, and hand-written types per language are forbidden (PERD §36.1). A new generator target is a new tool (AGENT-14).
+- **Default (smallest safe):** the target in noema#523: Python standard library only, no new dependency, scoped by `tools/codegen/ts.json` (a contract the UI does not read does not reach the bundle), output never edited by hand, `generate.py --check` failing on a difference. Owners agree: C1 for `tools/codegen`, the frontend engineer for `ui/`.
+- **What would change it:** a decision to use a schema-to-TypeScript tool from outside (a new dependency), or to keep UI types hand-written (against PERD §36.1); or a finding that the parsers need the conditional rules of the schemas (the Security Reviewer's note on noema#523).
+- **Not covered:** the UI's API client; the conditional rules (`if`, `then`, `not`), which stay with the JSON Schema validator.
+- **Owner:** Founders (the approval); EL (the PR); C1 and the frontend engineer (the owners of the paths).
+- **Deadline:** before noema#523 merges.
+- **Source:** noema#523; AGENT-14, AGENT-15; PERD §36.1, §40.4; ruling A187.
+
