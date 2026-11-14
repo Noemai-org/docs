@@ -1051,6 +1051,19 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the SSE events route or the reconstruction route is mounted in a deployed profile (both stay unmounted until the DSN files are set).
 - **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
 
+### OD-P-83: The link format of a fix PR's regression case (MEM-02; default; the test-file alternative stays off in the check until the workflow wiring PR)
+
+- **Status:** [OPEN] · NON-CANONICAL · proposed by the Benchmark Owner under AGENT-02 on noema#452. The Principal Architect accepted the format as ruling A156 (12 Nov 2026), which is now committed in `docs/decisions/DEC-2026-11-12-architect-rulings-a148-a160.md` (docs#157, merged); the number OD-P-83 is the Steward's allocation under ruling A171. The entry stays [OPEN] for one reason: ruling A156 says the workflow wiring is a separate PR after noema#452 merges, and until that PR sets `REGRESSION_ALLOW_TEST_FILE=1` the check accepts only a benchmark case ID, which is what REQ-MEM-002 itself requires. The status becomes [DECIDED] in the wiring PR.
+- **Missing decision:** the format of the regression link that REQ-MEM-002 requires on a fix PR. The requirement says a fix links the regression case it adds; it fixes no format.
+- **Why it matters:** the check that enforces the link (`tools/ci/check_regression_link.py`, noema#452) needs a rule it can test, and the Definition of Done (AGENTS.md section 8: regression case committed before the fix merges) needs a place a reviewer can find the case.
+- **Default (smallest safe):** a fix PR carries one line `Regression case: <ref>` in its body, outside any code block or quote. A fix PR is one **labelled `fix`** (the acceptance criterion of REQ-MEM-002, PERD v1.22 section on REQ-MEM-002: "CI SHALL block a PR labelled `fix` without a linked new case ID"); a head branch `fix/...` or a title that says fix also counts, as a supplement that never replaces the label. `<ref>` is a benchmark case ID (`BEN-<CATEGORY>-<4 digits>`), which is what REQ-MEM-002 requires ("a named, permanent benchmark case", "a linked new case ID"). "none", "n/a", "TBD" and empty are refused. The check follows CommonMark for fenced code.
+- **The alternative (ruling A156, committed in docs#157):** a test file that the PR itself changes (`test_*.py`, `*_test.py`, `*_test.go`, `*.test.ts[x]`, optionally `::name`). The check accepts it only when `REGRESSION_ALLOW_TEST_FILE=1`, which the workflow wiring PR sets; it is off by default, so no PR passes on a test file alone until that PR turns the alternative on as A156 provides.
+- **What would change it:** a regression-case registry (a directory of permanent cases) that the check should resolve IDs against instead of the shape alone (the check sees an ID's shape, not whether the case is new or permanent; the reviewer reads that); or a requirement to prove the order of the commits (the PR's file list cannot show that the test came before the fix; the reviewer reads the commits).
+- **Not covered:** wiring the check into a workflow, including passing the PR's labels (`PR_LABELS`) and enabling the A156 alternative (a separate PR after noema#452 merges, as ruling A156 says; `.github` needs a Founder's approval, AGENTS.md section 11); the order of commits; whether a case ID is new.
+- **Owner:** Benchmark Owner (the entry and the check); Architect (the decision, A156); Founder (the workflow wiring).
+- **Deadline:** before the workflow wiring PR.
+- **Source:** ruling A156; noema#452; REQ-MEM-002, REQ-BEN-006; AGENT-02, AGENT-11, AGENT-23.
+
 <a id="od-p-84"></a>
 ### OD-P-84: UI-01 frontend dependencies (AGENT-14; DECIDED by the Founder, 13 Nov 2026)
 
