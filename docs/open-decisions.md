@@ -992,7 +992,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
   | `POST /v1/admin/tenants/{tenant_id}/kill-switch:clear` body `{reason}` **(replaces the single kill-switch route)** | C-ADMIN only | switch off; C-VERIFY gets 403 `PERMISSION_DENIED`; `KILL_SWITCH_CHANGED` with the person as actor, and a `SECURITY_EVENT` in the same transaction (A71, docs#140); **its kind is not in the PERD §32.2 list yet: adding it (proposed name `KILL_SWITCH_CLEARED`) is a versioned PERD change plus a `record-event` contract change under AGENT-15, to be ruled and done before any route writes it** |
   | `GET /v1/admin/tenants/{tenant_id}/kill-switch` **(new route)** | C-ADMIN only | the state, the last change and who made it; ops and audit see the effect through `GET /v1/ops/alerts` |
 
-  Every other route of §39.4 stands as written, **with the callers of §39.4 unchanged**: `GET /v1/reconstructions/{correlation_id}` and `GET /v1/record/verify?tenant_id=` are audit; the panel and the alerts are ops and audit or ops as §39.4 says. `POST /v1/admin/policies/{policy_id}/versions` and `.../versions/{v}:publish`, `POST /v1/admin/packs:load` and `PUT /v1/admin/tenants/{id}/callback` take C-ADMIN. For publication, a version that is not higher than the active one (the same, or a downgrade) answers 409; the catalogue then needs a code for it (`POLICY_VERSION_NOT_NEWER`), which is a change to `errors.v1.json` under AGENT-15, not made here.
+  Every other route of §39.4 stands as written, **with the callers of §39.4 unchanged**: `GET /v1/reconstructions/{correlation_id}` and `GET /v1/record/verify?tenant_id=` are audit; the panel and the alerts are ops and audit or ops as §39.4 says. `POST /v1/admin/policies/{policy_id}/versions` and `.../versions/{v}/publish` (the segment form: ruling A183 amends D14's `{v}:publish`, [DEC-2026-11-13-d14-route-spelling](decisions/DEC-2026-11-13-d14-route-spelling.md)), `POST /v1/admin/packs:load` and `PUT /v1/admin/tenants/{id}/callback` take C-ADMIN. For publication, a version that is not higher than the active one (the same, or a downgrade) answers 409; the catalogue then needs a code for it (`POLICY_VERSION_NOT_NEWER`), which is a change to `errors.v1.json` under AGENT-15, not made here.
 - **Two notes for SEC-04 (Security Reviewer's finding 4):**
   - **Key rotation has no route.** Public keys are registered by the migrator at deploy (`key_register`, an operator step, DEC-2026-11-01 D3a); the callback route rotates a callback secret only. A test of the absence is meaningful: no route matches rotate or key, and the runtime roles cannot execute `key_register`, `key_retire` or `key_revoke`.
   - **`GET /v1/record/verify?tenant_id=`** takes a tenant in the query. For `ops` and `audit` it must equal the token's tenant or the call is refused with the not-found shape (INV-12, D7 item 7).
@@ -1067,21 +1067,109 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · default in use (ruling A168 and A172, [DEC-2026-11-12-architect-rulings-a166-a170](decisions/DEC-2026-11-12-architect-rulings-a166-a170.md) and [DEC-2026-11-12-architect-rulings-a171-a175](decisions/DEC-2026-11-12-architect-rulings-a171-a175.md); count once those records are merged). Filed by the Steward from EL's answer on noema#477, posted on docs#159.
 - **Missing decision:** what happens to an input that is recorded but not processed. PERD 28.2 has no failure state or arrow for it, and re-running `Trust.Decide` would record a second decision.
 - **Why it matters:** a stranded run that is retried must not record a second decision for the same input (INV-03 spirit: no action without a single, recorded decision; the Record is the proof, AGENT-21).
-- **Default (smallest safe):** resume from the last recorded state, never close the run. The retry goes through `Start` (noema#490), as A168 rules. Resume itself waits for the `Trust.Decide` follow-up PR (lookup on `(tenant_id, intent_id, intent_hash)` and its unique index), as A172 rules.
+- **Default (smallest safe):** resume from the last recorded state, never close the run. The retry goes through `Start` (noema#490), as A168 rules. Resume itself waits for the `Trust.Decide` follow-up PR. **Ruling A186 (13 Nov) replaces A172's index specification:** `Decide` is a pure function of its inputs; the lookup key is the full deterministic tuple of tenant, `intent_id`, `intent_hash`, context snapshot and policy version; the same inputs return the stored decision and append nothing; a re-evaluation with new evidence has a new key, so WAIT and CLARIFY re-decisions stay legal. EL maps the key onto the real columns and stops and asks if it cannot be formed from existing columns. Migration 0027 stays reserved ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), interim).
 - **What would change it:** C1's check that `Trust.Decide` returns the existing decision for the same input and appends nothing; or a ruling that adds a failure state to PERD 28.2 (a PERD change, by a new version file).
 - **Not covered:** the state machine itself (PERD 28.2); the follow-up PR's design.
 - **Owner:** EL (the build); Architect (the decision); C1 (the check).
 - **Deadline:** before the persistence slice is wired into the runner.
-- **Source:** rulings A168 and A172; noema#466, noema#477, noema#490; PERD 28.2.
+- **Source:** rulings A168, A172 and A186; noema#466, noema#477, noema#490; PERD 28.2.
 
 ### OD-P-86: The Intent Object's signature in the POC (OPEN, check against the SoT; ruling A177)
 
 - **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A177, noema#484).
 - **Missing decision:** whether the POC may leave the Intent Object's own `sig` field as an unsigned marker and treat the Record's signature on `INTENT_ADMITTED` (made by the REC-08 emitter signer) as the signature that counts. SoT §7 says the Intent Object is "signed by Understanding" and lists "schema and signature of the Intent Object" among Trust's checks. The model service never signs (INV-29), and no signing domain for Understanding exists.
 - **Why it matters:** if the SoT reading stands, Trust has a check it cannot perform in the POC. If A177 stands, the SoT sentence and the build differ, and a reader of the SoT could expect a signature that is not there. AGENT-02 forbids inventing a signing domain.
+- **Ruling A189 (13 Nov, interim):** Trust checks that the recomputed `intent_hash` equals the hash in the signed `INTENT_ADMITTED` event, read through the admission reader (tenant, principal and correlation bound). This differs from SoT §7 ("signed by Understanding"), so A177 stays interim. **The SoT edit goes into v1.13 as its own pull request, after the Intron change in v1.12.** Until then this entry stays open and G1 evidence says "signatures verified: no". (A189 calls this conflict "OD-P-85"; in the register it is OD-P-86, and OD-P-85 is the stranded-run resume.) [DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md).
 - **Default (smallest safe):** A177 as ruled. The core computes `intent_hash` over canonical JSON. The Record signs `INTENT_ADMITTED`. The Intent Object's `sig` stays the unsigned marker. No new signing domain. The model-side gate stays on v1 until the v2 contract is live.
 - **What would change it:** a ruling that Understanding signs (that needs a signing domain, a key outside the model service's reach, and a contract change under AGENT-15); or a SoT edit that moves the signature check from the Intent Object to the Record.
 - **Not covered:** the v2 contract's shape; the content of noema#484 and #489.
 - **Owner:** Architect (the decision); Founders (a SoT edit, if one is needed); EL and C1 (the build).
 - **Deadline:** before the v2 intent contract goes live.
 - **Source:** ruling A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
+
+### OD-P-87: The SoT edit for BD-16 and OD-04 when Intron becomes the sole speech provider (OPEN; ruling A179)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A179, [DEC-2026-11-13-voice-provider-intron](decisions/DEC-2026-11-13-voice-provider-intron.md); counts once that record is merged).
+- **Missing decision:** the Founders' authoring or approval of the SoT edit that A179 needs: BD-16 (SoT lines 101 and 729), §35.3 (1511), §37 "Provider runs" (1816), OD-04 (2381) and the §51 `/providers` layout (2575), with an Appendix D entry. The ruling names "SoT v1.7"; the SoT on `main` is v1.11 and Appendix D already lists v1.7, so the next version is v1.12 and the number needs confirming.
+- **Why it matters:** the SoT outranks every record. BD-16 says "speech integrates at least Aethex AI, Indigenius and N-ATLAS"; A179 integrates only Intron. Until the SoT changes, the SoT text stands and no one builds against A179 (AGENT-20, AGENT-27).
+- **Default (smallest safe):** the draft in [DEC-2026-11-13-voice-provider-intron-sot-draft](decisions/DEC-2026-11-13-voice-provider-intron-sot-draft.md), which edits nothing. The Steward does not edit the SoT. BD-16 is not reinterpreted.
+- **What would change it:** the Founders reword the draft, or decide the SoT stays and A179 is withdrawn.
+- **Not covered:** a second speech provider (OD-P-88); data terms (OD-P-89).
+- **Owner:** Founders (the SoT edit); Architect (the ruling).
+- **Deadline:** before any task that builds against A179 starts (VOI-01, VOI-04, VOI-10, BEN-23, UND-13 and PRE-04 as changed by CR-2026-11-13-A179-intron-voice-provider).
+- **Source:** ruling A179; SoT BD-16, OD-04, §35.3, §37, §51; AGENTS §11 (the SoT is not edited in place).
+
+### OD-P-88: Whether to add a second speech provider at pilot readiness (ADOPTED as written; ruling A179)
+
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A179). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
+- **Missing decision:** whether the POC adds a second speech provider, decided by the Founder at pilot readiness.
+- **Why it matters:** one provider is a single point of failure for voice; A179 accepts that for the POC because a failure degrades safely to text and replacing Intron needs no change to Trust, Execution, Outcome or the Record.
+- **Default (smallest safe):** no second provider in the POC.
+- **What would change it:** the POC evidence A179 names: the G5 voice gate result, the field report (VOI-14), the latency lab report (VOI-16), Intron's answer on capacity, the data-terms outcome (GOV-25) and the failure drills. The gate thresholds already in the pack and the plan decide; agents set none.
+- **Not covered:** which provider a second one would be.
+- **Owner:** Founder (the decision); Voice Engineer and Benchmark Owner (the evidence).
+- **Deadline:** pilot readiness.
+- **Source:** ruling A179; G5; VOI-14, VOI-16, GOV-25.
+
+### OD-P-89: Intron's written data terms (ADOPTED as written; ruling A180)
+
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A180). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
+- **Missing decision:** the Founder's commit of Intron's written terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
+- **Why it matters:** no real speaker's audio or transcript goes to Intron before this (A180, PERD R-18, AGENTS §10). "Zero data retention" is an unverified claim until it is in writing.
+- **Default (smallest safe):** synthetic audio only. The VOI-05 consent form names Intron.
+- **What would change it:** the Founder commits the written terms and says they are acceptable; or Intron's terms are not acceptable, which reopens OD-P-88.
+- **Not covered:** any claim of regulatory compliance (SoT §50.2).
+- **Owner:** Founder; GOV-25 and PRE-04 carry the work.
+- **Deadline:** before the first real speaker's recording (VOI-06).
+- **Source:** ruling A180; PERD R-18; GOV-25; VOI-05.
+
+### OD-P-90: Intron's rate limits and capacity (ADOPTED as written; rulings A179 and A182)
+
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (rulings A179 and A182). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
+- **Missing decision:** which rate limits and what capacity bind the voice subset run (BEN-23), the field work and a pilot, and whether Intron's answer on capacity is enough for the pilot.
+- **Why it matters:** A182 requires BEN-23 to pace for the documented rate limits. The rulings give no figure; the Steward invents none (AGENT-18).
+- **Default (smallest safe):** pace every run to Intron's documented limits; report the measured results as they come; the adapter splits TTS input into Intron's documented 10 to 100 character chunks (A181).
+- **What would change it:** Intron's written answer on capacity; the latency lab report (VOI-16); a failure drill that shows the limits bind earlier than documented.
+- **Not covered:** G5 thresholds, which do not change (A182).
+- **Owner:** Voice Engineer (the adapter and pacing); Benchmark Owner (BEN-23); Founder (the capacity decision).
+- **Deadline:** before the first gate run on Intron.
+- **Source:** rulings A179, A181, A182; BEN-23; VOI-16.
+
+### OD-P-91: Per-token confidence from Intron's speech-to-text (ADOPTED as written; ruling A181)
+
+- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A181). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider.
+- **Missing decision:** whether Intron's speech-to-text returns a confidence for each token, so that the key-slot rule of the PERD (a key slot below the configured confidence forces CLARIFY) can use it; and what the value for "insufficient confidence" is.
+- **Why it matters:** spoken amounts, account identifiers and transaction references are never trusted (A181). If a confidence is not returned, the rule has no input.
+- **Default (smallest safe):** a missing confidence counts as low. Partial transcripts never set a slot. "Insufficient confidence" is Founder or pack data; no agent sets it. A spoken "yes" is never a confirmation; only the signed card submit is.
+- **What would change it:** Intron's documentation or the qualification run (UND-13) showing which confidences it returns; the Founder or the pack setting the value.
+- **Not covered:** the existing thresholds in the pack and the plan, which do not change.
+- **Owner:** Voice Engineer (what Intron returns); Founder or pack data (the value).
+- **Deadline:** before the first gate run on Intron.
+- **Source:** ruling A181; REQ-VOI-003; INV-02; UND-13.
+
+- **Source:** rulings A177 and A189; A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
+
+### OD-P-92: A recorded-replay Understanding provider for the G1 run (APPROVED by the Founder in session, 13 Nov 2026; AGENT-14; ruling A188)
+
+- **Status:** [DECIDED] · NON-CANONICAL · filed by the Steward on the Architect's instruction (ruling A188, [DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), interim). **The Founder approved it in session on 13 Nov 2026 (AGENT-14: a new component needs an approved entry).** The approval is recorded here by the Repo Steward as the Founder stated it; it counts as committed once a Founder who did not author this pull request merges it (A111; AGENTS §2, item 3). The approval is for exactly the default below: bench and test profiles only, refused in the demo profile, recordings from a real live compile run as synthetic fixtures with provenance, evidence labelled "Understanding: recorded replay of live output".
+- **Decision:** approved. The question was: approval to add a recorded-replay Understanding provider under `providers/` in the model service, for the G1 run.
+- **Why it matters:** G1 requires two runs of US-01 and US-06 with identical Trust decisions. Live model output differs between runs, so a live provider cannot give identical decisions. Replay can.
+- **Default (smallest safe, ruling A188):** the provider is selected by configuration in the bench and test profiles only and is **refused in the demo profile**. Its recordings come from a real live compile run and are stored as synthetic fixtures with provenance. The G1 evidence is labelled "Understanding: recorded replay of live output". Nothing in Trust, Execution or the Outcome verdict changes; the model output still crosses the schema gate (INV-02).
+- **What would change it:** the Founder declines (G1 would then run on live output and "identical decisions" could not be shown); or the Founder asks for the live compile run to be part of G1, which needs its own cost approval (UND-05).
+- **Not covered:** Understanding qualification (UND-13), live provider runs (UND-05), any use of replay in the demo or a pilot (refused).
+- **Owner:** Founder (the approval); C2 (the provider); EL (the G1 path and the label).
+- **Deadline:** before the G1 evidence run.
+- **Source:** ruling A188; AGENT-14; plan §3.1 (G1); PERD REQ-INT-002.
+
+### OD-P-93: A TypeScript codegen target for the UI's contract types (OPEN; AGENT-14; for the Founders' approval)
+
+- **Status:** [OPEN] · NON-CANONICAL · filed by the Steward on the Architect's instruction (noema#523, [DEC-2026-11-13-architect-rulings-a193-a198](decisions/DEC-2026-11-13-architect-rulings-a193-a198.md)). **The Steward files it; the Founders approve it.** The approach was chosen in a session, which is not authoritative until committed (AGENTS §2, item 3).
+- **Missing decision:** approval of a third generator target, TypeScript, in the in-repository generator `tools/codegen`, so that the UI has types and runtime parsers for the contracts it reads (generated into `ui/src/contract_types/`).
+- **Why it matters:** the UI shows only what the core sent and never an unmasked number (PERD §40.4), so every response and event is parsed before it is shown. The fixed stack gives codegen to Go and Pydantic only, and hand-written types per language are forbidden (PERD §36.1). A new generator target is a new tool (AGENT-14).
+- **Default (smallest safe):** the target in noema#523: Python standard library only, no new dependency, scoped by `tools/codegen/ts.json` (a contract the UI does not read does not reach the bundle), output never edited by hand, `generate.py --check` failing on a difference. Owners agree: C1 for `tools/codegen`, the frontend engineer for `ui/`.
+- **What would change it:** a decision to use a schema-to-TypeScript tool from outside (a new dependency), or to keep UI types hand-written (against PERD §36.1); or a finding that the parsers need the conditional rules of the schemas (the Security Reviewer's note on noema#523).
+- **Not covered:** the UI's API client; the conditional rules (`if`, `then`, `not`), which stay with the JSON Schema validator.
+- **Owner:** Founders (the approval); EL (the PR); C1 and the frontend engineer (the owners of the paths).
+- **Deadline:** before noema#523 merges.
+- **Source:** noema#523; AGENT-14, AGENT-15; PERD §36.1, §40.4; ruling A187.
+

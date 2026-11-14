@@ -21,6 +21,7 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 
 | Vendor | Used for | What we need from them | Where it goes | Data terms | Status | Owner |
 |---|---|---|---|---|---|---|
+| **Intron Sahara v2.5** | Speech-to-text and text-to-speech (sole integrated speech provider in the POC from the SoT edit of DEC-2026-11-13-voice-provider-intron, A179) | API access; the answer on capacity and rate limits; written data terms (retention, zero data retention, no training, sub-processors, hosting region, deletion timeline, incident notice) before any real speaker's audio or transcript (A180); whether per-token confidence is returned | Key name to be decided with the Founder; not yet named | Unverified until in writing; synthetic audio only until then | pending the SoT edit | Founder |
 | **Aethex AI** | Nigerian-language speech recognition and synthesis | API access; per-token or per-slot confidence in results (REQ-VOI-003); supported languages | `AETHEX_API_KEY` in `model-ci` and `bench` | Audio retention; region; DPA | not started | Founder |
 | **Indigenius** | Nigerian-language speech recognition | As above | `INDIGENIUS_API_KEY` in `model-ci` and `bench` | As above | not started | Founder |
 | **N-ATLAS** | Nigerian-language speech recognition | Confirm the access model (hosted API or downloadable weights) and licence. If weights, the hosting needed | To be decided once the access model is confirmed | Licence terms | not started | Founder |
