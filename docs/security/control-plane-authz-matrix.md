@@ -32,7 +32,7 @@ C7 and C8 (C-ADMIN and C-VERIFY) are ruled (Architect, 8 Nov 2026, noema#305): C
 | 2 | `POST /v1/admin/tenants/{t}/kill-switch:clear` | - | - | - | - | - | - | A | **P** | - | 401 |
 | 3 | `GET /v1/admin/tenants/{t}/kill-switch` (new route, OD-P-79) | - | - | - | - | - | - | A | - | - | 401 |
 | 4 | `POST /v1/admin/policies/{id}/versions` | - | - | - | - | - | - | A | - | - | 401 |
-| 5 | `POST /v1/admin/policies/{id}/versions/{v}:publish` | - | - | - | - | - | - | A | - | - | 401 |
+| 5 | `POST /v1/admin/policies/{id}/versions/{v}/publish` (segment form, ruling A183) | - | - | - | - | - | - | A | - | - | 401 |
 | 6 | `POST /v1/admin/packs:load` | - | - | - | - | - | - | A | - | - | 401 |
 | 7 | `PUT /v1/admin/tenants/{t}/callback` | - | - | - | - | - | - | A | - | - | 401 |
 | 8 | `GET /v1/ops/debt`, `GET /v1/ops/alerts` | - | - | A | - | - | - | - | - | - | 401 |
