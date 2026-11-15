@@ -468,7 +468,7 @@ Rules for adding an entry:
 
 Entries:
 
-- (none yet)
+- 2026-11-15 · a `git add -A` after a red run or a mutant run committed `rapid` counterexample files (`testdata/rapid/**/*.fail`) twice (noema#592, noema#600); each held a mutant's or a stub's failure message, not a defect of the code · before committing, run `git diff --name-only --cached | grep testdata/rapid` and commit a `.fail` only for a real defect, together with its regression test; a CI check on new `.fail` files is a candidate if it happens again · approved by: pending EL review
 
 ## 16. Where things are
 
