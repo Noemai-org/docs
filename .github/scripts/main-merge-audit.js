@@ -72,12 +72,27 @@ async function getAllPages(fn, params) {
   }
 }
 
+// GitHub's compare endpoint sometimes answers 5xx ("this diff is temporarily unavailable due to heavy server load")
+// for a large range, and the range from the installation cutoff grows with every merge. A 5xx is retried a few
+// times with a short wait; any other error, and a 5xx that persists, is thrown, so the audit never turns a failed
+// read into a pass or a skip. (14 and 16 Nov 2026: two first attempts failed this way and passed on re-run.)
+async function withRetry(fn, { attempts = 3, waitMs = 2000, sleep = (ms) => new Promise((r) => setTimeout(r, ms)) } = {}) {
+  for (let i = 1; ; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (!(e && e.status >= 500 && e.status < 600) || i >= attempts) throw e;
+      await sleep(waitMs * i);
+    }
+  }
+}
+
 // Commits of before...after (all pages), as a map sha -> commit.
 async function commitsBetween(github, { owner, repo, before, after }) {
   const map = new Map();
   let status = null;
   for (let page = 1; ; page++) {
-    const { data } = await github.rest.repos.compareCommitsWithBasehead({ owner, repo, basehead: `${before}...${after}`, per_page: 100, page });
+    const { data } = await withRetry(() => github.rest.repos.compareCommitsWithBasehead({ owner, repo, basehead: `${before}...${after}`, per_page: 100, page }));
     status = data.status;
     for (const c of data.commits) map.set(c.sha, c);
     if (data.commits.length < 100) break;
@@ -150,7 +165,7 @@ function renderIssue({ commit, pr, method, author, evaluation, rule, searched, m
 async function decide(github, ctx, sha, issues) {
   const { owner, repo, base, cutoff } = ctx;
   if (sha === cutoff.sha) return { sha, action: 'skip', reason: 'before_cutoff' };
-  const cmp = await github.rest.repos.compareCommitsWithBasehead({ owner, repo, basehead: `${cutoff.sha}...${sha}` });
+  const cmp = await withRetry(() => github.rest.repos.compareCommitsWithBasehead({ owner, repo, basehead: `${cutoff.sha}...${sha}` }));
   if (cmp.data.status !== 'ahead') return { sha, action: 'skip', reason: 'before_cutoff' };
   if (!ctx.ignoreReported && alreadyReported(issues, sha)) return { sha, action: 'skip', reason: 'already_reported' };
 
@@ -231,4 +246,4 @@ async function run({ github, context, core, cutoff }) {
   return result;
 }
 
-module.exports = { run, auditPush, evaluateReviews, arrivalsOf, findPullRequest, renderIssue, titleFor, RULES, DEDUPE_LABELS };
+module.exports = { run, auditPush, withRetry, evaluateReviews, arrivalsOf, findPullRequest, renderIssue, titleFor, RULES, DEDUPE_LABELS };

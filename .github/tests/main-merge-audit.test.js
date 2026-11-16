@@ -424,3 +424,51 @@ test('every github.rest method the audit calls is a real Octokit method', () => 
   for (const [ns, name] of used) assert.ok((METHODS[ns] || []).includes(name), `github.rest.${ns}.${name} does not exist in Octokit`);
   assert.ok(!(METHODS.repos || []).includes('listPullRequestsForCommit'), 'the name the first version used is not a method');
 });
+
+// ---- a 5xx from the compare endpoint is retried; anything else, or a 5xx that persists, is thrown ----
+function flaky(github, failures, status = 500) {
+  const real = github.rest.repos.compareCommitsWithBasehead;
+  let left = failures;
+  let tries = 0;
+  github.rest.repos.compareCommitsWithBasehead = async (p) => {
+    tries++;
+    if (left-- > 0) { const e = new Error('Server Error: Sorry, this diff is temporarily unavailable due to heavy server load.'); e.status = status; throw e; }
+    return real(p);
+  };
+  return () => tries;
+}
+
+test('13. two 500s from compare, then success: the audit still decides (the 14 and 16 Nov failures)', async () => {
+  const f = fakeGithub({ commits: graph(), prs: [pr(7, 'alice', 'merge')], reviews: { 7: [rev('bob', 'APPROVED')] } });
+  const tries = flaky(f.github, 2);
+  assert.equal(typeof audit.withRetry, 'function');
+  // the retry waits are real timers; run them with no wait by patching setTimeout for this test
+  const realSetTimeout = global.setTimeout;
+  global.setTimeout = (fn) => realSetTimeout(fn, 0);
+  try {
+    const r = await audit.auditPush(f.github, ctx('tip', 'merge'));
+    assert.deepEqual(r.decisions.map((d) => d.action), ['pass']);
+  } finally {
+    global.setTimeout = realSetTimeout;
+  }
+  assert.ok(tries() >= 3, 'compare was tried again after each 500');
+});
+
+test('14. a 500 that persists is thrown: a failed read is never a pass or a skip', async () => {
+  const f = fakeGithub({ commits: graph(), prs: [pr(7, 'alice', 'merge')], reviews: { 7: [rev('bob', 'APPROVED')] } });
+  flaky(f.github, 99);
+  const realSetTimeout = global.setTimeout;
+  global.setTimeout = (fn) => realSetTimeout(fn, 0);
+  try {
+    await assert.rejects(() => audit.auditPush(f.github, ctx('tip', 'merge')), (e) => e.status === 500);
+  } finally {
+    global.setTimeout = realSetTimeout;
+  }
+});
+
+test('15. a 4xx from compare is not retried', async () => {
+  const f = fakeGithub({ commits: graph(), prs: [pr(7, 'alice', 'merge')], reviews: { 7: [rev('bob', 'APPROVED')] } });
+  const tries = flaky(f.github, 99, 404);
+  await assert.rejects(() => audit.auditPush(f.github, ctx('tip', 'merge')), (e) => e.status === 404);
+  assert.equal(tries(), 1);
+});
