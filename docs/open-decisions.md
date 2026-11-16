@@ -839,7 +839,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-67"></a>
 ### OD-P-67: Whether Tushe supplies the webhook signing secret
 
-- **Status:** [OPEN] · NON-CANONICAL · not blocking · the Founders ask Tushe whether it supplies the webhook signing secret (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); open until Tushe answers.
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-11-16-tushe-addendum-od-p-67](decisions/DEC-2026-11-16-tushe-addendum-od-p-67.md) §2 (takes effect when that record is approved and merged): Tushe's addendum of 15 Nov 2026 (section 6) says the webhook endpoint and its signing-secret rotation are self-serve for Noema; ruling A240 has the Founder register and rotate it, with the value in the bench Environment only. Asked of Tushe by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)).
 - **Missing decision:** whether Tushe gives Noema the signing secret for its webhooks, or Noema generates it and gives it to Tushe. The relay generates one into a named volume and says the secret Tushe was given can be written there instead (noema#48).
 - **Why it matters:** the secret decides who can forge a delivery, and the vendor register (docs/vendors/README.md) has to name its owner.
 - **Minimum safe default (meanwhile):** the relay-generated secret, synthetic, local only.

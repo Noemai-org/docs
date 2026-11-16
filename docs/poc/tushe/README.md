@@ -8,7 +8,7 @@ Tushe provides the synthetic enterprise environment the Noema POC is built and b
 | [Original export](source/) | 1.0 | Unchanged source | Kept for provenance |
 | [Requested changes v1.0 → v1.1](tushe-spec-delta-v1.1.md) | 1.1 (draft) | **Superseded by v1.2. Never sent to Tushe** | Kept for the record of what was drafted |
 | [Changes v1.0 → v1.2](tushe-spec-delta-v1.2.md) | 1.2 | Records the exchange of 13 Oct 2026 (the PDF is the record) | The amended AT-01, AT-03 and AT-15 conditions, requests R1 to R13 with dates, and what was withdrawn (DEC-2026-10-16 E10) |
-| [Tushe correspondence](responses/README.md) | — | Frozen records | Tushe's draft response of 7 Oct 2026 (received 8 Oct); Noema's response of 13 Oct 2026, as sent (PDF) |
+| [Tushe correspondence](responses/README.md) | — | Frozen records | Tushe's draft response of 7 Oct 2026 (received 8 Oct); Noema's response of 13 Oct 2026, as sent (PDF); Tushe's addendum of 15 Nov 2026 (PDF) |
 | [Acceptance](acceptance/README.md) | — | Worksheet sent 13 Oct 2026 (PDF); not yet signed | The worksheet for the joint session; AT-01 to AT-20 |
 
 **What governs Tushe semantics** (DEC-2026-10-16 E10): the specification v1.0; Tushe's response of 7 Oct 2026; [DEC-2026-10-12](../../decisions/DEC-2026-10-12-tushe-environment-scope.md); delta v1.2; and the signed worksheet. Nobody infers endpoint semantics from memory or from one observed response.
