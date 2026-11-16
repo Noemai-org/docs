@@ -839,7 +839,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 <a id="od-p-67"></a>
 ### OD-P-67: Whether Tushe supplies the webhook signing secret
 
-- **Status:** [OPEN] · NON-CANONICAL · not blocking · the Founders ask Tushe whether it supplies the webhook signing secret (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)); open until Tushe answers.
+- **Status:** [CLOSED] · NON-CANONICAL · closed by [DEC-2026-11-16-tushe-addendum-od-p-67](decisions/DEC-2026-11-16-tushe-addendum-od-p-67.md) §2 (takes effect when that record is approved and merged): Tushe's addendum of 15 Nov 2026 (section 6) says the webhook endpoint and its signing-secret rotation are self-serve for Noema; ruling A240 has the Founder register and rotate it, with the value in the bench Environment only. Asked of Tushe by the Founders (Block E, E4, 7 Nov 2026; [DEC-2026-11-07-founder-decisions-block-e](decisions/DEC-2026-11-07-founder-decisions-block-e.md)).
 - **Missing decision:** whether Tushe gives Noema the signing secret for its webhooks, or Noema generates it and gives it to Tushe. The relay generates one into a named volume and says the secret Tushe was given can be written there instead (noema#48).
 - **Why it matters:** the secret decides who can forge a delivery, and the vendor register (docs/vendors/README.md) has to name its owner.
 - **Minimum safe default (meanwhile):** the relay-generated secret, synthetic, local only.
@@ -1203,4 +1203,16 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founders (the approval); EL (the PR); C1 and the frontend engineer (the owners of the paths).
 - **Deadline:** before noema#523 merges.
 - **Source:** noema#523; AGENT-14, AGENT-15; PERD §36.1, §40.4; ruling A187.
+
+### OD-P-94: An accessibility scan tool for the UI tests: axe (CLOSED; approved by ruling A252)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **approved** by ruling A252 (the text of A238; `DEC-2026-11-16-architect-rulings-a242-a252`, docs#192, open; no link until it merges): `@axe-core/playwright` **4.14.0** with `axe-core` **~4.14.0**, pinned with a lockfile, **local scan only**, a **test-only** dependency under **MPL-2.0** (file-level terms, unmodified). Filed by the Steward from noema#610; the registry facts below were read on 16 Nov 2026.
+- **Missing decision:** approval of an accessibility scanner in the UI test manifest, so that UI-01 and UI-04 can run a WCAG scan (PERD §40.1, WCAG 2.2 AA) against the local synthetic UI. The approved UI package list ([DEC-2026-11-13-ui-01-frontend-dependencies](decisions/DEC-2026-11-13-ui-01-frontend-dependencies.md)) has `react`, `react-dom`, their `@types` and `@playwright/test`, and no axe.
+- **Why it matters:** no new dependency without an [OPEN] entry and approval (AGENT-14); a test dependency still runs in CI and needs a pinned, reviewed supply chain.
+- **Default (smallest safe), the Frontend Engineer's proposal:** `@axe-core/playwright` **4.14.0**, an exact pin with the lockfile committed (the rule of D2 of the UI dependency record), used only in tests against the local synthetic UI, no separate server and no third-party runtime script. **Facts read from the npm registry on 16 Nov 2026:** version 4.14.0 is the `latest` tag, published 15 Oct 2026 (more than two weeks old); its only dependency is `axe-core` `~4.14.0` (so `axe-core` also needs an exact pin); peer dependency `playwright-core` `>= 1.0.0` (compatible with the approved Playwright 1.64.1); licence **MPL-2.0**, where the packages already approved are MIT; the registry listing was not checked for install scripts.
+- **What would change it:** a security or compatibility finding on `@axe-core/playwright` or `axe-core`; a preinstalled equivalent in the approved Playwright image; or a Founder objection to the MPL-2.0 licence (a test-only dependency that is not shipped in the UI bundle; to be confirmed).
+- **Not covered:** any other accessibility tool; running the scan against anything but the synthetic UI.
+- **Owner:** Founders or the Architect (the approval); the Frontend Engineer (UI-01, UI-04); the Security Reviewer (the supply-chain read).
+- **Deadline:** before UI-01 or UI-04 adds the package.
+- **Source:** noema#610; ruling A238; AGENT-14; PERD §40.1; DEC-2026-11-13-ui-01-frontend-dependencies.
 
