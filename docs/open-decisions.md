@@ -1135,6 +1135,13 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Founder; GOV-25 and PRE-04 carry the work.
 - **Deadline:** before the first real speaker's recording (VOI-06).
 - **Source:** ruling A180; PERD R-18; GOV-25; VOI-05.
+- **Vendor statements (Intron's email of 13 Nov 2026; unverified until the DPA is signed and, where it says so, until measured; recorded on the Founder's direction of 16 Nov, A241; they are notes, not decisions, and set no threshold):**
+  - Retention is set by the customer (zero, a day, a week, and so on); new accounts start at zero retention.
+  - Intron states it does not use customer audio or transcripts to train its models.
+  - Processing runs on AWS in Ireland (EU).
+  - Intron states it is SOC 2 Type I, ISO 27001 and NDPR certified.
+  - A Data Processing Agreement is signed together with the commercial agreement.
+  - **Class (A241):** these restrict real speaker data (A180, the DPA); they do not block engineering work, which starts on synthetic audio. Nothing here is verified: "zero retention" and the certifications stay claims until the DPA and the evidence are in hand.
 
 ### OD-P-90: Intron's rate limits and capacity (ADOPTED as written; rulings A179 and A182)
 
@@ -1147,6 +1154,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Voice Engineer (the adapter and pacing); Benchmark Owner (BEN-23); Founder (the capacity decision).
 - **Deadline:** before the first gate run on Intron.
 - **Source:** rulings A179, A181, A182; BEN-23; VOI-16.
+- **Vendor statements (Intron's email of 13 Nov 2026; unverified until the DPA is signed and, where it says so, until measured; recorded on the Founder's direction of 16 Nov, A241; they are notes, not decisions, and set no threshold):**
+  - An Integrator account can be set up at once, with 60 free test minutes to split between speech-to-text and text-to-speech; billing is prepaid credit (card through Stripe or Paystack, or invoice).
+  - List rates per audio hour: speech-to-text English (including Nigerian English) 1.00 USD; speech-to-text local languages (including Pidgin and code-mixed speech) 1.25 USD; text-to-speech English 1.25 USD; text-to-speech local languages 1.50 USD. A volume tier applies at 10,000 to 50,000 hours a month, with custom pricing. (External figures, recorded as Intron's statement only; AGENT-18.)
+  - The standard plan includes 3 concurrent sessions; Intron says it can raise this once it knows peak concurrency, operating days and hours and monthly volumes, and that rate limits are set in the same step.
+  - New real-time streaming endpoints are said to go live "in the next few weeks", built for voice bots and supporting 8 kHz telephony audio; Intron prefers to give measured P95 figures on them under the customer's load. Intron's engineering later gave: intermediate (partial) transcripts usually about 1.7 seconds, P95 of 3 seconds; final transcript P95 of 8 seconds from the end of audio, measured on a 5-minute stream; both to be confirmed on the customer's own audio and expected load during evaluation.
+  - Intron states that Nigerian English, Nigerian Pidgin and speech mixed with Pidgin, Yoruba, Igbo or Hausa are supported (language codes in its documentation).
+  - Intron asks for the use case, the split between streaming and batch and between English and local languages, peak concurrent sessions and operating hours, the latency target, any text-to-speech volume, and a call with its engineering and product team. That reply is the Founder's or the Voice Engineer's; it sets no threshold.
+  - **Class (A241):** the concurrency and the streaming endpoints do not block engineering on synthetic audio. They may block the live gate run or production until measured or raised; classified then, not now. **The only latency target is VOI-16 (end of speech to first spoken word on the clean path, under 1.8 s, by stage; A241):** Intron's quoted figures above are its statements, not targets, and are not compared to VOI-16 until they are measured on the streaming endpoints.
 
 ### OD-P-91: Per-token confidence from Intron's speech-to-text (ADOPTED as written; ruling A181)
 
@@ -1161,6 +1176,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Source:** ruling A181; REQ-VOI-003; INV-02; UND-13.
 
 - **Source:** rulings A177 and A189; A177 in [DEC-2026-11-12-architect-interim-a177-a178](decisions/DEC-2026-11-12-architect-interim-a177-a178.md); SoT §7, AGENT-02, INV-29.
+- **Vendor statements (Intron's email of 13 Nov 2026; unverified until the DPA is signed and, where it says so, until measured; recorded on the Founder's direction of 16 Nov, A241; they are notes, not decisions, and set no threshold):**
+  - **The email does not answer this question.** It says nothing about a confidence for each token; the entry stays open on that point (Intron's documentation or the qualification run, UND-13).
+  - **Class (A241):** if no per-token confidence is returned, the default already stands (a missing confidence counts as low); that blocks no engineering work.
 
 ### OD-P-92: A recorded-replay Understanding provider for the G1 run (APPROVED by the Founder in session, 13 Nov 2026; AGENT-14; ruling A188)
 
