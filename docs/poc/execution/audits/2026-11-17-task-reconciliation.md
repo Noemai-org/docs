@@ -105,3 +105,16 @@ The full list, with the evidence for each, is the `stale_flag` column of the CSV
 - Some Completed tasks merged with a red or missing check-run (noted per task in the CSV: for example noema#186, #194, #272, #177, #115). `main`'s head was green when checked. They stay Completed with that note; say if you want them held at Verified until a green run is linked.
 - Judgement calls the verifiers flagged are in each row's `evidence` and `gap` text. Where a call is strict (for example GOV-06 and GOV-01), the reason is written there so the owner can answer it.
 - Open pull requests were not re-read for CI beyond what the agents saw; their state is a snapshot of 17 Nov 2026.
+
+## 8. Addendum, 17 Nov 2026 (evening): four status changes since the baseline
+
+The baseline above was read in the morning. Since then these merged or opened; only these four rows change in `tasks.csv`. The category counts of section 1 are the morning baseline; with these changes Completed is 74 and In review is 5 (CON-05, UND-16 and SEC-03 move from Ready, Not started or In progress into In review).
+
+| Task | Before | After | Evidence |
+|---|---|---|---|
+| CON-06 | Ready | **Done** | noema#651 (merged 17 Nov, 25 checks success at `44237cd`): `services/core/internal/contracts/cross_assignment_test.go` and `services/model/tests/test_cross_assignment.py` refuse every value of one closed list in every other, including `OUTCOME_UNKNOWN` against `EXECUTION_OUTCOME_UNKNOWN` and S0 to S3 against the data sensitivity; the names are unchanged. Not shown by this task: a `TransactionClassification` list that refuses `OUTCOME_UNKNOWN` (A272 adds it before the tag), and the Go pattern gap (DEBT-42) |
+| CON-05 | Ready | In review | noema#669 (open, not draft): four money rules, canaries, unit tests |
+| UND-16 | Backlog | In review | noema#654 (open, not draft; the dry-run exit 3 of A285 at `f128fd8`) and noema#672 (the dry-run job accepts exit 3) |
+| SEC-03 | In progress | In review | noema#636 (open, ready for review since 17 Nov; READY FOR CODEX at `727636c`; A246 and A259 are decided) |
+
+Checked and left unchanged: **CON-04** (noema#652 adds the Go tests of the intent, plan and binding vector families; the schema-valid intent and plan vectors and the shared masking vector file of A259 are not done, so the done-when is not met); **EXE-09** (noema#588 merged, but the clause "a human escalation is never counted as a pass" has no test I could find, and its Need EXE-05 is not Done).
