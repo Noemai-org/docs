@@ -26,7 +26,7 @@ A254: "The four codes (`TARGET_FROZEN`, `CLOCK_BREACHED_UNROUTED`, `DISPATCH_BUD
 
 A254 as first given said "four codes" and "17 to 21". The registry's closed list of core reason codes already held 17 codes, and `DECLINED_BY_APPROVER` is one of them (SoT §43.2a, since v1.2), so three new codes give 20. The Steward put the question to the Architect. The Architect's correction of 17 Nov 2026: "the enum goes 17 to 20. `DECLINED_BY_APPROVER` was already one of the 17, so only three codes are new. That was my error. C1 and the Steward were right." The count is **20**.
 
-The registry (`docs/engineering/state-registry.md`) and the SoT value list keep the old list until the Founders' next SoT version adds the three codes; no edit is made here (a SoT change is a new version with an Appendix D entry). C1's contract pull request adds exactly the three codes and the enum count is 20.
+The registry row (`docs/engineering/state-registry.md`, "Decision Record · `reason_codes`") lists the three codes from the hotfix of 17 Nov 2026: C1's noema#653 changed the vendored copy first, which made the `drift` check red on noema `main` and would fail `tools/contracts/validate.py` if the copy were reverted, so the original was brought to the copy's text (REQ-OPS-005; the decision is this record, ruling A254). The SoT value list is not edited here: it changes in the next SoT version, made by the Founders with an Appendix D entry. C1's contract pull request adds exactly the three codes and the enum count is 20.
 
 ## 4. Record fields
 
