@@ -118,3 +118,13 @@ The baseline above was read in the morning. Since then these merged or opened; o
 | SEC-03 | In progress | In review | noema#636 (open, ready for review since 17 Nov; READY FOR CODEX at `727636c`; A246 and A259 are decided) |
 
 Checked and left unchanged: **CON-04** (noema#652 adds the Go tests of the intent, plan and binding vector families; the schema-valid intent and plan vectors and the shared masking vector file of A259 are not done, so the done-when is not met); **EXE-09** (noema#588 merged, but the clause "a human escalation is never counted as a pass" has no test I could find, and its Need EXE-05 is not Done).
+
+## 9. Addendum, 17 Nov 2026 (late): PRE-03 and ENV-01 (A291)
+
+| Task | Before | After | Evidence |
+|---|---|---|---|
+| PRE-03 | Ready | **Done** | A291 (`DEC-2026-11-17-architect-rulings-a287-a295`): the Founder's session with Tushe was the kickoff; the Tushe addendum of 15 Nov (docs#188) is the written trace. The done-when text ("both invites accepted") is read as met by that session |
+| ENV-01 | Backlog, blocked | Ready | Its only Need was PRE-03 |
+
+Checked since section 8 and left unchanged (none meets its done-when): noema#576 (STM-01 is already Done), #618, #650 (EXP-01: the explanation facts source; the task is not complete), #646 (EDG-01: the stage map and `GET /v1/investigations/{id}`; the token and audit-role clauses are open), #659 (BEN-06 to BEN-09: coverage notes, not the cases) and #657 (TEN-05, part of ENV-14). With PRE-03 the Completed count is 75.
+
