@@ -29,7 +29,7 @@
 | Ruling | Text | Supersedes or changes |
 |---|---|---|
 | **A253** (interim) | **WIP limit.** The limit is counted per agent role. Drafts do not count. The Steward keeps the count. Merging comes before opening. This is an interpretation the Founders can overrule. | Nothing committed. It is a reading of the plan §5 limit (at most 4 open pull requests per driving founder, at most 2 of them P0); the plan is not edited (a change is a new plan version). |
-| **A254** (interim) | **Reason codes.** The four codes (`TARGET_FROZEN`, `CLOCK_BREACHED_UNROUTED`, `DISPATCH_BUDGET_EXHAUSTED`, `DECLINED_BY_APPROVER`) are adopted. The enum goes 17 to 21. The Steward writes the decision record. C1's contract pull request goes now. TRU-14 waits until after G1. | Adopts what **A244** proposed (three codes) and adds the fourth name. The count does not add up: see the separate record `DEC-2026-11-17-reason-codes-a254`. |
+| **A254** (interim) | **Reason codes.** The four codes (`TARGET_FROZEN`, `CLOCK_BREACHED_UNROUTED`, `DISPATCH_BUDGET_EXHAUSTED`, `DECLINED_BY_APPROVER`) are adopted. The enum goes 17 to 21. The Steward writes the decision record. C1's contract pull request goes now. TRU-14 waits until after G1. | Adopts what **A244** proposed (three codes) and adds the fourth name. The text as given said 17 to 21; the Architect corrected it to **20** on 17 Nov 2026 (`DEC-2026-11-17-architect-rulings-a270-a277`; record `DEC-2026-11-17-reason-codes-a254`). |
 | **A255** (interim) | **Capabilities.** `Capabilities.Check` carries the Role (the safer reading). | Nothing committed. |
 | **A256** (interim) | **Temporal test environment.** `go.temporal.io/sdk/testsuite` counts as the "Temporal test environment" of PERD §36.1. No [OPEN] entry is needed. | Nothing committed. It is a reading of the PERD §36.1 row "Temporal test environment" and of AGENT-14. |
 | **A257** (interim) | **SEC-08.** C1 authors SEC-08 and the Security Reviewer reviews it. | Nothing committed. |
@@ -56,16 +56,17 @@
 
 ## 3. What the Steward did where the rulings are silent
 
-- **A254's count.** The message says "four codes" and "17 to 21". The registry's 17 core codes already hold `DECLINED_BY_APPROVER` (SoT §43.2a, since v1.2); only three of the four are new, so the enum goes to 20, not 21. The Steward records the codes exactly as given and the count as unresolved, and asks for the fourth new code or a count of 20 (`DEC-2026-11-17-reason-codes-a254`). No registry or SoT edit is made until it is answered.
+- **A254's count.** The message said "four codes" and "17 to 21". `DECLINED_BY_APPROVER` was already one of the registry's 17 core codes (SoT §43.2a, since v1.2), so three codes are new and the enum goes to **20**. The Steward asked; the Architect confirmed 20 and said the 21 was his error (A270 to A277 record, preface). No registry or SoT edit is made here.
 - **A263.** The `eight scopes` text of the TEN-07b line in the 16 Nov session file is changed in this pull request.
 - **A253.** Counted from today's open pull requests only when the Founders ask for the count; no number is invented here.
 - **A265 and A250 and A235** debt entries are DEBT-38 to DEBT-41 in this pull request (the debt register). The "PERD amendment before G3" (no new spend event) is a follow-up for the PERD v1.25 change request, owner EL; it is not a debt entry.
 - **Not committed by this record:** the decisions on noema pull requests (#615, #580, #583, #565, #643, #625, #636, #536, #576) are the Architect's reviews of those pull requests; the owners act on them there.
-- **Next free ruling: A270.**
+- **Next free ruling: A278** (A270 to A277 are in `DEC-2026-11-17-architect-rulings-a270-a277`).
 
 ## 4. The Steward's ledger
 
 | Block | Numbers | Next free |
 |---|---|---|
 | Earlier records | A41 to A252 (merged) | |
-| This record | A253 to A269 | **A270** |
+| This record | A253 to A269 | |
+| Next record | A270 to A277 | **A278** |
