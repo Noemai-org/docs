@@ -6,11 +6,11 @@ Date: 2026-11-17 · Owner: Repo Steward · Task: GOV-30 (status assessment) · S
 
 | Category | Tasks |
 |---|---|
-| Completed | 72 |
+| Completed | 73 |
 | In progress | 49 |
 | In review | 2 |
 | Ready | 14 |
-| Blocked | 86 |
+| Blocked | 85 |
 | Deferred | 7 |
 | Stalled | 16 |
 | Not started | 29 |
@@ -18,7 +18,7 @@ Date: 2026-11-17 · Owner: Repo Steward · Task: GOV-30 (status assessment) · S
 
 The eight categories are mutually exclusive and add up to the 275 tasks in the register. A task sits in the first rule that fits, in the order of section 2. "Stale or unsupported" is a separate flag laid over the same tasks, not a ninth category: it covers **79** tasks (section 4).
 
-Before this audit the board said: Backlog 127, In progress 64, Done 46, Unassessed 24, Ready 12, In review 2. After it, `current_status` says: Backlog 122, Done 72, In progress 65, Ready 14, In review 2. The board's four columns cannot express Blocked, Deferred or Stalled, so those three are carried in this record and in the `blocked` flag; they read as Backlog or In progress in `tasks.csv`.
+Before this audit the board said: Backlog 127, In progress 64, Done 46, Unassessed 24, Ready 12, In review 2. After it, `current_status` says: Backlog 121, Done 73, In progress 65, Ready 14, In review 2. The board's four columns cannot express Blocked, Deferred or Stalled, so those three are carried in this record and in the `blocked` flag; they read as Backlog or In progress in `tasks.csv`.
 
 ## 2. Rules used
 
@@ -37,9 +37,9 @@ The seven-day line is a working choice of this audit, not a plan rule. Say so if
 
 ## 3. What changed on the board
 
-Updated the same day (17 Nov 2026) after the first draft: ENV-17 is Completed (noema#537, read after the audit; the Founders' message called it merged and the code on `main` supports it) and UND-14 is In progress, not Done: the compile route is not built or wired on `main` (`services/model/README.md`; noema#598 merged the compiler only), so the report that it merged is not supported.
+Updated the same day (17 Nov 2026) after the first draft: ENV-17 is Completed (noema#537, read after the audit; the Founders' message called it merged and the code on `main` supports it) ENV-02 is Completed on IL's report (the Steward re-checked the 20 AT rows against the frozen specification). UND-14 is In progress, not Done: the compile route is not built or wired on `main` (`services/model/README.md`; noema#598 merged the compiler only), so the report that it merged is not supported.
 
-- Completed: **72** against **46** Done before. The gap is work that merged without anyone moving the board; the CSV lists each task with the evidence.
+- Completed: **73** against **46** Done before. The gap is work that merged without anyone moving the board; the CSV lists each task with the evidence.
 - **6** tasks the board called Done are not supported (section 4).
 - `Unassessed` is gone: all 24 of those tasks now have a category.
 - `blocked` is `true` exactly where the CSV has a blocker, and `false` for Completed tasks and tasks with none.
@@ -77,7 +77,7 @@ The full list, with the evidence for each, is the `stale_flag` column of the CSV
 
 ## 5. Task IDs by category
 
-**Completed (72):** PRE-01, GOV-19, PLT-01, GOV-20, CON-02, GOV-04, PLT-02, PLT-03, PLT-04, CON-01, BEN-01, BEN-02, SEC-01, CON-03, PLT-06, PLT-07, REC-01, STM-01, UND-02, BEN-03, VOI-02, PCK-01, EVD-01, EVD-03, UND-04, ENV-09, BEN-04, VOI-03, PCK-02, ENV-08, SEC-02, TRU-01, TRU-02, TRU-03, TRU-05, EXE-01, RES-01, OPS-08, OPS-09, GOV-29, EXE-02, EXE-03, OUT-01, RCV-01, REC-03, TST-01, OPS-07, EXE-04, TRU-09, SEC-04, OUT-02, BEN-10, PCK-03, TRU-13, PCK-04, REC-09, SEC-05, BEN-13, REC-04, BEN-14, BEN-15, TST-04, SEC-11, UND-12, BEN-30, VOI-18, SEC-14, SEC-12, REC-08, ENV-15, BEN-31, ENV-17
+**Completed (73):** PRE-01, GOV-19, PLT-01, GOV-20, CON-02, GOV-04, PLT-02, PLT-03, PLT-04, CON-01, BEN-01, BEN-02, SEC-01, CON-03, PLT-06, PLT-07, REC-01, STM-01, UND-02, BEN-03, VOI-02, PCK-01, EVD-01, EVD-03, UND-04, ENV-09, BEN-04, VOI-03, PCK-02, ENV-08, SEC-02, TRU-01, TRU-02, TRU-03, TRU-05, EXE-01, RES-01, OPS-08, OPS-09, GOV-29, EXE-02, EXE-03, OUT-01, RCV-01, REC-03, TST-01, OPS-07, EXE-04, TRU-09, SEC-04, OUT-02, BEN-10, PCK-03, TRU-13, PCK-04, REC-09, SEC-05, BEN-13, REC-04, BEN-14, BEN-15, TST-04, SEC-11, UND-12, BEN-30, VOI-18, SEC-14, SEC-12, REC-08, ENV-15, BEN-31, ENV-17, ENV-02
 
 **In progress (49):** PLT-05, AGT-01, VOI-01, UND-01, UND-03, EDG-01, UND-05, ENV-05, ENV-06, TRU-04, GOV-30, ENV-14, EXP-01, BEN-05, SEC-03, VOI-04, TRU-06, VOI-05, TRU-07, TRU-08, EDG-02, CAP-01, VOI-06, UI-01, EXE-05, EXE-09, RCV-02, MEM-01, MEM-02, CON-07, UI-02, VOI-08, EXP-04, UI-03, SEC-08, SEC-09, BEN-16, UI-04, VOI-10, OPS-02, UND-13, VOI-17, EXE-08, TST-05, BEN-29, BEN-21, BEN-23, VOI-14, UND-14
 
@@ -85,7 +85,7 @@ The full list, with the evidence for each, is the `stale_flag` column of the CSV
 
 **Ready (14):** PRE-02, PRE-03, PRE-04, GOV-02, GOV-05, GOV-23, GOV-09, REC-02, PLT-08, CON-05, EVD-02, EVD-06, CON-06, REC-06
 
-**Blocked (86):** PRE-05, GOV-03, ENV-01, ENV-02, ENV-11, EVD-04, EVD-05, UND-06, ENV-10, GOV-07, ENV-07, AMB-01, AMB-02, AMB-03, AMB-04, AMB-05, RES-03, RES-04, GOV-10, BEN-28, STM-03, REC-10, UND-15, VOI-07, TST-02, UND-08, PLN-03, RCV-04, GOV-11, OUT-04, RCV-03, EXP-02, EXP-03, OUT-05, API-01, EXP-05, VOI-09, SEC-07, OBS-01, OBS-02, BEN-17a, BEN-17b, SEC-10, PLN-02, OPS-01, VOI-11, OPS-03, BEN-19, UI-05, OBS-03, UND-09, UND-10, UND-11, RES-05, CAP-03, MEM-04, GOV-12, REC-07, SEC-13, TST-06, ARM-01, ARM-02, BEN-22, VOI-12, ARM-03, ARM-05, BIZ-02, UI-06, VOI-13, BEN-24, BEN-25, VOI-15, BIZ-03, REL-01, GOV-13, BEN-26, BEN-27, GOV-14, REL-02, DEM-01, GOV-15, GOV-16, DEM-02, DEM-03, GOV-17, GOV-18
+**Blocked (85):** PRE-05, GOV-03, ENV-01, ENV-11, EVD-04, EVD-05, UND-06, ENV-10, GOV-07, ENV-07, AMB-01, AMB-02, AMB-03, AMB-04, AMB-05, RES-03, RES-04, GOV-10, BEN-28, STM-03, REC-10, UND-15, VOI-07, TST-02, UND-08, PLN-03, RCV-04, GOV-11, OUT-04, RCV-03, EXP-02, EXP-03, OUT-05, API-01, EXP-05, VOI-09, SEC-07, OBS-01, OBS-02, BEN-17a, BEN-17b, SEC-10, PLN-02, OPS-01, VOI-11, OPS-03, BEN-19, UI-05, OBS-03, UND-09, UND-10, UND-11, RES-05, CAP-03, MEM-04, GOV-12, REC-07, SEC-13, TST-06, ARM-01, ARM-02, BEN-22, VOI-12, ARM-03, ARM-05, BIZ-02, UI-06, VOI-13, BEN-24, BEN-25, VOI-15, BIZ-03, REL-01, GOV-13, BEN-26, BEN-27, GOV-14, REL-02, DEM-01, GOV-15, GOV-16, DEM-02, DEM-03, GOV-17, GOV-18
 
 **Deferred (7):** ARM-04, GOV-24, GOV-25, GOV-26, GOV-27, OPS-05, OPS-06
 
