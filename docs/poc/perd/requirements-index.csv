@@ -35,7 +35,7 @@ REQ-TRU-001,"Exactly one outcome, fully attributed",P0,TRU,23. Trust Engine,POC-
 REQ-TRU-002,Fail-closed gate order,P0,TRU,23. Trust Engine,INV-16;POC-NFR-03;POC-FR-07;US-10,
 REQ-TRU-003,Target-bound three-layer authority,P0,TRU,23. Trust Engine,POC-FR-07;US-07,REQ-CTX-006
 REQ-TRU-004,"Versioned, effective-dated policy evaluation",P0,TRU,23. Trust Engine,OD-02;INV-09;US-08,REQ-SEC-006
-REQ-TRU-005,Policy publication voids grants,P0,TRU,23. Trust Engine,INV-26;US-20;US-08,REQ-EXE-001
+REQ-TRU-005,A superseded policy voids its grants at execution,P0,TRU,23. Trust Engine,INV-26;US-20;US-08,REQ-EXE-001
 REQ-TRU-006,Clock evaluation,P1,TRU,23. Trust Engine,,REQ-ENV-003
 REQ-TRU-007,Decision determinism,P0,TRU,23. Trust Engine,POC-NFR-01;INV-21;AGENT-14,
 REQ-TRU-008,Decision Grant issuance,P0,TRU,23. Trust Engine,INV-03;INV-25;POC-FR-08,REQ-PLN-002
