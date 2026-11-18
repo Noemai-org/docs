@@ -1243,3 +1243,32 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Frontend Engineer (the pull request, noema#699); Security Reviewer (the supply-chain read); Founders (the approval, given).
 - **Deadline:** before noema#699 adds the package.
 - **Source:** noema#696, noema#699; ruling A298; AGENT-14; REQ-UI-001, POC-FR-11; DEC-2026-11-13-ui-01-frontend-dependencies.
+
+
+### OD-P-97: OpenTelemetry in both services (CLOSED; approved by ruling A320)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **approved** by ruling A320 ("REC-02: OpenTelemetry is approved (PERD §36.1)"; [DEC-2026-11-18-architect-rulings-a317-a328](decisions/DEC-2026-11-18-architect-rulings-a317-a328.md)). AGENT-14.
+- **Missing decision:** approval of the OpenTelemetry packages REC-02 needs (the correlation chain in headers, `traceparent`, logs and spans in both services).
+- **Why it matters:** no new dependency without an entry and approval (AGENT-14); PERD §36.1 names "OpenTelemetry, Prometheus-style metrics, JSON logs with redaction" in the fixed stack, so the stack is not in question, only the exact packages.
+- **Approved:** OpenTelemetry for tracing and correlation in the core and the model service, as PERD §36.1 names it. The exact packages and versions are named by REC-02's pull request, pinned with the lockfile, and read by the Security Reviewer.
+- **Not covered:** any vendor-specific agent or exporter (PERD §36.1 rejects vendor agents); any other telemetry library.
+- **Owner:** C2 (REC-02); Security Reviewer (the supply-chain read).
+- **Source:** ruling A320; PERD §36.1; REQ-AUD-004, REQ-OBS-002, REQ-SEC-003.
+
+### OD-P-98: `pgregory.net/rapid` adopted (CLOSED; adopted, A320)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **adopted** by ruling A320 ("`rapid` is already in `go.mod` and in use, so the Steward records it as adopted"). The dependency itself was approved earlier by [DEC-2026-11-03-rapid-test-dependency](decisions/DEC-2026-11-03-rapid-test-dependency.md) (a test-only dependency of the core, Block E E6). AGENT-14.
+- **Missing decision:** none outstanding: PERD §36.1 lists the Go property-testing library as [REC] and the approval was recorded on 3 and 7 Nov 2026.
+- **Recorded:** `rapid` is the adopted Go property-testing library. The next PERD version drops its [REC] label.
+- **Not covered:** any other property-testing library.
+- **Owner:** Engineering lead.
+- **Source:** ruling A320; DEC-2026-11-03-rapid-test-dependency; PERD §36.1.
+
+### OD-P-99: golangci-lint for the Go gate (CLOSED; approved by ruling A318)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **approved** by ruling A318 ("PLT-09 stays approved (A296): golangci-lint 2.5.0 pinned, gating after the 12 baseline findings are fixed"). AGENT-14.
+- **Missing decision:** approval of golangci-lint as a lint tool (AGENTS §5: linters not in PERD §36.1 need approval). PLT-09 names golangci-lint, mypy and Ruff in the plan row and PERD v1.19.
+- **Approved:** golangci-lint **2.5.0**, pinned (by hash, A296), as the Go gate of PLT-09. It gates only after the 12 baseline findings are fixed; until then it reports. Reading `.github` changes is the Security Reviewer's (A296).
+- **Not covered:** any other linter or formatter; mypy and Ruff are PLT-09's other tools under the plan row and PERD v1.19 and keep their own pins.
+- **Owner:** EL (PLT-09); Security Reviewer (`.github`).
+- **Source:** rulings A296 and A318; PLT-09; PERD v1.19.
