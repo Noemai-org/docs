@@ -1216,3 +1216,30 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before UI-01 or UI-04 adds the package.
 - **Source:** noema#610; ruling A238; AGENT-14; PERD §40.1; DEC-2026-11-13-ui-01-frontend-dependencies.
 
+
+
+### OD-P-95: A YAML parser for the CI safeguards: PyYAML (CLOSED; approved by the Founder, 17 and 18 Nov 2026)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **approved** by the Founder in comments on noema#667 ("approved: PyYAML, hash-pinned, safe_load, safeguards job only", 17 Nov 2026 14:50 UTC and again 18 Nov 2026 10:07 UTC), on the Architect's ruling A283 and A294. Filed by the Steward on the Security Reviewer's request ([DEC-2026-11-18-od-p-95-96-yaml-parser-and-ui-browser-build](decisions/DEC-2026-11-18-od-p-95-96-yaml-parser-and-ui-browser-build.md)). AGENT-14.
+- **Missing decision:** approval of one YAML parser as a pinned, hash-locked dependency of `tools/ci`, so that the workflow checks read the parsed document and not its lines.
+- **Why it matters:** two safeguards (no persisted checkout credential, noema#622; workflow permissions, noema#629) were line scanners, and Codex found a bypass in each, one valid spelling after another. A parser removes the class. No YAML parser was a `tools/ci` dependency (read by the Security Reviewer on noema#667): `tools/ci` is standard library only; `gopkg.in/yaml.v3` is an indirect Go requirement only.
+- **Approved (the smallest safe default, as the Founder wrote it):** PyYAML; **hash-pinned** (an exact version with its hashes in a `tools/ci/requirements.lock`); **`yaml.safe_load` only** (never `load`); installed in the **`safeguards` job only**, with no other use. The two checks then walk the parsed `jobs` and `steps` with the same tests and canaries, and the line scanners are deleted in the same change.
+- **Version:** not named by the approval. The Security Reviewer chooses it in the pull request and commits its hashes; it must be a release older than two weeks. **Facts the Steward read from PyPI on 18 Nov 2026:** the latest release is 6.0.3, uploaded 25 Sep 2025; licence MIT.
+- **What would change it:** a security finding on the chosen release; a parser that is already available without a new dependency; a failure of `safe_load` on a real workflow file.
+- **Not covered:** any other use of PyYAML or any other parser; installing it outside the `safeguards` job.
+- **Owner:** Security Reviewer (the pull request and the pin); Founders (the approval, given).
+- **Deadline:** before noema#622 and noema#629 are replaced by parser-based checks.
+- **Source:** noema#667, noema#622, noema#629; rulings A283 and A294; AGENT-14.
+
+### OD-P-96: A local browser build for interactive React: esbuild (CLOSED; approved by the Founder, 17 and 18 Nov 2026)
+
+- **Status:** [CLOSED] · NON-CANONICAL · **approved** by the Founder in comments on noema#696 ("approved: react, react-dom, esbuild, pinned exactly, ui only", 17 Nov 2026 and 18 Nov 2026 10:07 UTC), on the Architect's approval in principle (A298). Filed by the Steward on the Frontend Engineer's request (noema#696; "the Steward assigns the decision number"). AGENT-14.
+- **Missing decision:** how the UI's interactive React reaches a browser without an external script. The approved React 19 packages ship CommonJS entry points; the existing build emits ES modules and does not bundle them, so a browser cannot run them. The approved UI package list ([DEC-2026-11-13-ui-01-frontend-dependencies](decisions/DEC-2026-11-13-ui-01-frontend-dependencies.md), D5) approves no bundler.
+- **Approved:** `react`, `react-dom` (already approved, D1 of that record) and **`esbuild`**, **pinned exactly**, in `ui/` only, as a **dev dependency** that bundles the existing React and TypeScript entry point locally. No runtime CDN, no hand-written module loader, no new service, state library or UI framework.
+- **Version:** the Frontend Engineer proposes **0.28.2** (noema#696). **Facts the Steward read from the npm registry on 18 Nov 2026:** 0.28.2 is the `latest` tag, published 8 Aug 2026 (more than two weeks old); licence MIT; no runtime dependencies; 26 optional platform-binary packages; its `postinstall` script is `node install.js`. The approval does not name the version, so the Founders or the Architect confirm 0.28.2 on noema#696 if they want it fixed here; otherwise the Frontend Engineer pins the version that passes the checks below, and the pull request names it.
+- **Conditions (from noema#696, kept):** a committed lockfile; `npm audit` evidence on it (a high or critical finding returns the package to the Founders, D3 of the UI record); the install works under the existing `npm ci --ignore-scripts` policy, with the platform binary verified (esbuild's `postinstall` does not run under `--ignore-scripts`, so the install path is shown, not assumed); security and compatibility review (the Security Reviewer).
+- **What would change it:** a security or compatibility finding on `esbuild`; an already-approved browser delivery method the Architect points to; a failure under `--ignore-scripts`.
+- **Not covered:** any other bundler, dev server, plugin or loader; esbuild outside `ui/`; a runtime use.
+- **Owner:** Frontend Engineer (the pull request, noema#699); Security Reviewer (the supply-chain read); Founders (the approval, given).
+- **Deadline:** before noema#699 adds the package.
+- **Source:** noema#696, noema#699; ruling A298; AGENT-14; REQ-UI-001, POC-FR-11; DEC-2026-11-13-ui-01-frontend-dependencies.
