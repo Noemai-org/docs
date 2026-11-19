@@ -21,7 +21,7 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 
 | Vendor | Used for | What we need from them | Where it goes | Data terms | Status | Owner |
 |---|---|---|---|---|---|---|
-| **Intron Sahara v2.5** | Speech-to-text and text-to-speech (sole integrated speech provider in the POC from the SoT edit of DEC-2026-11-13-voice-provider-intron, A179) | API access; the answer on capacity and rate limits; written data terms (retention, zero data retention, no training, sub-processors, hosting region, deletion timeline, incident notice) before any real speaker's audio or transcript (A180); whether per-token confidence is returned | Key name to be decided with the Founder; not yet named | Unverified until in writing; synthetic audio only until then | pending the SoT edit | Founder |
+| **Intron Sahara v2.5** | Speech-to-text and text-to-speech (sole integrated speech provider in the POC from the SoT edit of DEC-2026-11-13-voice-provider-intron, A179) | API access; the answer on capacity and rate limits; whether per-token confidence is returned | Key name to be decided with the Founder; not yet named | **Founder decision of 19 Nov 2026 (A377, DEC-2026-11-19-founder-intron-data-terms-a377-a379): Intron's email of 18 Nov is accepted as the POC data terms; a DPA is not a precondition.** These are Intron's statements, not verified by Noema; REQ-VOI-004 and the SYNTHETIC label still apply | pending the SoT edit | Founder |
 | **Aethex AI** | Nigerian-language speech recognition and synthesis | API access; per-token or per-slot confidence in results (REQ-VOI-003); supported languages | `AETHEX_API_KEY` in `model-ci` and `bench` | Audio retention; region; DPA | not started | Founder |
 | **Indigenius** | Nigerian-language speech recognition | As above | `INDIGENIUS_API_KEY` in `model-ci` and `bench` | As above | not started | Founder |
 | **N-ATLAS** | Nigerian-language speech recognition | Confirm the access model (hosted API or downloadable weights) and licence. If weights, the hosting needed | To be decided once the access model is confirmed | Licence terms | not started | Founder |
@@ -55,6 +55,6 @@ Status values: `not started` · `requested` · `in hand` · `wired` · `not need
 
 ## Rules
 
-- A vendor is used with real customer or partner data only after its "Data terms" column is checked off and a DPA is in place. Until then: synthetic data only.
+- A vendor is used with real customer or partner data only after its "Data terms" column is checked off and a DPA is in place. Until then: synthetic data only. **Exception (Founder decision of 19 Nov 2026, A377): Intron's data terms are accepted for the POC and a DPA is not a precondition for it; every other vendor keeps this rule.**
 - Model versions are pinned. A vendor that cannot pin a version is not used for anything the Record must replay.
 - Adding a vendor means adding a row here in the same PR as the code that calls it.

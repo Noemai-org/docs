@@ -1051,9 +1051,9 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** before the SSE events route or the reconstruction route is mounted in a deployed profile (both stay unmounted until the DSN files are set).
 - **Source:** ruling A170; PERD §39.2; REQ-API-001; REQ-SEC-004.
 
-### OD-P-83: The link format of a fix PR's regression case (MEM-02; default; the test-file alternative stays off in the check until the workflow wiring PR)
+### OD-P-83: The link format of a fix PR's regression case (MEM-02; CLOSED; the workflow wiring merged in noema#673)
 
-- **Status:** [OPEN] · NON-CANONICAL · proposed by the Benchmark Owner under AGENT-02 on noema#452. The Principal Architect accepted the format as ruling A156 (12 Nov 2026), which is now committed in `docs/decisions/DEC-2026-11-12-architect-rulings-a148-a160.md` (docs#157, merged); the number OD-P-83 is the Steward's allocation under ruling A171. The entry stays [OPEN] for one reason: ruling A156 says the workflow wiring is a separate PR after noema#452 merges, and until that PR sets `REGRESSION_ALLOW_TEST_FILE=1` the check accepts only a benchmark case ID, which is what REQ-MEM-002 itself requires. The status becomes [DECIDED] in the wiring PR.
+- **Status:** [CLOSED] · NON-CANONICAL · the format was accepted as ruling A156 (12 Nov 2026), committed in `docs/decisions/DEC-2026-11-12-architect-rulings-a148-a160.md` (docs#157, merged). It was held [OPEN] for one reason: the workflow wiring. **noema#673 (MEM-02, "wire the regression-link check into CI (labels, live description, ruling A156)") merged on 18 Nov 2026**, and `.github/workflows/regression-link.yml` on `main` sets `REGRESSION_ALLOW_TEST_FILE=1`, so the A156 alternative is on. Closed by the Steward at the Benchmark Owner's request (19 Nov 2026), as the entry said it would be. Proposed by the Benchmark Owner under AGENT-02 on noema#452; the number OD-P-83 is the Steward's allocation under ruling A171.
 - **Missing decision:** the format of the regression link that REQ-MEM-002 requires on a fix PR. The requirement says a fix links the regression case it adds; it fixes no format.
 - **Why it matters:** the check that enforces the link (`tools/ci/check_regression_link.py`, noema#452) needs a rule it can test, and the Definition of Done (AGENTS.md section 8: regression case committed before the fix merges) needs a place a reviewer can find the case.
 - **Default (smallest safe):** a fix PR carries one line `Regression case: <ref>` in its body, outside any code block or quote. A fix PR is one **labelled `fix`** (the acceptance criterion of REQ-MEM-002, PERD v1.22 section on REQ-MEM-002: "CI SHALL block a PR labelled `fix` without a linked new case ID"); a head branch `fix/...` or a title that says fix also counts, as a supplement that never replaces the label. `<ref>` is a benchmark case ID (`BEN-<CATEGORY>-<4 digits>`), which is what REQ-MEM-002 requires ("a named, permanent benchmark case", "a linked new case ID"). "none", "n/a", "TBD" and empty are refused. The check follows CommonMark for fenced code.
@@ -1124,24 +1124,21 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Deadline:** pilot readiness.
 - **Source:** ruling A179; G5; VOI-14, VOI-16, GOV-25.
 
-### OD-P-89: Intron's written data terms (ADOPTED as written; ruling A180)
+### OD-P-89: Intron's written data terms (CLOSED; decided by the Founder, 19 Nov 2026; replaces the rule of ruling A180)
 
-- **Status:** [DEFAULT] · NON-CANONICAL · **adopted as written** on the Architect's instruction of 13 Nov 2026 ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2); filed by the Steward on the Architect's instruction (ruling A180). The default below is the rule in force **from the SoT edit that adopts A179 (v1.12)**; until then the committed SoT stands and only synthetic audio goes to any speech provider. **Intron's written terms are still unverified: `[DEFAULT]` here does not mean the terms are settled.**
-- **Missing decision:** the Founder's commit of Intron's written terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
-- **Why it matters:** no real speaker's audio or transcript goes to Intron before this (A180, PERD R-18, AGENTS §10). "Zero data retention" is an unverified claim until it is in writing.
-- **Default (smallest safe):** synthetic audio only. The VOI-05 consent form names Intron.
-- **What would change it:** the Founder commits the written terms and says they are acceptable; or Intron's terms are not acceptable, which reopens OD-P-88.
-- **Not covered:** any claim of regulatory compliance (SoT §50.2).
-- **Owner:** Founder; GOV-25 and PRE-04 carry the work.
-- **Deadline:** before the first real speaker's recording (VOI-06).
-- **Source:** ruling A180; PERD R-18; GOV-25; VOI-05.
-- **Vendor statements (Intron's email of 13 Nov 2026; unverified until the DPA is signed and, where it says so, until measured; recorded on the Founder's direction of 16 Nov, A241; they are notes, not decisions, and set no threshold):**
-  - Retention is set by the customer (zero, a day, a week, and so on); new accounts start at zero retention.
-  - Intron states it does not use customer audio or transcripts to train its models.
-  - Processing runs on AWS in Ireland (EU).
-  - Intron states it is SOC 2 Type I, ISO 27001 and NDPR certified.
-  - A Data Processing Agreement is signed together with the commercial agreement.
-  - **Class (A241):** these restrict real speaker data (A180, the DPA); they do not block engineering work, which starts on synthetic audio. Nothing here is verified: "zero retention" and the certifications stay claims until the DPA and the evidence are in hand.
+- **Status:** [CLOSED] · NON-CANONICAL · **decided** by the Founder on 19 Nov 2026 ([DEC-2026-11-19-founder-intron-data-terms-a377-a379](decisions/DEC-2026-11-19-founder-intron-data-terms-a377-a379.md), A377 to A379; takes effect when that record is approved and merged). It replaces A180's "written terms before real audio", which this entry had adopted ([DEC-2026-11-13-architect-rulings-a183-a192](decisions/DEC-2026-11-13-architect-rulings-a183-a192.md), §2).
+- **Missing decision (as raised):** the Founder's commit of Intron's data terms: retention, zero data retention, no training, sub-processors, hosting region, deletion timeline and incident notice.
+- **Decision:** Intron's email of 18 Nov 2026 is accepted as the data terms for the POC (A377). A DPA is no longer a precondition for any work, including real-speaker audio; the DPA follows the commercial agreement (A377, A378). Counsel is not needed and blocks nothing (A378). Consent forms are no longer required for recordings of people outside the team; the Integrator account's retention is zero days (A379). The Founder holds Intron to its commitments in writing (A377).
+- **What stays:** REQ-VOI-004 (raw audio never in the repository or CI artifacts, only in the bench Environment's private store, deleted per the plan); synthetic audio stays labelled; masking before any provider call (AGENTS §10).
+- **Not covered:** any claim of regulatory compliance (SoT §50.2, AGENTS §10): the certifications below are Intron's own statements. The terms of any other provider (OD-P-88).
+- **Owner:** Founder (decided); Steward records.
+- **Source:** A377 to A379; the Founder's instruction of 19 Nov 2026; PERD R-18; VOI-05; GOV-25.
+- **Intron's statements (its email of 13 Nov 2026, noted on the Founder's direction of 16 Nov, A241; its email of 18 Nov 2026 as A377 states it; they are Intron's statements, accepted by the Founder as the POC data terms, not verified by Noema):**
+  - Retention is set by the customer (zero, a day, a week, and so on); new accounts start at zero retention; zero data retention by default, configurable upward (A377).
+  - Intron states it does not use customer audio or transcripts to train its models (A377: no training on customer data).
+  - Processing runs on AWS in Ireland (EU) (the 13 Nov email).
+  - Intron states it is SOC 2 Type I, ISO 27001 and NDPR certified (A377).
+  - A Data Processing Agreement is signed together with the commercial agreement (A377: "alongside a commercial agreement").
 
 ### OD-P-90: Intron's rate limits and capacity (ADOPTED as written; rulings A179 and A182)
 
