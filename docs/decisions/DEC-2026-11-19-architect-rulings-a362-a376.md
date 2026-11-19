@@ -150,4 +150,4 @@ Record these rulings, and PERD v1.26 covers the A365 clarification. Instructions
 | `DEC-2026-11-19-architect-rulings-a341-a357` | A341 to A357 | |
 | This record | A362 to A376 (A363's `planned:<node>` rule and A345's last bullet withdrawn) | |
 | `DEC-2026-11-19-founder-intron-data-terms-a377-a379` | A377 to A379 | |
-| Not received | A358 to A361, A380 to A392, A393 to A400 (see `DEC-2026-11-19-architect-corrections-a371-a345s4`) | **A401** |
+| Not received | A358 to A361, A380 to A383, A389 to A392, A393 to A400 (see `DEC-2026-11-19-architect-corrections-a371-a345s4`) | **A401** |
