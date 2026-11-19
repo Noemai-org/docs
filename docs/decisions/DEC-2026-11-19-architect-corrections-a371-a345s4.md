@@ -40,7 +40,8 @@ The Steward's instruction says "Record A358-A392" and "Record A393-A400 (the ans
 |---|---|---|
 | `DEC-2026-11-19-architect-rulings-a362-a376` | A362 (heading only), A363 to A376 | Recorded |
 | Founder decision, Intron's data terms | A377 to A379 | Recorded, verbatim |
-| Not received | A358 to A361, A380 to A392, A393 to A400 | **Text needed from the Architect** |
+| `DEC-2026-11-19-architect-rulings-a384-a388` | A384 to A388 | Recorded |
+| Not received | A358 to A361, A380 to A383, A389 to A392, A393 to A400 | **Text needed from the Architect** |
 | Next free | A401 | |
 
 When the Architect sends the text, the Steward records it, exactly as given, in the next record.
@@ -49,4 +50,4 @@ When the Architect sends the text, the Steward records it, exactly as given, in 
 
 1. **A371:** the correction names A371, but the route sentence is A370. Is the correction to A370's route sentence, and does "the panel route" replace "the investigation view"?
 2. **A345 S4:** what is the pack's field and where does `trustlimits` read it? The Steward writes no pack field name (the fintech pack has no `routes` field either, DEBT-53).
-3. **Text of A358 to A361, A380 to A392 and A393 to A400.**
+3. **Text of A358 to A361, A380 to A383, A389 to A392 and A393 to A400.**
