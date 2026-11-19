@@ -134,7 +134,8 @@ Applied from ruling A352 (DEC-2026-11-19-architect-rulings-a341-a357), which ask
 2. §23.3, "Reason codes": the table gains the three core codes ruling A254 adopted, with the step that produces each as the code has it: `TARGET_FROZEN` (T10, the freeze check), `CLOCK_BREACHED_UNROUTED` and `DISPATCH_BUDGET_EXHAUSTED` (T12). The sentence about how many codes the record decided is reworded to say the closed enum has 20 (A254, A270 to A277).
 3. REQ-CTX-007 (EVD-06, ruling A320): the order of handling is stated, strip control characters, then cap, then detect; the cap is 256 characters per field as a bench setting [REC]; the call site is the Evidence layer after the payload read, with one read id per read as the ObjectRef; the detector's patterns are pack data (A292).
 4. **docs#206 (PLANNED to ESCALATING), under option (b) (ruling A352): no PERD text changes.** There is no new §28.2 arrow; when the dispatch budget is spent the runner re-evaluates and Trust decides ESCALATE `DISPATCH_BUDGET_EXHAUSTED` at T12.
-5. Not changed: §54 (the sacred safety invariants) and every other requirement.
+5. REQ-TRU-009 (the confirmation contract), ruling A365 (DEC-2026-11-19-architect-rulings-a362-a376): the evidence component of `binding_hash` is a content hash over the sorted (source, source record id, payload hash) triples, ids left out; the decision's and the grant's `evidence_set_hash` stay as they are (a clarification of "evidence set", flagged for the Founders' next SoT version).
+6. Not changed: §54 (the sacred safety invariants) and every other requirement.
 
 No requirement is added or removed; the totals stay as in v1.25.
 
@@ -2310,6 +2311,7 @@ Routing priority derives from `phase` through pack routing rules. Priority may b
 
 - **Requirement:** SoT §43.2a exactly.
   - `binding_hash` = SHA-256(JCS({`principal_id`, `intent_hash`, `capability_id`, `target_ref`, `params_hash`, `evidence_set_hash`, `plan_hash`, `policy_version`})).
+  - **Evidence component of the binding (clarification, ruling A365).** The Evidence layer mints a new id on every read, so a hash over ids would never match again and the approver would be asked forever. In `binding_hash`, the `evidence_set_hash` member is a content hash: the sorted (source, source record id, payload hash) triples with the layer's own ids left out. The decision's and the grant's `evidence_set_hash` (§21.3) are unchanged. Changed payloads still mean `BindingChanged` and a fresh CONFIRM. This clarifies "evidence set" here; it stays a flagged note for the Founders' next SoT version.
   - Default expiry: 10 min [ADOPTED DEC-2026-10-17].
   - ACCEPT triggers a fresh evaluation (re-read evidence, rebuild the plan, recompute the hash).
   - A mismatch produces a new decision, never a grant.
