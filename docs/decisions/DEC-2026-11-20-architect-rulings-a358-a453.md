@@ -6,8 +6,8 @@
 | **Date** | 20 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
 | **Decides** | The ledger A358 to A362 and A380 to A428 (§1), and the rulings A429 to A453 (§2). The rulings A363 to A376 are in `DEC-2026-11-19-architect-rulings-a362-a376`, A377 to A379 in `DEC-2026-11-19-founder-intron-data-terms-a377-a379`, and A384 to A388 in `DEC-2026-11-19-architect-rulings-a384-a388`; this record does not repeat them. |
-| **Supersedes** | **A360 is replaced by A362** (as the ledger says). **A429 supersedes the force-push question.** **A447 corrects A345 S4** (and answers the question of `DEC-2026-11-19-architect-corrections-a371-a345s4`). **A430 corrects the earlier KILL_SWITCH instruction** (and states A400). **A410 states the correction to A371**: the reconstruction route is audit-only and ops use the panel route. **A448 answers** the PERD-version questions of the same record. **A449 confirms** the Steward's defaults. **A450:** noema#764 is closed because A363 supersedes it. Otherwise per ruling, in §1 and §2. |
-| **Amends** | Plan v1.26 (the consent wording of VOI-06, VOI-08 and the demo pre-flight; the gate column of TRU-07 and TRU-12), by `CR-2026-11-20-A449-plan-v1.26`; `tasks.csv` (TST-02); the debt register (DEBT-54 to DEBT-56 confirmed). Nothing in the SoT or the PERD. |
+| **Supersedes** | **A360 is replaced by A362** (as the ledger says). **A429 supersedes the force-push question.** **A447 corrects A345 S4** (and answers the question of `DEC-2026-11-19-architect-corrections-a371-a345s4`). **A430 corrects the earlier KILL_SWITCH instruction** (and states A400). **A410 states the correction to A371**: the reconstruction route is audit-only and ops use the panel route. **A448 answers** the PERD-version questions of the same record. **The restatement of the evidence digest restates A365, A411 and A435** (PERD v1.28). **A449 confirms** the Steward's defaults. **A450:** noema#764 is closed because A363 supersedes it. Otherwise per ruling, in §1 and §2. |
+| **Amends** | PERD v1.28 (REQ-TRU-009: the restated evidence digest, `CR-2026-11-20-A365-perd-v1.28`); plan v1.26 (the consent wording of VOI-06, VOI-08 and the demo pre-flight; the gate column of TRU-07 and TRU-12), by `CR-2026-11-20-A449-plan-v1.26`; `tasks.csv` (TST-02); the debt register (DEBT-54 to DEBT-56 confirmed). Nothing in the SoT or the PERD. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -198,7 +198,27 @@ A365 is PERD v1.27, because a PERD is never edited in place. "Adopt v1.26" means
 
 SR closes it, because A363 supersedes it.
 
-*A451, A452 and A453: the Architect's heading says "A429–A453", and the message holds rulings A429 to A450. No text came for A451, A452 or A453 (§3).*
+### The evidence component of a confirmation binding (restatement of A365, A411 and A435)
+
+The evidence component of a confirmation binding is a content digest: SHA-256 over the LP-encoded, sorted entries (source, source_record_id, facts_digest, status) of the evidence items the decision used, where facts_digest is the hash of the item's mapped, normalized facts (the same evidence mapping the Reconciler and the policy use). Evidence ids are not part of it, and duplicate entries count once. The binding keeps the SoT §43.2a field name evidence_set_hash for this value. The Decision Record's and the grant's own evidence_set_hash are unchanged; the writer's step carries the content digest separately (ConfirmationBindingEvidenceHash) for the binding computation.
+
+*Supersedes or changes:* restates **A365**, **A411** and **A435**. PERD v1.28 carries it (§3).
+
+### A451 (interim): Raw-audio store.
+
+IL creates a private store on the bench host (a volume, 0700, a retention timer per the VOI-05 plan, never uploaded, never in the repo or CI artifacts); access is the Founders and the voice runner only; SR reviews the PR (REQ-VOI-004, A377-A379).
+
+### A452 (interim): #201 and the voice recording plan.
+
+Adults only; no recording of bystanders; sessions in controlled settings. This is a recommendation for the Founder to confirm or overrule. Consent-form wording is dropped from VOI-05, VOI-06, VOI-08 and the demo pre-flight (A379's effect).
+
+*The Steward's note:* the adults-only, no-bystanders and controlled-settings points are the Architect's **recommendation**, not a decision, until the Founder confirms or overrules. The Steward does not add them to the plan. The consent-wording part is A379's effect and is already in plan v1.25 (VOI-05) and v1.26 (VOI-06, VOI-08, the pre-flight).
+
+### A453 (interim): Authority notes.
+
+A PR that cites a ruling not yet merged says "interim" (AGENTS 2.3). When docs#211 merges, the authority notes on #767, #201 and #625 are removed.
+
+*The Steward's note:* docs#211 has merged (20 Nov 2026), so those notes are due for removal by the authors of noema#767, noema#201 and noema#625; the Steward does not edit another agent's pull request.
 
 ## 3. What the Steward did, and where the rulings are silent
 
@@ -207,14 +227,14 @@ SR closes it, because A363 supersedes it.
 - **A345 S4 correction (A447, A416).** The at-risk value is `clock_at_risk_remaining_bp` in `packs/fintech/limits/trust_limits.json`, read by `platform/trustlimits`. `NOEMA_TRUST_AT_RISK_BPS` (A356's table) is withdrawn, as the earlier corrections record says. That answers its question 2.
 - **KILL_SWITCH kinds (A430, A400).** KILL_SWITCH_CLEARED and KILL_SWITCH_CLEAR_REFUSED are `SECURITY_EVENT` kinds. The Steward does not hold the earlier KILL_SWITCH instruction the ruling corrects (it is not in any committed record), so it records the corrected rule only. `DEC-2026-11-10-architect-sync-a113-a122` (A114) already says the same, so no committed document needs changing. The Founders' `DEC-2026-11-07` D5 and the `KILL_SWITCH_CHANGED` event are not touched.
 - **A448 answers two questions:** PERD v1.27 is where A365 lives (the Steward's reading was right); "adopt v1.26" means nothing now (so no adoption record is written).
-- **The numbers.** The ledger repeats, in its own numbers, several rulings that earlier records hold under A363 to A376: A411 is A365 and A366; A410 is A370's route sentence; A417 is A368's `ROLE:<role>`; A419 is A363's `produced_by`; A393 and A394 are A369's Q-A and PackVersion; A400 is A430; A401 is A369's graph params with A440's kind; A416 is A447. The Steward records both as given and changes no wording; where the wording differs, **the later ruling governs** (SoT §0.4, item 1: the latest recorded decision first, once committed). The Steward found no contradiction in substance. One point **is flagged for the Architect:** A435 says the evidence digest "covers mapped facts with status included; duplicates count once", while PERD v1.27 (REQ-TRU-009, from A365) says "sorted (source, source record id, payload hash) triples, ids left out". If the A435 reading is the intended one, v1.27's wording needs a new PERD version (v1.28, with a change request). The Steward writes none until the Architect says.
-- **A451, A452, A453 have no text** (§2). The Steward invents none.
+- **The numbers.** The ledger repeats, in its own numbers, several rulings that earlier records hold under A363 to A376: A411 is A365 and A366; A410 is A370's route sentence; A417 is A368's `ROLE:<role>`; A419 is A363's `produced_by`; A393 and A394 are A369's Q-A and PackVersion; A400 is A430; A401 is A369's graph params with A440's kind; A416 is A447. The Steward records both as given and changes no wording; where the wording differs, **the later ruling governs** (SoT §0.4, item 1: the latest recorded decision first, once committed). The Steward found no contradiction in substance. One point was flagged: A435 says the evidence digest covers "mapped facts with status included" and PERD v1.27 said "(source, source record id, payload hash) triples". **The Architect's restatement (§2) settles it**, and **PERD v1.28** (`CR-2026-11-20-A365-perd-v1.28`) carries the restated digest: v1.27 is not edited.
+- **A451, A452 and A453** came in a later message of 20 Nov and are recorded in §2, with the restatement of the evidence digest.
 - **A429** (history hygiene): noema#721 (EL) and noema#802 (SR) are closed and reopened from fresh branches by their authors. The Steward does not do that.
 - **A441:** no migration number is assigned: no owner is named, and the migration follows the G1 critical path. Next free is 0035 on the ledger (noema#183); an owner claims it there first.
 - **A449:** DEBT-54, DEBT-55 and DEBT-56 are marked confirmed in the debt register. The A388 CI job sits under UI-04 (no new task row). The gate column of TRU-07 and TRU-12 becomes G1, by `CR-2026-11-20-A449-plan-v1.26`; the four conditions of G1 (plan §3.1) are unchanged.
 - **Plan v1.26** (`CR-2026-11-20-A449-plan-v1.26`): VOI-06's done-when loses "and consent"; VOI-08's task loses "consent"; the demo pre-flight loses "consent forms in hand for any live voice" (the effect of A379); TRU-07 and TRU-12 carry **G1**. Not changed, because the instruction does not name them: line 336 of the plan's "never" list ("keep raw audio without consent") and the G5 row.
 - **TST-02 (verified, not Done).** noema#675 merged on 18 Nov 2026 (the selector `greedy_cover`, the `smoke` suite with `min_cases: 30`, its tests): 30 cases, 22 of 22 user stories, 24 of 28 fault effects, 16 of 20 capabilities. Its own description says what is not done: running the smoke on every merge and the nightly run (a workflow change), and the row's "smoke runs under 10 min on every PR" is not observed (no workflow on `main` runs the `smoke` suite; `bench-nightly` is a schedule). So TST-02 becomes **In progress** (from Backlog); `blocked` stays true (the workflow needs a Founder decision and SR, and BEN-06 to BEN-09 are listed in Needs and are not Done). BEN-12 still needs it.
-- **Next free ruling: A454** (A451 to A453 are named without text).
+- **Next free ruling: A454.**
 
 ## 4. The Steward's ledger
 
@@ -225,5 +245,5 @@ SR closes it, because A363 supersedes it.
 | `DEC-2026-11-19-architect-rulings-a362-a376` | A362 (heading only; its text is in this record), A363 to A376 | |
 | `DEC-2026-11-19-founder-intron-data-terms-a377-a379` | A377 to A379 (Founder) | |
 | `DEC-2026-11-19-architect-rulings-a384-a388` | A384 to A388 | |
-| This record | A358 to A362 (A360 replaced), A380 to A383, A389 to A428, A429 to A450 | |
-| Named without text | A451 to A453 | **A454** |
+| This record | A358 to A362 (A360 replaced), A380 to A383, A389 to A428, A429 to A453 | |
+| Also in this record | A451 to A453; the restatement of the evidence digest (A365, A411, A435) | **A454** |
