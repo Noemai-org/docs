@@ -74,6 +74,10 @@ The startup recovery pass may run in the background and gate `/readyz`. Plain "r
 - **A544.** The Steward fills no pack value. `limits/trust_limits.json` and its values are C2's; a value the PERD and the SoT do not state is an [OPEN] entry in `docs/open-decisions.md` with the safest default (nothing allowed under freeze; no route means UNKNOWN). Nobody invents a value (AGENT-02, AGENT-16).
 - **A546.** The PERD table lists REQ-AMB-003 (deterministic scoring from pack weights) under Understanding (deterministic code, no model), which fits A546's "where the PERD places it". The Steward raises no conflict. C2 reads REQ-AMB-003 and raises a CONFLICT block if the placement differs. All SYNTHETIC labels are required (AGENT-25).
 - **A548.** The Steward changes no Compose value; IL adds the mounts. A new key directory or login is also a secrets-handling path, so SR reads it.
+- **A542 and noema#892 (EL's read).** noema#892 is merged, but EL has not confirmed that its adapter refuses an empty `DeclinedRequestID` on a `DECLINED_BY_APPROVER` reject. EL takes that as a small follow-up PR, tests first. The Steward does not read #892 as closed on A542 until that follow-up merges.
+- **A548 and the key kinds (EL's read).** A548 names `core-trust.ed25519.<n>.key` for the core-trust **Record** signing keys, as the orchestrator's keys sign Record events. The Steward reads A548 as changing nothing in AGENTS §6: grants and confirmations stay HMAC-SHA-256, and per-power asymmetric grant keys stay deferred. The Architect confirms that reading. noema#884's shared reader checks the owner against the process's effective user, so uid 65532 must be the core's runtime user; IL pins that in `deploy/`.
+- **A550 and the accessor limit (EL's question, open).** A475 allowed one accessor on `trustpack.Pack` and A512 a second; `OwnershipKinds()` (noema#844) and `Ref()` (noema#905) are already on `main`, and A550 names more (the confirmation-terms accessor, the registry accessor, the plangraphs inputs). The ruling does not say whether A550 amends that limit. The Steward does not decide it: the Architect says whether A550 amends A475 and A512 for the accessors it names (read-only, derived from verified pack bytes). Until then EL builds against the stated limit.
+- **A519 (EL's question, open, not in this record).** The Writer does not insert the `confirmation_request` row, so the A519 end-to-end test cannot pass today. The Architect rules who owns that fix (C1's Writer) and whether `Requests.Create` stays.
 - **A549.** A `/readyz` change is Platform's; no spec edit here.
 - **Task status (`tasks.csv`).** Unchanged: it moves only on merged evidence, and nothing new has merged against a done-when since the OPS-24 pass (UND-17 → Done). The Steward rechecks in the next status pass.
 - **Migration ledger on noema#183** is unchanged: 0037 stays reserved; these rulings add none.
@@ -91,4 +95,4 @@ The startup recovery pass may run in the background and gate `/readyz`. Plain "r
 | A541 | cross-role reads (no further text) | |
 | This record | A542 to A550 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank); A537 lane contents beyond lane 5 | **A551** |
+| Named without text | A467 (blank); A537 lane contents beyond lane 5; A550 vs the A475/A512 accessor limit and A519 (open questions, no ruling) | **A551** |
