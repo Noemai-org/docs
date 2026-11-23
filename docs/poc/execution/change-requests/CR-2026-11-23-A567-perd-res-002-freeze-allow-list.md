@@ -1,0 +1,17 @@
+# Change request: CR-2026-11-23-A567-perd-res-002-freeze-allow-list
+
+**Status: Draft, until the Founders adopt it.** No PERD file is edited by this request.
+
+- Change ID: CR-2026-11-23-A567-perd-res-002-freeze-allow-list
+- Requester: Principal Architect (ruling A567, relayed on 23 Nov 2026; with A544), drafted by the Repo Steward
+- REQ IDs affected: REQ-RES-002 (Contradiction freeze), and the conflicts-register entry SOT-C-33. The plan task owners are PCK-08 (noema#910, the pack limits pin) and EL's consumer. No requirement is added or removed.
+- Behaviour before: PERD v1.28 REQ-RES-002: "While it exists, Trust may issue grants only for capabilities whose descriptor declares `allowed_under_freeze: true` [ADOPTED DEC-2026-10-17]: `CREATE_ESCALATION_CASE`, `RECORD_INVESTIGATION_EVIDENCE` and `ROUTE_TO_INTERNAL_OWNER`." The allow-list is an attribute on each capability descriptor. Ruling A544 (interim) puts the Reconciler and Clocks routing, including `AllowedUnderFreeze`, in pack data at `limits/trust_limits.json`; ruling A567 (interim) says "the freeze allow-list stays in `trust_limits.json`".
+- Behaviour after (proposed text, for the Architect to approve or reword): "While it exists, Trust may issue grants only for capabilities named in the freeze allow-list of the pack's `limits/trust_limits.json` [ADOPTED DEC-2026-10-17 for the three capabilities]: `CREATE_ESCALATION_CASE`, `RECORD_INVESTIGATION_EVIDENCE` and `ROUTE_TO_INTERNAL_OWNER`. If the limits entry is missing, nothing is allowed under a freeze and Trust fails closed." The three capabilities and the rule that every other consequential write on a frozen target is refused do not change. Additive optional pack members stay v1, each with a migration note (precedent noema#879, noema#902).
+- Safety and security impact: no Tier 0 gate, threshold or TTL changes. The allow-list stays one list, in one place, and a missing entry fails closed (nothing allowed). The risk named by SOT-C-33 is two places defining the list; this change removes the second.
+- Tests added or changed: EL's consumer test that a missing limits entry allows nothing under a freeze (fail closed); REQ-RES-002's property test that a grant for a non-allowed capability on a frozen target is unconstructable stays. None weakened. The owners add them; none here.
+- Schedule and dependency impact: noema#910 (PCK-08) carries the limits pin; no gate or date moves from this request.
+- SoT or PERD text changes: PERD only, as a new version file (Proposed) with `requirements-index.csv` regenerated, and a decision record. Rulings A544 and A567 (`DEC-2026-11-23-architect-rulings-a542-a553` and `DEC-2026-11-23-architect-rulings-a561-a573`) are that record. The SoT is not edited (INV-20's wording is not touched). Until the PERD version exists, A567 governs (the A448 pattern); the merged PERD v1.28 is not edited.
+- Decision owner: Principal Architect (the PERD text); the Founders adopt it.
+- Decision record: DEC-2026-11-23-architect-rulings-a561-a573 (A567; A544)
+- Migration and rollback: none for the document. Applied as the next PERD version file, Proposed. Roll back by deleting that file and regenerating the index from v1.28.
+- Open question for the Architect (not decided here): does the capability descriptor's `allowed_under_freeze` attribute stay as a second, redundant statement (with a load-time refusal if it disagrees with the limits entry), or is it removed? A567 says only that the allow-list stays in `trust_limits.json`.
