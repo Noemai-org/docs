@@ -1,12 +1,12 @@
-# DEC-2026-11-23 · Architect rulings A534 to A538 (interim)
+# DEC-2026-11-23 · Architect rulings A534 to A540 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 23 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 23 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
-| **Decides** | Rulings A534 to A538 (§1), every one Interim. A525 to A533 are in two merged records (§1, first paragraph); they are not repeated. |
-| **Supersedes** | **A536 amends A527** (two holders of the migration password, not one; A527 is in `DEC-2026-11-22-architect-rulings-a518-a524`, which is merged and not edited, so a reader of that record must read A536). **A534** settles the A503 path (the ESCALATE record) and rescopes noema#733. **A535** removes a refusal gate for a missing time slot from Understanding. Otherwise per ruling, in §1. |
+| **Decides** | Rulings A534 to A540 (§1), and A474's follow-up (A488), every one Interim. A525 to A533 are in two merged records (§1, first paragraph); they are not repeated. |
+| **Supersedes** | **A536 amends A527** (two holders of the migration password, not one; A527 is in `DEC-2026-11-22-architect-rulings-a518-a524`, which is merged and not edited, so a reader of that record must read A536). **A539** settles where the disposition id travels (A534's open point). **A540** says how tenants-provision's role is narrowed (A536). **A534** settles the A503 path (the ESCALATE record) and rescopes noema#733. **A535** removes a refusal gate for a missing time slot from Understanding. Otherwise per ruling, in §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder (A111)
 - Date: 23 November 2026
 - Owner: Principal Architect; Founder; Technical Co-Founder
-- Decides: A534 to A538
+- Decides: A534 to A540
 - Decision: §1
 - Rationale and evidence: the Architect's message of 23 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-07, INV-12, INV-21; AGENT-11, AGENT-15, AGENT-16, AGENT-25; REQ-RCV-001, REQ-RCV-003, REQ-TRU-010; PERD §23; AGENTS §8
@@ -28,7 +28,8 @@ The Architect's rulings A525 to A538 were relayed together. Their texts are reco
 
 - **A525 to A529:** `DEC-2026-11-22-architect-rulings-a518-a524` (merged, docs#226).
 - **A530 to A533:** `DEC-2026-11-23-architect-rulings-a530-a533` (merged, docs#228).
-- **A534 to A538:** below.
+- **A534 to A540:** below.
+- **A474's follow-up** is A488 (§1, last item).
 
 **A536 amends A527:** where A527 says the one-shot is the password's only holder, read A536 (two holders).
 
@@ -58,15 +59,31 @@ A527 is amended: migrate and tenants-provision are the two holders of the migrat
 
 The Pidgin lexicon is pack data. C2 adds only the phrases the G1 inputs use plus obvious ones. Entries are labelled SYNTHETIC and reviewed by the Founders as data, and nobody waits on that review.
 
+### A539 (interim, where the disposition id travels; answers EL on A534).
+
+The disposition id travels in the workflow's start input as plain data. There is no new row column. The Record is the authority: recovery re-reads the ESCALATE decision from the Record by correlation, never from workflow history. The task is TRU-10, on branch `feat/TRU-10-escalation-path`, and EL's allowlist extension in A534 applies to it.
+
+### A540 (interim, tenants-provision's role; follows A536).
+
+tenants-provision gets the narrowest role that works. IL lists the statements `provision-tenants.sh` runs in #894, and the PR either uses a narrower login or says why DDL is needed. This is not a blocker.
+
+### A537 lanes (as given by the Architect).
+
+A537's four lanes are: (1) pack source and capabilities; (2) trust inputs; (3) decisions; (4) surfaces. The Architect pointed to "the lane text above" for what each lane holds; only the four names reached the Steward, so the components in each lane are not listed here.
+
+### A474's follow-up (A488).
+
+A474's follow-up is A488: no `--published-by`, no `--commit-sha`, and `build_revision` is OD-P-100.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **Why this record exists.** docs#228 merged (06:40, `27ea8fd`) with A530 to A533 only. The Steward pushed a combined A525 to A538 record to that branch afterwards, which never reached `main`; SR and EL both found it. That commit is abandoned. This record carries A534 to A538 only, the merged A530 to A533 record stays as merged, and A525 to A529 are not repeated, so no ruling has two texts.
-- **A534.** The ruling does not name the task ID the allowlist extension applies to ("this task"), and the Steward does not guess it. EL asks which start arguments carry the decision id: the workflow's input, or the investigation row, which has no column for it (INV-30 allows an id in workflow input but no I/O in workflow code). The ruling says only "the investigation's start arguments"; the Architect names which. The Steward adds no field or contract: `DispositionDecisionID` is C1's change with the AGENT-15 steps, and #733 is rescoped by C1.
+- **A534.** The two points the Steward flagged are answered by A539: the task is TRU-10 on `feat/TRU-10-escalation-path`, and the id travels in the workflow's start input as plain data. The Steward adds no field or contract: `DispositionDecisionID` is C1's change with the AGENT-15 steps, and #733 is rescoped by C1.
 - **A535.** "Unresolved" for the time slot and the CLARIFY mapping are C2's and C1's; no PERD text is changed. The goldens G-B and G-E are untouched.
-- **A536.** SR asks why `tenants-provision` holds the migration password and not a narrower role, and whether the answer is that it needs the DDL role. The ruling does not say; it is a question for the Architect. SR reads both one-shots when IL pins them (the pin, the read-only root, tmpfs, no capabilities, postgres-only network). Compose values are IL's.
-- **A537 is incomplete as relayed.** It points to "Section 3" for the four lanes, and Section 3 did not arrive; the 19 components and the lanes are not listed here, and the Steward does not infer them. A follow-up adds them once the section is committed.
+- **A536.** SR's question (why `tenants-provision` holds the migration password and not a narrower role) is answered by A540: the narrowest role that works; IL lists the statements in #894 and the PR either uses a narrower login or says why DDL is needed; not a blocker. SR reads both one-shots when IL pins them. Compose values are IL's.
+- **A537.** The four lane names are recorded. What each lane holds, and the 19 components, were not relayed; the Steward does not infer them. A follow-up adds them if the Architect sends the lane text.
 - **A538.** Pack data; the Founders review it as data and nobody waits on that review. SYNTHETIC labels are required (AGENT-25).
-- **Next free ruling: A539.**
+- **Next free ruling: A541.**
 
 ## 3. The Steward's ledger
 
@@ -76,6 +93,6 @@ The Pidgin lexicon is pack data. C2 adds only the phrases the G1 inputs use plus
 | `DEC-2026-11-20-*` records | A358 to A362, A380 to A485 (A467: no text) | |
 | `DEC-2026-11-21-*` and `DEC-2026-11-22-architect-rulings-a518-a524` | A489 to A492, A502 to A517, A518 to A529 | |
 | `DEC-2026-11-23-architect-rulings-a530-a533` | A530 to A533 | |
-| This record | A534 to A538 | |
+| This record | A534 to A540 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank), A474 follow-up, A537 lanes (Section 3), A534 start-arguments location, A536 reason for the second holder | **A539** |
+| Named without text | A467 (blank); A474's follow-up is A488 | **A541** |
