@@ -1,12 +1,12 @@
-# DEC-2026-11-23 · Architect rulings A593 to A599 (interim)
+# DEC-2026-11-23 · Architect rulings A593 to A601 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 23 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 23 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
-| **Decides** | Rulings A593 to A599 (§1), every one Interim. |
-| **Supersedes** | **A599 clarifies A585** (how long an agent stays subscribed). **A593 completes A582** (what SLOT mode does not require). **A598 fixes the meaning of "turn"** in A581 and A590 and reserves a migration for the key. **A596 changes the version** of `trust-limits` that A561 and A579 rely on (v1 to v2). **A597 narrows** A542's rule for `#912` to a DECLINED_BY_APPROVER reject. Otherwise nothing; per ruling, in §1. |
+| **Decides** | Rulings A593 to A601 (§1), every one Interim, and the Architect's confirmations of A599 and of the order in A596. |
+| **Supersedes** | **The Architect confirms A599 and retires the earlier practice** of posting READY right after a push and then unsubscribing (§1). **A600 makes SR's five conditions binding** with owners. **A601 states the migration ledger.** **A599 clarifies A585** (how long an agent stays subscribed). **A593 completes A582** (what SLOT mode does not require). **A598 fixes the meaning of "turn"** in A581 and A590 and reserves a migration for the key. **A596 changes the version** of `trust-limits` that A561 and A579 rely on (v1 to v2). **A597 narrows** A542's rule for `#912` to a DECLINED_BY_APPROVER reject. Otherwise nothing; per ruling, in §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan, as written. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder (A111)
 - Date: 23 November 2026
 - Owner: Principal Architect; Founder; Technical Co-Founder
-- Decides: A593 to A599
+- Decides: A593 to A601
 - Decision: §1
 - Rationale and evidence: the Architect's message of 23 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-12; AGENT-15, AGENT-16; REQ-AMB-004, REQ-TRU-009; `clarification.v1`, `trust-limits`; AGENTS §5, §8, §11
@@ -48,9 +48,31 @@ C1 follows up on #912's note: the Writer refuses an empty id for a DECLINED_BY_A
 
 The turn is the request id the Gateway mints for each POST. C1's key migration takes the next free number after 0039, which the Steward reserves on #183.
 
-### A599 (interim, A585 clarified).
+### A599 (interim, A585 clarified), confirmed by the Architect (stated with A600).
 
-After pushing, stay subscribed until the PR's current head CI has been read and READY posted, or a failure is fixed. Then unsubscribe.
+A599 stands, and the Architect confirms the reading:
+
+- **What the earlier "stop watchers" instruction covers:** polling loops, scheduled check-ins and background watchers that sit and wait. That still stands. Nobody polls, and nobody schedules waits.
+- **What A599 adds:** a PR's own event feed. It wakes an agent when CI finishes or a review lands, so it is event-driven and not a watcher. An agent stays subscribed to a PR until the current head's CI has been read and READY is posted, or a failure is fixed. Then it unsubscribes.
+- **Why it replaces the old practice:** "Post READY right after a push, then unsubscribe" has repeatedly left READY posted on heads whose CI nobody read, and has led agents to ask "tell me when to read". The old practice is retired.
+
+### A596's order (#916 before #910), confirmed by the Architect.
+
+Confirmed, for the Steward's reason. #916 and #910 both edit `manifest.v1.json` and the packcheck files, and #916 changes the pack file and so its pin. Merging #916 first means #910, the larger change, recomputes the pin once. It is not a logic dependency. #910 stays what the record says: schema, generated models, limits document and loader all move to v2 together. The loader refuses a v1 file and a v2 file missing the ceiling, with no default filled in, and both Founders approve.
+
+### A600 (interim, SR's five conditions).
+
+All five are accepted as binding conditions on the code PRs, owned as follows:
+
+- **A598 and migration 0040 (C1):** the request id is minted by the Gateway on the authenticated path. It never comes from a client header or body. Tenant and principal come from the session. A client retry is a new evaluation.
+- **A597 (C1):** the Writer refuses an empty id for a DECLINED_BY_APPROVER reject before it opens a transaction, with a test.
+- **A595 (FE, #638):** one "Record verified" line driven by the contract's `chain.verified`, never by an outcome item or the timeline's verdict entry. A test shows it never appears when the body is refused. This supersedes the Architect's earlier "safe side" note.
+- **A596 (C2, #910):** as above, with consumers failing closed.
+- **A593 (C1, #926):** `allow_none` and `none_option_id` stay required outside SLOT mode, with a negative fixture.
+
+### A601 (interim, ledger).
+
+Migrations: 0037 is #922, 0038 is #923, 0039 is #925, and 0040 is reserved for C1's key. The next free number is 0041. Open PRs hold the numbers, and nothing above 0036 is merged.
 
 ## 2. What the Steward did, and where the rulings are silent
 
@@ -67,17 +89,17 @@ After pushing, stay subscribed until the PR's current head CI has been read and 
 - **A596 and the order #916, then #910 (Codex's point).** A596 says "C2 bumps to `trust-limits.v2` with a migration note and regenerated models, and moves the pack file and the loader to v2. #910 follows #916." The ruling does not say why #910 follows #916. What the Steward can read from the two pull requests (23 Nov 2026), as an observation and not a ruling:
   - **#916 (PCK-09)** adds optional members to `intent-node.v1` (`options_key`, `display_template`, `attribute_order`), edits `packs/fintech_v1.json`, **changes the pack's pin in `packs/fintech/manifest.v1.json`**, and edits `tools/packcheck/checks.py` and `test_packcheck.py`. It does not touch `trust-limits`.
   - **#910 (PCK-08)** changes `contracts/schemas/trust-limits.v1.json`, the limits pack document, the manifest and the manifest schema, the loader (`platform/packload`, `platform/trustlimits`, `platform/ceilings`), the generated models, and the same `manifest.v1.json`, `checks.py` and `test_packcheck.py`.
-  - The two overlap in the manifest and the packcheck files, and #916 changes the pack file and its pin, so the Steward reads the order as: **#916 merges first, then #910 builds on the new pack file and pin.** The Architect confirms or gives the real reason.
+  - The two overlap in the manifest and the packcheck files, and #916 changes the pack file and its pin, so the Steward reads the order as: **#916 merges first, then #910 builds on the new pack file and pin.** **The Architect confirmed the reason (§1):** it is not a logic dependency; #916 merges first so that #910, the larger change, recomputes the pin once.
   - **What A596 requires of #910 (stated exactly):** the schema (`trust-limits.v2`), the generated models, the trust-limits pack document and the loader all move to v2 **together in that one change**, so no consumer is left reading v1 and v2 side by side; the loader refuses a v1 file and a v2 file missing the required confirmation-ceiling member, with no default filled in (SR); the migration note follows AGENT-15; **same-head CI** is green; and **both Founders approve** the contract change. A596 is not a rename of the contract id.
   - `CR-2026-11-23-A567-perd-res-002-freeze-allow-list` names `trust_limits.json` and is unchanged; the contract version is C2's PR's to name.
 - **A597 and A542.** A542 closed when #912 merges. A597 is C1's follow-up to a note on #912: only a DECLINED_BY_APPROVER reject needs a non-empty id; other reject reasons keep mapping an empty one. The Steward changes no code.
-- **A599 and my own flow (a change for you to know about).** A599 clarifies A585: after pushing, an agent stays subscribed until the PR's current head CI has been read and READY posted (or a failure is fixed), then unsubscribes. Until now the Steward posted "READY FOR CODEX" right after each push and unsubscribed at once, as the Founder asked earlier. **Once this record merges, the Steward follows A599** on its own pull requests: it stays subscribed until the head's CI is read, then posts READY and unsubscribes. The Founder's earlier instruction to stop unnecessary watchers is read as superseded by the Architect's later flow rule only after this record binds. **This reading is the Founder's to confirm on the merge** (Security Reviewer's point): an earlier Founder instruction is being narrowed by a later Architect rule, and the Steward does not narrow it alone.
+- **A599, confirmed, and the Steward's flow.** The Architect confirms A599 and retires the earlier practice. The Steward's earlier reading (that the Founder's "stop watchers" instruction was narrowed only after this record binds, and was the Founder's to confirm) is superseded by the Architect's confirmation, which the Founder relayed to the Steward on 23 Nov 2026. From this push on, the Steward stays subscribed to its own pull request until the current head's CI has been read, then posts READY and unsubscribes (or fixes a failure first). The Steward still does not poll or schedule waits. The first text of this record said to post READY right after a push; that is dropped.
 - **Task status (`tasks.csv`)** is unchanged here; it moves only on merged evidence.
-- **Next free ruling: A600.**
+- **Next free ruling: A602.**
 
-## 3. Reviewer conditions for the code pull requests
+## 3. SR's conditions, now binding (A600)
 
-Security Reviewer read this record READY at `d6e44e1`. The conditions are **reviewers' conditions, not rulings**; each owner meets them in the code PR.
+Security Reviewer read this record READY at `d6e44e1` and gave five conditions. **A600 makes them binding conditions on the code PRs**, with the owners in §1 (A598 and 0040 and A597: C1; A595: FE; A596: C2; A593: C1). The text below is SR's.
 
 1. **A598 and the 0040 migration.** The Gateway's request id is minted by the Gateway on the authenticated path and is never taken from a client header or body. The key's tenant and principal come from the session. A client retry is a new POST and so a new evaluation; only a replay of the same POST returns the stored record. The migration follows A463 (independent read from EL or C2; SR reads as SR).
 2. **A597.** The Writer refuses an empty id for a DECLINED_BY_APPROVER reject **before opening a transaction**, and a test says so. A reject for another reason with an empty id still maps empty; any other outcome that names an id stays refused (A542).
@@ -95,6 +117,6 @@ SR also answered from the earlier points: A594 closes the question on #921; A598
 | `DEC-2026-11-20-*` records | A358 to A362, A380 to A485 (A467: no text) | |
 | `DEC-2026-11-21-*` and `DEC-2026-11-22-architect-rulings-a518-a524` | A489 to A492, A502 to A517, A518 to A529 | |
 | `DEC-2026-11-23-*` records: `a530-a533`, `a534-a540`, `a542-a553`, `a554-a560`, `a561-a580`, `a581-a592`, `a590-a592-confirmed` | A530 to A592 (A541 noted; A590 to A592 in full) | |
-| This record | A593 to A599 | |
+| This record | A593 to A601 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank, by ruling A592) | **A600** |
+| Named without text | A467 (blank, by ruling A592) | **A602** |
