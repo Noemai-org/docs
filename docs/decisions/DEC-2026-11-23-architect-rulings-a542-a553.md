@@ -1,12 +1,12 @@
-# DEC-2026-11-23 · Architect rulings A542 to A550 (interim)
+# DEC-2026-11-23 · Architect rulings A542 to A553 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 23 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 23 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
-| **Decides** | Rulings A542 to A550 (§1), every one Interim. A541 is noted (§2). |
-| **Supersedes** | **A547 adds a lane 5** to the four lanes of A537 (`DEC-2026-11-23-architect-rulings-a534-a540`). **A548** names the key and login variables for the core-trust Record signing keys. **A543** changes the Writes port. Otherwise nothing; per ruling, in §1. |
+| **Decides** | Rulings A542 to A553 (§1), every one Interim. A541 is noted (§2). |
+| **Supersedes** | **A551 amends A475 and A512** (the accessor count rule goes). **A552 settles** the confirmation request row (follows A519) and removes the standalone creator. **A553 confirms** A548's reading. **A547 adds a lane 5** to the four lanes of A537 (`DEC-2026-11-23-architect-rulings-a534-a540`). **A548** names the key and login variables for the core-trust Record signing keys. **A543** changes the Writes port. Otherwise nothing; per ruling, in §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,12 +15,12 @@
 - Status: Interim; counts on merge by a non-author Founder (A111)
 - Date: 23 November 2026
 - Owner: Principal Architect; Founder; Technical Co-Founder
-- Decides: A542 to A550
+- Decides: A542 to A553
 - Decision: §1
 - Rationale and evidence: the Architect's message of 23 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-07, INV-14, INV-21, INV-29; AGENT-15, AGENT-16, AGENT-25; REQ-AMB-003, REQ-TRU-010; PERD §23, §32; AGENTS §5, §8
 - Supersedes: see the Supersedes row above
-- Migration notes: none from this record. A543 and A550 (C1's confirmation contract) may need additive contract changes with the AGENT-15 steps, in the same PR as the change. A544 adds a pack data kind (an additive limits kind, like #879).
+- Migration notes: none from this record. A543, A550 and A552 (C1's confirmation contract and the Writer's insert) may need additive contract changes with the AGENT-15 steps, in the same PR as the change. A544 adds a pack data kind (an additive limits kind, like #879).
 
 ## 1. The rulings
 
@@ -65,6 +65,30 @@ The startup recovery pass may run in the background and gate `/readyz`. Plain "r
 - **C2:** `StepFactSource` (from the sealed-snapshot reader) and the explainer's facts source.
 - **EL:** the recovery Postgres reader.
 
+### A551 (interim, pack accessors; amends A475 and A512).
+
+- The count rule goes. A475 allowed one accessor and A512 a second, and `OwnershipKinds()` and `Ref()` are already on `main`, so the number is dead. It only ever stood in for the real intent: the verified `Pack` must not grow an API that reads anything but the verified bytes.
+- **The new rule.** A475 and A512 are amended. Any number of accessors is allowed on a verified `Pack` if each one meets all five conditions:
+  1. It is read-only.
+  2. It derives only from the verified pack bytes, with no file, network or database access after verification.
+  3. It returns copies or immutable values.
+  4. It contains no industry or country terms (INV-14).
+  5. It is named in a ruling or in the PR body, with a test that a pack failing verification yields no accessor.
+- **Ratified** under the same rule: `OwnershipKinds()` and `Ref()`.
+- The hard cap with a separate reader type is rejected. It is more code for no extra safety.
+
+### A552 (interim, the confirmation request row; follows A519).
+
+- **The Writer owns it.** The Recorder persists the new confirmation request in the same transaction as the CONFIRM decision. The Writer does not do that today, and that gap is why the A519 test cannot pass. C1 fixes it in the Writer.
+- **Writer behaviour:** the Writer inserts the row using the store's transaction-bound insert, takes the time-to-live from the database clock, keeps the supersede-chain constraint, and returns the request id with the decision. The decline then carries that id as `DeclinedRequestID`, which A542 requires.
+- **No standalone creator.** `Requests.Create` stops being a public creator. A request that exists without a recorded decision breaks "the Record comes first". The store keeps its read, answer and expire paths.
+- **Re-request after expiry** is a new CONFIRM decision through the Recorder, not a bare `Create`. C1 greps every caller of `Create`. A caller that is not a test either moves to the Recorder path or is refused.
+- **Test:** a CONFIRM through the real adapter leaves exactly one open request, and a crash between the decision and the request leaves neither.
+
+### A553 (interim, A548 confirmed).
+
+A548 changes nothing in AGENTS §6. Grants and confirmations stay HMAC-SHA-256, and the ed25519 keys sign Record events only. Uid 65532 must be the core's runtime user, and IL pins that in `deploy/`. EL checks first whether a Go-side signing key directory is needed at all, because decision records may be signed in the database.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **A541** (docs#229 era) was cross-role reads. That is all the Architect gave; the Steward records no more and does not guess its text. It is named here so the sequence A534 to A550 has no gap.
@@ -74,14 +98,14 @@ The startup recovery pass may run in the background and gate `/readyz`. Plain "r
 - **A544.** The Steward fills no pack value. `limits/trust_limits.json` and its values are C2's; a value the PERD and the SoT do not state is an [OPEN] entry in `docs/open-decisions.md` with the safest default (nothing allowed under freeze; no route means UNKNOWN). Nobody invents a value (AGENT-02, AGENT-16).
 - **A546.** The PERD table lists REQ-AMB-003 (deterministic scoring from pack weights) under Understanding (deterministic code, no model), which fits A546's "where the PERD places it". The Steward raises no conflict. C2 reads REQ-AMB-003 and raises a CONFLICT block if the placement differs. All SYNTHETIC labels are required (AGENT-25).
 - **A548.** The Steward changes no Compose value; IL adds the mounts. A new key directory or login is also a secrets-handling path, so SR reads it.
-- **A542 and noema#892 (EL's read).** noema#892 is merged, but EL has not confirmed that its adapter refuses an empty `DeclinedRequestID` on a `DECLINED_BY_APPROVER` reject. EL takes that as a small follow-up PR, tests first. The Steward does not read #892 as closed on A542 until that follow-up merges.
-- **A548 and the key kinds (EL's read).** A548 names `core-trust.ed25519.<n>.key` for the core-trust **Record** signing keys, as the orchestrator's keys sign Record events. The Steward reads A548 as changing nothing in AGENTS §6: grants and confirmations stay HMAC-SHA-256, and per-power asymmetric grant keys stay deferred. The Architect confirms that reading. noema#884's shared reader checks the owner against the process's effective user, so uid 65532 must be the core's runtime user; IL pins that in `deploy/`.
-- **A550 and the accessor limit (EL's question, open).** A475 allowed one accessor on `trustpack.Pack` and A512 a second; `OwnershipKinds()` (noema#844) and `Ref()` (noema#905) are already on `main`, and A550 names more (the confirmation-terms accessor, the registry accessor, the plangraphs inputs). The ruling does not say whether A550 amends that limit. The Steward does not decide it: the Architect says whether A550 amends A475 and A512 for the accessors it names (read-only, derived from verified pack bytes). Until then EL builds against the stated limit.
-- **A519 (EL's question, open, not in this record).** The Writer does not insert the `confirmation_request` row, so the A519 end-to-end test cannot pass today. The Architect rules who owns that fix (C1's Writer) and whether `Requests.Create` stays.
+- **A542 and noema#892.** The Architect's message says #892 is still open, so the empty-`DeclinedRequestID` fix goes in #892 itself. GitHub shows noema#892 **merged** (11:43 UTC, 23 Nov 2026, by a Founder, no related PR open), so it cannot be fixed in place. The Steward records the fact: the empty-id fix is EL's small follow-up PR, tests first, and A542 is not read as closed until that fix merges with its test. If the Architect means another PR, EL names it.
+- **A548 and A553.** A553 confirms the Steward's reading of A548 (grants stay HMAC; the ed25519 keys sign Record events only; uid 65532 must be the core's runtime user, pinned by IL in `deploy/`; EL first checks whether a Go-side signing key directory is needed at all). noema#884's shared reader checks the owner against the process's effective user.
+- **A550 and the accessor limit.** Settled by A551: the count rule goes; any number of accessors on a verified `Pack`, each meeting the five conditions; `OwnershipKinds()` and `Ref()` ratified. EL names each accessor A550 gives in the PR body, with its verification test.
+- **A519 and the request row.** Settled by A552: the Writer inserts the row in the CONFIRM decision's transaction (C1); no standalone `Requests.Create`; C1 greps every caller; the crash test. EL's A519 end-to-end test follows C1's Writer change.
 - **A549.** A `/readyz` change is Platform's; no spec edit here.
 - **Task status (`tasks.csv`).** Unchanged: it moves only on merged evidence, and nothing new has merged against a done-when since the OPS-24 pass (UND-17 → Done). The Steward rechecks in the next status pass.
 - **Migration ledger on noema#183** is unchanged: 0037 stays reserved; these rulings add none.
-- **Next free ruling: A551.**
+- **Next free ruling: A554.**
 
 ## 3. The Steward's ledger
 
@@ -93,6 +117,6 @@ The startup recovery pass may run in the background and gate `/readyz`. Plain "r
 | `DEC-2026-11-23-architect-rulings-a530-a533` | A530 to A533 | |
 | `DEC-2026-11-23-architect-rulings-a534-a540` | A534 to A540 (A474's follow-up is A488) | |
 | A541 | cross-role reads (no further text) | |
-| This record | A542 to A550 | |
+| This record | A542 to A553 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank); A537 lane contents beyond lane 5; A550 vs the A475/A512 accessor limit and A519 (open questions, no ruling) | **A551** |
+| Named without text | A467 (blank); A537 lane contents beyond lane 5 | **A554** |
