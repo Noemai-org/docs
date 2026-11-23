@@ -61,11 +61,23 @@ After pushing, stay subscribed until the PR's current head CI has been read and 
 - **A595.** A570 already rules that the audit panel shows "Record verified" once, only from the backend's chain verdict; A595 states what the panel does when the verdict is absent (shows nothing; never fabricates one). FE's.
 - **A596 and the limits change requests.** A561 made the confirmation TTL ceiling a required member of `trust_limits.json`, and A579 made `trust_limits.json` the single freeze-list authority. A596 makes the version bump (v1 to v2) a condition of adding that required member, so AGENT-15 holds. `CR-2026-11-23-A567-perd-res-002-freeze-allow-list` names `trust_limits.json` and is unchanged; the PERD text, when the version file is made, names the file, and C2's PR names the contract version. #910 follows #916 (the pack candidate labels).
 - **A597 and A542.** A542 closed when #912 merges. A597 is C1's follow-up to a note on #912: only a DECLINED_BY_APPROVER reject needs a non-empty id; other reject reasons keep mapping an empty one. The Steward changes no code.
-- **A599 and my own flow (a change for you to know about).** A599 clarifies A585: after pushing, an agent stays subscribed until the PR's current head CI has been read and READY posted (or a failure is fixed), then unsubscribes. Until now the Steward posted "READY FOR CODEX" right after each push and unsubscribed at once, as the Founder asked earlier. **Once this record merges, the Steward follows A599** on its own pull requests: it stays subscribed until the head's CI is read, then posts READY and unsubscribes. The Founder's earlier instruction to stop unnecessary watchers is read as superseded by the Architect's later flow rule only after this record binds.
+- **A599 and my own flow (a change for you to know about).** A599 clarifies A585: after pushing, an agent stays subscribed until the PR's current head CI has been read and READY posted (or a failure is fixed), then unsubscribes. Until now the Steward posted "READY FOR CODEX" right after each push and unsubscribed at once, as the Founder asked earlier. **Once this record merges, the Steward follows A599** on its own pull requests: it stays subscribed until the head's CI is read, then posts READY and unsubscribes. The Founder's earlier instruction to stop unnecessary watchers is read as superseded by the Architect's later flow rule only after this record binds. **This reading is the Founder's to confirm on the merge** (Security Reviewer's point): an earlier Founder instruction is being narrowed by a later Architect rule, and the Steward does not narrow it alone.
 - **Task status (`tasks.csv`)** is unchanged here; it moves only on merged evidence.
 - **Next free ruling: A600.**
 
-## 3. The Steward's ledger
+## 3. Reviewer conditions for the code pull requests
+
+Security Reviewer read this record READY at `d6e44e1`. The conditions are **reviewers' conditions, not rulings**; each owner meets them in the code PR.
+
+1. **A598 and the 0040 migration.** The Gateway's request id is minted by the Gateway on the authenticated path and is never taken from a client header or body. The key's tenant and principal come from the session. A client retry is a new POST and so a new evaluation; only a replay of the same POST returns the stored record. The migration follows A463 (independent read from EL or C2; SR reads as SR).
+2. **A597.** The Writer refuses an empty id for a DECLINED_BY_APPROVER reject **before opening a transaction**, and a test says so. A reject for another reason with an empty id still maps empty; any other outcome that names an id stays refused (A542).
+3. **A595 and noema#638.** At `5b16a740` the audit panel shows no "Record verified" line even when the chain is verified: the safe side, but not what A595 asks. The verdict is the contract's `chain.verified` (fixed to `true` once the body parses); it must not be the outcome verdict item or the timeline's VERDICT entry. FE adds that one line and a test that it never appears when the body is refused.
+4. **A596 (`trust-limits.v2`).** The loader and the pack file move to v2 together. The loader refuses a v1 file, and a v2 file missing the required confirmation-ceiling member, with no default filled in (AGENT-16). The consumers (intake and the Writer, A561) fail closed when the limit is absent. The migration note and regenerated models follow AGENT-15; both Founders approve the contract change.
+5. **A593 (SLOT mode).** `allow_none` and `none_option_id` are not required in SLOT mode, and the contract keeps them required outside SLOT, with a negative fixture for a non-SLOT card that omits them (SR's condition 3 on docs#234 stands). The card never shows "None of these" in SLOT mode.
+
+SR also answered from the earlier points: A594 closes the question on #921; A598 (a server-minted request id) answers the worry on A581; A597 answers the note on #892.
+
+## 4. The Steward's ledger
 
 | Block | Numbers | Next free |
 |---|---|---|
