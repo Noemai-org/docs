@@ -1281,3 +1281,14 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** a guard shape that cannot be limited to one path without admitting a nine-digit identifier elsewhere; a build pipeline that never embeds VCS data or an image digest (the event would always say `unavailable`, and the decision would be to drop it); a consumer that needs the revision per event (it would then be per event, with the guard shape of (1)).
 - **Owner:** Architect (the guard, the event and the contract); Core Engineer 1 (the writers); Security Reviewer (the guard change); Infrastructure Lead (the image digest).
 - **Source:** ruling A488; A474 ([DEC-2026-11-20-architect-rulings-a469-a485](decisions/DEC-2026-11-20-architect-rulings-a469-a485.md)); noema#850 (merged, option (a)); `services/core/record/payloadguard/guard.go`; the Security Reviewer's recommendation on noema#850 (build information only, name `build_revision`); the Founder's direction of 21 Nov 2026.
+
+### OD-P-101: The compile gate's threshold: 9000 basis points, interim (OPEN, Founder to confirm)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from ruling A603 (interim, in `DEC-2026-11-23-architect-rulings-a602-a605`; counts when that record merges). AGENT-16: an agent never sets a threshold.
+- **Missing decision:** the threshold of the compile service's stage-1 gate ("Does the customer explicitly ask for something to be done for them?"): the confidence at or above which the gate answers yes and stage 2 picks a capability. A false assertion is the harmful error, so doubt abstains.
+- **Interim value (the Architect's, labelled a Founder decision to confirm):** **9000 basis points**, held in pack data, never a code constant.
+- **Why it matters:** a threshold set too low lets a false assertion through; too high makes the service miss explicit requests (the safe error, but a cost). The golden compile runs and the offline set (A604) are the evidence; no golden is edited (A533).
+- **Proposed smallest safe default:** keep 9000 basis points until the Founders confirm or change it, after run 8 (and run 9 only if its readable evidence shows a threshold problem; A605).
+- **Evidence that would invalidate the default:** the per-golden option, the top five probabilities including abstain and the threshold applied, printed by the job log (A602); run 8's variance over three repeats; the offline set of 24 to 30 synthetic phrasings (A604).
+- **Owner:** the Founders (the value); Core Engineer 2 (the pack data and the gate); Benchmark Owner (the offline set).
+- **Source:** rulings A602, A603, A604, A605; AGENT-16; INV-22.
