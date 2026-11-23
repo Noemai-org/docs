@@ -1,12 +1,12 @@
-# DEC-2026-11-23 · Architect rulings A561 to A573 (interim)
+# DEC-2026-11-23 · Architect rulings A561 to A576 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 23 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 23 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
-| **Decides** | Rulings A561 to A573 (§1), every one Interim. |
-| **Supersedes** | **A566 refines A560** (§1: floor division only for the final reported score; the margin and the floor are compared in exact scaled-integer arithmetic). **A567 settles** where the freeze allow-list lives (`trust_limits.json`, under A544) and opens a conflict with PERD REQ-RES-002 (register entry SOT-C-33). **A561 turns** the PERD's 10-minute default confirmation expiry into a ceiling. **A564** gives the Outcome verdict signer its own key directory. **A571** changes noema#905. **A572** files DEBT-57. Otherwise nothing; per ruling, in §1. |
+| **Decides** | Rulings A561 to A576 (§1), every one Interim. |
+| **Supersedes** | **A574 replaces the second bullet of A562** (no empty-evidence-set hash; truthful absence instead) and changes `decision-record.v2` (§1, A574). **A566 refines A560** (§1: floor division only for the final reported score; the margin and the floor are compared in exact scaled-integer arithmetic). **A567 settles** where the freeze allow-list lives (`trust_limits.json`, under A544) and opens a conflict with PERD REQ-RES-002 (register entry SOT-C-33). **A561 turns** the PERD's 10-minute default confirmation expiry into a ceiling. **A564** gives the Outcome verdict signer its own key directory. **A571** changes noema#905. **A572** files DEBT-57. Otherwise nothing; per ruling, in §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan, as written. A567's PERD change and the A555 and A566 PERD notes go through change requests (§2). |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,12 +15,12 @@
 - Status: Interim; counts on merge by a non-author Founder (A111)
 - Date: 23 November 2026
 - Owner: Principal Architect; Founder; Technical Co-Founder
-- Decides: A561 to A573
+- Decides: A561 to A576
 - Decision: §1
 - Rationale and evidence: the Architect's message of 23 Nov 2026, relayed to the Steward
-- Affected requirement IDs / SoT sections: INV-02, INV-14, INV-20, INV-21, INV-29; AGENT-15, AGENT-16, AGENT-27; REQ-TRU-009, REQ-TRU-010, REQ-RES-002, REQ-AMB-003, REQ-AUD-004; PERD §22, §23; AGENTS §5, §8, §11
+- Affected requirement IDs / SoT sections: INV-02, INV-14, INV-20, INV-21, INV-29; AGENT-15, AGENT-16, AGENT-27; REQ-TRU-009, REQ-TRU-010, REQ-RES-002, REQ-AMB-003, REQ-AUD-004; PERD §22, §23; `decision-record.v2`; AGENTS §5, §8, §11
 - Supersedes: see the Supersedes row above
-- Migration notes: none from this record. A565 is one contract version bump by C1 after G1 (AGENT-15 steps). A567 keeps additive optional pack members at v1 with a migration note (precedent noema#879, noema#902). A572 adds no migration.
+- Migration notes: none from this record. A565 is one contract version bump by C1 after G1 (AGENT-15 steps). A567 keeps additive optional pack members at v1 with a migration note (precedent noema#879, noema#902). A574 adds one contract change and one database migration (C1's own small PR, the next free number on noema#183, 0038; both Founders for the contract; an independent migration read, A463). A572 adds no other migration.
 
 ## 1. The rulings
 
@@ -33,7 +33,7 @@ The ceiling is the PERD's 10 minutes (EL reads it so; C2 cites the section). It 
 ### A562 (interim, #903 and #733).
 
 - A disposition id goes into a `RecordRequest` only when the continuation names an escalation-set step. It never goes onto a read or no-step decision. C1 fixes #903's pass-through, and #733's refusal stays.
-- An early ESCALATE (before policy and evidence are evaluated) is still recorded, with its intent hash, the policy version in force and its reason codes, and an empty evidence set (the hash of the empty set). If the PERD forbids this, C1 raises a CONFLICT block instead of guessing.
+- An early ESCALATE (before policy and evidence are evaluated) is still recorded, with its intent hash, the policy version in force and its reason codes, and an empty evidence set (the hash of the empty set). If the PERD forbids this, C1 raises a CONFLICT block instead of guessing. **[This second bullet is withdrawn and replaced by A574 below: no empty-evidence-set hash; truthful absence instead. The text above is kept as the Architect gave it, for the audit trail.]**
 - A replay test that breaks once #733 lands is updated in the same change.
 
 ### A563 (interim).
@@ -80,11 +80,29 @@ Tenant-init uses the superuser DSN and the migration login stays out (A527, A536
 
 FE's UI fixes may move to a Claude Code session if its environment cannot reach GitHub. Dependent UI PRs merge main in, never rebase (AGENTS §11).
 
+### A574 (interim, corrects A562's second bullet).
+
+FE is right, and so is the contract text. The Architect's "record an early ESCALATE with an empty evidence set" would claim an evidence evaluation that never happened. That is a synthetic claim, so it is withdrawn.
+
+- **The fix is truthful absence.** `decision-record.v2` currently requires `evidence_snapshot_id`, `policy_version` and `evidence_freshness` for every outcome. The decision-basis rules allow an early non-ALLOW outcome to carry only the pack version and the evaluation time. So for REJECT, CLARIFY, WAIT, ESCALATE and UNKNOWN those three members become nullable. ALLOW and CONFIRM keep them required and non-null.
+- **Mechanics.** C1 does it as its own small PR: a conditional schema rule, a migration relaxing NOT NULL with a CHECK on outcome (preserving the immutability triggers), a migration note and regenerated models. It is a `/contracts` change, so both Founders, and a migration needs an independent read (A463). The migration number is the next free one on #183.
+- **Order for #903.** #903 merges now with the post-accept recording fix. An early-gate ESCALATE ends in UNKNOWN with a typed reason, which is safe and truthful. The contract PR follows immediately. C1 confirms none of the five G1 cases can end in an early ESCALATE. If any can, the contract PR moves ahead of the run.
+
+### A575 (interim, #910).
+
+`anchor_entities[].field` must be a declared Timestamp field in the descriptor. C2 adds that validation, with negative tests for a missing field and a non-timestamp field, and merges main to clear the conflict.
+
+### A576 (interim, #616).
+
+FE's safe retry is approved. After an ambiguous failure the original answer stays locked, the screen says it cannot confirm whether the answer was recorded, and retry sends only that same answer with the same request id. The opposite answer is never offered. The server's first-answer-wins rule (A341) stays the authority.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **A561 and the Writer's source for the ceiling (EL).** The ceiling reaches the Writer as an injected value from `trustlimits`, not as a database read inside the transaction, so the Writer's dependency direction stays as it is. EL moves the A519 tests (noema#909, which use a SYNTHETIC far-future expiry) to a value within 10 minutes when the ceiling lands.
 - **A561.** PERD REQ-TRU-009 says "Default expiry: 10 min [ADOPTED DEC-2026-10-17]". A561 makes 10 minutes the ceiling for the TTL; the value is the PERD's, and C2 cites the section when it adds the required `trust_limits.json` member. The Steward fills no value (AGENT-16). noema#911 merges first.
-- **A562: the safety boundary of the empty evidence basis (Codex and EL, both asked for it; the ruling does not state it).** The ruling says an early ESCALATE is recorded with the hash of the empty set. It does not say, and the Steward does not add as a ruling, the three conditions the reviewers ask for. Meanwhile the safer reading applies (AGENT-20): (a) the empty-set basis is for an ESCALATE only, and an ALLOW or a CONFIRM with an empty evidence basis stays refused; (b) no grant is issued from an empty-basis record (grants come only from ALLOW, INV-25; no write without a valid grant, INV-03); (c) the record should say that no snapshot was read, because the hash of the empty set alone can be mistaken for a sealed snapshot of nothing, which matters to replay (INV-21) and audit. **Open for the Architect:** the ruling names no typed marker or reason for (c); C1 proposes one in its task and the Architect confirms it. The tests the reviewers ask for are C1's and EL's: a T7 and a T9 early ESCALATE through the real adapter and Writer, and a refusal of an empty basis on ALLOW and on CONFIRM. The hash of the empty set is not stated in the ruling either; C1 states which digest it is and where it is defined. Whether the PERD forbids recording an early ESCALATE is C1's to check, and a CONFLICT block is C1's if it does (AGENT-27); the Steward raises none.
+- **A562 and A574.** A574 withdraws the second bullet of A562: nothing is recorded as an empty evidence set, and no empty-set hash exists. The reviewers' concern on docs#233 (Codex and EL: an empty-set hash could be mistaken for a sealed snapshot of nothing, and ALLOW or CONFIRM with an empty basis must stay refused) is met by A574's own terms, as the Steward reads them: the three members are **absent (null)** for an early REJECT, CLARIFY, WAIT, ESCALATE or UNKNOWN, so no evaluation is claimed, and ALLOW and CONFIRM keep them required and non-null, so they cannot carry an absent basis. Grants come only from ALLOW (INV-25), as before. The ruling names a "typed reason" for an early-gate ESCALATE that ends in UNKNOWN (§1, A574, order for #903); C1 states the reason code in its PR, and the Steward invents none. The tests the reviewers asked for (a T7 and a T9 early ESCALATE through the real adapter and Writer; ALLOW and CONFIRM refused without the three members) are C1's and EL's.
+- **A574 and the migration ledger.** The Steward reserved **0038** on noema#183 for A574's migration (0037 stays reserved for DEBT-54; no open pull request claims 0037 to 0049). The author is C1, so the independent migration read comes from EL or C2, and SR reads as SR (A463). The contract change needs both Founders (AGENT-15). C1 confirms that none of the five G1 cases can end in an early ESCALATE; if one can, the contract PR moves ahead of the G1 run. Until that PR merges, #903's early-gate ESCALATE ends in UNKNOWN with a typed reason.
+- **A575 and A576.** A575 is C2's (noema#910: the validation, the negative tests, merging `main`); A576 is FE's (noema#616). The Steward changes no code or UI. A576 leaves A341 (first answer wins) as the authority.
 - **A564.** IL adds the mounts, and SR reads the new key directory (a secrets path). Identity `core-outcome` is announced in `services/core/migrations/0013_receipt_signature.sql`; mode 0400 and owner 65532 come from A518 and A553, as in A554.
 - **A565 and A570.** A565 is after G1, one contract version bump by C1 with the AGENT-15 steps; nothing changes now, and FE hears first. A570's wording rules apply to the UI PRs (FE's); the Steward changes no UI text.
 - **A566 and the A555 change request.** A566 refines A560. The Steward added the A566 rule and the proposed PERD notes to `CR-2026-11-23-A555-perd-22-1-ranker-placement` (still a Draft; the PERD stays v1.28). The example in A566 shows why the rule matters: 9000.00 minus 5500.25 is 3499.75, below the 3500 margin, so the case is AMBIGUOUS; on floored scores it would read 9000 minus 5500, exactly 3500, and pass.
@@ -92,9 +110,9 @@ FE's UI fixes may move to a Claude Code session if its environment cannot reach 
 - **A567 and the duplicate authority (EL and Codex).** The single source is real only when the descriptor's `allowed_under_freeze` is removed as an authority, or kept as non-authoritative with a pack loader that fails closed on any mismatch with the limits entry (EL recommends removal). It also needs a rule that a pack of manifest version 3 or later must list the limits files: EL found that noema#910's pin is opt-in (deleting the four manifest entries leaves the loader and packcheck green). Both are in the change request as conditions; the Architect decides the first.
 - **A568 and A569 to A573.** A568 is Voice's (noema#824); A569 and A570 are FE's (noema#638, #609, #616); A571 is EL's (noema#905); A573 is FE's. The Steward changes no code or UI.
 - **A572 and the debt register.** The Steward filed **DEBT-57** (the narrower provisioning login for tenants-provision and tenant-init; owner C2 with IL; due before the G2 review). A572 does not set a tier; the Architect sets it. EL recommends Tier 2 (a secrets path with the widest login, though the DSN never reaches argv, the environment or a log), with the due point as written and the G1 record naming the DSN used; that is a recommendation, not a ruling. The G1 record states plainly what is used.
-- **Migration ledger on noema#183** is unchanged: 0037 stays reserved.
+- **Migration ledger on noema#183:** 0037 stays reserved for DEBT-54; **0038 is reserved for A574** (above). Next free: 0039.
 - **Task status (`tasks.csv`)** is unchanged here; it moves only on merged evidence.
-- **Next free ruling: A574.**
+- **Next free ruling: A577.**
 
 ## 3. The Steward's ledger
 
@@ -104,6 +122,6 @@ FE's UI fixes may move to a Claude Code session if its environment cannot reach 
 | `DEC-2026-11-20-*` records | A358 to A362, A380 to A485 (A467: no text) | |
 | `DEC-2026-11-21-*` and `DEC-2026-11-22-architect-rulings-a518-a524` | A489 to A492, A502 to A517, A518 to A529 | |
 | `DEC-2026-11-23-architect-rulings-a530-a533`, `-a534-a540`, `-a542-a553`, `-a554-a560` | A530 to A533; A534 to A540; A541 noted, A542 to A553; A554 to A560 | |
-| This record | A561 to A573 | |
+| This record | A561 to A576 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank); A537 lane contents beyond lane 5 | **A574** |
+| Named without text | A467 (blank); A537 lane contents beyond lane 5; the typed reason code of A574's early-gate UNKNOWN (C1 states it) | **A577** |
