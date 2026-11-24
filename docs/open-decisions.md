@@ -1292,3 +1292,15 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** the per-golden option, the top five probabilities including abstain and the threshold applied, printed by the job log (A602); run 8's variance over three repeats; the offline set of 24 to 30 synthetic phrasings (A604).
 - **Owner:** the Founders (the value); Core Engineer 2 (the pack data and the gate); Benchmark Owner (the offline set).
 - **Source:** rulings A602, A603, A604, A605; AGENT-16; INV-22.
+
+### OD-P-102: `capability-descriptor.v2`: compensation per capability (OPEN, provisional; contract change for both Founders)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A631 (interim, in `DEC-2026-11-24-architect-rulings-a624-a637`; counts when that record merges). AGENT-15 applies.
+- **Missing decision:** the contract `capability-descriptor` has no per-capability compensation member. The PERD packcheck rules need one. The Architect rules that **the PERD vocabulary wins**: a new `capability-descriptor.v2` with compensation as the enum `NONE_REQUIRED`, `INVERSE_CAPABILITY`, `ESCALATE_ONLY`, and an `inverse_mapping` (a capability id plus a parameter map) **required when `INVERSE_CAPABILITY`**. It adds only what the PERD packcheck rules need.
+- **What stays open until both Founders approve the contract change:** the exact members and their JSON Schema; the packcheck rules (C1 owns them); the version bump, the migration note and the regenerated models (AGENT-15). PCK-05 stays separate (A627).
+- **Why it matters:** a capability that has no declared compensation cannot be checked by packcheck for a missing inverse, and a pack could ship a write with no recovery definition (plan §13.1: no new capability without its registry entry, policy, verification predicate and recovery definition).
+- **Proposed smallest safe default:** exactly the Architect's ruling and nothing more: the three enum values and `inverse_mapping` required for `INVERSE_CAPABILITY`; packcheck refuses a descriptor that omits the member.
+- **Evidence that would invalidate the default:** a POC capability whose compensation the three values cannot express; an `inverse_mapping` that needs more than a capability id and a parameter map for the four POC capabilities.
+- **Owner:** Core Engineer 1 (the contract and the packcheck rules); both Founders (approval); EL for PCK-05 (separate).
+- **Source:** ruling A631; plan task CAP-02; PERD packcheck rules; AGENT-15.
+
