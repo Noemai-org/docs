@@ -26,22 +26,22 @@
 
 ### A612 (interim, SR's four conditions on A606 to A609, binding with owners).
 
-The conditions Security Reviewer gave on docs#238 for A606 to A609 are binding, owned as follows:
+SR's four conditions on docs#238 are binding, each with an owner:
 
-- **A606 (C2, #932):** exact decimal parse, no float; a plain decimal in [0,1]; integer basis points; abstain on a missing or malformed value.
-- **A607 (C1, #914):** a request exactly at expiry counts as expired; a boundary test.
-- **A608 (Voice, #824):** no partial audio left in the store after a budget stop.
-- **A609 (C2 and EL, #910):** the loader refuses the malformed limits file at start-up; composition fails closed.
+- **A606 (C2, #932).** The gate parses the provider's probability exactly, with no float. It accepts only a plain decimal between 0 and 1 and compares in integer basis points, so 0.9 meets 9000 and 0.8999 does not. A missing or malformed value abstains.
+- **A607 (C1, #914).** A boundary test: a request exactly at expiry counts as expired.
+- **A608 (Voice, #824).** No partial audio is left in the store after a budget stop. Audio is written only once it is accepted, and anything staged is discarded on the stop.
+- **A609 (C2 and EL, #910).** The loader refuses the malformed limits file at start-up, not only `packcheck` in CI. C2's loader validates against `trust-limits.v2`, and EL's composition fails closed on a refusal.
 
 docs#238 and noema#933 merge as they are once a non-author Founder reviews.
 
 ## 2. What the Steward did, and where the rulings are silent
 
 - **Where A606 to A609 are recorded.** A606 to A611 are in `DEC-2026-11-24-architect-rulings-a606-a611`, in docs#238, which is open at this writing; this record is written from `main` and does not link to that file. When docs#238 merges, the Steward merges `main` into this branch and keeps both rows of the decisions README.
-- **A606's detail.** The Architect's text is the binding one. Security Reviewer's fuller wording on docs#238 (no exponent, NaN, sign or extra text; 0.9 meets 9000 and 0.8999 does not; the threshold is pack data with no default in code; no golden or input edited, A533) is how SR will read the code PR; it states the same conditions in more detail and adds no new rule to A612. OD-P-101 stays Open: the 9000 basis-point value is still the Architect's interim value for the Founders to confirm.
+- **A606's detail.** The Architect's text is the binding one, and it now carries the 0.9 and 0.8999 example. Security Reviewer's wording on docs#238 adds the cases it will look for (no exponent, NaN, sign or extra text; the threshold is pack data with no default in code; no golden or input edited, A533); those are how SR will read the code PR and are not part of A612's text. OD-P-101 stays Open: the 9000 basis-point value is still the Architect's interim value for the Founders to confirm.
 - **A607.** The database's expiry check is authoritative (A607): the boundary case is "exactly at expiry is expired".
-- **A608 and A587.** A587 (a run that fails before any session removes the zero-byte report file it created, never a non-empty report) stays as it is; A612 adds that no partial audio is left in the store after a budget stop.
-- **A609 and A596.** A596 and A609 make packcheck validate the shipped limits file against `trust-limits.v2` with a negative test; A612 adds the runtime side: the loader refuses the same malformed file at start-up, and composition fails closed (a pack that does not load starts nothing).
+- **A608 and A587.** A587 (a run that fails before any session removes the zero-byte report file it created, never a non-empty report) stays as it is; A612 adds that no partial audio is left in the store after a budget stop, because audio is written only once it is accepted and anything staged is discarded on the stop.
+- **A609 and A596.** A596 and A609 make packcheck validate the shipped limits file against `trust-limits.v2` with a negative test; A612 adds the runtime side: C2's loader refuses the same malformed file at start-up, validating against `trust-limits.v2`, and EL's composition fails closed on a refusal (a pack that does not load starts nothing).
 - **Merge direction.** The direction that docs#238 and noema#933 "merge as they are once a non-author Founder reviews" is recorded. The Steward does not merge or approve either (AGENTS §11); both have Security Reviewer READY and Codex with no findings at their current heads.
 - **Task status (`tasks.csv`)** and the **migration ledger** are unchanged (0037 #922, 0038 #923, 0039 #925, 0040 reserved, next free 0041).
 - **Next free ruling: A613.**
