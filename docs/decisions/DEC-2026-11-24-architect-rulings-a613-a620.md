@@ -26,9 +26,7 @@
 
 ### A613. G2 starts now, in parallel with G1.
 
-- Plan §9 says G2 work waits for G1. A chat instruction doesn't override that until it is committed (AGENTS §2.3).
-- So the Architect takes the safe path. Any G2 task whose "Needs" tasks are Done may be built now, and the Steward records a decision for it today (`DEC-2026-11-24-g2-parallel-start`).
-- The G2 gate itself still counts only after G0 and G1 pass. Nothing G2 touches the G1 path. G1 PRs keep priority in review.
+Recorded in full in its own decision record, **`DEC-2026-11-24-g2-parallel-start`**, which is the text of record for A613 (this record does not repeat it, so the two cannot drift).
 
 ### A614. Stop the loops.
 
@@ -72,9 +70,9 @@ Slices 2 to 4 are split so C1 is not the only builder:
 
 ## 2. What the Steward did, and where the rulings are silent
 
-- **A613.** Recorded in its own decision record, `DEC-2026-11-24-g2-parallel-start` (Interim; binding on merge; the plan is not edited). Until that record merges, plan §9 stands.
+- **A613.** In `DEC-2026-11-24-g2-parallel-start` (Interim; binding on merge; the plan is not edited; a pointer in `docs/poc/execution/README.md` shows the override). Until that record merges, plan §9 stands.
 - **A614.** The Steward adopts it: it reports only when a PR is READY at a head, merged, or blocked with a named blocker, and sends no status-only report or recap. A585 and A599 are unchanged (the Steward stays subscribed until the head's CI is read, then posts READY and unsubscribes).
-- **A615.** The task is TRU-10 (A539). The allowlist is the Architect's to widen; the Steward changes no task card. `DispositionDecisionID` is a contract field on two workflow inputs: the AGENT-15 steps (a version bump where a contract changes, a migration note, regenerated models) apply, and C1's independent read covers `workflows/` (INV-30: workflow code does no I/O).
+- **A615.** The task is TRU-10 (A539). The allowlist is the Architect's to widen; the Steward changes no task card. `DispositionDecisionID` is a new field on `EscalateInput` and `RouteGrantRequest`. **Whether AGENT-15 applies depends on what those types are:** if they are generated from `/contracts` documents, the AGENT-15 steps apply (a version bump, a migration note, regenerated models); if they are Go workflow structs only, there is no contract to version. EL or C1 states which in the PR, so nobody versions a contract that does not exist. C1's independent read covers `workflows/` (INV-30: workflow code does no I/O).
 - **A616 and A617.** A616 is EL's (#935). A617 is EL's (#934): the CODEOWNERS line for a new top-level owned path in the same PR is AGENTS §11's rule. "Nothing increments" refers to the epoch (A513, A520).
 - **A618 and noema#800.** noema#800 shows **merged** on GitHub (it records a call refused by the full pool as `POOL_REFUSED`, A372). A618's change (charge 0 only for a call that provably sent nothing) is therefore a **follow-up PR by C2**, not a change to #800, unless the Architect meant a different number. The Steward does not guess; C2 names the PR. The USD 5 ceiling is unchanged (AGENT-16: no agent changes a threshold).
 - **A619 and AGENT-14.** The provider class under `providers/` in the model service is where provider code lives (INV-29). "No new dependency" keeps AGENT-14 satisfied. "Wait for a passing run" ties to the stop rule of A605: run 7's recordings are not handed over, and no run is started by this ruling.
