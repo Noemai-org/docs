@@ -58,7 +58,7 @@ SR's proposal is accepted: the deadline test counts client-issued statements ins
 - **A611 and noema#915.** The first fix of #915 allowed one extra attempt after `Spend` returned (the one statement a single connection can have in flight). A611 replaces that with a count of client-issued statements: the test fails if the client issues any statement after `Spend` returned, and no server-side timing is involved. The Steward made the change in noema#915 in the same session (the PR body and its status file say what changed).
 - **A605 in the compile-run record.** A605 is already in `DEC-2026-11-23-architect-rulings-a602-a605`. At the Founder's instruction the Steward also recorded its stop rule in the compile-run record in `noema`, `status/UND-16.md` (the series that holds the live compile runs, `UND-16-run6.md` being the latest): at most two more live compile runs (8, and 9 only if run 8's readable evidence shows a threshold problem); no run 10 without a Founder decision between an asymmetric pass rule and a delay; no golden edited (A533).
 - **Task status (`tasks.csv`)** is unchanged here. **Migration ledger on noema#183** is unchanged: 0037 #922, 0038 #923, 0039 #925, 0040 reserved, next free 0041.
-- **Next free ruling: A612.**
+- **Next free ruling: A613.** (A612, Security Reviewer's four conditions on A606 to A609 made binding with owners, is recorded in `DEC-2026-11-24-architect-rulings-a612`; this record was written before it.)
 
 ## 3. The Steward's ledger
 
@@ -69,5 +69,6 @@ SR's proposal is accepted: the deadline test counts client-issued statements ins
 | `DEC-2026-11-22-architect-rulings-a518-a524` | A518 to A529 | |
 | `DEC-2026-11-23-*` records, `a530-a533` to `a602-a605` | A530 to A605 (A541 noted; A590 to A592 in full) | |
 | This record | A606 to A611 | |
+| `DEC-2026-11-24-architect-rulings-a612` | A612 | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank, by ruling A592) | **A612** |
+| Named without text | A467 (blank, by ruling A592) | **A613** |
