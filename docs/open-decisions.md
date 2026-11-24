@@ -1304,3 +1304,46 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Core Engineer 1 (the contract and the packcheck rules); both Founders (approval); EL for PCK-05 (separate).
 - **Source:** ruling A631; plan task CAP-02; PERD packcheck rules; AGENT-15.
 
+### OD-P-103: `priority_routing` values for the SLA phases (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A644 (interim, in `DEC-2026-11-24-architect-rulings-a644-a656`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** The PERD and the plan give no more than the phrase "priority routing data" (plan row TRU-06). The Architect's smallest safe design: a pack member `priority_routing` maps each SLA phase to `{priority, owner_queue}`; `priority` is one of `HIGH`, `NORMAL`, `LOW`; **the values are SYNTHETIC, EL writes them**; C1's evaluator reads the member; a phase with no entry gets `NORMAL`. What is open is the values themselves (which phase gets which priority and which queue).
+- **Why it matters:** A wrong priority sends a case to the wrong queue or delays an urgent one; it never allows a write (routing is not authority).
+- **Proposed smallest safe default:** Exactly the Architect's design and nothing more; EL writes SYNTHETIC values; an absent phase is `NORMAL`.
+- **Evidence that would invalidate the default:** A phase the SLA evaluator produces that the member cannot express; an `owner_queue` that does not exist in the pack's queues.
+- **Owner:** EL (the values, as SYNTHETIC pack data); Core Engineer 1 (the evaluator); the Founders (any non-SYNTHETIC value).
+- **Source:** ruling A644 (and A640: one owner per member); plan task TRU-06; AGENT-16.
+
+
+### OD-P-104: The tenant-wide rate limit for TRU-11 is not built in the POC (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A648 (interim, in `DEC-2026-11-24-architect-rulings-a644-a656`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** TRU-11 counts the principal's decisions for a capability over the last hour on the database clock (A630, A648: every capability in the authorized set is checked; a voided grant still counts toward the hour). **A tenant-wide limit is not built in the POC.** What is open is whether and when one is wanted.
+- **Why it matters:** Without a tenant-wide limit, many principals of one tenant can each stay under the per-principal limit while the tenant as a whole sends many writes.
+- **Proposed smallest safe default:** No tenant-wide limit in the POC; the per-principal count only (A648). Wiring the Rates adapter happens after the G1 run.
+- **Evidence that would invalidate the default:** A G1 or G2 case that needs a tenant-wide cap; a partner requirement for one.
+- **Owner:** Architect (the decision); Core Engineer 1 (TRU-11).
+- **Source:** rulings A630 and A648; plan task TRU-11.
+
+
+### OD-P-105: The outcome pack-mapping field and a `Pending` member in the outcome-definition contract (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A651 (interim, in `DEC-2026-11-24-architect-rulings-a644-a656`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** For G1 the caller supplies the Outcome request's bindings; EL's composition fills them by exact name match between predicate variable and plan parameter, and refuses on a missing match; `Pending` stays nil (A651). What is open, after G1: a **pack mapping field** that carries the bindings in pack data, and a **`Pending` member** in the outcome-definition contract.
+- **Why it matters:** Without them the bindings live in code at the composition root, and a pending outcome cannot be expressed in the outcome definition.
+- **Proposed smallest safe default:** Nothing built before G1; exactly A651's exact-name match with refusal on a missing match; `Pending` stays nil.
+- **Evidence that would invalidate the default:** A G1 case with a pending outcome that the nil `Pending` cannot represent; a binding that exact-name matching cannot resolve.
+- **Owner:** Core Engineer 2 (the Outcome request builder, #950); EL (the composition); the Founders (a contract change, AGENT-15).
+- **Source:** ruling A651; ruling A620 (slice 3 is C2's); AGENT-15.
+
+
+### OD-P-106: The REGRESSION_LINK observation writer (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A652 (interim, in `DEC-2026-11-24-architect-rulings-a644-a656`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** The regression-link check (MEM-02, merged) fails a fix PR without a link; the Architect says a **`REGRESSION_LINK` observation writer** is open for after G1 (a writer that records the link as an observation). What exactly it records, and where, is not decided.
+- **Why it matters:** Without it the link is checked in CI but not recorded as evidence a reviewer or the G3 gate can read later.
+- **Proposed smallest safe default:** Nothing built before G1; the CI check stays as merged.
+- **Evidence that would invalidate the default:** A G3 or release-evidence requirement that the CI check alone cannot meet.
+- **Owner:** Benchmark Owner; EL.
+- **Source:** ruling A652; plan task MEM-02 (Done); REQ-MEM-002.
+
