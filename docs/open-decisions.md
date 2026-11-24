@@ -1295,7 +1295,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 ### OD-P-102: `capability-descriptor.v2`: compensation per capability (OPEN, provisional; contract change for both Founders)
 
-- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A631 (interim, in `DEC-2026-11-24-architect-rulings-a624-a637`; counts when that record merges). AGENT-15 applies.
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from ruling A631 (interim, in `DEC-2026-11-24-architect-rulings-a624-a643`; counts when that record merges). AGENT-15 applies.
 - **Missing decision:** the contract `capability-descriptor` has no per-capability compensation member. The PERD packcheck rules need one. The Architect rules that **the PERD vocabulary wins**: a new `capability-descriptor.v2` with compensation as the enum `NONE_REQUIRED`, `INVERSE_CAPABILITY`, `ESCALATE_ONLY`, and an `inverse_mapping` (a capability id plus a parameter map) **required when `INVERSE_CAPABILITY`**. It adds only what the PERD packcheck rules need.
 - **What stays open until both Founders approve the contract change:** the exact members and their JSON Schema; the packcheck rules (C1 owns them); the version bump, the migration note and the regenerated models (AGENT-15). PCK-05 stays separate (A627).
 - **Why it matters:** a capability that has no declared compensation cannot be checked by packcheck for a missing inverse, and a pack could ship a write with no recovery definition (plan §13.1: no new capability without its registry entry, policy, verification predicate and recovery definition).
