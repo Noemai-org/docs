@@ -6,7 +6,7 @@
 | **Date** | 24 November 2026 |
 | **Owner** | Principal Architect (the decision); Founder and Technical Co-Founder (the merge) |
 | **Decides** | Build work for a G2 task may start before G1 passes, when the task's "Needs" tasks are all Done. The G2 gate itself is not moved. |
-| **Supersedes** | **The sequencing in plan §9 ("Entry condition. G1 passed. If it did not, Monday is spent on the slice and the ambiguity work starts on Tuesday. Nothing else in this week is allowed to start before the slice is green")**, for build work only, and only from the moment this record merges. **Exception kept:** the G1-failure hold of plan §3.1 and AGENTS §3 step 3 is preserved (§1, item 6). The plan file is **not edited** (AGENTS §11); a plan version carries the change only by change request (plan §19). |
+| **Supersedes** | **The sequencing in plan §9 ("Entry condition. G1 passed. If it did not, Monday is spent on the slice and the ambiguity work starts on Tuesday. Nothing else in this week is allowed to start before the slice is green")**, for build work only, and only from the moment this record merges. **Exception kept (ruling A621):** the G1-failure hold of plan §3.1 and AGENTS §3 step 3 is preserved (§1, item 6). The plan file is **not edited** (AGENTS §11); a plan version carries the change only by change request (plan §19). |
 | **Amends** | Nothing in the SoT or the PERD. |
 | **Authority order applied** | SoT §0.4: an approved POC decision ranks above the plan. |
 
@@ -29,8 +29,8 @@
 3. **Nothing G2 touches the G1 path.** A G2 task that would change something G1 depends on does not start under this decision.
 4. **G1 PRs keep priority in review.**
 5. **Tasks already in flight are unchanged.** A task that is already under way for G1 (for example the TRU-10 disposition path, or any task on the G1 critical path) is not made a "G2 start" by this record, and its priority does not change. The decision adds permission to start a G2 task; it takes none away.
-6. **If G1 fails, the hold of plan §3.1 and AGENTS §3 step 3 still applies, and ambiguity work waits.** *The Steward's reading, the safer one (AGENT-20); A613 does not say.* A613 does not permit ambiguity (AMB) tasks to start after a G1 FAIL, and does not override plan §3.1 ("if G1 failed, week 2 starts with the slice and ambiguity work waits"). Meanwhile G2 work in flight yields review and CI capacity to G1 repair, and no G2 PR merges while a G1 failure is open. **The Architect confirms or corrects this.**
-7. **"May be built now" includes merging, on the same gates.** *The Steward's reading, not stated in A613.* A G2 PR may merge only if it passes the same checks and reviews as any PR and touches nothing on the G1 path; nothing it adds counts as G2 gate evidence before G0 and G1 pass (item 2); and item 6's hold applies. **The Architect confirms or corrects this.**
+6. **A G1 failure keeps the plan §3.1 hold (ruling A621).** If G1 fails, ambiguity work waits (plan §3.1: "if G1 failed, week 2 starts with the slice and ambiguity work waits"); G2 work already in flight yields review and CI capacity to the G1 repair; no G2 PR merges while a G1 failure is open. **Today G1 has not failed; it has not run yet**, so G2 PRs may merge under item 7.
+7. **"May be built now" includes merging (ruling A622).** It applies on the same gates: green CI, READY at the head, the required reads and approvals. The PR must touch nothing on the G1 path. It counts as no G2 evidence until G0 and G1 pass (item 2). Item 6's hold applies.
 8. **Why it takes the safe path.** Plan §9 says G2 work waits for G1, and a chat instruction does not override it until it is committed (AGENTS §2.3). This record is that commitment.
 
 ## 2. What the Steward did, and where the record is silent

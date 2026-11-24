@@ -1,12 +1,12 @@
-# DEC-2026-11-24 · Architect rulings A613 to A620 (interim)
+# DEC-2026-11-24 · Architect rulings A613 to A623 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 24 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves and merges it (A111; AGENTS §2, item 3). |
 | **Date** | 24 November 2026 |
 | **Owner** | Principal Architect (the rulings); Founder and Technical Co-Founder (the merge) |
-| **Decides** | Rulings A613 to A620 (§1), every one Interim. A613 has its own decision record, `DEC-2026-11-24-g2-parallel-start`. |
-| **Supersedes** | **A613** changes the sequencing of plan §9 for build work (see that record). **A615 extends** the TRU-10 allowlist (A534, A539). **A618 and A619 refine** earlier rulings on #800 and UND-15. **A620 splits** the build of lane 5 (A547). **A614 is a reporting rule** that keeps A585 and A599. Otherwise nothing; per ruling, in §1. |
+| **Decides** | Rulings A613 to A623 (§1), every one Interim. A613 has its own decision record, `DEC-2026-11-24-g2-parallel-start`. |
+| **Supersedes** | **A613** changes the sequencing of plan §9 for build work (see that record). **A615 extends** the TRU-10 allowlist (A534, A539). **A618 and A619 refine** earlier rulings on #800 and UND-15. **A620 splits** the build of lane 5 (A547). **A614 is a reporting rule** that keeps A585 and A599. **A621 and A622 settle** the two points the reviewers raised on A613 (the G1-failure hold; merging). **A623 settles** the AGENT-15 question on A615. Otherwise nothing; per ruling, in §1. |
 | **Amends** | Nothing in the SoT, the PERD or the plan, as written. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder (A111)
 - Date: 24 November 2026
 - Owner: Principal Architect; Founder; Technical Co-Founder
-- Decides: A613 to A620
+- Decides: A613 to A623
 - Decision: §1
 - Rationale and evidence: the Architect's message of 24 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-03, INV-14, INV-29; AGENT-14, AGENT-16; REQ-TRU-010; plan §3, §9; AGENTS §2.3, §5, §11
@@ -68,17 +68,35 @@ Slices 2 to 4 are split so C1 is not the only builder:
 - Slice 4 (Record reader) goes to an EL agent.
 - All three start from a fresh branch off `main` once #917 has merged.
 
+### A621. A G1 failure keeps the plan §3.1 hold.
+
+- If G1 fails, ambiguity work waits.
+- G2 work already in flight yields review and CI capacity to the G1 repair.
+- No G2 PR merges while a G1 failure is open.
+- Today G1 has not failed. It has not run yet. So G2 PRs may merge under A622.
+
+### A622. "May be built now" includes merging.
+
+- It applies on the same gates (green CI, READY at the head, the required reads and approvals).
+- The PR must touch nothing on the G1 path.
+- It counts as no G2 evidence until G0 and G1 pass.
+
+### A623 (A615's AGENT-15 note).
+
+A615's AGENT-15 note applies only if `EscalateInput` and `RouteGrantRequest` come from `/contracts` documents.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **A613.** In `DEC-2026-11-24-g2-parallel-start` (Interim; binding on merge; the plan is not edited; a pointer in `docs/poc/execution/README.md` shows the override). Until that record merges, plan §9 stands.
 - **A614.** The Steward adopts it: it reports only when a PR is READY at a head, merged, or blocked with a named blocker, and sends no status-only report or recap. A585 and A599 are unchanged (the Steward stays subscribed until the head's CI is read, then posts READY and unsubscribes).
-- **A615.** The task is TRU-10 (A539). The allowlist is the Architect's to widen; the Steward changes no task card. `DispositionDecisionID` is a new field on `EscalateInput` and `RouteGrantRequest`. **Whether AGENT-15 applies depends on what those types are:** if they are generated from `/contracts` documents, the AGENT-15 steps apply (a version bump, a migration note, regenerated models); if they are Go workflow structs only, there is no contract to version. EL or C1 states which in the PR, so nobody versions a contract that does not exist. C1's independent read covers `workflows/` (INV-30: workflow code does no I/O).
+- **A615.** The task is TRU-10 (A539). The allowlist is the Architect's to widen; the Steward changes no task card. `DispositionDecisionID` is a new field on `EscalateInput` and `RouteGrantRequest`. **A623 settles when AGENT-15 applies:** only if `EscalateInput` and `RouteGrantRequest` come from `/contracts` documents (then a version bump, a migration note and regenerated models); if they are Go workflow structs only, there is no contract to version. EL or C1 states which in the PR, so nobody versions a contract that does not exist. C1's independent read covers `workflows/` (INV-30: workflow code does no I/O).
 - **A616 and A617.** A616 is EL's (#935). A617 is EL's (#934): the CODEOWNERS line for a new top-level owned path in the same PR is AGENTS §11's rule. "Nothing increments" refers to the epoch (A513, A520).
 - **A618 and noema#800.** noema#800 shows **merged** on GitHub (it records a call refused by the full pool as `POOL_REFUSED`, A372). A618's change (charge 0 only for a call that provably sent nothing) is therefore a **follow-up PR by C2**, not a change to #800, unless the Architect meant a different number. The Steward does not guess; C2 names the PR. The USD 5 ceiling is unchanged (AGENT-16: no agent changes a threshold).
 - **A619 and AGENT-14.** The provider class under `providers/` in the model service is where provider code lives (INV-29). "No new dependency" keeps AGENT-14 satisfied. "Wait for a passing run" ties to the stop rule of A605: run 7's recordings are not handed over, and no run is started by this ruling.
 - **A620 and #917.** A547 gave lane 5 to C1 with EL integrating the ports; A620 splits slices 2 to 4 among C1, C2 and an EL agent, all from a fresh branch off `main` after #917 merges. noema#917 (slice 1) is open at this writing. Lane 5 traces to STM-01 (A589).
+- **A621, A622 and the decision record.** The two points the reviewers (the Benchmark Owner and Codex) asked about are now rulings: the G1-failure hold is kept (A621) and "may be built now" includes merging on the same gates (A622). The Steward's earlier "safer reading" in `DEC-2026-11-24-g2-parallel-start` (rules 6 and 7) is replaced by these rulings. A621 notes that G1 has not run yet, so the hold is not in force today and G2 PRs may merge under A622 once the record itself has merged. No G2 PR may merge before that record merges.
 - **Migration ledger on noema#183** and **`tasks.csv`** are unchanged: 0037 #922, 0038 #923, 0039 #925, 0040 reserved, next free 0041.
-- **Next free ruling: A621.**
+- **Next free ruling: A624.**
 
 ## 3. The Steward's ledger
 
@@ -87,6 +105,6 @@ Slices 2 to 4 are split so C1 is not the only builder:
 | Earlier records | A41 to A340 (A316 and A328 withdrawn) | |
 | `DEC-2026-11-20-*` and `DEC-2026-11-21-*` records | A358 to A362, A380 to A485 (A467: no text), A489 to A492, A502 to A517 | |
 | `DEC-2026-11-22-*` to `DEC-2026-11-24-architect-rulings-a612` | A518 to A612 (A541 noted; A590 to A592 in full) | |
-| This record | A613 to A620 (A613 also in `DEC-2026-11-24-g2-parallel-start`) | |
+| This record | A613 to A623 (A613 also in `DEC-2026-11-24-g2-parallel-start`) | |
 | Withdrawn, never recorded | A493 to A501 | |
-| Named without text | A467 (blank, by ruling A592) | **A621** |
+| Named without text | A467 (blank, by ruling A592) | **A624** |
