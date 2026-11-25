@@ -1,12 +1,12 @@
-# DEC-2026-11-25 · Architect rulings A690 to A700 (interim)
+# DEC-2026-11-25 · Architect rulings A689 to A703 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 25 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 25 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A690 to A700 (§1), every one Interim. **A689 was not supplied** to the Steward and is not recorded (§2). |
-| **Supersedes** | **A690 redraws** the review tiers of AGENTS §11 (Tier 1 gains contracts, packs and security; Tier 2 gains tests, UI and refactors; SR reads Tier 1 only). **A691 replaces** A674's removal of the reversal pair. **A692 settles** lane 5 slice 4 (option (b)). **A693 confirms** A543 and A681. **A694 confirms** OD-P-116's members. **A696 adds** four gaps to A684's list. **A698 settles** the pack version rule until the contracts-v1.0.0 tag. Otherwise nothing; per ruling in §1. |
+| **Decides** | Rulings A689 to A703 (§1 and §1A), every one Interim. A689 is the stop order, recorded in full in §1A (A703). |
+| **Supersedes** | **A690 redraws** the review tiers of AGENTS §11 and **A701 and A702 settle them by path** (the highest tier wins; `deploy`, keys and secrets are named Tier 1). **A703 records A689**, the stop order. **A691 replaces** A674's removal of the reversal pair. **A692 settles** lane 5 slice 4 (option (b)). **A693 confirms** A543 and A681. **A694 confirms** OD-P-116's members. **A696 adds** four gaps to A684's list. **A698 settles** the pack version rule until the contracts-v1.0.0 tag. Otherwise nothing; per ruling in §1. |
 | **Amends** | `AGENTS.md` §11 "Reviews" (A690: the review load). OD-P-113 and OD-P-116 (update lines). Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 25 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A690 to A700
+- Decides: A689 to A703
 - Decision: §1
 - Rationale and evidence: the Architect's message of 25 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-05, INV-07, INV-17, INV-22, INV-29; BD-08; AGENT-14, AGENT-15, AGENT-16; REQ-RES-005, REQ-VER-001, REQ-VER-002, REQ-CTX-007, REQ-EXE-003; SoT §51
@@ -93,21 +93,51 @@ EL owns the input gateway write path. C1 owns the recovery reader and write path
 - #972 holds until IL's compose PR is in. Agreed with SR.
 - #974: C1 explains or reverts the one re-encoded line.
 
+## 1A. Rulings A701 to A703, and A689 (the Architect's answers to the review of this pull request)
+
+### A701. Tier follows paths (SR's finding 2, adopted)
+
+- A PR's tier follows the paths it touches, and the highest tier wins. A "refactor", "test" or "docs" label never lowers it.
+- **Tier 1 paths** are:
+  - `trust/`, `execution/`, `outcome/`, `record/`, `contracts/`, `packs/`;
+  - security, identity, keys and secrets;
+  - `.github/`, `deploy/` and `tools/ci/`;
+  - the oracle and held-out paths;
+  - `AGENTS.md`, `CLAUDE.md` and `docs/decisions/`.
+- Everything else is Tier 2. It needs green CI, Codex READY if Codex has posted, and the Founder's approval.
+
+### A702. `deploy`, keys and secrets
+
+`deploy` stays Tier 1. Keys and secrets are named explicitly as Tier 1. They are not left to "security" and "identity".
+
+### A703. A689 goes into the record in full
+
+The text is the stop order the Architect gave, reproduced below. SR may then clear docs#246.
+
+### A689 (the stop order, in full)
+
+- No output on a wake that needs no action.
+- No sub-agent batches to review PRs. Independent reads are for migrations only (A463), or when SR names one.
+- One agent per assigned task. Nothing new starts without a ruling that names it.
+- No re-reading CI unless the head moved.
+- Reports are a table only: PR, head, CI result, READY or the named blocker. If nothing changed, say nothing.
+- When nothing is left, end the turn. No summaries or recaps.
+
 ## 2. What the Steward did, and where the rulings are silent
 
-- **A689 was not supplied.** The Steward's ledger read A689 as the next free number; the message began at A690. Nothing is invented for A689. If it exists, send it and the Steward records it.
+- **A689** is recorded in full in §1A (A703). The Steward follows it from now on.
 - **[OPEN] entries, as asked:**
   - **OD-P-117**: `golang.org/x/text` and the matcher manifest kind (A695). The new dependency is approved by the Architect; both Founders approve at the #960 merge (AGENT-14). The module is not in PERD §36.1's list; the manifest kind's name and shape are C2's to state in the pull request.
   - **OD-P-118**: the reversal pair's `convergence_window_seconds` of 0 (A691).
   - **OD-P-119**: the `step_params` member of the signed execution receipt (A692). Its shape is C1's to state in the contract pull request.
   - **OD-P-116** (`SLA_EVALUATED`) is updated in place: A694 confirms the members and the two conditional rules in #984; it stays Open until the contract file merges with both Founders' approval.
   - **OD-P-113** is updated in place: A691 keeps the reversal pair with a window of 0, replacing A674's removal; the entry stays Open for the `reversal_posted` shape.
-- **A690 and AGENTS.md.** `AGENTS.md` §11 now carries the new tiers (a "Review load" sentence). **A690 moves contracts and packs into Tier 1 and tests, UI and refactors into Tier 2**; AGENTS §11's "Tier 1 (trust, execution, outcome, record, migrations, identity)" and "Tier 2 (contracts, packs, benchmark, voice, docs)" and plan §4 (v1.29) state the older split. `AGENTS.md` §11 governs until a plan version restates it (A671). **Two notes for the Architect:** (a) migrations stay on A463's independent read (A685); the Steward reads "security" and "`.github`" as Tier 1 paths as written. (b) "SR does not read Tier 2" is the Steward's reading of "SR now reads Tier 1 only". (c) **`deploy`:** A690 names `.github` but not `deploy`; the older text of §11 says "`.github` and `deploy` still need SR". Reviewers (SR, Codex) found that dropping it would silently remove SR's coverage of deployment changes. **The Steward keeps `deploy` as an SR path (the safer reading, AGENT-20) and has added it to AGENTS.md §11.** The Architect confirms, or rules that `deploy` leaves Tier 1. SR also asks that keys and secrets be named as Tier 1 paths; the Steward reads them as covered by "security" and "identity" and has not added them, and the Architect confirms.
-- **SR's second finding on this pull request (open, for the Architect).** SR asks that the tier follow the paths a PR touches, with the highest tier winning, whatever the PR calls itself: otherwise a "refactor", a "test" or a "docs" label can move a change under `trust/`, `execution/`, `outcome/`, the oracle or held-out material, `leakscan.allow`, goldens, `tools/packcheck`, `tools/codegen`, `tools/ci`, `AGENTS.md`, `docs/decisions/` or the SoT into Tier 2, which can merge with no review when Codex is silent. A690 sorts by kind of change, not by path. **The Steward has not added a rule that A690 does not state** (a committed instruction should not carry more than the ruling it cites, as A685 said of an earlier Steward addition). The Steward recommends the Architect adopt SR's sentence, which the Steward then records and puts in AGENTS.md.
+- **A690, A701, A702 and AGENTS.md.** `AGENTS.md` §11 carries the tier rule by path and the Tier 1 path list as ruled (with `deploy`, keys and secrets named). **Plan §4 and §13.1 (v1.29) state the older tier split;** `AGENTS.md` §11 governs until a plan version restates it (A671). A small plan version for that is available on request.
+- **SR's second finding and the `deploy` question (reviewers' findings on this pull request)** are settled by A701 and A702.
 - **Notes from SR's read, for the owners (not decisions).** A698 is not a precedent for breaking changes: #963 changes the `compensation` vocabulary in place and is covered by A647 and A700. For A699, SR asks for a netcheck assertion that no service other than the ops listener mounts the admin emitter DSN. For A692, the `step_params` member may hold only the params named by the PLAN_PARAM bindings, and a personal identifier is held masked or as a hash (AGENT-13). For A693, SR accepts "no write" on the condition that #963 is on `main` first so packcheck refuses a pack whose write-capable node has no `write_when`, and #990 tests the shipped fintech pack.
 - **The noema copy of AGENTS.md** takes the change in a re-point PR after this merges (as noema#967 and noema#991 did).
 - **A692 and A665.** The Steward notes that A665's version token in `evidence/portread` goes in its own small PR, with its allowlist extended to that package (EL's PR body states it). No `docs` change.
 - **A696.** The four gaps join A684's list for EL's burn-down; the Steward does not move `tasks.csv`.
 - **A698 and the G0-N tag.** The `contracts-v1.0.0` tag is a G0-N item (ENV-14 in the plan); nothing for the Steward to cut.
 - **A690's order, A693, A694, A697, A699, A700:** other owners' work; nothing for the Steward beyond this record.
-- **Next free ruling: A701** (A689 is not supplied).
+- **Next free ruling: A704.**
