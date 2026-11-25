@@ -1,13 +1,13 @@
-# DEC-2026-11-25 · Architect rulings A657 to A667 (interim)
+# DEC-2026-11-25 · Architect rulings A657 to A667, and A669 to A672 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 25 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 25 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A657 to A667 (§1), every one Interim. |
-| **Supersedes** | **A657 confirms A656** and ends the re-read loop; it amends AGENTS §11 "Reviews" (this pull request edits it). **A659 changes** A641's use of `window_seconds` (A647) to the name `convergence_window_seconds` and moves the rule set to version 2. **A661 is restated and closed by A668** (`DEC-2026-11-25-architect-ruling-a668`, docs#243); it is recorded here as given. **A662 settles** noema#952 (merge as is). **A664 fixes** the landing order of the contract and pack PRs. **A666 sets** RES-02's freeze as a Record event. Otherwise nothing; per ruling in §1. |
-| **Amends** | `AGENTS.md` §11 "Reviews" (A656, A657). Nothing in the SoT or the PERD. The plan is untouched (see §2, "EVD-05"). |
+| **Decides** | Rulings A657 to A667 and A669 to A672 (§1 and §1A), every one Interim. A668 is `DEC-2026-11-25-architect-ruling-a668` (docs#243). |
+| **Supersedes** | **A669 amends A657** (the re-read rule's wording) and **A670 adds an end marker to A656**; **A671 and A672** are applied by plan v1.29 (§2). **A657 confirms A656** and ends the re-read loop; it amends AGENTS §11 "Reviews" (this pull request edits it). **A659 changes** A641's use of `window_seconds` (A647) to the name `convergence_window_seconds` and moves the rule set to version 2. **A661 is restated and closed by A668** (`DEC-2026-11-25-architect-ruling-a668`, docs#243); it is recorded here as given. **A662 settles** noema#952 (merge as is). **A664 fixes** the landing order of the contract and pack PRs. **A666 sets** RES-02's freeze as a Record event. Otherwise nothing; per ruling in §1. |
+| **Amends** | `AGENTS.md` §11 "Reviews" (A656, A657, A669, A670). **Plan v1.29** (new version: §4, §13.1, and the owner of CON-04). Nothing in the SoT or the PERD. The plan row EVD-05 is untouched (see §2, "EVD-05"). |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -15,18 +15,18 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 25 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A657 to A667
+- Decides: A657 to A667; A669 to A672
 - Decision: §1
 - Rationale and evidence: the Architect's message of 25 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-07, INV-17, INV-21, INV-22, INV-29; BD-08; AGENT-14, AGENT-15, AGENT-16; REQ-CTX-005, REQ-CTX-006, REQ-CTX-008, REQ-RES-002, REQ-RES-005, REQ-ENV-001, REQ-TRU-011; PERD §36.1
 - Supersedes: see the Supersedes row above
-- Migration notes: A659 moves the reconciliation rule set to version 2 and adds a `recon-rule-set.v1.json` schema (AGENT-15 steps, in C1's #963). A666 uses migration 0042 for EXE-06. A664's `injection_patterns` member is version-gated. No migration is added by this record.
+- Migration notes: A659 moves the reconciliation rule set to version 2 (A671 and A672 add no migration) and adds a `recon-rule-set.v1.json` schema (AGENT-15 steps, in C1's #963). A666 uses migration 0042 for EXE-06. A664's `injection_patterns` member is version-gated. No migration is added by this record.
 
 ## 1. The rulings
 
 ### A657. Re-read rule (ends the re-read loop)
 
-- A push after READY that changes only comments, docs or status files **keeps the READY**. Green CI at that head is still required.
+- A push after READY that changes only comments, docs or status files **keeps the READY**. Green CI at that head is still required. **Amended by A669 (§1A):** the exact conditions are in A669.
 - A code push needs a **fresh READY at the new head**.
 - SR's READY stands in for Codex on every Tier 1 PR while Codex is out of usage (A656, confirmed).
 - The Steward opens a docs PR that commits A656 and A657, so they are in force before any merge relies on them. **This pull request does that** (AGENTS §11 "Reviews").
@@ -123,6 +123,34 @@ Landing order, so each later PR only re-pins the manifest: **#910, #964, #965, #
 - BO builds the runner timeline drivers for `webhook:settlement_updated`, `webhook:reversal_posted` and `session_resume:same_channel`. An unsupported event is a failure, never a skip.
 - FE moves the journeys spec to its own directory and config, and keeps #957 draft until #907 and #962 land.
 
+## 1A. Rulings A669 to A672 (the Architect's answers to the review of this pull request)
+
+### A669. Re-read rule wording (A657 amended). Adopt SR's wording.
+
+- A push keeps READY only if one of these holds:
+  - every changed file is `*.md` or under `status/`;
+  - or the only changed lines in code are directive-free comments (no `//go:build`, `# noqa`, `//nolint` or similar) and the rest of the file is byte-identical.
+- The pusher states which case applies.
+- A merge-main commit voids no earlier read unless its conflict resolution changed code.
+- Anything else is a code push and needs a fresh READY at the new head.
+
+### A670. End marker for A656
+
+- The Steward records the day Codex returns.
+- From that day the old Tier 1 text applies again: Codex, or SR standing in, plus SR READY at the same head.
+- Key and identity paths stay SR paths regardless (A541). No extra role reads are kept for them.
+
+### A671. Plan and AGENTS.md. Yes to both.
+
+- A small plan version restates §4 and §13.1, with its change request, so the plan, AGENTS.md and the rulings agree. The plan file is never edited in place.
+- The noema copy of AGENTS.md goes in a pull request once docs#244 merges. The copy states the `docs` commit it was taken from.
+
+### A672. CON-04
+
+- It goes back to **In progress**. The schema-valid `intent_hash` and `plan_hash` vectors are what a grant binds to (INV-17), so the Architect will not mark it Done without them.
+- C1 owns it. C1 adds the shared Go and Python golden vectors for both hashes, red first, as a small pull request that touches `/contracts` fixtures only, with no schema change.
+- The Architect does not rule those vectors outside its done-when. The earlier instruction to mark CON-04 Done is withdrawn.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **AGENTS.md §11 "Reviews" amended** (A656, A657): SR's READY at the same head stands in for an unread Codex on every Tier 1 pull request while Codex is out of usage; independent role reads apply to migrations only (A463); the re-read rule above. Plan §4 and §13.1 keep their older Tier text (a plan is not edited in place); A656 and A657 rank above the plan (SoT §0.4, approved POC decisions). **The copy of AGENTS.md in `noema` carries the old text** and takes this change by its own pull request after this one merges; the `docs` original wins until then (AGENTS §16).
@@ -135,17 +163,18 @@ Landing order, so each later PR only re-pins the manifest: **#910, #964, #965, #
   - **Already open, not duplicated:** OD-P-101 (the 9000 basis-point gate threshold; the rulings call it `OD-A603`), OD-P-104 (tenant-wide rate limit), OD-P-105 (outcome pack mapping and `Pending`), OD-P-106 (`REGRESSION_LINK` writer); all four are in `main`.
   - **Wording of OD-P-111 and OD-P-112 is the Steward's.** The message named them without text. The missing decision and the default are drawn from REQ-CTX-008, OD-P-56 and the safe-default rule; the Architect confirms or corrects them.
 - **Debt.** **DEBT-58** (`sealed_at` as the ordering authority, A661 and A668, owner C1) is in docs#243; this pull request does not repeat it. **DEBT-59** (the rate check and the grant under one advisory lock, A662, owner C1) is added here. Tier 2 is the Steward's proposal; the ruling gives no tier.
-- **Tasks marked Done in `tasks.csv`, on merged evidence** (status columns only; the plan is not edited):
+- **Tasks marked Done in `tasks.csv`, on merged evidence** (PLT-08 and EVD-06; **CON-04 is not Done**, A672) (status columns only; the plan is not edited):
 
   | Task | Evidence (merged pull request, merge commit; checks at the pull request's last head) |
   |---|---|
   | **BEN-06 to BEN-09** | Already Done in `tasks.csv` on `main`; no change. |
   | **PLT-08** | noema#693 (`196b452`; 25 check runs succeeded at the merge commit). Done-when: an event commits with its state change or not at all, shown by a crash test. |
   | **EVD-06** | noema#674 (`f043976`, the permutation property) and noema#688 (`af1e9fd`, the advisory injection detector). Done-when: permutation property test passes; injection fixture records a security event. For #674, all 24 check runs succeeded at the last head (`6d773ad`); the merge commit on `main` shows one red `checks` job in "Vendored-copy script tests (the current PERD is resolved, not hardcoded)", a tool test the test-only change does not touch. For #688, 25 succeeded at the merge commit. |
-  | **CON-04** | noema#652 (`cddaab2`; 25 succeeded) and noema#1 and #2 (the vectors). Done-when: Go and Python each compute every vector in CI. **Not covered, stated:** the schema-valid `intent_hash` and `plan_hash` vectors (the row adds them "once CON-01 exists"), and the shared masking vector file of A259. They are follow-ups named in `status/CON-04.md`; the Architect or the Founders may rule them outside CON-04's done-when. |
+  | **CON-04** | **Not Done (A672).** Set back to In progress, owner C1. noema#652 (`cddaab2`; 25 succeeded) and noema#1 and #2 delivered the Go tests for every family and the `evidence_set_hash` vectors, but the schema-valid `intent_hash` and `plan_hash` vectors (INV-17) are still to do (C1's small contracts-fixtures PR). |
 
 - **`go.temporal.io/api`**: promoted from an indirect to a direct dependency in `services/core` for `REJECT_DUPLICATE` (A666). It is already in the module graph, so no new module is added; AGENT-14's approval is A666. Recorded here; the change itself is C1's.
 - **EVD-05 change request**: drafted as `CR-2026-11-25-evd-05-hostility-proxy-split` (Draft). The plan row is not changed until a plan version applies it (plan §19); A666 says C2 starts when the CR merges.
 - **Tushe question list**: `docs/poc/tushe/questions-2026-11-25-env05.md` (a draft for the Founder to send with the OpenAPI request; the Steward does not send it). It carries the eight unstated items of `status/ENV-05.md` (noema#961's branch), with R6.
 - **A659, #949 and #958; A664's order; A665's runs; A667's journeys:** other owners' work; nothing for the Steward beyond this record. A663 waits on #923.
-- **Next free ruling: A669** (A668 is `DEC-2026-11-25-architect-ruling-a668`).
+- **A669 to A672 applied here:** the AGENTS.md §11 paragraph carries A669's wording and A670's end marker; **plan v1.29** (`NOEMA_POC_4WEEK_PLAN_v1.29.md`, a new version; v1.28 is not edited) restates §4 and §13.1 and moves CON-04's owner to C1, with `CR-2026-11-25-a671-review-standing` and `CR-2026-11-25-a672-con-04`; `tasks.csv` is regenerated by `plan_index.py` (only the CON-04 row differs), CON-04 In progress. **The noema copy of AGENTS.md** goes in a pull request once this one merges (A671). **A670's marker:** the Steward records the day Codex returns in that day's daily note (`docs/poc/execution/daily/`); no date is set now.
+- **Next free ruling: A673** (A668 is `DEC-2026-11-25-architect-ruling-a668`; A669 to A672 are in §1A).
