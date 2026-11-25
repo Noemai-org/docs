@@ -1406,3 +1406,43 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A fixture or run showing that UNKNOWN on a 429 breaks a journey the pack allows.
 - **Owner:** Founders; C2 (EVD-05).
 - **Source:** REQ-CTX-008; plan task EVD-05; AGENT-16. Wording the Steward's.
+
+### OD-P-113: The `reversal_posted` event's shape, and the reversal pair of the convergence matrix (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** Tushe has not stated the shape of the inbound `reversal_posted` event, so the reversal pair of PCK-05's convergence-window matrix cannot be computed (A674, A659). A674 takes it out of the active rule list into this entry, with its rule text, until Tushe answers the question list (item 9 of `docs/poc/tushe/questions-2026-11-25-env05.md`, to be sent by the Founder with the OpenAPI request). The rule text, as the pack's rule set v1 carries it: the contradiction `reversal_conflict` (a reversal in state POSTED against a debit in state NOT_POSTED, unless noted) and rule R3 (REVERSED_CONFIRMED when a reversal is KNOWN, POSTED and `original_debit_linked`, with no `reversal_conflict` contradiction); EL attaches the exact pair and its window to the pull request.
+- **Why it matters:** Without the shape no window can be tied to the reversal source, and a guessed shape would be an invented one (AGENTS §14).
+- **Proposed smallest safe default:** The reversal pair is out of the active rule list: a reversal is not compared, so a case that depends on it is UNKNOWN or ESCALATE, never WAIT. EL ships the three computable pairs now (300 s each, from A641).
+- **Evidence that would invalidate the default:** Tushe's written answer giving the `reversal_posted` shape (and where the original-debit link comes from).
+- **Owner:** Founders (the Tushe answer); EL (PCK-05).
+- **Source:** rulings A659, A674; `docs/poc/tushe/questions-2026-11-25-env05.md` item 9; REQ-RES-005; AGENT-16.
+
+### OD-P-114: A decline message template keyed by reason code (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A680: the decline is a fixed generic message with no internal code. Whether a pack template keyed by reason code replaces it is not decided; it is open after G1.
+- **Why it matters:** A generic message is safe but gives the customer no plain reason; a reason-keyed text risks leaking an internal code or a rule.
+- **Proposed smallest safe default:** The fixed generic message; no reason text, no code, no template.
+- **Evidence that would invalidate the default:** A journey where the generic message makes the customer unable to act, shown after G1.
+- **Owner:** Architect; FE (copy).
+- **Source:** ruling A680; REQ-INP-004 (INP-01); AGENT-09.
+
+### OD-P-115: Interim execute and rollback timeouts (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A681: `NOEMA_EXECUTION_EXECUTE_TIMEOUT_MS` and `NOEMA_EXECUTION_ROLLBACK_TIMEOUT_MS` stay required with no code default (fail closed). Interim values go in the bench compose only: execute 10000, rollback 5000. The Founders must confirm or change them.
+- **Why it matters:** A timeout is a safety limit (AGENT-16); too short turns a slow write into OUTCOME_UNKNOWN, too long holds the case.
+- **Proposed smallest safe default:** Execute 10000 ms and rollback 5000 ms in the bench compose only; nothing in code; a missing setting fails the start.
+- **Evidence that would invalidate the default:** A measured execute or rollback time from the Tushe or stand-in runs that exceeds or far undercuts these.
+- **Owner:** Founders; C1.
+- **Source:** ruling A681; AGENT-16; REQ-EXE-003.
+
+### OD-P-116: The `SLA_EVALUATED` payload schema (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A681 approves the `SLA_EVALUATED` payload schema as an additive contract file, with a migration note and regenerated models, in one small pull request for both Founders in the pass with #969. The ruling does not state the payload's members; they are C1's to propose in that pull request.
+- **Why it matters:** A Record event with no schema cannot be asserted in tests or read by the reconstruction (AGENT-15).
+- **Proposed smallest safe default:** No `SLA_EVALUATED` event is written until the contract file merges.
+- **Evidence that would invalidate the default:** The members the clocks and the explanation need that the first draft lacks.
+- **Owner:** C1; both Founders (approval).
+- **Source:** ruling A681; AGENT-15; PERD §32.2.
