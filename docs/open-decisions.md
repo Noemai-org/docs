@@ -1412,6 +1412,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** Tushe has not stated the shape of the inbound `reversal_posted` event, so the reversal pair of PCK-05's convergence-window matrix cannot be computed (A674, A659). A674 takes it out of the active rule list into this entry, with its rule text, until Tushe answers the question list (item 9 of `docs/poc/tushe/questions-2026-11-25-env05.md`, to be sent by the Founder with the OpenAPI request). The rule text, as the pack's rule set v1 carries it: the contradiction `reversal_conflict` (a reversal in state POSTED against a debit in state NOT_POSTED, unless noted) and rule R3 (REVERSED_CONFIRMED when a reversal is KNOWN, POSTED and `original_debit_linked`, with no `reversal_conflict` contradiction); EL attaches the exact pair and its window to the pull request.
 - **Why it matters:** Without the shape no window can be tied to the reversal source, and a guessed shape would be an invented one (AGENTS §14).
+- **Update (A691, replaces A674's removal; interim, `DEC-2026-11-25-architect-rulings-a690-a700`):** the pair is **kept** in the active rule list and the set-730 corpus test is not weakened. Its `convergence_window_seconds` is declared as **0** (no window, so an immediate ESCALATE): the safest value, packcheck passes, no number is invented. When Tushe states the `reversal_posted` shape, the window becomes the smaller of its sources' freshness limits. The default below is the earlier text of A674, superseded by this update.
 - **Proposed smallest safe default:** The reversal pair is out of the active rule list: a reversal is not compared, so a case that depends on it is UNKNOWN or ESCALATE, never WAIT. EL ships the three computable pairs now (300 s each, from A641).
 - **Evidence that would invalidate the default:** Tushe's written answer giving the `reversal_posted` shape (and where the original-debit link comes from).
 - **Owner:** Founders (the Tushe answer); EL (PCK-05).
@@ -1442,7 +1443,38 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A673 to A684 (interim, in `DEC-2026-11-25-architect-rulings-a673-a684`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** A681 approves the `SLA_EVALUATED` payload schema as an additive contract file, with a migration note and regenerated models, in one small pull request for both Founders in the pass with #969. The ruling does not state the payload's members; they are C1's to propose in that pull request.
 - **Why it matters:** A Record event with no schema cannot be asserted in tests or read by the reconstruction (AGENT-15).
+- **Update (A694, interim, `DEC-2026-11-25-architect-rulings-a690-a700`):** the `SLA_EVALUATED` members and the two conditional rules in #984 are **confirmed**; the entry stays Open until the contract file merges with both Founders' approval (A681).
 - **Proposed smallest safe default:** No `SLA_EVALUATED` event is written until the contract file merges.
 - **Evidence that would invalidate the default:** The members the clocks and the explanation need that the first draft lacks.
 - **Owner:** C1; both Founders (approval).
 - **Source:** ruling A681; AGENT-15; PERD §32.2.
+
+### OD-P-117: `golang.org/x/text` and a manifest kind for the matcher data file (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A690 to A700 (interim, in `DEC-2026-11-25-architect-rulings-a690-a700`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A695 approves `golang.org/x/text` for the Go recipient matcher (C2, #960) and one manifest kind for the matcher data file. A new dependency needs an entry and approval (AGENT-14); the ruling says both Founders approve at the #960 merge. The module is not yet in PERD §36.1's list, and the manifest kind's name and shape are C2's to state in the pull request.
+- **Why it matters:** A matcher built without a vetted text library would hand-roll Unicode handling for names; a new manifest kind is a pack-contract change (AGENT-15).
+- **Proposed smallest safe default:** The matcher uses only the approved module and the one manifest kind; nothing else is added; the matcher data file is pack data, never code (SoT §51).
+- **Evidence that would invalidate the default:** A need for a second module or a second manifest kind, or a finding that the module cannot do the matching A675 and A676 require.
+- **Owner:** C2; both Founders (approval at the #960 merge).
+- **Source:** ruling A695; AGENT-14, AGENT-15; PERD §36.1; noema#960.
+
+### OD-P-118: The reversal pair's `convergence_window_seconds` of 0 (A691) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A690 to A700 (interim, in `DEC-2026-11-25-architect-rulings-a690-a700`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A691 keeps the reversal pair and declares its `convergence_window_seconds` as 0, meaning no window and an immediate ESCALATE, until Tushe states the `reversal_posted` shape; then the window becomes the smaller of its sources' freshness limits. Whether the Founders accept 0 for the POC is not recorded; it is the Architect's interim ruling.
+- **Why it matters:** A window of 0 is the fail-closed value; a larger one would be an invented number (AGENT-16).
+- **Proposed smallest safe default:** 0 seconds: no window, immediate ESCALATE, for the reversal pair only.
+- **Evidence that would invalidate the default:** Tushe's written shape for `reversal_posted` (see OD-P-113), after which the smaller freshness limit applies.
+- **Owner:** Founders (with the Tushe answer); EL (#988).
+- **Source:** ruling A691; OD-P-113; REQ-RES-005; AGENT-16.
+
+### OD-P-119: The `step_params` member of the signed execution receipt (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A690 to A700 (interim, in `DEC-2026-11-25-architect-rulings-a690-a700`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A692 (slice 4, option (b)): add `step_params` to the signed execution receipt as an additive member in the receipt contract. It holds only the params named by the outcome definition's PLAN_PARAM bindings. It is a contract change (AGENT-15) with a migration note and both Founders; C1 owns it because Execution produces the receipt. The member's exact shape is C1's to state in the pull request.
+- **Why it matters:** The outcome reader (lane 5 slice 4) cannot read the plan's params from what Execution wrote without it; a wider member would put params the outcome does not need into a signed receipt.
+- **Proposed smallest safe default:** No `step_params` until the contract change merges; EL builds the slice 4 reader after that lands, and reads only what Execution wrote.
+- **Evidence that would invalidate the default:** A needed param that no PLAN_PARAM binding names.
+- **Owner:** C1; both Founders (approval).
+- **Source:** ruling A692; AGENT-15; REQ-VER-001, REQ-VER-002; PERD §32.
