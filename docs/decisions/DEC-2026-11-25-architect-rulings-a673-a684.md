@@ -1,13 +1,13 @@
-# DEC-2026-11-25 · Architect rulings A673 to A684 (interim)
+# DEC-2026-11-25 · Architect rulings A673 to A684, and A685 to A688 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 25 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 25 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A673 to A684 (§1), every one Interim. |
-| **Supersedes** | **A673 fixes the date of A670's end marker** (Codex returned 25 Nov 2026) and sets the review labels. **A674 narrows** PCK-05's matrix to three pairs and moves the reversal pair to OD-P-113; it settles OD-RES05-1's placement question (A659). **A675 confirms** A556 and A665 together. **A677 orders** #949 before #958. **A680 asks for** a PERD rewording (drafted as v1.30, Proposed). Otherwise nothing; per ruling in §1. |
-| **Amends** | `AGENTS.md` §11 "Reviews" (A673: the date and the labels). PERD **v1.30** (Proposed; REQ-INT-004 only; A680). Nothing in the SoT or the plan. |
+| **Decides** | Rulings A673 to A684 (§1) and A685 to A688 (§1A), every one Interim. |
+| **Supersedes** | **A685 restores A463** (independent role read for migrations only, before and after Codex's return) and **A686 sets** the 60-minute stand-in rule, replacing the earlier "while Codex is out of usage" form of A656 and A657; **A687 settles** FE's label. **A673 fixes the date of A670's end marker** (Codex returned 25 Nov 2026) and sets the review labels. **A674 narrows** PCK-05's matrix to three pairs and moves the reversal pair to OD-P-113; it settles OD-RES05-1's placement question (A659). **A675 confirms** A556 and A665 together. **A677 orders** #949 before #958. **A680 asks for** a PERD rewording (drafted as v1.30, Proposed). Otherwise nothing; per ruling in §1. |
+| **Amends** | `AGENTS.md` §11 "Reviews" (A673, A685, A686, A687: the date, the labels, the independent read, the stand-in rule). PERD **v1.30** (Proposed; REQ-INT-004 only; A680). Nothing in the SoT or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 25 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A673 to A684
+- Decides: A673 to A684; A685 to A688
 - Decision: §1
 - Rationale and evidence: the Architect's message of 25 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-07, INV-17, INV-22, BD-08; AGENT-14, AGENT-15, AGENT-16; REQ-AMB-002, REQ-CTX-008, REQ-INT-004, REQ-RES-005, REQ-TRU-011, REQ-EXE-003, REQ-ENV-001; AMB-02
@@ -98,12 +98,37 @@ They are in BO's #962 manifest: `usr_synth001`, `002`, `009`, `015`, `019`, `029
   4. Explainer, input gateway (#919 and #925), confirmation route, worker (#945 and the start site).
 - After each merge IL re-dispatches the stack-check. The first 200 closes #692 and unblocks TST-02's smoke job.
 
+## 1A. Rulings A685 to A688 (the Architect's answers to the review of this pull request)
+
+### A685. Independent role read
+
+- The Steward's removal was wrong, and the Steward is right to remove its own addition. It should have been restored to A463, not left to depend on "unamended".
+- A670 says the Tier 1 text applies again. That text includes A463: the independent role read is for **migrations only**. It is the same before and after Codex's return.
+- Key, identity and `.github` paths stay SR paths (A541), which is not an extra read.
+- Restore that wording in docs#245.
+
+### A686. SR standing in for Codex
+
+- For a Tier 1 PR, SR's READY plus green CI plus Codex's READY at the same head is the normal rule.
+- If Codex has posted nothing on that head 60 minutes after SR's READY, and CI is green, SR's READY stands in. SR says so in the comment.
+- If Codex has posted NOT READY on the head, the stand-in does not apply. The finding is fixed, which is a code push and gets a fresh READY.
+- A Codex NOT READY at an older head says nothing about a newer head.
+- Heads that already carry an SR stand-in READY from before 25 Nov keep it.
+- SR resumes posting stand-in READYs under this rule. No Tier 1 PR stalls on Codex's silence.
+
+### A687. FE's review label
+
+"FE", the role name, as in A673.
+
+### A688. docs#245 approval
+
+The Architect has not read the REQ-INT-004 wording, so makes no ruling on it. The recommendation is to approve it if it restates A404 and D8 (the grant is refused lazily at spend and execute, not voided at admit) and changes no behaviour. The Steward quotes the final wording in the PR body, and the Founders check it against that sentence.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 - **The day Codex returned (A670, A673): 25 November 2026.** A673 says "from today"; the record is dated 25 Nov 2026. `AGENTS.md` §11 now states the date and the review labels. The plan (v1.29 §4) says only that the Steward records the day, so it needs no change. **The noema copy of AGENTS.md** carries the old paragraph until it is re-pointed (a small pull request after this one merges, with `tools/vendor/repoint_docs.py`, as noema#967 did).
-- **Review-gate wording after Codex's return (SR's and Codex's findings on this pull request).** `AGENTS.md` §11 first said "an independent role read stays for migrations only (A463)" after the return date. A673 does not say that; A656 and A657 granted the narrowing only "while Codex is out of usage", and A670 says the Tier 1 text applies again unamended, which includes one independent role review (EL, C1 or C2, not the author). **The clause is removed.** The safer reading (AGENT-20) applies until the Architect says otherwise: from 25 Nov 2026 the Tier 1 gate is the Tier 1 text of §11 and plan §4, with the independent role read. **Question for the Architect:** does the independent role read of every Tier 1 PR apply again from 25 Nov (the safer reading, applied here), or does A656's "migrations only" continue now Codex is back?
-- **Open question from SR on "Codex, or SR standing in" after the return.** One reviewer cannot be both the Codex read and the SR READY on the same head without the two gates collapsing into one. SR asks the Architect to state (1) when SR may still stand in for Codex (for example only when Codex has not posted on the head within a period the Architect names; SR will not choose it), and (2) that heads which already carry SR's READY as the stand-in (before 25 Nov) keep it, and that a code push after 25 Nov follows (1). Until it is answered, SR posts no READY described as standing in for Codex on a head pushed after 25 Nov. The Steward records the question; it does not decide it.
-- **A673's last sentence ("FE does not adopt that format")** is recorded as given and is **not** put into AGENTS.md: it does not say whether FE keeps another label or is exempt from labelling. The Architect states what FE uses.
+- **Review-gate wording (A685, A686).** `AGENTS.md` §11 first said the independent role read stays for migrations only after the return; then the Steward removed it and applied "unamended" as the safer reading. A685 says the removal was wrong: the migrations-only wording of A463 is restored, before and after Codex's return. A686 answers SR's question on standing in for Codex (the 60-minute rule). Both are now in `AGENTS.md` §11. **Plan §4 and §13.1 (v1.29) state the earlier form of A656 and A657;** `AGENTS.md` §11 governs until a plan version restates them (A671). A small plan version for that is available on request.
+- **A673's last sentence ("FE does not adopt that format")** is settled by A687: FE labels its comments "FE". It is in `AGENTS.md` §11's list of labels.
 - **[OPEN] entries opened (provisional, NON-CANONICAL), as asked:**
   - **OD-P-113** the `reversal_posted` shape and the reversal pair, with the pair's rule text taken from the pack's rule set v1 (the `reversal_conflict` contradiction and rule R3). EL attaches the exact pair and window to the pull request, because the PCK-05 matrix is not on `main`.
   - **OD-P-114** the decline template keyed by reason code (after G1).
@@ -115,4 +140,4 @@ They are in BO's #962 manifest: `usr_synth001`, `002`, `009`, `015`, `019`, `029
 - **A676, A677, A678, A679, A682, A683, A684:** other owners' work; nothing for the Steward beyond this record. A676's privacy fix is the first HIGH item on #960. A684's list is the G1 critical path; the Steward does not move `tasks.csv` for it.
 - **A681 and AGENT-16.** The interim timeout values are the Architect's, set for the bench compose only (AGENT-16 keeps agents from setting them).
 - **A674 and the plan.** PCK-05's task row (plan v1.29) is unchanged; the three-pair scope is the ruling's (an approved POC decision ranks above the plan, SoT §0.4).
-- **Next free ruling: A685.**
+- **Next free ruling: A689.**
