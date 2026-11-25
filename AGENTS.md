@@ -375,6 +375,8 @@ The sources are SoT §47, PERD §41 and §42, and the threat-to-test map in [`do
 
 **Reviews.** Review gates are set by tier (A143, plan §4). **Tier 1** (trust, execution, outcome, record, migrations, identity): Codex READY + SR READY + one independent role review (EL, C1 or C2, not the author) + CI + one Founder approval. **Tier 2** (contracts, packs, benchmark, voice, docs): Codex where A14 applies + one independent reviewer READY (SR counts) + CI + one Founder approval; `.github` and `deploy` still need SR. An agent's report is not acceptance (plan §4.1).
 
+**Review standing (A656, A657; Interim, in force when `DEC-2026-11-25-architect-rulings-a657-a667` merges).** While Codex is out of usage, SR's READY at the same head stands in for Codex on every Tier 1 pull request (A480, A541). An independent role read (EL, C1 or C2, not the author) applies to **migrations only** (A463). Re-read rule: a push after READY that changes only comments, docs or status files keeps the READY, and green CI at that head is still required; a code push needs a fresh READY at the new head. A merge-main commit voids no earlier read (A468). The older Tier text above and in plan §4 and §13.1 reads with this paragraph; the ruling ranks above the plan (SoT §0.4).
+
 **Approval and merge.** One approval from a Founder who did not author or drive the pull request is enough to merge any pull request in `docs` or `noema`, whatever paths it changes (A111, [DEC-2026-11-09-one-founder-approval](docs/decisions/DEC-2026-11-09-one-founder-approval.md)). The other gates above and in plan §13.1 are unchanged.
 
 **In the `docs` repository** (carried forward unchanged):

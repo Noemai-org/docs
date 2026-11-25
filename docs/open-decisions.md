@@ -1347,3 +1347,62 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Owner:** Benchmark Owner; EL.
 - **Source:** ruling A652; plan task MEM-02 (Done); REQ-MEM-002.
 
+### OD-P-107: The convergence window of each compared fact pair (named OD-RES05-1) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** The window inside which two compared facts may still converge (RES-05, noema#949). A659 rules: no new number; the windows come from A641 (the smaller freshness limit of the pair), declared as `convergence_window_seconds` in rule set version 2. Whether the Founders accept those windows as the POC's is not recorded.
+- **Why it matters:** Inside the window the Reconciler waits, with no write and no verdict; outside it escalates. A wrong window waits too long or escalates too early.
+- **Proposed smallest safe default:** No window, so ESCALATE (fail closed). With A659, the window is the smaller freshness limit of the pair, checked equal by packcheck.
+- **Evidence that would invalidate the default:** Settlement and reversal lag observed in the benchmark world that the freshness limits do not cover.
+- **Owner:** Founders; C1 (rule set v2); EL (PCK-05).
+- **Source:** rulings A641, A659; `status/RES-05.md` (feat/RES-05-convergence-windows); REQ-RES-005; AGENT-16.
+
+### OD-P-108: Pack limit values that the SoT and the PERD do not state (named OD-A544) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A544: `limits/trust_limits.json` and its values are C2's; a value the PERD and the SoT do not state is an [OPEN] entry. Which values those are is listed by the owner of each limit, not by the Steward.
+- **Why it matters:** A pack value nobody may invent (AGENT-16) blocks any code that needs it, and a guessed one is an unsafe default.
+- **Proposed smallest safe default:** Nothing allowed under freeze; no route means UNKNOWN (A544).
+- **Evidence that would invalidate the default:** A value stated in the SoT or the PERD, or a Founder decision that sets it.
+- **Owner:** C2 (the pack's values); Founders.
+- **Source:** ruling A544 (`DEC-2026-11-23-architect-rulings-a542-a553`); AGENT-02, AGENT-16.
+
+### OD-P-109: A per-source freshness override (named OD-EVD02-1) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** PERD §21.2 names `per_source_override?` in the effective limit and `PROFILE_OVERRIDE` in `limit_set_by`, but neither the trust profile nor any pack member or contract carries an override. Where it lives, and who sets its values, is not decided.
+- **Why it matters:** `freshness.Limits.Override` is an input nothing supplies, so it is zero.
+- **Proposed smallest safe default:** No override.
+- **Evidence that would invalidate the default:** A requirement to age one source out faster or slower than the profile's `max_evidence_age_seconds`.
+- **Owner:** Founders (a pack member on the trust profile, additive, AGENT-15).
+- **Source:** `status/EVD-02.md` (OD-EVD02-1); PERD §21.2; AGENT-16.
+
+### OD-P-110: The read budget of REQ-CTX-003 (named OD-EVD02-2) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** REQ-CTX-003 says "within the read budget" and no number is stated in the documents; `Session` takes the refresh timeout as a required argument.
+- **Why it matters:** Without a stated budget every caller picks its own timeout, so a read can wait past what the journey allows.
+- **Proposed smallest safe default:** The caller must pass a timeout; no default is set.
+- **Evidence that would invalidate the default:** A budget in the SoT, the PERD or a Founder decision.
+- **Owner:** Architect.
+- **Source:** `status/EVD-02.md` (OD-EVD02-2); REQ-CTX-003; AGENT-16.
+
+### OD-P-111: The clock-skew tolerance when ordering events (EVENT_ORDER) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** Rules A641, A659 and the Reconciler's EVENT_ORDER_UNCERTAIN (OD-P-56) need to know how far apart two event times may be before their order is uncertain. The ruling names an `EVENT_ORDER skew` open entry without text; the Steward wrote this entry from OD-P-56 and the safe-default rule, and the Architect confirms or corrects it.
+- **Why it matters:** A tolerance that is too wide hides a real reordering; one that is too narrow escalates cases the data would order.
+- **Proposed smallest safe default:** Zero tolerance: any case where the order cannot be shown from the facts is EVENT_ORDER_UNCERTAIN, so ESCALATE.
+- **Evidence that would invalidate the default:** Observed skew between the stand-in's and Tushe's event times in the benchmark world.
+- **Owner:** Founders; C1.
+- **Source:** OD-P-56; REQ-CTX-008 ("clock skew: recorded"); AGENT-16. Wording the Steward's.
+
+### OD-P-112: The EVD-05 retry budget (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** REQ-CTX-008 gives a bounded exponential backoff of 100 ms, 300 ms and 900 ms for a 429 without `Retry-After`, labelled [REC], and "honour `Retry-After` within the read budget" with no stated budget (see OD-P-110). Whether the [REC] backoff is adopted for the POC is not recorded. The ruling names this open entry without text; the Steward wrote it from REQ-CTX-008, and the Architect confirms or corrects it.
+- **Why it matters:** A retry budget is a safety limit (AGENT-16): too many retries hammer the enterprise, none turn every 429 into UNKNOWN.
+- **Proposed smallest safe default:** No retry: a read that fails is UNKNOWN. The [REC] backoff stays [REC] until a decision adopts it.
+- **Evidence that would invalidate the default:** A fixture or run showing that UNKNOWN on a 429 breaks a journey the pack allows.
+- **Owner:** Founders; C2 (EVD-05).
+- **Source:** REQ-CTX-008; plan task EVD-05; AGENT-16. Wording the Steward's.
