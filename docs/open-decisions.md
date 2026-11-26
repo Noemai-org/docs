@@ -1402,6 +1402,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward from the rulings A657 to A667 (interim, in `DEC-2026-11-25-architect-rulings-a657-a667`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** REQ-CTX-008 gives a bounded exponential backoff of 100 ms, 300 ms and 900 ms for a 429 without `Retry-After`, labelled [REC], and "honour `Retry-After` within the read budget" with no stated budget (see OD-P-110). Whether the [REC] backoff is adopted for the POC is not recorded. The ruling names this open entry without text; the Steward wrote it from REQ-CTX-008, and the Architect confirms or corrects it.
 - **Why it matters:** A retry budget is a safety limit (AGENT-16): too many retries hammer the enterprise, none turn every 429 into UNKNOWN.
+- **Update (A728, interim, `DEC-2026-11-26-architect-rulings-a721-a737`):** the read retry budget stays 0 beyond EVD-02's one refresh; the entry stays Open. Reads use a fresh connection each time (`DisableKeepAlives`), so the attempt count is exact.
 - **Proposed smallest safe default:** No retry: a read that fails is UNKNOWN. The [REC] backoff stays [REC] until a decision adopts it.
 - **Evidence that would invalidate the default:** A fixture or run showing that UNKNOWN on a 429 breaks a journey the pack allows.
 - **Owner:** Founders; C2 (EVD-05).
@@ -1484,6 +1485,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** A704 sets the five Limits as settings with no code default: max patterns 64, max pattern length 1024 characters, max document size 65536 bytes, max nesting depth 8, field cap 256 characters. The values go in the bench compose only. Whether the Founders adopt them for any other profile is not recorded; EL maps them to the real field names and the `NOEMA_INJECTION_*` settings.
+- **Update (A722, interim, `DEC-2026-11-26-architect-rulings-a721-a737`):** the pattern length setting stays **in bytes**, so A704's "characters" is superseded; the value 1024 is read as 1024 bytes (see OD-P-131).
 - **Why it matters:** They bound what the advisory screen reads (AGENT-16); too high a bound costs time, too low refuses real packs.
 - **Proposed smallest safe default:** The bench values above, in the bench compose only; a missing setting fails the start.
 - **Evidence that would invalidate the default:** A real pack's pattern data or an evidence document that exceeds a bound, seen in a run.
@@ -1549,3 +1551,53 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A reading of A404 or D8 that the wording does not match.
 - **Owner:** Founders; Architect.
 - **Source:** rulings A680, A688, A712; D8; PERD v1.30.
+
+### OD-P-127: The `outcome_bindings` pack member (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A721 to A737 (interim, in `DEC-2026-11-26-architect-rulings-a721-a737`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A723 adds an additive optional pack member `outcome_bindings` to `pack.v1` (A698), per capability: the outcome definition id; a map from each predicate variable to `PLAN_PARAM:<param>`, `INTENT_ID` or `SUBJECT`; and `retry_safety`. C1 writes the schema, the packcheck rule and the SYNTHETIC fintech data in one contracts PR for both Founders; EL consumes it. Where the outcome definition or the descriptor already carries one of these, EL reads it there. It replaces A651's "exact name match" for production. The member's exact shape is C1's to state in the pull request.
+- **Why it matters:** Slice 4 (the outcome reader, #1019) cannot bind predicate variables to plan params without it; a wrong binding would verify the wrong target (INV-04).
+- **Proposed smallest safe default:** No `outcome_bindings` until the contracts PR merges; the caller supplies bindings for G1 as A651 said.
+- **Evidence that would invalidate the default:** A predicate variable that none of the three sources (`PLAN_PARAM`, `INTENT_ID`, `SUBJECT`) can bind.
+- **Owner:** C1 (contracts PR); both Founders; EL.
+- **Source:** ruling A723, A698, A651; AGENT-15; REQ-VER-002.
+
+### OD-P-128: `maxProperties` 8 and `maxLength` 128 on `step_params` (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A721 to A737 (interim, in `DEC-2026-11-26-architect-rulings-a721-a737`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A724 approves `maxProperties` 8 and `maxLength` 128 on `step_params` of the signed execution receipt (A692, A709). It marks them OPEN for the Founders: whether they are the POC's bounds is theirs to confirm.
+- **Why it matters:** They bound what a signed receipt carries (AGENT-16); too low refuses a legitimate bound param, too high lets a large value into a signed record.
+- **Proposed smallest safe default:** `maxProperties` 8 and `maxLength` 128, set in the schema (a contract change for both Founders).
+- **Evidence that would invalidate the default:** A bound param of a G1 capability that exceeds either bound.
+- **Owner:** Founders; C1.
+- **Source:** ruling A724, A709, A692; OD-P-119; AGENT-15, AGENT-16.
+
+### OD-P-129: The pack's `tenant_zone` as the authority for the tenant offset (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A721 to A737 (interim, in `DEC-2026-11-26-architect-rulings-a721-a737`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A729: the pack's `tenant_zone` (A650) is the authority for the tenant offset. The lexicon's offset must equal it, which a test already pins. Whether the Founders confirm this single authority is not recorded.
+- **Why it matters:** Two sources of the offset (pack and lexicon) could disagree on a stated time; one authority and a pinned test avoids it.
+- **Proposed smallest safe default:** `tenant_zone` is the authority; the lexicon offset equals it, pinned by the existing test.
+- **Evidence that would invalidate the default:** A tenant whose zone has more than one offset in the data window.
+- **Owner:** Founders; C2 (DATA-02).
+- **Source:** ruling A729, A650, A634; REQ-DATA-002.
+
+### OD-P-130: Money arithmetic code (M6) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A721 to A737 (interim, in `DEC-2026-11-26-architect-rulings-a721-a737`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A729: money arithmetic code (M6) does not exist and nothing is invented. It stays OPEN until after G1.
+- **Why it matters:** Any money arithmetic written now would be invented (AGENT-02), and money handling is a safety area (BD-08).
+- **Proposed smallest safe default:** No money arithmetic code; amounts are integer minor units plus currency and are compared, never computed.
+- **Evidence that would invalidate the default:** A G1 or later journey that needs arithmetic on amounts.
+- **Owner:** Founders; C2.
+- **Source:** ruling A729; REQ-DATA-002; AGENT-02.
+
+### OD-P-131: The injection pattern length setting in bytes (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A721 to A737 (interim, in `DEC-2026-11-26-architect-rulings-a721-a737`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A722: the pattern length setting stays in bytes, so A704's "characters" (1024 characters) is superseded; the value 1024 is read as 1024 bytes. Whether 1024 bytes suits real patterns is not recorded.
+- **Why it matters:** A bound in bytes counts multibyte characters as several; a bound in characters would need a decoder in the loader.
+- **Proposed smallest safe default:** 1024 bytes, in the bench compose only (A704, A714).
+- **Evidence that would invalidate the default:** A real pack pattern whose character length is under 1024 but byte length is over it.
+- **Owner:** Founders; EL.
+- **Source:** ruling A722, A704; OD-P-120; AGENT-16.
