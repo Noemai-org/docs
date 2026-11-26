@@ -1464,6 +1464,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A690 to A700 (interim, in `DEC-2026-11-25-architect-rulings-a690-a700`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** A691 keeps the reversal pair and declares its `convergence_window_seconds` as 0, meaning no window and an immediate ESCALATE, until Tushe states the `reversal_posted` shape; then the window becomes the smaller of its sources' freshness limits. Whether the Founders accept 0 for the POC is not recorded; it is the Architect's interim ruling.
 - **Why it matters:** A window of 0 is the fail-closed value; a larger one would be an invented number (AGENT-16).
+- **Update (A708, interim, `DEC-2026-11-26-architect-rulings-a704-a720`):** the schema and the loader allow a window of 0 (C1's small contracts PR, both Founders; see OD-P-124). The reversal pair stays at 0; EL reworks #988 after that PR.
 - **Proposed smallest safe default:** 0 seconds: no window, immediate ESCALATE, for the reversal pair only.
 - **Evidence that would invalidate the default:** Tushe's written shape for `reversal_posted` (see OD-P-113), after which the smaller freshness limit applies.
 - **Owner:** Founders (with the Tushe answer); EL (#988).
@@ -1478,3 +1479,73 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A needed param that no PLAN_PARAM binding names.
 - **Owner:** C1; both Founders (approval).
 - **Source:** ruling A692; AGENT-15; REQ-VER-001, REQ-VER-002; PERD §32.
+
+### OD-P-120: The injection screen's five limits (bench values) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A704 sets the five Limits as settings with no code default: max patterns 64, max pattern length 1024 characters, max document size 65536 bytes, max nesting depth 8, field cap 256 characters. The values go in the bench compose only. Whether the Founders adopt them for any other profile is not recorded; EL maps them to the real field names and the `NOEMA_INJECTION_*` settings.
+- **Why it matters:** They bound what the advisory screen reads (AGENT-16); too high a bound costs time, too low refuses real packs.
+- **Proposed smallest safe default:** The bench values above, in the bench compose only; a missing setting fails the start.
+- **Evidence that would invalidate the default:** A real pack's pattern data or an evidence document that exceeds a bound, seen in a run.
+- **Owner:** Founders; EL; IL (compose).
+- **Source:** ruling A704, A714; REQ-CTX-007; AGENT-16.
+
+### OD-P-121: The planner text bound `NOEMA_PLAN_TEXT_MAX_BYTES` (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A705: required with no default; the bench compose sets 256. Whether 256 is adopted beyond the bench is not recorded.
+- **Why it matters:** It bounds the plan text the Planner accepts (AGENT-16).
+- **Proposed smallest safe default:** 256 bytes in the bench compose only; absent fails the start.
+- **Evidence that would invalidate the default:** A plan text that legitimately exceeds 256 bytes in a G1 journey.
+- **Owner:** Founders; EL; IL.
+- **Source:** ruling A705, A714; AGENT-16.
+
+### OD-P-122: The maximum push-to-talk recording of 30 seconds (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A715: the maximum push-to-talk recording is 30 s as a UI setting, and Voice enforces the same limit host-side. A715 marks it OPEN for the Founders: whether 30 s is the POC's value is theirs to confirm.
+- **Why it matters:** A recording limit bounds audio stored and sent to the speech provider (AGENT-16; no raw audio retained beyond the plan).
+- **Proposed smallest safe default:** 30 seconds, enforced in the UI and host-side by Voice.
+- **Evidence that would invalidate the default:** A journey or an utterance in the recordings that needs longer.
+- **Owner:** Founders; FE; Voice.
+- **Source:** ruling A715; AGENT-16.
+
+### OD-P-123: The version token and the complete marker of the portread payload (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A706 (A665): `version_token` is the maximum entry version, as a string; `complete` means the read answered and was not unavailable. The allowlist is extended to `evidence/portread`, in its own PR. Whether the Founders adopt this meaning for the contract is not recorded.
+- **Why it matters:** The token and the marker decide whether a facts read is whole and current; a wrong meaning would let a partial read count as complete.
+- **Proposed smallest safe default:** The meaning above; a read that did not answer is never `complete`.
+- **Evidence that would invalidate the default:** A read path where the maximum entry version does not identify the state read.
+- **Owner:** Architect; EL.
+- **Source:** ruling A706, A665; INV-21.
+
+### OD-P-124: A convergence window of 0 allowed by the pack schema and the loader (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A708: the schema and the loader allow a window of 0 (C1, a small contracts PR for both Founders). The reversal pair stays at 0 (A691); the four single-valued windows use the smaller freshness limit of their sources (300 s for credit and switch). OD-P-118 (the reversal pair's 0) is updated in place.
+- **Why it matters:** A window of 0 means no window and an immediate ESCALATE; the schema change widens what a pack may declare (AGENT-15).
+- **Proposed smallest safe default:** 0 only for the reversal pair; every other window the smaller freshness limit of its sources.
+- **Evidence that would invalidate the default:** A pack that declares 0 for a pair other than the reversal pair.
+- **Owner:** C1 (contracts PR); both Founders; EL (#988 rework).
+- **Source:** rulings A691, A708; REQ-RES-005; AGENT-15, AGENT-16.
+
+### OD-P-125: INP-01 design 8 (slot inheritance) rejected (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A712 rejects design 8: N+1 is compiled alone, and missing slots are asked through SLOT clarification (on `main` since #926). The other safer defaults of the INP-01 note stand; #684 merges after EL's re-read. Whether the Founders confirm the rejection is not recorded.
+- **Why it matters:** Slot inheritance would carry earlier slot values into a new version; asking again is the safer reading.
+- **Proposed smallest safe default:** Design 8 rejected; N+1 compiled alone; missing slots asked.
+- **Evidence that would invalidate the default:** A journey where asking again makes the customer unable to continue.
+- **Owner:** Founders; C2 (INP-01); EL.
+- **Source:** ruling A712; REQ-INP-004, REQ-INT-004.
+
+### OD-P-126: The REQ-INT-004 rewording (PERD v1.30, Proposed) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A704 to A720 (interim, in `DEC-2026-11-26-architect-rulings-a704-a720`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A680 and A712 ask for a rewording of REQ-INT-004 like A312's: version N+1 voids nothing at admit time and a stale grant is refused at its next use (step E3). It is drafted as PERD v1.30 (Proposed; merged in `main`, with `CR-2026-11-25-A680-perd-v1.30-int-004-lazy-void`). Whether the Founders accept the version is not recorded (A688: approve if it restates A404 and D8 and changes no behaviour).
+- **Why it matters:** Until accepted, the PERD text and the code disagree on when a grant is voided.
+- **Proposed smallest safe default:** The v1.30 wording; the rulings govern until the Founders accept the version.
+- **Evidence that would invalidate the default:** A reading of A404 or D8 that the wording does not match.
+- **Owner:** Founders; Architect.
+- **Source:** rulings A680, A688, A712; D8; PERD v1.30.
