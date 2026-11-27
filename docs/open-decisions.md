@@ -1617,7 +1617,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** A739: the upper bound is 999, the Execution ring's bound, for every key ring; the evidence key file uses the same format as the other signers' seed files, with the 16 KiB cap. EL conforms its loader to IL's #1023 names (the volume and the `core_evidence_ed25519_seed_1` file). The bench value of `NOEMA_EVIDENCE_KEY_MAX_ACTIVE` stays 2 (A722). Whether 999 is adopted outside the bench is not recorded.
 - **Why it matters:** A ring bound limits how many key versions can be active (AGENT-16); too high lets stale keys stay valid.
-- **Proposed smallest safe default:** 999 as the upper bound for every ring; the bench `MAX_ACTIVE` 2; the 16 KiB cap on the key file.
+- **Proposed smallest safe default:** 999 as the upper bound for every ring; the bench `MAX_ACTIVE` 2; the 16 KiB cap on the key file. 999 is a ceiling only: `NOEMA_EVIDENCE_KEY_MAX_ACTIVE` stays a required setting with no code default (AGENT-16; SR's condition on this pull request).
 - **Evidence that would invalidate the default:** A ring in use whose active count must exceed 999, or a key file larger than 16 KiB.
 - **Owner:** Founders; EL; IL (#1023).
 - **Source:** ruling A739, A722, A594; AGENT-16.
@@ -1636,6 +1636,7 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
 - **Missing decision:** A746: `DOCS_READ_TOKEN` was a repository secret with no main-only restriction (a credential-exposure risk). The Founder states the remediation is done: the GitHub Environment `docs-read` was created, restricted to `main`, and the secret moved into it. SR's #1007 condition stands: the `tushe-fixture` Environment needs a Founder reviewer and a main-only rule before any secret is added. The Steward cannot see GitHub's settings; the entry stays Open until both are confirmed in the settings.
+- **Rotation (SR's condition on this pull request):** `DOCS_READ_TOKEN` was readable by any branch workflow before it was moved into the `docs-read` Environment. Moving it stops further exposure but does not undo the earlier exposure. **Whether the token was rotated is not recorded**; SR asks that it be rotated and the rotation recorded here.
 - **Why it matters:** A secret reachable from any branch can be read by a workflow on a branch (SoT §47; AGENTS §10).
 - **Proposed smallest safe default:** No secret in `tushe-fixture` until it has a Founder reviewer and a main-only rule; `docs-read` as the Founder states.
 - **Evidence that would invalidate the default:** A workflow run on a non-main ref that reads `DOCS_READ_TOKEN`.
