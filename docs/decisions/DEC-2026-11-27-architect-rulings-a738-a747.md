@@ -1,12 +1,12 @@
-# DEC-2026-11-27 · Architect rulings A738 to A747 (interim)
+# DEC-2026-11-27 · Architect rulings A738 to A752 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 27 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 27 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A738 to A747 (§1), every one Interim. |
-| **Supersedes** | **A738 amends** A669 (the re-read rule), A686 (the stand-in clock: 30 minutes, not 60) and AGENTS §11's "never base a PR on another PR's branch" (stacking up to 4 PRs), and generalises A730. **A739 sets** the key ring bound. **A740 extends** A723 with a fourth source. **A741 accepts** BO's generator run as the A604 evidence. **A742 extends** IL's allowlist for one PR. **A743 settles** INP-01's answered SLOT value. **A745 restates** A680. **A746 records** the Founder's remediation of `DOCS_READ_TOKEN`. **A747 bundles** the composition gaps. Otherwise nothing; per ruling in §1. |
+| **Decides** | Rulings A738 to A747 (§1) and A748 to A752 (§1A), every one Interim. |
+| **Supersedes** | **A748 replaces** A738's READY rule with SR's wording; **A749 removes** A738's stacking (stacking is off); **A750 sets** when the stand-in clock starts; **A751 narrows** A738's rule on findings outside the diff; **A752 limits** A742's golden regeneration. **A738 amends** A669 (the re-read rule), A686 (the stand-in clock: 30 minutes, not 60) and AGENTS §11's "never base a PR on another PR's branch" (stacking up to 4 PRs), and generalises A730. **A739 sets** the key ring bound. **A740 extends** A723 with a fourth source. **A741 accepts** BO's generator run as the A604 evidence. **A742 extends** IL's allowlist for one PR. **A743 settles** INP-01's answered SLOT value. **A745 restates** A680. **A746 records** the Founder's remediation of `DOCS_READ_TOKEN`. **A747 bundles** the composition gaps. Otherwise nothing; per ruling in §1. |
 | **Amends** | `AGENTS.md` §11 (A738: the speed rules, the re-read rule, the stand-in clock, stacking). Nothing in the SoT, the PERD or the plan; plan §4 (v1.31) states the 60-minute clock and the A669 rule until a plan version restates them. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 27 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A738 to A747
+- Decides: A738 to A752
 - Decision: §1
 - Rationale and evidence: the Architect's message of 27 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-12, INV-14, INV-16, INV-17, INV-29; BD-08; AGENT-11, AGENT-12, AGENT-15, AGENT-16; REQ-INP-004, REQ-INT-004, REQ-VER-002, REQ-STM-001, REQ-TRU-009, REQ-SEC-004; SoT §51
@@ -107,6 +107,42 @@ EL builds the remaining gaps as commits in a few bundled PRs (the table below), 
 | 16 | Recovery reader | C1 | #996 is merged. Confirm the gap flipped. |
 | 17 | Recovery write path | C1 | After EL's slice 4 reader |
 
+## 1A. Rulings A748 to A752 (the Architect's answers to SR's read of this pull request)
+
+### A748. READY holds across a push (item 1, adopt SR's wording)
+
+A push keeps READY only if one of these is true:
+
+- Every changed file is `*_test.go` or `test_*.py` outside `tools/ci/`, `.github/`, `contracts/` and `packs/`, and the push adds cases without editing any existing assertion.
+- Every changed file is `*.md` outside `docs/decisions/`, `AGENTS.md` and `CLAUDE.md`, or is under `status/`.
+
+Anything else is a code push and needs a fresh READY. The pusher states which case applies.
+
+### A749. No stacking (item 2)
+
+- Stacking is off. Dependent work goes in one PR as separate commits (AGENTS §11), which `pr-base-guard.yml` already enforces.
+- The "up to 4 PRs" wording is removed. There is no `.github` change for the guard.
+- SR, Codex and the Founder read the one PR's final head.
+
+### A750. Stand-in clock (item 3, adopt)
+
+- The 30-minute clock starts only when Codex's review is not still running.
+- A Codex finding on the head ends the stand-in.
+
+### A751. Findings outside the diff (item 4, adopt)
+
+- A Codex finding outside a PR's diff becomes a follow-up only where the diff neither changes nor newly reaches that code.
+- SR decides, and each follow-up condition names an owner and a task or PR.
+
+### A752. Golden regeneration (item 6, adopt)
+
+A742's golden regeneration is an exception to A533 for that one PR. It changes identifiers only, and no assertion is edited.
+
+### OD-P-134 and `DOCS_READ_TOKEN` (the Architect's instructions in the same message)
+
+- **OD-P-134.** The Architect had not seen its wording. Use the more restrictive reading between the Steward's and SR's, and record it. If it changes behaviour, the Architect rules on it in the next message.
+- **`DOCS_READ_TOKEN`.** The token was readable by any branch before the move. **The Founder needs to rotate it and record the rotation date, then move it into the `docs-read` Environment restricted to `main`.**
+
 ## 2. What the Steward did, and where the rulings are silent
 
 | Item | What was done |
@@ -116,8 +152,9 @@ EL builds the remaining gaps as commits in a few bundled PRs (the table below), 
 | **BEN-06 to BEN-09** | Already Done in `tasks.csv` on `main`; no change. |
 | **[OPEN] entries (provisional, NON-CANONICAL)** | **OD-P-132** the `EPOCH` source of `outcome_bindings` (A740); **OD-P-133** the key ring bound 999 and the evidence key file format (A739); **OD-P-134** `LEXICON_REF_WITHOUT_FILE` (the Steward's wording; see below); **OD-P-135** the `DOCS_READ_TOKEN` remediation (A746). |
 | **`LEXICON_REF_WITHOUT_FILE`** | The code is in the model service's lexicon loader (`understanding/compiler/lexicon.py`, `SKIPPED_CODE`) and its tests: a lexicon reference that names no file is skipped and logged under this code. A636 says Yoruba, Hausa and Igbo are measured only, with no lexicon. **The message named the entry without text:** the Steward wrote it from the code and A636; the Architect confirms or corrects it. |
-| **SR's read of this pull request (open for the Architect; the Steward has not changed the ruling's text)** | **(1)** A738's READY rule "only adds tests, docs or status files" defines none of its terms: "docs" covers `docs/decisions/` and `AGENTS.md`, "tests" covers `tools/ci/test_*.py` and fixtures and goldens under `contracts/fixtures/` and `testdata/`, and "adds" is not tied to "no existing assertion removed or weakened". SR proposes: the push changes only `*_test.go` or `test_*.py` outside `tools/ci/`, `.github/`, `contracts/` and `packs/`, adds cases and removes or edits no existing assertion; or only `*.md` outside `docs/decisions/`, `AGENTS.md` and `CLAUDE.md`, or `status/`; A669's comment-only clause with its directive list stays; anything else needs a fresh READY. **(2)** Stacking up to 4 PRs conflicts with "dependent work in one PR" and with `pr-base-guard.yml`, which fails any PR whose base is not `main`; SR asks for which case applies when, whether 4 is four children of one parent or a stack four deep, the gate (a child merges into its parent's branch only, the parent alone merges to `main`, and SR, Codex and the Founder read the parent's final head), and that the guard changes in its own `.github` PR. **(3)** The 30-minute stand-in clock starts only when Codex's review of that head is not in progress, and a Codex finding on the head ends the stand-in. **(4)** "Codex findings outside a PR's diff become follow-up conditions" holds only where the diff neither changes nor newly reaches the code the finding is about; SR decides; each condition names an owner and a task or PR. **(6)** A742's regenerated golden is an exception to A533 for that one PR, and the PR changes identifiers only with no assertion edited. These need the Architect's ruling. **(5) and (7)** are applied in OD-P-135 and OD-P-133. |
-| **A746** | The Founder's remediation (the `docs-read` Environment, main-only, secret moved) is recorded as done on the Founder's statement; the Steward cannot see GitHub's settings and records it as stated. The `tushe-fixture` Environment condition (SR's #1007) stays open in OD-P-135. |
+| **SR's read of this pull request (findings 1 to 4 and 6)** | Settled by A748 to A752 (§1A) and applied in `AGENTS.md` §11 exactly as ruled. Conditions 5 and 7 were applied in OD-P-135 and OD-P-133. |
+| **A746 and `DOCS_READ_TOKEN`** | A746 recorded the Founder's statement that the `docs-read` Environment was created and the secret moved. The Architect's message of 27 Nov says the token was readable by any branch before the move: **the Founder rotates it, records the rotation date, then moves it into `docs-read` restricted to `main`.** The Steward cannot see GitHub's settings. **The rotation date is not recorded yet** (OD-P-135, the field is blank). The `tushe-fixture` condition (SR's #1007) stands. |
 | **A747's table** | Recorded as ruled, with its owners. The Steward does not move `tasks.csv` for it. |
 | **A739 to A745** | Other owners' work; nothing for the Steward beyond this record. |
-| **Next free ruling** | **A748** |
+| **OD-P-134 (the more restrictive reading)** | Recorded with the more restrictive reading: a lexicon reference that names no file is **refused by packcheck**, not skipped and logged. This **changes behaviour** from today's code (`SKIPPED_CODE`, skip and log), so it waits for the Architect's ruling in the next message; until then the code is unchanged. |
+| **Next free ruling** | **A753** |
