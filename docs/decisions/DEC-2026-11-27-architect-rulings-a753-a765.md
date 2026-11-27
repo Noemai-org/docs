@@ -1,13 +1,13 @@
-# DEC-2026-11-27 · Architect rulings A753 to A768 (interim)
+# DEC-2026-11-27 · Architect rulings A753 to A770 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 27 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 27 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A753 to A768 (§1), every one Interim. |
-| **Supersedes** | **A753 replaces** A749 (stacking is allowed again, up to 4 child PRs on one parent). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). **A766 states** who merges a child into its parent's branch. **A767 conditions** A753: no stacked child until IL's guard PR merges (A765's "stacks on that PR" is read subject to it). **A768 rules** on A755 against INV-30 and closes SOT-C-36. Otherwise nothing; per ruling in §1. |
-| **Amends** | `AGENTS.md` §11 (A753: stacking). Nothing in the SoT, the PERD or the plan. |
+| **Decides** | Rulings A753 to A770 (§1), every one Interim. |
+| **Supersedes** | **A769 replaces** A753, A766 and A767, and so A749: one stacking rule (§1, A769). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). **A768 rules** on A755 against INV-30 and closes SOT-C-36. **A770 resolves** SR's conditions 3, 4 and 6 to 9 as the Steward recommended them. Otherwise nothing; per ruling in §1. |
+| **Amends** | `AGENTS.md` §11 (A769: stacking). Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
 **Record fields (decisions README template).**
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 27 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A753 to A768
+- Decides: A753 to A770
 - Decision: §1
 - Rationale and evidence: the Architect's message of 27 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-12, INV-16, INV-17, INV-20, INV-21, INV-29, INV-30; BD-08; AGENT-11, AGENT-12, AGENT-15, AGENT-16; REQ-RES-005, REQ-VER-004, REQ-TRU-009, REQ-STM-001, REQ-INP-004, REQ-OPS-003; SoT §51
@@ -24,9 +24,9 @@
 
 ## 1. The rulings
 
-### A753. Stacking PRs (replaces A749)
+### A753. Stacking PRs (replaced by A769)
 
-Stacking PRs is allowed (not more than 4). This replaces A749. In practice (the Founder's instruction): up to 4 child PRs on one parent; children base on the parent's branch; only the parent merges to `main`; readers read the parent's final head. The `pr-base-guard` change is its own `.github` PR (IL).
+Replaced by A769 (§1). It carries no rule of its own.
 
 ### A754. Evidence record timeout
 
@@ -103,7 +103,7 @@ Voice takes two reads that need an independent reader: the migration read of #10
 
 ### A765. G1 critical path now
 
-The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unconfigured. That was before #1018 and about a dozen other merges. The next run is the authority. The remaining gaps, by owner, are in the table below, and owners are expected to execute on them right now and deliver reports on them. If an owner is waiting for a PR to merge, it stacks on that PR (A753), names the stack in its title and notes it in the PR body.
+The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unconfigured. That was before #1018 and about a dozen other merges. The next run is the authority. The remaining gaps, by owner, are in the table below, and owners are expected to execute on them right now and deliver reports on them. If an owner is waiting for a PR to merge, it stacks on that PR under A769: the first line of its PR body says "STACKED ON #N. Do not merge until #N has merged."
 
 | Gap | Owner | State and next step |
 |---|---|---|
@@ -120,16 +120,9 @@ The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unco
 | Recovery reader | EL | Reader merged (#996), but nothing sets `SurfaceSeams.Recovery`. EL sets it. |
 | Recovery write path | C1 | After EL's slice 4. |
 
-### A766. Who merges a child into its parent (SR 1)
+### A766 and A767 (replaced by A769)
 
-- Agents never merge. A non-author Founder merges a child into its parent's branch.
-- The conditions are green CI at the child's head and the child owner's READY.
-- SR and Codex read only the parent's final head, as in A753.
-- The parent's driving Founder is the default merger. Either Founder may do it.
-
-### A767. Stacking before the guard PR (SR 2)
-
-No stacked child until IL's guard PR merges. Until then, dependent work is one PR with commits.
+Replaced by A769. They carry no rule of their own.
 
 ### A768. A755 against INV-30 (what "not recorded" means)
 
@@ -142,11 +135,34 @@ No stacked child until IL's guard PR merges. Until then, dependent work is one P
 - Recording the WAIT as a Decision Record stays OPEN until after G1, and a Founder decides it.
 - SOT-C-36 is filed as the conflict block, with A768 as the ruling.
 
+### A769. Stacking (replaces A753, A766 and A767)
+
+- An agent that is waiting on PR #N to merge works on its task now, in a branch cut from #N's branch.
+- It opens its PR with #N's branch as the base. The first line of its PR body says: "STACKED ON #N. Do not merge until #N has merged."
+- Up to 4 PRs may stack on one #N.
+- The Founder merges #N first. Then the stacked PR retargets to `main`: GitHub does this when #N's branch is deleted, and if it does not, the Founder changes the base to `main` by hand. The Founder merges the stacked PR only after that.
+- If #N changes after the stacked agent started, the agent merges #N's branch into its own. No rebase.
+- `pr-base-guard` is red on a stacked PR until its base merges and it retargets to `main`. That is expected, and a red guard is never merged past. No `.github` change is needed, so there is no waiting.
+- SR, Codex and the Founder read the stacked PR's own diff against its base. SR's two blocking findings on docs#252 (who merges, and stacking before the guard PR) no longer apply.
+
+### A770. SR's conditions 3, 4 and 6 to 9 (approved as the Steward recommended them)
+
+Source: the Steward's recommendations of 27 Nov 2026, approved in the Founder-side message that relayed A769. The relay gave no ruling number; the Steward numbered this one. Interim.
+
+| SR | Resolved as |
+|---|---|
+| 3 | EL reads #1021's migration, with C2 as backup. A764 is amended: Voice keeps the #1034 vector reproduction and does not read the migration. The pool of independent readers (A463, A685) is not widened. |
+| 4 | #1021 edits migration 0043 in place, with no 0044. C1 adds three tests: a REJECT keyed by turn and principal inserts; any outcome other than ESCALATE or REJECT is refused by the CHECK; the Record event is asserted. C1's status file lists every early refusal in A680 and shows each is ESCALATE or REJECT. |
+| 6 | DEBT-60 is Tier 2, and is done before G1 if the freeze read is on the dispatch path. C1 builds one tenant-scoped, indexed read function by target with a context deadline. Four tests: a read error reads as frozen; no row is not frozen; a cleared row is not frozen; another tenant's row is never visible. |
+| 7 | #1032 compares integer seconds and never uses `time.Duration` or `Sub`. Truncating `ceiling_ms/1000` rounds toward rejecting, and a ceiling under 1000 ms becomes 0 s, so everything is rejected. A property test covers extreme values, including a year-2400 expiry. |
+| 8 | `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` is required at startup. The core refuses to start if it is absent, zero, or not less than the enclosing turn deadline. The Architect sets any absolute upper bound. The bench value of 5000 ms stays. |
+| 9 | A762 is made mechanical: SR checks at each #733 head that the diff does not touch the worker start site, and if it does the stand-in ends. EL's start-site PR carries Codex's finding as a test: a duplicate or restarted start must not create a second ESCALATE. |
+
 ## 2. What the Steward did, and where the rulings are silent
 
 | Item | What was done |
 |---|---|
-| **`AGENTS.md` §11 (A753)** | Stacking is allowed again, replacing A749 (A766 and A767 apply: no stacked child until IL's guard PR merges; a non-author Founder merges a child into its parent's branch): up to 4 child PRs on one parent; children base on the parent's branch; only the parent merges to `main`; SR, Codex and the Founder read the parent's final head; a child names its stack in its title and body. The `pr-base-guard` change is its own `.github` PR (IL). Per A767 no stacked child is opened until that guard PR has merged, so none is red on `pr-base-guard`. The Steward does not change the guard. |
+| **`AGENTS.md` §11 (A769)** | One stacking rule, replacing A749, A753, A766 and A767: an agent waiting on PR #N branches from #N's branch and opens its PR with that base, with "STACKED ON #N. Do not merge until #N has merged." as the first line of the body; up to 4 PRs on one #N; the Founder merges #N, the stacked PR retargets to `main`, then the Founder merges it; if #N changes, #N's branch is merged into the stacked branch, no rebase; `pr-base-guard` is red until the retarget and is never merged past; no guard change; readers read the stacked PR's diff against its base. |
 | **A741 and A744 (A759)** | Recorded with the text as given in §1 (A759). |
 | **[OPEN] entries (provisional, NON-CANONICAL)** | **OD-P-136** recording a WAIT (A755, OPEN until after G1); **OD-P-137** the evidence record timeout (A754); **OD-P-138** the `question_key` design (A757). |
 | **DEBT-60** | Added to the debt register: the by-target read function for freeze rows (A756). Owner C1 (the Steward's default: #1035 is C1's); Tier 3 proposed (the ruling gives none). |
@@ -155,6 +171,7 @@ No stacked child until IL's guard PR merges. Until then, dependent work is one P
 | **A762** | Recorded; nothing for the Steward. |
 | **A765's table** | Recorded as ruled; `tasks.csv` is not moved for it. |
 | **A765's table: #1004** | Corrected by the Steward: #1004 is open and unmerged (Codex finding on docs#252). Only #1016 is merged. |
-| **Points still open (SR and Codex on docs#252; A766, A767 and A768 answered SR 1, SR 2 and the INV-30 finding)** | (3) A764 gives Voice the independent read of #1021's migration, while §11 and A685 name EL, C1 or C2 (not the author): **Architect**, unless §11 is amended. (4) #1021's CHECK is widened in place in migration 0043, with no 0044 (A761), with a test inserting a REJECT keyed by turn and principal: **C1**. (5) DEBT-60's tier (SR: Tier 2, with a test that a read error reads as frozen) and what exactly it adds: **Architect**, with **C1**. (6) #1032 compares integer seconds against `ceiling_ms/1000`, which truncates the ceiling safely, and its regression covers the subtraction for a year-2400 expiry: **the #1032 owner**. (7) `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` needs an upper bound with the other required timeouts (A754, OD-P-137): **IL** with **EL**. (8) A762 holds only while #733 does not change or newly reach the start site: **EL** and **SR**. (Numbers are SR's; no committed ruling answers these yet.) |
-| **A766 to A768** | Recorded as ruled. AGENTS §11 states A766 and A767. SOT-C-36 is closed with A768. OD-P-136's default is restated per A768; whether to record the WAIT as a Decision Record stays OPEN, and a Founder decides it. |
-| **Next free ruling** | **A769** |
+| **SR 3, 4, 6, 7, 8, 9** | Resolved by A770, as the Steward recommended them. The owners (EL, C1, #1032's owner, IL with EL, SR) carry them out; none is done by this record. |
+| **A768 and A770** | Recorded. SOT-C-36 is closed with A768. OD-P-136's default is restated per A768; whether to record the WAIT as a Decision Record stays OPEN, and a Founder decides it. DEBT-60 is now Tier 2 (A770, SR 6). |
+| **A769** | Replaces A753, A766 and A767. |
+| **Next free ruling** | **A771** |
