@@ -36,6 +36,7 @@ Stacking PRs is allowed (not more than 4). This replaces A749. In practice (the 
 
 - C1's reading is accepted: WAIT is returned to the caller and re-evaluated when the window ends. At expiry the contradiction becomes an ESCALATE Decision Record.
 - Recording a WAIT is OPEN until after G1.
+- **Scope (Steward note, Codex finding on docs#252; the Architect to confirm):** the ruling does not say whether "not recorded" means no hash-chained Record event only, or no durable state. INV-30 persists every decision in Postgres, so the Steward reads it as the first, with the WAIT and its deadline kept as durable state, and files SOT-C-36 in the conflicts register. Until ruled, a WAIT authorises nothing (no grant, no state change), its window starts from the recorded evidence times, and the ESCALATE at expiry carries the original contradiction (SR condition 5 on docs#252).
 - C1's wiring (T10 carries the wait, T11 ends it) is accepted.
 
 ### A756. Freeze events (#1035)
@@ -113,7 +114,7 @@ The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unco
 | Recorder | EL, C2, C1 | C2's StepFactSource merged (#1027). C1's FreezeReader (#1035). EL wires them. |
 | Explainer | EL | #1015, #970, #1031 merged or ready. EL wires them. |
 | Confirmations and the confirmation route | C1, EL | #1028 appender is READY. EL builds the per-tenant adapters. |
-| Input gateway write path | EL | #1019 (READY), #1004, #1016 merged, the A707 port, then `outcome_bindings` (#1026). |
+| Input gateway write path | EL | #1019 (READY); #1016 merged; **#1004 is open and not merged** (head 932acef2, merge state blocked, so its review gates are not complete; Steward correction of 27 Nov 2026 after Codex's finding on docs#252, the Architect to confirm its dependency and next action); the A707 port, then `outcome_bindings` (#1026). |
 | Events route | IL, EL | #1005 merged. The next stack-check shows whether it flipped. |
 | Worker | EL | Escalation start site (A730 condition). |
 | Recovery reader | EL | Reader merged (#996), but nothing sets `SurfaceSeams.Recovery`. EL sets it. |
@@ -131,4 +132,6 @@ The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unco
 | **A758 and A761** | Other owners' work; the Steward records the assignments as ruled. |
 | **A762** | Recorded; nothing for the Steward. |
 | **A765's table** | Recorded as ruled; `tasks.csv` is not moved for it. |
+| **A765's table: #1004** | Corrected by the Steward: #1004 is open and unmerged (Codex finding on docs#252). Only #1016 is merged. |
+| **Points the rulings leave open (SR and Codex on docs#252; none is decided here, none applies until ruled)** | (1) Who merges a child into its parent's branch, given §11 "never merge any PR": the Steward's recommendation is the parent's driving Founder, on green CI at the child's head. (2) Stacking is not used until IL's `pr-base-guard` PR has merged; the guard's rule is that a child's base is an open PR branch of the same stack, at most 4. (3) A764 gives Voice the independent read of #1021's migration, while §11 and A685 name EL, C1 or C2 (not the author); #1021 is C1's, so EL or C2 would read it unless §11 is amended. (4) #1021's CHECK is widened in place in migration 0043, with no 0044 (A761), with a test inserting a REJECT keyed by turn and principal (C1). (5) DEBT-60's tier (SR: Tier 2, with a test that a read error reads as frozen) and what exactly it adds. (6) #1032 compares integer seconds against `ceiling_ms/1000`, which truncates the ceiling safely, and its regression covers the subtraction for a year-2400 expiry. (7) `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` needs an upper bound with the other required timeouts (A754, OD-P-137). (8) A762 holds only while #733 does not change or newly reach the start site. (9) The scope of A755 against INV-30 (SOT-C-36). |
 | **Next free ruling** | **A766** |
