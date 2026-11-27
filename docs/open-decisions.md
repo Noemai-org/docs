@@ -1642,3 +1642,33 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A workflow run on a non-main ref that reads `DOCS_READ_TOKEN`.
 - **Owner:** Founders; SR (the #1007 condition).
 - **Source:** ruling A746; noema#1007 (ENV-16); AGENTS §10.
+
+### OD-P-136: Recording a WAIT (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A753 to A765 (interim, in `DEC-2026-11-27-architect-rulings-a753-a765`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A755: WAIT is not recorded in the POC. WAIT is returned to the caller and re-evaluated when the window ends; at expiry the contradiction becomes an ESCALATE Decision Record. C1's wiring (T10 carries the wait, T11 ends it) is accepted. Whether and how a WAIT is recorded is OPEN until after G1.
+- **Why it matters:** A WAIT that is not recorded leaves no Record of the decision to wait (INV-21: the Record proves it later); recording it adds an event type and a store.
+- **Proposed smallest safe default:** No WAIT record; the ESCALATE at expiry is recorded.
+- **Evidence that would invalidate the default:** A journey or an audit where the absence of a WAIT record prevents reconstructing why a case waited.
+- **Owner:** Architect; C1.
+- **Source:** ruling A755; REQ-RES-005; SOT-C-34; INV-21.
+
+### OD-P-137: The evidence record timeout `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A753 to A765 (interim, in `DEC-2026-11-27-architect-rulings-a753-a765`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A754: `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` is required, with no code default. The bench value is 5000 ms; IL adds it to the compose. Whether 5000 ms is adopted beyond the bench is not recorded.
+- **Why it matters:** It bounds an evidence write to the Record (AGENT-16); too short turns a slow append into a failed read, too long holds the case.
+- **Proposed smallest safe default:** 5000 ms in the bench compose only; absent fails the start.
+- **Evidence that would invalidate the default:** A measured Record append time that exceeds or far undercuts 5000 ms.
+- **Owner:** Founders; EL; IL.
+- **Source:** ruling A754; AGENT-16.
+
+### OD-P-138: The `question_key` design for SLOT questions (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A753 to A765 (interim, in `DEC-2026-11-27-architect-rulings-a753-a765`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A757: add an optional `question_key` to the slot declaration in `intent-node.v1.json` (additive, v1, A698). A template file may hold a key that is not `<outcome>/<classification>` only when it names a declared question key. `fin.clarify.when` text is added to `en-NG.json` with a native-speaker review flag. Packcheck requires text for every declared question key in every required locale. EL builds the resolver server-side in core; FE only displays it. One contract and pack PR for both Founders. The exact member shape is C2's to state in the pull request.
+- **Why it matters:** A SLOT question is customer-facing text: an unreviewed or missing text in a required locale would reach a customer; a key resolved in the UI would put logic in the client.
+- **Proposed smallest safe default:** The design above; no question text outside a declared key; the native-speaker flag on `en-NG`.
+- **Evidence that would invalidate the default:** A required locale for which no native-speaker review is available before G1.
+- **Owner:** C2 (contracts and pack PR); both Founders; EL (the resolver).
+- **Source:** ruling A757, A698; REQ-INP-004; AGENT-15.
