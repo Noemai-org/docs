@@ -1646,12 +1646,12 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 ### OD-P-136: Recording a WAIT (OPEN, provisional)
 
 - **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A753 to A765 (interim, in `DEC-2026-11-27-architect-rulings-a753-a765`; counts when that record merges). AGENT-02 structure.
-- **Missing decision:** A755: WAIT is not recorded in the POC. WAIT is returned to the caller and re-evaluated when the window ends; at expiry the contradiction becomes an ESCALATE Decision Record. C1's wiring (T10 carries the wait, T11 ends it) is accepted. Whether and how a WAIT is recorded is OPEN until after G1.
-- **Why it matters:** A WAIT that is not recorded leaves no Record event of the decision to wait (POC-FR-12 and P9, reconstruction from the Record); recording it adds an event type and a store. Separately, INV-30 requires every decision to be persisted in Postgres, so the WAIT and its deadline need durable state even if no Record event is written (SOT-C-36).
-- **Proposed smallest safe default:** No WAIT Record event; the WAIT and its deadline stay in durable Postgres state (INV-30); the ESCALATE at expiry is recorded. While the WAIT is not recorded: it authorises nothing (no grant, no state change); the window's start comes from the recorded evidence times, never from process memory, so a restart cannot extend a wait; and the ESCALATE Decision Record at expiry carries the original contradiction (SR condition 5, docs#252).
+- **Missing decision:** A755 and A768: a WAIT is a stateless evaluation result in the POC (no write, grant or verdict; nothing held in Temporal). Whether to record it as a Decision Record is OPEN until after G1, and a Founder decides it. A755: WAIT is returned to the caller and re-evaluated when the window ends; at expiry the contradiction becomes an ESCALATE Decision Record. C1's wiring (T10 carries the wait, T11 ends it) is accepted. Whether and how a WAIT is recorded is OPEN until after G1.
+- **Why it matters:** A WAIT that is not recorded leaves no Record event of the decision to wait (POC-FR-12 and P9, reconstruction from the Record); recording it adds an event type and a store. INV-30 is met by A768: nothing about the wait is held anywhere but the Record (SOT-C-36, closed by A768).
+- **Proposed smallest safe default:** A768 as ruled: no WAIT record; no write, no grant and no verdict while waiting; the window is derived from the timestamps of facts already on the Record, never from process memory, so a restart cannot extend a wait; re-evaluation on the customer's next turn or by a Postgres sweep that reads the Record (REQ-VER-004); the ESCALATE Decision Record at expiry carries the original contradiction and always escalates.
 - **Evidence that would invalidate the default:** A journey or an audit where the absence of a WAIT record prevents reconstructing why a case waited.
-- **Owner:** Architect; C1.
-- **Source:** ruling A755; REQ-RES-005; SOT-C-34; SOT-C-36; INV-30; POC-FR-12.
+- **Owner:** a Founder decides; C1 builds.
+- **Source:** ruling A755; REQ-RES-005; SOT-C-34; SOT-C-36; rulings A755, A768; INV-21; INV-30; POC-FR-12.
 
 ### OD-P-137: The evidence record timeout `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` (OPEN, provisional)
 

@@ -1,12 +1,12 @@
-# DEC-2026-11-27 · Architect rulings A753 to A765 (interim)
+# DEC-2026-11-27 · Architect rulings A753 to A768 (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 27 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 27 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A753 to A765 (§1), every one Interim. |
-| **Supersedes** | **A753 replaces** A749 (stacking is allowed again, up to 4 child PRs on one parent). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). Otherwise nothing; per ruling in §1. |
+| **Decides** | Rulings A753 to A768 (§1), every one Interim. |
+| **Supersedes** | **A753 replaces** A749 (stacking is allowed again, up to 4 child PRs on one parent). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). **A766 states** who merges a child into its parent's branch. **A767 conditions** A753: no stacked child until IL's guard PR merges (A765's "stacks on that PR" is read subject to it). **A768 rules** on A755 against INV-30 and closes SOT-C-36. Otherwise nothing; per ruling in §1. |
 | **Amends** | `AGENTS.md` §11 (A753: stacking). Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,10 +15,10 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 27 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A753 to A765
+- Decides: A753 to A768
 - Decision: §1
 - Rationale and evidence: the Architect's message of 27 Nov 2026, relayed to the Steward
-- Affected requirement IDs / SoT sections: INV-02, INV-03, INV-12, INV-16, INV-17, INV-20, INV-21, INV-29; BD-08; AGENT-11, AGENT-12, AGENT-15, AGENT-16; REQ-RES-005, REQ-TRU-009, REQ-STM-001, REQ-INP-004, REQ-OPS-003; SoT §51
+- Affected requirement IDs / SoT sections: INV-02, INV-03, INV-12, INV-16, INV-17, INV-20, INV-21, INV-29, INV-30; BD-08; AGENT-11, AGENT-12, AGENT-15, AGENT-16; REQ-RES-005, REQ-VER-004, REQ-TRU-009, REQ-STM-001, REQ-INP-004, REQ-OPS-003; SoT §51
 - Supersedes: see the Supersedes row above
 - Migration notes: A757 adds an optional `question_key` to the slot declaration in `intent-node.v1.json` (additive, v1, A698; one contract and pack PR for both Founders). A761: #1021's early outcome set is ESCALATE and REJECT (a widened CHECK). A764: the migration read of #1021 (A463) is Voice's. No migration is added by this record.
 
@@ -36,7 +36,7 @@ Stacking PRs is allowed (not more than 4). This replaces A749. In practice (the 
 
 - C1's reading is accepted: WAIT is returned to the caller and re-evaluated when the window ends. At expiry the contradiction becomes an ESCALATE Decision Record.
 - Recording a WAIT is OPEN until after G1.
-- **Scope (Steward note, Codex finding on docs#252; the Architect to confirm):** the ruling does not say whether "not recorded" means no hash-chained Record event only, or no durable state. INV-30 persists every decision in Postgres, so the Steward reads it as the first, with the WAIT and its deadline kept as durable state, and files SOT-C-36 in the conflicts register. Until ruled, a WAIT authorises nothing (no grant, no state change), its window starts from the recorded evidence times, and the ESCALATE at expiry carries the original contradiction (SR condition 5 on docs#252).
+- **Scope:** A768 rules on what "not recorded" means.
 - C1's wiring (T10 carries the wait, T11 ends it) is accepted.
 
 ### A756. Freeze events (#1035)
@@ -120,11 +120,33 @@ The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unco
 | Recovery reader | EL | Reader merged (#996), but nothing sets `SurfaceSeams.Recovery`. EL sets it. |
 | Recovery write path | C1 | After EL's slice 4. |
 
+### A766. Who merges a child into its parent (SR 1)
+
+- Agents never merge. A non-author Founder merges a child into its parent's branch.
+- The conditions are green CI at the child's head and the child owner's READY.
+- SR and Codex read only the parent's final head, as in A753.
+- The parent's driving Founder is the default merger. Either Founder may do it.
+
+### A767. Stacking before the guard PR (SR 2)
+
+No stacked child until IL's guard PR merges. Until then, dependent work is one PR with commits.
+
+### A768. A755 against INV-30 (what "not recorded" means)
+
+- A WAIT is a stateless evaluation result. The turn ends with no write, no grant and no verdict.
+- Nothing about the wait is held in Temporal, because Temporal is never authoritative (INV-30).
+- The window is derived from the timestamps of facts already on the Record, so it is deterministic and replayable (INV-21).
+- Re-evaluation happens either on the customer's next turn or in a Postgres-based sweep. The sweep reads the Record, and it is the fallback of REQ-VER-004.
+- At window expiry the contradiction becomes an ESCALATE Decision Record.
+- OD-P-136's safeguards (SR 5) apply: no write, no grant and no verdict while waiting, and an expiry that always escalates.
+- Recording the WAIT as a Decision Record stays OPEN until after G1, and a Founder decides it.
+- SOT-C-36 is filed as the conflict block, with A768 as the ruling.
+
 ## 2. What the Steward did, and where the rulings are silent
 
 | Item | What was done |
 |---|---|
-| **`AGENTS.md` §11 (A753)** | Stacking is allowed again, replacing A749: up to 4 child PRs on one parent; children base on the parent's branch; only the parent merges to `main`; SR, Codex and the Founder read the parent's final head; a child names its stack in its title and body. The `pr-base-guard` change is its own `.github` PR (IL). **Until that guard changes, a stacked child is red on `pr-base-guard`** (SR's earlier finding on #251); A689 and the guard's rule "never merge past a red `pr-base-guard`" apply. The Steward notes it and does not change the guard. |
+| **`AGENTS.md` §11 (A753)** | Stacking is allowed again, replacing A749 (A766 and A767 apply: no stacked child until IL's guard PR merges; a non-author Founder merges a child into its parent's branch): up to 4 child PRs on one parent; children base on the parent's branch; only the parent merges to `main`; SR, Codex and the Founder read the parent's final head; a child names its stack in its title and body. The `pr-base-guard` change is its own `.github` PR (IL). Per A767 no stacked child is opened until that guard PR has merged, so none is red on `pr-base-guard`. The Steward does not change the guard. |
 | **A741 and A744 (A759)** | Recorded with the text as given in §1 (A759). |
 | **[OPEN] entries (provisional, NON-CANONICAL)** | **OD-P-136** recording a WAIT (A755, OPEN until after G1); **OD-P-137** the evidence record timeout (A754); **OD-P-138** the `question_key` design (A757). |
 | **DEBT-60** | Added to the debt register: the by-target read function for freeze rows (A756). Owner C1 (the Steward's default: #1035 is C1's); Tier 3 proposed (the ruling gives none). |
@@ -133,5 +155,6 @@ The newest stack-check (run 16, at `6d6b566`) still listed 18 components as unco
 | **A762** | Recorded; nothing for the Steward. |
 | **A765's table** | Recorded as ruled; `tasks.csv` is not moved for it. |
 | **A765's table: #1004** | Corrected by the Steward: #1004 is open and unmerged (Codex finding on docs#252). Only #1016 is merged. |
-| **Points the rulings leave open (SR and Codex on docs#252; none is decided here, none applies until ruled)** | (1) Who merges a child into its parent's branch, given §11 "never merge any PR": the Steward's recommendation is the parent's driving Founder, on green CI at the child's head. (2) Stacking is not used until IL's `pr-base-guard` PR has merged; the guard's rule is that a child's base is an open PR branch of the same stack, at most 4. (3) A764 gives Voice the independent read of #1021's migration, while §11 and A685 name EL, C1 or C2 (not the author); #1021 is C1's, so EL or C2 would read it unless §11 is amended. (4) #1021's CHECK is widened in place in migration 0043, with no 0044 (A761), with a test inserting a REJECT keyed by turn and principal (C1). (5) DEBT-60's tier (SR: Tier 2, with a test that a read error reads as frozen) and what exactly it adds. (6) #1032 compares integer seconds against `ceiling_ms/1000`, which truncates the ceiling safely, and its regression covers the subtraction for a year-2400 expiry. (7) `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` needs an upper bound with the other required timeouts (A754, OD-P-137). (8) A762 holds only while #733 does not change or newly reach the start site. (9) The scope of A755 against INV-30 (SOT-C-36). |
-| **Next free ruling** | **A766** |
+| **Points still open (SR and Codex on docs#252; A766, A767 and A768 answered SR 1, SR 2 and the INV-30 finding)** | (3) A764 gives Voice the independent read of #1021's migration, while §11 and A685 name EL, C1 or C2 (not the author): **Architect**, unless §11 is amended. (4) #1021's CHECK is widened in place in migration 0043, with no 0044 (A761), with a test inserting a REJECT keyed by turn and principal: **C1**. (5) DEBT-60's tier (SR: Tier 2, with a test that a read error reads as frozen) and what exactly it adds: **Architect**, with **C1**. (6) #1032 compares integer seconds against `ceiling_ms/1000`, which truncates the ceiling safely, and its regression covers the subtraction for a year-2400 expiry: **the #1032 owner**. (7) `NOEMA_EVIDENCE_RECORD_TIMEOUT_MS` needs an upper bound with the other required timeouts (A754, OD-P-137): **IL** with **EL**. (8) A762 holds only while #733 does not change or newly reach the start site: **EL** and **SR**. (Numbers are SR's; no committed ruling answers these yet.) |
+| **A766 to A768** | Recorded as ruled. AGENTS §11 states A766 and A767. SOT-C-36 is closed with A768. OD-P-136's default is restated per A768; whether to record the WAIT as a Decision Record stays OPEN, and a Founder decides it. |
+| **Next free ruling** | **A769** |
