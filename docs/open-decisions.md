@@ -1601,3 +1601,43 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A real pack pattern whose character length is under 1024 but byte length is over it.
 - **Owner:** Founders; EL.
 - **Source:** ruling A722, A704; OD-P-120; AGENT-16.
+
+### OD-P-132: The `EPOCH` source of `outcome_bindings` (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A740: `outcome_bindings` (OD-P-127) gains a fourth source, `EPOCH`: the subject's current logical-resolution epoch, read through the same `NextEpoch` port the Interpreter uses. C1 adds it to #1026. Whether the Founders confirm the fourth source in the contract is not recorded (both Founders approve the contracts PR).
+- **Why it matters:** A binding that reads the epoch lets an outcome definition name the version of the subject it verifies; a wrong source would bind the wrong state (INV-04).
+- **Proposed smallest safe default:** The four sources (`PLAN_PARAM`, `INTENT_ID`, `SUBJECT`, `EPOCH`); a variable no source can bind fails closed.
+- **Evidence that would invalidate the default:** A predicate variable that none of the four sources can bind.
+- **Owner:** C1 (#1026); both Founders; EL.
+- **Source:** ruling A740, A723; OD-P-127; AGENT-15.
+
+### OD-P-133: The key ring upper bound of 999 and the evidence key file format (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A739: the upper bound is 999, the Execution ring's bound, for every key ring; the evidence key file uses the same format as the other signers' seed files, with the 16 KiB cap. EL conforms its loader to IL's #1023 names (the volume and the `core_evidence_ed25519_seed_1` file). The bench value of `NOEMA_EVIDENCE_KEY_MAX_ACTIVE` stays 2 (A722). Whether 999 is adopted outside the bench is not recorded.
+- **Why it matters:** A ring bound limits how many key versions can be active (AGENT-16); too high lets stale keys stay valid.
+- **Proposed smallest safe default:** 999 as the upper bound for every ring; the bench `MAX_ACTIVE` 2; the 16 KiB cap on the key file.
+- **Evidence that would invalidate the default:** A ring in use whose active count must exceed 999, or a key file larger than 16 KiB.
+- **Owner:** Founders; EL; IL (#1023).
+- **Source:** ruling A739, A722, A594; AGENT-16.
+
+### OD-P-134: A lexicon reference with no file (`LEXICON_REF_WITHOUT_FILE`) (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** The model service skips a lexicon reference that names no file and logs it under the code `LEXICON_REF_WITHOUT_FILE`. A636 says Yoruba, Hausa and Igbo are measured only, with no lexicon. Whether a pack may carry such a reference (skipped and logged) or packcheck must refuse it is not decided. The wording is the Steward's, from the code and A636; the Architect confirms or corrects it.
+- **Why it matters:** A silently skipped lexicon could make a locale look supported when it is not; a refusal could block the measured-only recordings.
+- **Proposed smallest safe default:** Skipped and logged under the code, as the code does today; no locale is claimed as supported without a lexicon file.
+- **Evidence that would invalidate the default:** A run where a skipped reference changes a compile result for en-NG or pcm.
+- **Owner:** Architect; C2.
+- **Source:** `services/model/noema_model/understanding/compiler/lexicon.py` (`SKIPPED_CODE`); ruling A636.
+
+### OD-P-135: The `DOCS_READ_TOKEN` remediation and the `tushe-fixture` Environment (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A738 to A747 (interim, in `DEC-2026-11-27-architect-rulings-a738-a747`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A746: `DOCS_READ_TOKEN` was a repository secret with no main-only restriction (a credential-exposure risk). The Founder states the remediation is done: the GitHub Environment `docs-read` was created, restricted to `main`, and the secret moved into it. SR's #1007 condition stands: the `tushe-fixture` Environment needs a Founder reviewer and a main-only rule before any secret is added. The Steward cannot see GitHub's settings; the entry stays Open until both are confirmed in the settings.
+- **Why it matters:** A secret reachable from any branch can be read by a workflow on a branch (SoT §47; AGENTS §10).
+- **Proposed smallest safe default:** No secret in `tushe-fixture` until it has a Founder reviewer and a main-only rule; `docs-read` as the Founder states.
+- **Evidence that would invalidate the default:** A workflow run on a non-main ref that reads `DOCS_READ_TOKEN`.
+- **Owner:** Founders; SR (the #1007 condition).
+- **Source:** ruling A746; noema#1007 (ENV-16); AGENTS §10.
