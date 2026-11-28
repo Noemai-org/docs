@@ -1,12 +1,12 @@
-# DEC-2026-11-27 · Architect rulings A753 to A770 (interim)
+# DEC-2026-11-27 · Architect rulings A753 to A769 and SR-APP (interim)
 
 | | |
 |---|---|
 | **Status** | **Interim.** Decided by the Principal Architect, relayed to the Repo Steward on 27 Nov 2026, who commits them. Counts once a Founder who did not author this pull request approves, from a personal account, and merges it (A111, A638; AGENTS §2, item 3). |
 | **Date** | 27 November 2026 |
 | **Owner** | Principal Architect (the rulings); the Founders (the merge) |
-| **Decides** | Rulings A753 to A770 (§1), every one Interim. |
-| **Supersedes** | **A769 replaces** A753, A766 and A767, and so A749: one stacking rule (§1, A769). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). **A768 rules** on A755 against INV-30 and closes SOT-C-36. **A770 resolves** SR's conditions 3, 4 and 6 to 9 as the Steward recommended them. Otherwise nothing; per ruling in §1. |
+| **Decides** | Rulings A753 to A769 and SR-APP (§1), every one Interim. |
+| **Supersedes** | **A769 replaces** A753, A766 and A767, and so A749: one stacking rule (§1, A769). **A755 accepts** C1's reading of WAIT. **A758 answers** four findings. **A760 applies** A752 to #1034. **A762 confirms** the stand-in under A750 and A751. **A765 restates** the G1 critical path (A684, A696, A736, A747). **A768 rules** on A755 against INV-30 and closes SOT-C-36. **SR-APP resolves** SR's conditions 3, 4 and 6 to 9 as the Steward recommended them. Otherwise nothing; per ruling in §1. |
 | **Amends** | `AGENTS.md` §11 (A769: stacking). Nothing in the SoT, the PERD or the plan. |
 | **Authority order applied** | SoT → decision records → PERD → plan |
 
@@ -15,7 +15,7 @@
 - Status: Interim; counts on merge by a non-author Founder's personal approval (A111, A638)
 - Date: 27 November 2026
 - Owner: Principal Architect; Founders
-- Decides: A753 to A770
+- Decides: A753 to A769 and SR-APP
 - Decision: §1
 - Rationale and evidence: the Architect's message of 27 Nov 2026, relayed to the Steward
 - Affected requirement IDs / SoT sections: INV-02, INV-03, INV-12, INV-16, INV-17, INV-20, INV-21, INV-29, INV-30; BD-08; AGENT-11, AGENT-12, AGENT-15, AGENT-16; REQ-RES-005, REQ-VER-004, REQ-TRU-009, REQ-STM-001, REQ-INP-004, REQ-OPS-003; SoT §51
@@ -145,7 +145,7 @@ Replaced by A769. They carry no rule of their own.
 - `pr-base-guard` is red on a stacked PR until its base merges and it retargets to `main`. That is expected, and a red guard is never merged past. No `.github` change is needed, so there is no waiting.
 - SR, Codex and the Founder read the stacked PR's own diff against its base. SR's two blocking findings on docs#252 (who merges, and stacking before the guard PR) no longer apply.
 
-### A770. SR's conditions 3, 4 and 6 to 9 (approved as the Steward recommended them)
+### SR-APP. SR's conditions 3, 4 and 6 to 9 (approved as the Steward recommended them; first numbered SR-APP by the Steward, renumbered by DEC-2026-11-28-architect-rulings-a770-a776 because the Architect's SR-APP is CI throughput)
 
 Source: the Steward's recommendations of 27 Nov 2026, approved in the Founder-side message that relayed A769. The relay gave no ruling number; the Steward numbered this one. Interim.
 
@@ -171,7 +171,7 @@ Source: the Steward's recommendations of 27 Nov 2026, approved in the Founder-si
 | **A762** | Recorded; nothing for the Steward. |
 | **A765's table** | Recorded as ruled; `tasks.csv` is not moved for it. |
 | **A765's table: #1004** | Corrected by the Steward: #1004 is open and unmerged (Codex finding on docs#252). Only #1016 is merged. |
-| **SR 3, 4, 6, 7, 8, 9** | Resolved by A770, as the Steward recommended them. The owners (EL, C1, #1032's owner, IL with EL, SR) carry them out; none is done by this record. |
-| **A768 and A770** | Recorded. SOT-C-36 is closed with A768. OD-P-136's default is restated per A768; whether to record the WAIT as a Decision Record stays OPEN, and a Founder decides it. DEBT-60 is now Tier 2 (A770, SR 6). |
+| **SR 3, 4, 6, 7, 8, 9** | Resolved by SR-APP, as the Steward recommended them. The owners (EL, C1, #1032's owner, IL with EL, SR) carry them out; none is done by this record. |
+| **A768 and SR-APP** | Recorded. SOT-C-36 is closed with A768. OD-P-136's default is restated per A768; whether to record the WAIT as a Decision Record stays OPEN, and a Founder decides it. DEBT-60 is now Tier 2 (SR-APP, SR 6). |
 | **A769** | Replaces A753, A766 and A767. |
-| **Next free ruling** | **A771** |
+| **Next free ruling** | Superseded: see `DEC-2026-11-28-architect-rulings-a770-a776` (the Architect's A770 is CI throughput) |
