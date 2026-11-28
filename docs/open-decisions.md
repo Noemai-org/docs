@@ -1672,3 +1672,24 @@ Each entry follows the AGENT-02 structure. "Proposed default" is the smallest sa
 - **Evidence that would invalidate the default:** A required locale for which no native-speaker review is available before G1.
 - **Owner:** C2 (contracts and pack PR); both Founders; EL (the resolver).
 - **Source:** ruling A757, A698; REQ-INP-004; AGENT-15.
+
+### OD-P-139: The `step_params` disclosure per binding (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A770 to A776 (interim, in `DEC-2026-11-28-architect-rulings-a770-a776`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** A774: each bound parameter declares a disclosure of VERBATIM, MASKED or HASHED in `outcome_bindings`. The default when absent is HASHED. Packcheck refuses VERBATIM for a parameter whose descriptor type is an identifier, account or name. MASKED keeps the last four digits. C1 adds the member to #1026 (a draft). The exact member shape is C1's to state in the pull request. **Steward-applied condition (SR 5 on docs#253; the Architect confirms):** HASHED means a keyed hash with a per-tenant key (the Record's existing key custody), or account-like parameters must be MASKED; a predicate compares like with like.
+- **Why it matters:** `step_params` reach the Record and the logs; a verbatim identifier or account would breach AGENT-13 and the masking rule.
+- **Proposed smallest safe default:** The design above; HASHED when absent.
+- **Evidence that would invalidate the default:** A parameter whose Record proof needs the value and cannot use a hash or the last four digits.
+- **Owner:** C1 (the contract member and the packcheck rule); both Founders (the contract PR, AGENT-15).
+- **Source:** ruling A774; AGENT-13; AGENT-15.
+
+### OD-P-140: The stray branch `c2/data02-a758` (OPEN, provisional)
+
+- **Status:** [OPEN] · NON-CANONICAL · opened by the Repo Steward at the Architect's instruction from the rulings A770 to A776 (interim, in `DEC-2026-11-28-architect-rulings-a770-a776`; counts when that record merges). AGENT-02 structure.
+- **Missing decision:** What becomes of the branch `c2/data02-a758` in `noema`, which belongs to no open pull request. The Architect's instruction is to leave it.
+- **Why it matters:** An orphan branch can be mistaken for live work; AGENTS §11 forbids deleting a branch one did not create.
+- **Proposed smallest safe default:** Leave it. The Steward neither deletes nor merges it.
+- **Evidence that would invalidate the default:** The branch carries work C2 needs, or C2 asks for it to be removed.
+- **Owner:** C2 (the branch's owner).
+- **Source:** the Architect's instruction of 28 Nov 2026; AGENTS §11.
+
